@@ -1,0 +1,55 @@
+{
+  "name": "vndc-dapp",
+  "version": "1.0.0",
+  "description": "VNDC - Blockchain Token System for Higher Education DApp",
+  "main": "hardhat.config.js",
+  "scripts": {
+    "compile": "hardhat compile",
+    "deploy:mumbai": "hardhat run scripts/deploy.js --network mumbai",
+    "deploy:polygon": "hardhat run scripts/deploy.js --network polygon",
+    "test": "hardhat test",
+    "test:gas": "REPORT_GAS=true hardhat test",
+    "coverage": "hardhat coverage",
+    "verify:mumbai": "hardhat verify --network mumbai",
+    "verify:polygon": "hardhat verify --network polygon",
+    "hardhat": "hardhat",
+    "clean": "hardhat clean",
+    "node": "hardhat node",
+    "accounts": "hardhat accounts",
+    "flatten": "hardhat flatten",
+    "typechain": "typechain --target ethers-v6 --out-dir typechain-types './**/*.sol'"
+  },
+  "keywords": [
+    "blockchain",
+    "ethereum",
+    "polygon",
+    "nft",
+    "credentials",
+    "education",
+    "governance",
+    "defi"
+  ],
+  "author": "VNDC Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-verify": "^2.0.0",
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@nomicfoundation/hardhat-ethers": "^3.0.0",
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
+    "@typechain/ethers-v6": "^11.0.0",
+    "@types/chai": "^4.2.0",
+    "@types/mocha": ">=9.1.0",
+    "chai": "^4.2.0",
+    "ethers": "^6.0.0",
+    "hardhat": "^2.17.0",
+    "hardhat-gas-reporter": "^1.0.8",
+    "solidity-coverage": "^0.8.0",
+    "typechain": "^8.3.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.0",
+    "@openzeppelin/hardhat-upgrades": "^2.0.0",
+    "dotenv": "^16.0.3"
+  }
+}
