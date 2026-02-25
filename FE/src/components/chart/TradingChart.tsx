@@ -108,8 +108,8 @@ export default function TradingChart({ data, pair, height = 420, className = '' 
       width: chartContainerRef.current.clientWidth,
       height,
       layout: {
-        background: { type: ColorType.Solid, color: 'transparent' },
-        textColor: '#94a3b8',
+        background: { type: ColorType.Solid, color: '#ffffff' },
+        textColor: '#6b7280',
         fontFamily: "'Inter', sans-serif",
         fontSize: 11,
       },
@@ -214,17 +214,17 @@ export default function TradingChart({ data, pair, height = 420, className = '' 
   }, [data, height, showMA, ma20]);
 
   return (
-    <div className={`glass-card overflow-hidden ${className}`}>
+    <div className={`card overflow-hidden ${className}`}>
       {/* Chart Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 pb-0">
         <div className="flex items-center gap-4">
-          <h3 className="text-lg font-bold text-white">{pair}</h3>
+          <h3 className="text-lg font-bold text-surface-800">{pair}</h3>
           {currentPrice && (
             <div className="flex items-center gap-3">
-              <span className="text-xl font-bold text-white">
+              <span className="text-xl font-bold text-surface-800">
                 {currentPrice.close.toFixed(currentPrice.close < 1 ? 6 : 2)}
               </span>
-              <span className={`text-sm font-semibold ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>
+              <span className={`text-sm font-semibold ${isPositive ? 'text-emerald-600' : 'text-red-600'}`}>
                 {isPositive ? '+' : ''}{priceChange.toFixed(currentPrice.close < 1 ? 8 : 4)}
                 ({isPositive ? '+' : ''}{priceChangePercent.toFixed(2)}%)
               </span>
@@ -238,23 +238,23 @@ export default function TradingChart({ data, pair, height = 420, className = '' 
             onClick={() => setShowMA(!showMA)}
             className={`px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition-all ${
               showMA
-                ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                : 'bg-surface-800/50 text-surface-500 border border-surface-700/40'
+                ? 'bg-amber-50 text-amber-600 border border-amber-200'
+                : 'bg-surface-50 text-surface-500 border border-surface-200'
             }`}
           >
             MA20
           </button>
 
           {/* Timeframes */}
-          <div className="flex rounded-xl bg-surface-800/50 border border-surface-700/40 p-0.5">
+          <div className="flex rounded-xl bg-surface-50 border border-surface-200 p-0.5">
             {TIMEFRAMES.map(tf => (
               <button
                 key={tf.value}
                 onClick={() => setTimeframe(tf.value)}
                 className={`px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition-all ${
                   timeframe === tf.value
-                    ? 'bg-brand-500/20 text-brand-300'
-                    : 'text-surface-500 hover:text-white'
+                    ? 'bg-brand-50 text-brand-600'
+                    : 'text-surface-500 hover:text-surface-700'
                 }`}
               >
                 {tf.label}
@@ -267,11 +267,11 @@ export default function TradingChart({ data, pair, height = 420, className = '' 
       {/* OHLCV Summary Bar */}
       {currentPrice && (
         <div className="flex gap-4 px-4 py-2 text-[11px]">
-          <span className="text-surface-500">O <span className="text-surface-300 font-mono">{currentPrice.open.toFixed(currentPrice.open < 1 ? 6 : 2)}</span></span>
-          <span className="text-surface-500">H <span className="text-emerald-400 font-mono">{currentPrice.high.toFixed(currentPrice.high < 1 ? 6 : 2)}</span></span>
-          <span className="text-surface-500">L <span className="text-red-400 font-mono">{currentPrice.low.toFixed(currentPrice.low < 1 ? 6 : 2)}</span></span>
-          <span className="text-surface-500">C <span className={`font-mono ${isPositive ? 'text-emerald-400' : 'text-red-400'}`}>{currentPrice.close.toFixed(currentPrice.close < 1 ? 6 : 2)}</span></span>
-          <span className="text-surface-500">Vol <span className="text-surface-300 font-mono">{(currentPrice.volume / 1000).toFixed(1)}K</span></span>
+          <span className="text-surface-500">O <span className="text-surface-700 font-mono">{currentPrice.open.toFixed(currentPrice.open < 1 ? 6 : 2)}</span></span>
+          <span className="text-surface-500">H <span className="text-emerald-600 font-mono">{currentPrice.high.toFixed(currentPrice.high < 1 ? 6 : 2)}</span></span>
+          <span className="text-surface-500">L <span className="text-red-600 font-mono">{currentPrice.low.toFixed(currentPrice.low < 1 ? 6 : 2)}</span></span>
+          <span className="text-surface-500">C <span className={`font-mono ${isPositive ? 'text-emerald-600' : 'text-red-600'}`}>{currentPrice.close.toFixed(currentPrice.close < 1 ? 6 : 2)}</span></span>
+          <span className="text-surface-500">Vol <span className="text-surface-700 font-mono">{(currentPrice.volume / 1000).toFixed(1)}K</span></span>
         </div>
       )}
 

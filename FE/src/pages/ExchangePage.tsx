@@ -1,18 +1,13 @@
 import { useState, useMemo } from 'react';
 import {
   ArrowLeftRight, Plus, TrendingUp, TrendingDown, Clock, CheckCircle,
-  XCircle, Search, Filter, ArrowUpDown, Coins, Users, BarChart3,
-  ShoppingCart, Tag, RefreshCcw, AlertCircle, ChevronDown, Copy,
-  ExternalLink, Zap, ArrowRight, CandlestickChart,
+  XCircle, Search, ArrowUpDown, BarChart3,
+  ShoppingCart, Tag, RefreshCcw, AlertCircle, Zap, ArrowRight, CandlestickChart,
 } from 'lucide-react';
-import PageHeader from '@/components/ui/PageHeader';
-import StatCard from '@/components/ui/StatCard';
-import Tabs from '@/components/ui/Tabs';
 import Modal from '@/components/ui/Modal';
-import EmptyState from '@/components/ui/EmptyState';
 import TradingChart, { useTradingData, TRADING_PAIRS } from '@/components/chart/TradingChart';
 import { useWeb3 } from '@/contexts/Web3Context';
-import { cn, shortenAddress, formatNumber, formatDate, timeAgo } from '@/lib/utils';
+import { cn, formatNumber, timeAgo } from '@/lib/utils';
 
 // ─── Types ───
 interface Order {
@@ -144,84 +139,83 @@ export default function ExchangePage() {
     setListPrice('');
   };
 
+  const [activeTab, setActiveTab] = useState('chart');
+
   const tabs = [
-    { id: 'chart', label: 'Biểu đồ', icon: <CandlestickChart size={15} /> },
-    { id: 'orderbook', label: 'Sổ lệnh', icon: <ArrowUpDown size={15} /> },
-    { id: 'trades', label: 'Lịch sử giao dịch', icon: <Clock size={15} /> },
-    { id: 'marketplace', label: 'Chợ nội bộ', icon: <ShoppingCart size={15} /> },
-    { id: 'my-orders', label: 'Lệnh của tôi', icon: <Tag size={15} /> },
+    { id: 'chart', label: 'Biểu đồ', icon: CandlestickChart },
+    { id: 'orderbook', label: 'Sổ lệnh', icon: ArrowUpDown },
+    { id: 'trades', label: 'Giao dịch', icon: Clock },
+    { id: 'marketplace', label: 'Chợ nội bộ', icon: ShoppingCart },
+    { id: 'my-orders', label: 'Lệnh của tôi', icon: Tag },
   ];
 
   return (
-    <div>
-      <PageHeader
-        title="Sàn giao dịch nội bộ"
-        description="Giao dịch token P2P và mua bán tài nguyên trong campus"
-        lucideIcon={ArrowLeftRight}
-        badge="DEX"
-        action={
-          <div className="flex gap-2">
-            <button onClick={() => setShowCreateListing(true)} className="btn-secondary btn-sm">
-              <ShoppingCart size={15} /> Đăng bán
-            </button>
-            <button onClick={() => setShowCreateOrder(true)} className="btn-primary btn-sm">
-              <Plus size={15} /> Tạo lệnh
-            </button>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center">
+            <ArrowLeftRight size={20} className="text-brand-600" />
           </div>
-        }
-      />
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard label="Khối lượng 24h" value={stats.totalVolume24h} icon={<TrendingUp className="w-5 h-5" />} color="brand" change="+12.5%" trend="up" />
-        <StatCard label="Lệnh đang mở" value={stats.totalOrders} icon={<ArrowUpDown className="w-5 h-5" />} color="info" />
-        <StatCard label="Giao dịch hôm nay" value={stats.totalTrades} icon={<BarChart3 className="w-5 h-5" />} color="success" />
-        <StatCard label="Sản phẩm đang bán" value={stats.totalListings} icon={<ShoppingCart className="w-5 h-5" />} color="warning" />
+          <div>
+            <h1 className="text-xl font-bold text-surface-800">Sàn giao dịch</h1>
+            <p className="text-sm text-surface-500">{stats.totalOrders} lệnh mở · {stats.totalTrades} giao dịch hôm nay</p>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <button onClick={() => setShowCreateListing(true)} className="btn-secondary btn-sm"><ShoppingCart size={14} /> Đăng bán</button>
+          <button onClick={() => setShowCreateOrder(true)} className="btn-primary btn-sm"><Plus size={14} /> Tạo lệnh</button>
+        </div>
       </div>
 
-      {/* Quick Swap Widget */}
-      <div className="glass-card p-6 mb-8">
-        <div className="flex items-center gap-2 mb-4">
-          <Zap className="w-5 h-5 text-brand-400" />
-          <h3 className="font-semibold text-white">Đổi nhanh (Quick Swap)</h3>
+      {/* Quick Swap */}
+      <div className="card">
+        <div className="flex items-center gap-2 mb-3">
+          <Zap size={16} className="text-brand-600" />
+          <h3 className="text-sm font-semibold text-surface-800">Đổi nhanh</h3>
         </div>
-        <div className="flex flex-col sm:flex-row items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-center gap-3">
           <div className="flex-1 w-full">
-            <label className="label">Từ</label>
             <div className="flex gap-2">
               <input type="number" placeholder="0.00" className="input flex-1" />
-              <select className="select w-28" value={tokenOffer} onChange={e => setTokenOffer(e.target.value)}>
+              <select className="select w-24" value={tokenOffer} onChange={e => setTokenOffer(e.target.value)}>
                 {SUPPORTED_TOKENS.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
           </div>
-          <button className="p-2.5 rounded-xl bg-brand-500/10 border border-brand-500/20 text-brand-400 hover:bg-brand-500/20 transition-all mt-5 sm:mt-0">
-            <ArrowRight size={18} />
-          </button>
+          <ArrowRight size={16} className="text-surface-400" />
           <div className="flex-1 w-full">
-            <label className="label">Đến</label>
             <div className="flex gap-2">
               <input type="number" placeholder="0.00" className="input flex-1" readOnly />
-              <select className="select w-28" value={tokenWant} onChange={e => setTokenWant(e.target.value)}>
+              <select className="select w-24" value={tokenWant} onChange={e => setTokenWant(e.target.value)}>
                 {SUPPORTED_TOKENS.filter(t => t !== tokenOffer).map(t => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
           </div>
-          <button className="btn-primary mt-5 sm:mt-0 w-full sm:w-auto" disabled={!isConnected}>
-            <RefreshCcw size={15} /> Đổi ngay
+          <button className="btn-primary sm:w-auto w-full" disabled={!isConnected}>
+            <RefreshCcw size={14} /> Đổi
           </button>
         </div>
-        {!isConnected && (
-          <p className="text-xs text-surface-500 mt-3 flex items-center gap-1">
-            <AlertCircle size={12} /> Kết nối ví để giao dịch
-          </p>
-        )}
+        {!isConnected && <p className="text-xs text-surface-500 mt-2"><AlertCircle size={12} className="inline" /> Kết nối ví để giao dịch</p>}
       </div>
 
-      {/* Main Content Tabs */}
-      <Tabs tabs={tabs} defaultTab="chart">
-        {(activeTab) => (
-          <>
+      {/* Tab Navigation */}
+      <div className="flex gap-1 overflow-x-auto border-b border-surface-200 pb-px">
+        {tabs.map(t => {
+          const Icon = t.icon;
+          return (
+            <button key={t.id} onClick={() => setActiveTab(t.id)}
+              className={cn('px-3 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors',
+                activeTab === t.id ? 'border-brand-500 text-brand-600' : 'border-transparent text-surface-500 hover:text-surface-700'
+              )}>
+              <Icon size={14} className="inline mr-1" />{t.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Tab Content */}
+      <div>
             {/* ─── Chart ─── */}
             {activeTab === 'chart' && (
               <div>
@@ -234,8 +228,8 @@ export default function ExchangePage() {
                       className={cn(
                         'px-4 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all border',
                         selectedPairIndex === i
-                          ? 'bg-brand-500/15 text-brand-300 border-brand-500/30 shadow-lg shadow-brand-500/5'
-                          : 'bg-surface-800/40 text-surface-400 border-surface-700/40 hover:text-white hover:border-surface-600/50'
+                          ? 'bg-brand-500/15 text-brand-600 border-brand-500/30 shadow-lg shadow-brand-500/5'
+                          : 'bg-surface-50 text-surface-500 border-surface-200 hover:text-surface-800 hover:border-surface-600/50'
                       )}
                     >
                       {p.pair}
@@ -253,12 +247,12 @@ export default function ExchangePage() {
                 {/* Market Depth / Recent Trades below chart */}
                 <div className="grid lg:grid-cols-2 gap-4 mt-4">
                   {/* Buy Orders (Bids) */}
-                  <div className="glass-card p-4">
-                    <h4 className="text-sm font-semibold text-emerald-400 mb-3 flex items-center gap-1.5">
+                  <div className="card p-4">
+                    <h4 className="text-sm font-semibold text-success-600 mb-3 flex items-center gap-1.5">
                       <TrendingUp size={14} /> Lệnh mua (Bid)
                     </h4>
                     <div className="space-y-1">
-                      <div className="flex items-center justify-between text-[11px] text-surface-500 pb-1.5 border-b border-surface-700/30">
+                      <div className="flex items-center justify-between text-[11px] text-surface-500 pb-1.5 border-b border-surface-200">
                         <span>Giá</span>
                         <span>Số lượng</span>
                         <span>Tổng</span>
@@ -267,10 +261,10 @@ export default function ExchangePage() {
                         const depth = 30 + Math.random() * 70;
                         return (
                           <div key={o.id} className="flex items-center justify-between text-xs py-1 relative">
-                            <div className="absolute inset-0 bg-emerald-500/5 rounded" style={{ width: `${depth}%` }} />
-                            <span className="text-emerald-400 font-mono relative z-10">{o.price.toFixed(o.price < 1 ? 6 : 2)}</span>
-                            <span className="text-surface-300 font-mono relative z-10">{formatNumber(o.amountOffer)}</span>
-                            <span className="text-surface-400 font-mono relative z-10">{formatNumber(o.amountOffer * o.price)}</span>
+                            <div className="absolute inset-0 bg-success-500/5 rounded" style={{ width: `${depth}%` }} />
+                            <span className="text-success-600 font-mono relative z-10">{o.price.toFixed(o.price < 1 ? 6 : 2)}</span>
+                            <span className="text-surface-400 font-mono relative z-10">{formatNumber(o.amountOffer)}</span>
+                            <span className="text-surface-500 font-mono relative z-10">{formatNumber(o.amountOffer * o.price)}</span>
                           </div>
                         );
                       })}
@@ -278,12 +272,12 @@ export default function ExchangePage() {
                   </div>
 
                   {/* Sell Orders (Asks) */}
-                  <div className="glass-card p-4">
-                    <h4 className="text-sm font-semibold text-red-400 mb-3 flex items-center gap-1.5">
+                  <div className="card p-4">
+                    <h4 className="text-sm font-semibold text-danger-600 mb-3 flex items-center gap-1.5">
                       <TrendingDown size={14} /> Lệnh bán (Ask)
                     </h4>
                     <div className="space-y-1">
-                      <div className="flex items-center justify-between text-[11px] text-surface-500 pb-1.5 border-b border-surface-700/30">
+                      <div className="flex items-center justify-between text-[11px] text-surface-500 pb-1.5 border-b border-surface-200">
                         <span>Giá</span>
                         <span>Số lượng</span>
                         <span>Tổng</span>
@@ -292,10 +286,10 @@ export default function ExchangePage() {
                         const depth = 30 + Math.random() * 70;
                         return (
                           <div key={o.id} className="flex items-center justify-between text-xs py-1 relative">
-                            <div className="absolute inset-0 bg-red-500/5 rounded" style={{ width: `${depth}%` }} />
-                            <span className="text-red-400 font-mono relative z-10">{o.price.toFixed(o.price < 1 ? 6 : 2)}</span>
-                            <span className="text-surface-300 font-mono relative z-10">{formatNumber(o.amountOffer)}</span>
-                            <span className="text-surface-400 font-mono relative z-10">{formatNumber(o.amountOffer * o.price)}</span>
+                            <div className="absolute inset-0 bg-danger-500/5 rounded" style={{ width: `${depth}%` }} />
+                            <span className="text-danger-600 font-mono relative z-10">{o.price.toFixed(o.price < 1 ? 6 : 2)}</span>
+                            <span className="text-surface-400 font-mono relative z-10">{formatNumber(o.amountOffer)}</span>
+                            <span className="text-surface-500 font-mono relative z-10">{formatNumber(o.amountOffer * o.price)}</span>
                           </div>
                         );
                       })}
@@ -304,16 +298,16 @@ export default function ExchangePage() {
                 </div>
 
                 {/* Recent Trades Ticker */}
-                <div className="glass-card p-4 mt-4">
-                  <h4 className="text-sm font-semibold text-surface-300 mb-3 flex items-center gap-1.5">
+                <div className="card p-4 mt-4">
+                  <h4 className="text-sm font-semibold text-surface-400 mb-3 flex items-center gap-1.5">
                     <Clock size={14} /> Giao dịch gần nhất
                   </h4>
                   <div className="flex gap-3 overflow-x-auto pb-1">
                     {MOCK_TRADES.map(trade => (
-                      <div key={trade.id} className="flex items-center gap-3 px-3 py-2 rounded-xl bg-surface-800/40 border border-surface-700/30 shrink-0">
-                        <span className="text-xs font-semibold text-white">{trade.token}</span>
-                        <span className="text-xs font-mono text-emerald-400">{trade.price}</span>
-                        <span className="text-xs font-mono text-surface-400">{formatNumber(trade.amount)}</span>
+                      <div key={trade.id} className="flex items-center gap-3 px-3 py-2 rounded-xl bg-surface-50 border border-surface-200 shrink-0">
+                        <span className="text-xs font-semibold text-surface-800">{trade.token}</span>
+                        <span className="text-xs font-mono text-success-600">{trade.price}</span>
+                        <span className="text-xs font-mono text-surface-500">{formatNumber(trade.amount)}</span>
                         <span className="text-[10px] text-surface-500">{timeAgo(trade.timestamp)}</span>
                       </div>
                     ))}
@@ -363,24 +357,24 @@ export default function ExchangePage() {
                             </span>
                           </td>
                           <td>
-                            <span className="font-mono text-xs text-surface-300">{order.trader}</span>
+                            <span className="font-mono text-xs text-surface-400">{order.trader}</span>
                           </td>
                           <td>
-                            <span className="font-semibold text-white">
+                            <span className="font-semibold text-surface-800">
                               {order.tokenOffer}/{order.tokenWant}
                             </span>
                           </td>
                           <td className="text-right font-mono">{formatNumber(order.amountOffer)}</td>
-                          <td className="text-right font-mono text-brand-300">{formatNumber(order.price)}</td>
+                          <td className="text-right font-mono text-brand-600">{formatNumber(order.price)}</td>
                           <td>
                             <div className="flex items-center gap-2">
-                              <div className="w-16 h-1.5 bg-surface-700 rounded-full overflow-hidden">
+                              <div className="w-16 h-1.5 bg-surface-200 rounded-full overflow-hidden">
                                 <div
                                   className="h-full bg-brand-500 rounded-full transition-all"
                                   style={{ width: `${order.filled}%` }}
                                 />
                               </div>
-                              <span className="text-xs text-surface-400">{order.filled}%</span>
+                              <span className="text-xs text-surface-500">{order.filled}%</span>
                             </div>
                           </td>
                           <td>
@@ -395,7 +389,7 @@ export default function ExchangePage() {
                                order.status === 'filled' ? 'Đã khớp' : 'Đã hủy'}
                             </span>
                           </td>
-                          <td className="text-xs text-surface-400">{timeAgo(order.createdAt)}</td>
+                          <td className="text-xs text-surface-500">{timeAgo(order.createdAt)}</td>
                           <td>
                             {order.status === 'open' && (
                               <button className="btn-primary btn-sm" disabled={!isConnected}>
@@ -432,17 +426,17 @@ export default function ExchangePage() {
                       {MOCK_TRADES.map(trade => (
                         <tr key={trade.id}>
                           <td className="text-surface-500 font-mono">#{trade.id}</td>
-                          <td className="font-semibold text-white">{trade.token}</td>
+                          <td className="font-semibold text-surface-800">{trade.token}</td>
                           <td>
-                            <span className="font-mono text-xs text-emerald-400">{trade.buyer}</span>
+                            <span className="font-mono text-xs text-success-600">{trade.buyer}</span>
                           </td>
                           <td>
-                            <span className="font-mono text-xs text-red-400">{trade.seller}</span>
+                            <span className="font-mono text-xs text-danger-600">{trade.seller}</span>
                           </td>
                           <td className="text-right font-mono">{formatNumber(trade.amount)}</td>
-                          <td className="text-right font-mono text-brand-300">{trade.price}</td>
-                          <td className="text-right font-mono font-semibold text-white">{trade.total}</td>
-                          <td className="text-xs text-surface-400">{timeAgo(trade.timestamp)}</td>
+                          <td className="text-right font-mono text-brand-600">{trade.price}</td>
+                          <td className="text-right font-mono font-semibold text-surface-800">{trade.total}</td>
+                          <td className="text-xs text-surface-500">{timeAgo(trade.timestamp)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -482,8 +476,8 @@ export default function ExchangePage() {
                         className={cn(
                           'px-3 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all',
                           selectedCategory === cat
-                            ? 'bg-brand-500/20 text-brand-300 border border-brand-500/30'
-                            : 'bg-surface-800/50 text-surface-400 border border-surface-700/40 hover:text-white'
+                            ? 'bg-brand-500/20 text-brand-600 border border-brand-500/30'
+                            : 'bg-surface-50 text-surface-500 border border-surface-200 hover:text-surface-700'
                         )}
                       >
                         {cat}
@@ -494,39 +488,37 @@ export default function ExchangePage() {
 
                 {/* Product Grid */}
                 {filteredMarketplace.length === 0 ? (
-                  <EmptyState
-                    lucideIcon={ShoppingCart}
-                    title="Không tìm thấy sản phẩm"
-                    description="Thử thay đổi bộ lọc hoặc đăng bán sản phẩm mới"
-                    action={
-                      <button onClick={() => setShowCreateListing(true)} className="btn-primary btn-sm">
-                        <Plus size={15} /> Đăng bán ngay
-                      </button>
-                    }
-                  />
+                  <div className="text-center py-12">
+                    <ShoppingCart size={32} className="mx-auto text-surface-300 mb-3" />
+                    <p className="text-surface-500 font-medium">Không tìm thấy sản phẩm</p>
+                    <p className="text-xs text-surface-400 mt-1">Thử thay đổi bộ lọc hoặc đăng bán sản phẩm mới</p>
+                    <button onClick={() => setShowCreateListing(true)} className="btn-primary btn-sm mt-3">
+                      <Plus size={14} /> Đăng bán ngay
+                    </button>
+                  </div>
                 ) : (
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {filteredMarketplace.map(item => (
-                      <div key={item.id} className="glass-card p-5 flex flex-col">
+                      <div key={item.id} className="card p-5 flex flex-col">
                         {/* Image placeholder */}
-                        <div className="w-full h-36 rounded-xl bg-surface-800/60 border border-surface-700/30 flex items-center justify-center mb-4 overflow-hidden">
+                        <div className="w-full h-36 rounded-xl bg-surface-100 border border-surface-200 flex items-center justify-center mb-4 overflow-hidden">
                           <div className="text-center">
-                            <Tag className="w-8 h-8 text-surface-600 mx-auto mb-1" />
-                            <span className="text-[10px] text-surface-600">{item.category}</span>
+                            <Tag className="w-8 h-8 text-surface-400 mx-auto mb-1" />
+                            <span className="text-[10px] text-surface-400">{item.category}</span>
                           </div>
                         </div>
 
                         <div className="flex items-start justify-between mb-2">
-                          <h3 className="font-semibold text-white text-sm leading-tight flex-1">{item.title}</h3>
+                          <h3 className="font-semibold text-surface-800 text-sm leading-tight flex-1">{item.title}</h3>
                           <span className="badge badge-brand text-[11px] ml-2 shrink-0">{item.category}</span>
                         </div>
 
-                        <p className="text-xs text-surface-400 mb-4 line-clamp-2 flex-1">{item.description}</p>
+                        <p className="text-xs text-surface-500 mb-4 line-clamp-2 flex-1">{item.description}</p>
 
-                        <div className="flex items-center justify-between mt-auto pt-3 border-t border-surface-700/30">
+                        <div className="flex items-center justify-between mt-auto pt-3 border-t border-surface-200">
                           <div>
-                            <span className="text-lg font-bold text-white">{formatNumber(item.price, 0)}</span>
-                            <span className="text-xs text-brand-400 ml-1">{item.token}</span>
+                            <span className="text-lg font-bold text-surface-800">{formatNumber(item.price, 0)}</span>
+                            <span className="text-xs text-brand-600 ml-1">{item.token}</span>
                           </div>
                           <button className="btn-primary btn-sm" disabled={!isConnected}>
                             <ShoppingCart size={14} /> Mua
@@ -548,49 +540,49 @@ export default function ExchangePage() {
             {activeTab === 'my-orders' && (
               <div>
                 {!isConnected ? (
-                  <EmptyState
-                    lucideIcon={ArrowLeftRight}
-                    title="Kết nối ví để xem"
-                    description="Bạn cần kết nối ví MetaMask để xem các lệnh của mình"
-                  />
+                  <div className="text-center py-12">
+                    <ArrowLeftRight size={32} className="mx-auto text-surface-300 mb-3" />
+                    <p className="text-surface-500 font-medium">Kết nối ví để xem</p>
+                    <p className="text-xs text-surface-400 mt-1">Bạn cần kết nối ví MetaMask để xem các lệnh của mình</p>
+                  </div>
                 ) : (
                   <div>
                     {/* My Active Orders */}
-                    <h3 className="text-sm font-semibold text-surface-300 mb-3">Lệnh đang mở</h3>
+                    <h3 className="text-sm font-semibold text-surface-400 mb-3">Lệnh đang mở</h3>
                     <div className="grid gap-3 mb-8">
                       {MOCK_ORDERS.filter(o => o.status === 'open' || o.status === 'partial').slice(0, 2).map(order => (
-                        <div key={order.id} className="glass-card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div key={order.id} className="card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                           <div className="flex items-center gap-4">
                             <div className={cn(
                               'w-10 h-10 rounded-xl flex items-center justify-center',
-                              order.type === 'buy' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'
+                              order.type === 'buy' ? 'bg-success-50 text-success-600' : 'bg-danger-50 text-danger-600'
                             )}>
                               {order.type === 'buy' ? <TrendingUp size={18} /> : <TrendingDown size={18} />}
                             </div>
                             <div>
                               <div className="flex items-center gap-2">
-                                <span className="font-semibold text-white">
+                                <span className="font-semibold text-surface-800">
                                   {order.type === 'buy' ? 'Mua' : 'Bán'} {order.tokenOffer}
                                 </span>
                                 <span className={cn('badge', order.status === 'partial' ? 'badge-warning' : 'badge-info')}>
                                   {order.status === 'partial' ? 'Khớp 1 phần' : 'Đang mở'}
                                 </span>
                               </div>
-                              <p className="text-xs text-surface-400 mt-0.5">
+                              <p className="text-xs text-surface-500 mt-0.5">
                                 {formatNumber(order.amountOffer)} {order.tokenOffer} → {formatNumber(order.amountWant)} {order.tokenWant}
                               </p>
                             </div>
                           </div>
                           <div className="flex items-center gap-4">
                             <div className="text-right">
-                              <p className="text-sm font-mono text-brand-300">{formatNumber(order.price)}</p>
+                              <p className="text-sm font-mono text-brand-600">{formatNumber(order.price)}</p>
                               <p className="text-[11px] text-surface-500">Giá</p>
                             </div>
                             <div className="flex items-center gap-2">
-                              <div className="w-20 h-1.5 bg-surface-700 rounded-full overflow-hidden">
+                              <div className="w-20 h-1.5 bg-surface-200 rounded-full overflow-hidden">
                                 <div className="h-full bg-brand-500 rounded-full" style={{ width: `${order.filled}%` }} />
                               </div>
-                              <span className="text-xs text-surface-400 w-8">{order.filled}%</span>
+                              <span className="text-xs text-surface-500 w-8">{order.filled}%</span>
                             </div>
                             <button className="btn-danger btn-sm">
                               <XCircle size={14} /> Hủy
@@ -601,18 +593,18 @@ export default function ExchangePage() {
                     </div>
 
                     {/* My Listings */}
-                    <h3 className="text-sm font-semibold text-surface-300 mb-3">Sản phẩm đang bán</h3>
+                    <h3 className="text-sm font-semibold text-surface-400 mb-3">Sản phẩm đang bán</h3>
                     <div className="grid sm:grid-cols-2 gap-3">
                       {MOCK_MARKETPLACE.slice(0, 2).map(item => (
-                        <div key={item.id} className="glass-card p-4 flex items-start gap-4">
-                          <div className="w-14 h-14 rounded-xl bg-surface-800/60 border border-surface-700/30 flex items-center justify-center shrink-0">
+                        <div key={item.id} className="card p-4 flex items-start gap-4">
+                          <div className="w-14 h-14 rounded-xl bg-surface-100 border border-surface-200 flex items-center justify-center shrink-0">
                             <Tag className="w-6 h-6 text-surface-500" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-semibold text-white text-sm truncate">{item.title}</h4>
-                            <p className="text-xs text-surface-400 mt-0.5">{item.category}</p>
+                            <h4 className="font-semibold text-surface-800 text-sm truncate">{item.title}</h4>
+                            <p className="text-xs text-surface-500 mt-0.5">{item.category}</p>
                             <div className="flex items-center justify-between mt-2">
-                              <span className="text-sm font-bold text-brand-300">{formatNumber(item.price, 0)} {item.token}</span>
+                              <span className="text-sm font-bold text-brand-600">{formatNumber(item.price, 0)} {item.token}</span>
                               <span className="badge badge-success text-[11px]">Đang bán</span>
                             </div>
                           </div>
@@ -621,7 +613,7 @@ export default function ExchangePage() {
                     </div>
 
                     {/* My Trade History */}
-                    <h3 className="text-sm font-semibold text-surface-300 mb-3 mt-8">Lịch sử giao dịch</h3>
+                    <h3 className="text-sm font-semibold text-surface-400 mb-3 mt-8">Lịch sử giao dịch</h3>
                     <div className="table-container">
                       <table>
                         <thead>
@@ -636,11 +628,11 @@ export default function ExchangePage() {
                         <tbody>
                           {MOCK_TRADES.slice(0, 3).map(trade => (
                             <tr key={trade.id}>
-                              <td className="font-semibold text-white">{trade.token}</td>
+                              <td className="font-semibold text-surface-800">{trade.token}</td>
                               <td><span className="badge badge-success">Mua</span></td>
                               <td className="text-right font-mono">{formatNumber(trade.amount)}</td>
-                              <td className="text-right font-mono text-brand-300">{trade.total}</td>
-                              <td className="text-xs text-surface-400">{timeAgo(trade.timestamp)}</td>
+                              <td className="text-right font-mono text-brand-600">{trade.total}</td>
+                              <td className="text-xs text-surface-500">{timeAgo(trade.timestamp)}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -650,9 +642,7 @@ export default function ExchangePage() {
                 )}
               </div>
             )}
-          </>
-        )}
-      </Tabs>
+      </div>
 
       {/* ─── Create Order Modal ─── */}
       <Modal
@@ -671,14 +661,14 @@ export default function ExchangePage() {
       >
         <div className="space-y-5">
           {/* Buy/Sell Toggle */}
-          <div className="flex gap-2 p-1 rounded-xl bg-surface-800/50 border border-surface-700/40">
+          <div className="flex gap-2 p-1 rounded-xl bg-surface-50 border border-surface-200">
             <button
               onClick={() => setOrderType('buy')}
               className={cn(
                 'flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all',
                 orderType === 'buy'
-                  ? 'bg-emerald-500/20 text-emerald-400 shadow-lg'
-                  : 'text-surface-400 hover:text-white'
+                  ? 'bg-success-500/20 text-success-600 shadow-lg'
+                  : 'text-surface-500 hover:text-surface-700'
               )}
             >
               <TrendingUp size={14} className="inline mr-1.5" /> Mua
@@ -688,8 +678,8 @@ export default function ExchangePage() {
               className={cn(
                 'flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all',
                 orderType === 'sell'
-                  ? 'bg-red-500/20 text-red-400 shadow-lg'
-                  : 'text-surface-400 hover:text-white'
+                  ? 'bg-danger-500/20 text-danger-600 shadow-lg'
+                  : 'text-surface-500 hover:text-surface-700'
               )}
             >
               <TrendingDown size={14} className="inline mr-1.5" /> Bán
@@ -723,7 +713,7 @@ export default function ExchangePage() {
                 value={amount}
                 onChange={e => setAmount(e.target.value)}
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-brand-400">{tokenOffer}</span>
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-brand-600">{tokenOffer}</span>
             </div>
           </div>
 
@@ -738,22 +728,22 @@ export default function ExchangePage() {
                 value={price}
                 onChange={e => setPrice(e.target.value)}
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-brand-400">{tokenWant}</span>
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-brand-600">{tokenWant}</span>
             </div>
           </div>
 
           {/* Summary */}
           {amount && price && (
-            <div className="p-4 rounded-xl bg-surface-800/50 border border-surface-700/30">
+            <div className="p-4 rounded-xl bg-surface-50 border border-surface-200">
               <div className="flex items-center justify-between text-sm mb-2">
-                <span className="text-surface-400">Tổng giá trị</span>
-                <span className="font-semibold text-white">
+                <span className="text-surface-500">Tổng giá trị</span>
+                <span className="font-semibold text-surface-800">
                   {formatNumber(parseFloat(amount) * parseFloat(price))} {tokenWant}
                 </span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="text-surface-400">Phí giao dịch (0.3%)</span>
-                <span className="text-surface-300">
+                <span className="text-surface-500">Phí giao dịch (0.3%)</span>
+                <span className="text-surface-400">
                   {formatNumber(parseFloat(amount) * parseFloat(price) * 0.003)} {tokenWant}
                 </span>
               </div>
@@ -822,7 +812,7 @@ export default function ExchangePage() {
                 value={listPrice}
                 onChange={e => setListPrice(e.target.value)}
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-brand-400">{listToken}</span>
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-brand-600">{listToken}</span>
             </div>
           </div>
         </div>

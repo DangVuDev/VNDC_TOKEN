@@ -39,17 +39,17 @@ export default function Modal({ open, onClose, title, description, children, foo
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={onClose} />
       <div className={cn(
         'relative w-full rounded-2xl shadow-2xl animate-slide-up',
-        'bg-surface-900 border border-surface-700/60',
+        'bg-surface-50 border border-surface-200 shadow-xl',
         sizeClass
       )}>
-        <div className="flex items-start justify-between p-5 border-b border-surface-800">
+        <div className="flex items-start justify-between p-5 border-b border-surface-200">
           <div>
-            <h3 className="text-lg font-semibold text-white">{title}</h3>
-            {description && <p className="text-sm text-surface-400 mt-1">{description}</p>}
+            <h3 className="text-lg font-semibold text-surface-800">{title}</h3>
+            {description && <p className="text-sm text-surface-500 mt-1">{description}</p>}
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-surface-400 hover:text-white hover:bg-surface-800 transition-all"
+            className="p-1.5 rounded-lg text-surface-400 hover:text-surface-700 hover:bg-surface-100 transition-all"
           >
             <X size={18} />
           </button>
@@ -58,7 +58,7 @@ export default function Modal({ open, onClose, title, description, children, foo
           {children}
         </div>
         {footer && (
-          <div className="flex items-center justify-end gap-3 p-5 border-t border-surface-800">
+          <div className="flex items-center justify-end gap-3 p-5 border-t border-surface-200">
             {footer}
           </div>
         )}

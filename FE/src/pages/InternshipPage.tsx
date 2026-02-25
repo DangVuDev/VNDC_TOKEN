@@ -1,10 +1,6 @@
 import { useState } from 'react';
 import { GraduationCap, Plus, Building, Clock, Users, CheckCircle, MapPin } from 'lucide-react';
-import PageHeader from '@/components/ui/PageHeader';
-import StatCard from '@/components/ui/StatCard';
-import Tabs from '@/components/ui/Tabs';
 import Modal from '@/components/ui/Modal';
-import EmptyState from '@/components/ui/EmptyState';
 import { useInternshipManager } from '@/hooks/useContracts';
 import { useContractAction } from '@/hooks/useContractAction';
 
@@ -52,73 +48,68 @@ export default function InternshipPage() {
   const statusBadge = (s: string) => s === 'open' ? <span className="badge badge-success">Đang mở</span> : s === 'in-progress' ? <span className="badge badge-brand">Đang diễn ra</span> : <span className="badge badge-neutral">Hoàn thành</span>;
 
   return (
-    <div>
-      <PageHeader title="Thực tập" description="Quản lý chương trình thực tập và tiến độ" lucideIcon={GraduationCap} badge="Internship"
-        action={<button className="btn-primary btn-sm" onClick={() => setShowCreate(true)}><Plus size={14} /> Tạo chương trình</button>}
-      />
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard label="Chương trình" value={demoInternships.length} icon={<GraduationCap className="w-5 h-5" />} color="brand" />
-        <StatCard label="Đang mở" value={demoInternships.filter(i => i.status === 'open').length} icon={<Clock className="w-5 h-5" />} color="success" />
-        <StatCard label="Đang thực tập" value={demoInternships.filter(i => i.status === 'in-progress').length} icon={<Building className="w-5 h-5" />} color="warning" />
-        <StatCard label="Ứng viên" value={demoInternships.reduce((a, i) => a + i.applied, 0)} icon={<Users className="w-5 h-5" />} color="info" />
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center">
+            <GraduationCap size={20} className="text-brand-600" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-surface-800">Thực tập</h1>
+            <p className="text-sm text-surface-500">{demoInternships.length} chương trình · {demoInternships.filter(i => i.status === 'open').length} đang mở</p>
+          </div>
+        </div>
+        <button className="btn-primary btn-sm" onClick={() => setShowCreate(true)}><Plus size={14} /> Tạo chương trình</button>
       </div>
 
-      <Tabs tabs={[
-        { id: 'programs', label: 'Chương trình', icon: <GraduationCap size={14} />, count: demoInternships.length },
-        { id: 'progress', label: 'Tiến độ', icon: <CheckCircle size={14} /> },
-      ]}>
-        {(active) => active === 'programs' ? (
-          <div className="space-y-4">
-            {demoInternships.map(intern => (
-              <div key={intern.id} className="card card-hover">
-                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                  <div className="flex items-start gap-4 flex-1">
-                    <div className="w-12 h-12 rounded-xl gradient-brand flex items-center justify-center text-white shrink-0">
-                      <Building size={24} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="text-base font-semibold text-white">{intern.title}</h3>
-                        {statusBadge(intern.status)}
-                      </div>
-                      <p className="text-sm text-surface-400">{intern.company}</p>
-                      <div className="flex items-center gap-4 mt-2 text-xs text-surface-500 flex-wrap">
-                        <span className="flex items-center gap-1"><MapPin size={12} /> {intern.location}</span>
-                        <span className="flex items-center gap-1"><Clock size={12} /> {intern.duration}</span>
-                        <span className="flex items-center gap-1"><Users size={12} /> {intern.applied}/{intern.spots} ứng viên</span>
-                      </div>
-                      <div className="mt-3 h-1.5 bg-surface-800 rounded-full overflow-hidden">
-                        <div className="h-full gradient-brand rounded-full transition-all" style={{ width: `${Math.min((intern.applied / intern.spots) * 100, 100)}%` }} />
-                      </div>
-                    </div>
+      {/* Programs */}
+      <div className="space-y-3">
+        {demoInternships.map(intern => (
+          <div key={intern.id} className="card card-hover">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-3 flex-1">
+                <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-600 shrink-0">
+                  <Building size={20} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="text-sm font-semibold text-surface-800">{intern.title}</h3>
+                    {statusBadge(intern.status)}
                   </div>
-                  <div className="flex gap-2 shrink-0">
-                    {intern.status === 'open' && (
-                      <button className="btn-primary btn-sm" onClick={() => handleApply(intern.id)}>Ứng tuyển</button>
-                    )}
+                  <p className="text-xs text-surface-500">{intern.company}</p>
+                  <div className="flex items-center gap-3 mt-1.5 text-xs text-surface-500 flex-wrap">
+                    <span><MapPin size={10} className="inline" /> {intern.location}</span>
+                    <span><Clock size={10} className="inline" /> {intern.duration}</span>
+                    <span><Users size={10} className="inline" /> {intern.applied}/{intern.spots}</span>
+                  </div>
+                  <div className="mt-2 h-1.5 bg-surface-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-brand-500 rounded-full" style={{ width: `${Math.min((intern.applied / intern.spots) * 100, 100)}%` }} />
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="card">
-            <h3 className="text-base font-semibold text-white mb-4">Tiến độ thực tập</h3>
-            <div className="space-y-4">
-              {['Tuần 1-2: Onboarding & Training', 'Tuần 3-4: Dự án nhỏ', 'Tuần 5-8: Dự án chính', 'Tuần 9-10: Review & Presentation', 'Tuần 11-12: Final Report'].map((phase, i) => (
-                <div key={phase} className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${i < 2 ? 'gradient-brand text-white' : 'bg-surface-800 text-surface-500'}`}>{i + 1}</div>
-                  <div className="flex-1">
-                    <p className={`text-sm ${i < 2 ? 'text-white font-medium' : 'text-surface-500'}`}>{phase}</p>
-                  </div>
-                  {i < 2 && <CheckCircle size={16} className="text-emerald-400" />}
-                </div>
-              ))}
+              {intern.status === 'open' && (
+                <button className="btn-primary btn-sm shrink-0" onClick={() => handleApply(intern.id)}>Ứng tuyển</button>
+              )}
             </div>
           </div>
-        )}
-      </Tabs>
+        ))}
+      </div>
+
+      {/* Progress */}
+      <div>
+        <h2 className="text-base font-semibold text-surface-800 mb-3">Tiến độ thực tập</h2>
+        <div className="card">
+          <div className="space-y-3">
+            {['Tuần 1-2: Onboarding & Training', 'Tuần 3-4: Dự án nhỏ', 'Tuần 5-8: Dự án chính', 'Tuần 9-10: Review & Presentation', 'Tuần 11-12: Final Report'].map((phase, i) => (
+              <div key={phase} className="flex items-center gap-3">
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold ${i < 2 ? 'bg-success-100 text-success-600' : 'bg-surface-100 text-surface-500'}`}>{i + 1}</div>
+                <p className={`text-sm flex-1 ${i < 2 ? 'text-surface-800 font-medium' : 'text-surface-500'}`}>{phase}</p>
+                {i < 2 && <CheckCircle size={16} className="text-success-600" />}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
       <Modal open={showCreate} onClose={() => setShowCreate(false)} title="Tạo chương trình thực tập" size="lg"
         footer={<button className="btn-primary" onClick={handleCreate} disabled={isLoading}>{isLoading ? 'Đang tạo...' : 'Tạo chương trình'}</button>}>

@@ -16,11 +16,11 @@ export default function EmptyState({
   const IconComponent = LIcon || PackageOpen;
   return (
     <div className={cn('flex flex-col items-center justify-center py-20 px-4 text-center', className)}>
-      <div className="w-16 h-16 rounded-2xl bg-surface-800/60 border border-surface-700/50 flex items-center justify-center text-surface-500 mb-5">
+      <div className="w-16 h-16 rounded-xl bg-surface-100 border border-surface-200 flex items-center justify-center text-surface-400 mb-5">
         {icon || <IconComponent className="w-7 h-7" />}
       </div>
-      <h3 className="text-lg font-semibold text-white mb-1.5">{title}</h3>
-      {description && <p className="text-sm text-surface-400 max-w-md mb-5">{description}</p>}
+      <h3 className="text-lg font-semibold text-surface-700 mb-1.5">{title}</h3>
+      {description && <p className="text-sm text-surface-500 max-w-md mb-5">{description}</p>}
       {action}
     </div>
   );

@@ -1,14 +1,10 @@
 import { useState, useEffect } from 'react';
-import { CreditCard, Plus, Ban, RefreshCw, Shield, Users } from 'lucide-react';
-import PageHeader from '@/components/ui/PageHeader';
-import StatCard from '@/components/ui/StatCard';
-import Tabs from '@/components/ui/Tabs';
+import { CreditCard, Plus, Ban, RefreshCw, XCircle } from 'lucide-react';
 import Modal from '@/components/ui/Modal';
 import EmptyState from '@/components/ui/EmptyState';
 import { useWeb3 } from '@/contexts/Web3Context';
 import { useStudentID } from '@/hooks/useContracts';
 import { useContractAction } from '@/hooks/useContractAction';
-import { shortenAddress } from '@/lib/utils';
 
 export default function StudentIDPage() {
   const { address } = useWeb3();
@@ -18,7 +14,7 @@ export default function StudentIDPage() {
   const [totalIssued, setTotalIssued] = useState(0);
   const [totalActive, setTotalActive] = useState(0);
   const [showIssue, setShowIssue] = useState(false);
-  const [showAction, setShowAction] = useState<{ type: string; tokenId: string } | null>(null);
+  const [manageId, setManageId] = useState('');
   const [form, setForm] = useState({ to: '', name: '', program: '', enrollmentDate: '', metadataURI: '' });
 
   useEffect(() => {
@@ -58,88 +54,108 @@ export default function StudentIDPage() {
     { successMessage: `Đã ${action === 'suspend' ? 'tạm ngưng' : action === 'revoke' ? 'thu hồi' : 'kích hoạt lại'} thẻ!` }
   );
 
-  return (
-    <div>
-      <PageHeader title="Thẻ sinh viên NFT" description="Phát hành và quản lý thẻ sinh viên dạng ERC-721" lucideIcon={CreditCard} badge="Student ID"
-        action={<button className="btn-primary btn-sm" onClick={() => setShowIssue(true)}><Plus size={14} /> Phát hành thẻ</button>}
-      />
+  const suspended = totalIssued - totalActive;
+  const rate = totalIssued ? Math.round(totalActive / totalIssued * 100) : 0;
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard label="Đã phát hành" value={totalIssued} icon={<CreditCard className="w-5 h-5" />} color="brand" />
-        <StatCard label="Đang hoạt động" value={totalActive} icon={<Shield className="w-5 h-5" />} color="success" />
-        <StatCard label="Tạm ngưng" value={totalIssued - totalActive} icon={<Ban className="w-5 h-5" />} color="warning" />
-        <StatCard label="Tỷ lệ active" value={totalIssued ? `${Math.round(totalActive / totalIssued * 100)}%` : '0%'} icon={<Users className="w-5 h-5" />} color="info" />
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center">
+            <CreditCard size={20} className="text-brand-600" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-surface-800">Thẻ sinh viên</h1>
+            <p className="text-sm text-surface-500">NFT ERC-721 · {totalIssued} phát hành · {totalActive} hoạt động</p>
+          </div>
+        </div>
+        <button className="btn-primary btn-sm" onClick={() => setShowIssue(true)}>
+          <Plus size={14} /> Phát hành
+        </button>
       </div>
 
-      <Tabs tabs={[
-        { id: 'cards', label: 'Thẻ sinh viên', icon: <CreditCard size={14} /> },
-        { id: 'manage', label: 'Quản lý', icon: <Shield size={14} /> },
-      ]}>
-        {(active) => active === 'cards' ? (
-          <div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-              {[
-                { id: 1, name: 'Nguyễn Văn A', program: 'Khoa học máy tính', status: 'active' },
-                { id: 2, name: 'Trần Thị B', program: 'Kỹ thuật phần mềm', status: 'active' },
-                { id: 3, name: 'Lê Văn C', program: 'An toàn thông tin', status: 'suspended' },
-              ].map(card => (
-                <div key={card.id} className="card card-hover relative overflow-hidden">
-                  <div className="absolute top-0 left-0 right-0 h-16 gradient-brand opacity-20 rounded-t-xl" />
-                  <div className="relative">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="w-12 h-12 rounded-xl gradient-brand flex items-center justify-center text-white font-bold text-lg">
-                        {card.name.charAt(0)}
-                      </div>
-                      <span className={card.status === 'active' ? 'badge badge-success' : 'badge badge-warning'}>
-                        {card.status === 'active' ? 'Hoạt động' : 'Tạm ngưng'}
-                      </span>
-                    </div>
-                    <h3 className="text-base font-semibold text-white">{card.name}</h3>
-                    <p className="text-sm text-surface-400">{card.program}</p>
-                    <p className="text-xs text-surface-500 mt-1">Token ID: #{card.id}</p>
-                    <div className="flex gap-2 mt-4">
-                      {card.status === 'active' ? (
-                        <button className="btn-secondary btn-sm" onClick={() => handleAction('suspend', card.id.toString())}><Ban size={12} /> Tạm ngưng</button>
-                      ) : (
-                        <button className="btn-primary btn-sm" onClick={() => handleAction('reactivate', card.id.toString())}><RefreshCw size={12} /> Kích hoạt</button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            {totalIssued === 0 && (
-              <EmptyState lucideIcon={CreditCard} title="Chưa có thẻ sinh viên"
-                description="Phát hành thẻ sinh viên NFT đầu tiên"
-                action={<button className="btn-primary btn-sm" onClick={() => setShowIssue(true)}><Plus size={14} /> Phát hành</button>} />
-            )}
+      {/* Stats strip */}
+      <div className="grid grid-cols-3 gap-4">
+        {[
+          { label: 'Phát hành', value: totalIssued, cls: 'text-brand-600' },
+          { label: 'Hoạt động', value: totalActive, cls: 'text-success-600' },
+          { label: 'Tạm ngưng', value: suspended, cls: 'text-warning-600' },
+        ].map(s => (
+          <div key={s.label} className="card text-center py-4">
+            <p className={`text-2xl font-bold ${s.cls}`}>{s.value}</p>
+            <p className="text-xs text-surface-500 mt-1">{s.label}</p>
           </div>
-        ) : (
-          <div className="card">
-            <h3 className="text-base font-semibold text-white mb-4">Quản lý trạng thái thẻ</h3>
-            <div className="space-y-3">
-              <div className="p-4 rounded-xl bg-surface-800/30">
-                <label className="label">Token ID</label>
-                <div className="flex gap-2">
-                  <input className="input flex-1" type="number" placeholder="Nhập Token ID..." value={showAction?.tokenId || ''} onChange={e => setShowAction({ type: '', tokenId: e.target.value })} />
-                  <button className="btn-secondary btn-sm" onClick={() => showAction && handleAction('suspend', showAction.tokenId)}><Ban size={14} /> Tạm ngưng</button>
-                  <button className="btn-danger btn-sm" onClick={() => showAction && handleAction('revoke', showAction.tokenId)}>Thu hồi</button>
-                  <button className="btn-primary btn-sm" onClick={() => showAction && handleAction('reactivate', showAction.tokenId)}><RefreshCw size={14} /> Kích hoạt</button>
+        ))}
+      </div>
+
+      {/* Student ID Cards */}
+      {totalIssued > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {[
+            { id: 1, name: 'Nguyễn Văn A', program: 'Khoa học máy tính', status: 'active' },
+            { id: 2, name: 'Trần Thị B', program: 'Kỹ thuật phần mềm', status: 'active' },
+            { id: 3, name: 'Lê Văn C', program: 'An toàn thông tin', status: 'suspended' },
+          ].map(card => (
+            <div key={card.id} className="card card-hover relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-12 bg-brand-600/10 rounded-t-xl" />
+              <div className="relative pt-2">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="w-11 h-11 rounded-xl bg-brand-600 flex items-center justify-center text-white font-bold">
+                    {card.name.charAt(0)}
+                  </div>
+                  <span className={card.status === 'active' ? 'badge badge-success' : 'badge badge-warning'}>
+                    {card.status === 'active' ? 'Hoạt động' : 'Tạm ngưng'}
+                  </span>
+                </div>
+                <h3 className="text-base font-semibold text-surface-800">{card.name}</h3>
+                <p className="text-sm text-surface-500">{card.program}</p>
+                <div className="flex items-center justify-between mt-3 pt-3 border-t border-surface-200">
+                  <span className="font-mono text-xs text-surface-400">ID #{card.id}</span>
+                  {card.status === 'active' ? (
+                    <button className="btn-ghost btn-sm text-warning-600" onClick={() => handleAction('suspend', card.id.toString())}>
+                      <Ban size={12} /> Tạm ngưng
+                    </button>
+                  ) : (
+                    <button className="btn-ghost btn-sm text-brand-600" onClick={() => handleAction('reactivate', card.id.toString())}>
+                      <RefreshCw size={12} /> Kích hoạt
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
-          </div>
-        )}
-      </Tabs>
+          ))}
+        </div>
+      ) : (
+        <EmptyState lucideIcon={CreditCard} title="Chưa có thẻ sinh viên"
+          description="Phát hành thẻ sinh viên NFT đầu tiên"
+          action={<button className="btn-primary btn-sm" onClick={() => setShowIssue(true)}><Plus size={14} /> Phát hành</button>}
+        />
+      )}
 
-      <Modal open={showIssue} onClose={() => setShowIssue(false)} title="Phát hành thẻ sinh viên" size="lg"
-        footer={<button className="btn-primary" onClick={handleIssue} disabled={isLoading}>{isLoading ? 'Đang phát hành...' : 'Phát hành thẻ'}</button>}>
+      {/* Admin: Manage by Token ID */}
+      <div className="admin-section">
+        <div className="admin-section-header">
+          <span className="admin-badge">Admin</span>
+          <p className="text-sm text-surface-500">Quản lý trạng thái thẻ theo Token ID</p>
+        </div>
+        <div className="flex gap-2 mt-3">
+          <input className="input flex-1" type="number" placeholder="Token ID..." value={manageId} onChange={e => setManageId(e.target.value)} />
+          <button className="btn-secondary btn-sm" disabled={!manageId} onClick={() => handleAction('suspend', manageId)}><Ban size={14} /></button>
+          <button className="btn-danger btn-sm" disabled={!manageId} onClick={() => handleAction('revoke', manageId)}><XCircle size={14} /></button>
+          <button className="btn-primary btn-sm" disabled={!manageId} onClick={() => handleAction('reactivate', manageId)}><RefreshCw size={14} /></button>
+        </div>
+      </div>
+
+      {/* Issue Modal */}
+      <Modal open={showIssue} onClose={() => setShowIssue(false)} title="Phát hành thẻ sinh viên"
+        footer={<button className="btn-primary" onClick={handleIssue} disabled={isLoading}>{isLoading ? 'Đang phát hành...' : 'Phát hành'}</button>}>
         <div className="space-y-4">
-          <div><label className="label">Địa chỉ ví sinh viên</label><input className="input" placeholder="0x..." value={form.to} onChange={e => setForm(f => ({ ...f, to: e.target.value }))} /></div>
+          <div><label className="label">Địa chỉ ví</label><input className="input" placeholder="0x..." value={form.to} onChange={e => setForm(f => ({ ...f, to: e.target.value }))} /></div>
           <div><label className="label">Họ tên</label><input className="input" placeholder="Nguyễn Văn A" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} /></div>
-          <div><label className="label">Chương trình đào tạo</label><input className="input" placeholder="Khoa học máy tính" value={form.program} onChange={e => setForm(f => ({ ...f, program: e.target.value }))} /></div>
+          <div><label className="label">Chương trình</label><input className="input" placeholder="Khoa học máy tính" value={form.program} onChange={e => setForm(f => ({ ...f, program: e.target.value }))} /></div>
           <div><label className="label">Ngày nhập học</label><input className="input" type="date" value={form.enrollmentDate} onChange={e => setForm(f => ({ ...f, enrollmentDate: e.target.value }))} /></div>
-          <div><label className="label">Metadata URI (IPFS)</label><input className="input" placeholder="ipfs://..." value={form.metadataURI} onChange={e => setForm(f => ({ ...f, metadataURI: e.target.value }))} /></div>
+          <div><label className="label">Metadata URI</label><input className="input" placeholder="ipfs://..." value={form.metadataURI} onChange={e => setForm(f => ({ ...f, metadataURI: e.target.value }))} /></div>
         </div>
       </Modal>
     </div>

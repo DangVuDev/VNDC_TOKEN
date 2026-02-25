@@ -21,6 +21,7 @@ import IntegrationPage from './pages/IntegrationPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import SettingsPage from './pages/SettingsPage';
 import ExchangePage from './pages/ExchangePage';
+import DocumentationPage from './pages/DocumentationPage';
 
 export default function App() {
   return (
@@ -47,6 +48,7 @@ export default function App() {
         <Route path="integration" element={<IntegrationPage />} />
         <Route path="analytics" element={<AnalyticsPage />} />
         <Route path="settings" element={<SettingsPage />} />
+        <Route path="docs" element={<DocumentationPage />} />
       </Route>
     </Routes>
   );

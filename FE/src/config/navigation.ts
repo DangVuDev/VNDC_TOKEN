@@ -2,6 +2,7 @@ import {
   LayoutDashboard, Coins, ShieldCheck, GraduationCap, Trophy, CreditCard,
   FileText, Vote, IdCard, Award, Wallet, Users, Star, Briefcase,
   Building2, FlaskConical, Search, Plug, BarChart3, Settings, ArrowLeftRight,
+  BookOpen,
 } from 'lucide-react';
 
 export interface NavItem {
@@ -33,6 +34,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Tích hợp', path: '/integration', icon: Plug, group: 'Hệ thống' },
   { label: 'Phân tích', path: '/analytics', icon: BarChart3, group: 'Hệ thống' },
   { label: 'Cài đặt', path: '/settings', icon: Settings, group: 'Hệ thống' },
+  { label: 'Tài liệu', path: '/docs', icon: BookOpen, group: 'Hệ thống' },
 ];
 
 export function getNavGroups(): { group: string; items: NavItem[] }[] {

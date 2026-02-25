@@ -40,7 +40,7 @@ export default function Tabs({ tabs, defaultTab, activeTab: controlledTab, onCha
             {tab.count !== undefined && (
               <span className={cn(
                 'ml-1 text-[11px] px-1.5 py-0.5 rounded-md',
-                active === tab.id ? 'bg-brand-400/20 text-brand-300' : 'bg-surface-700/50 text-surface-400'
+                active === tab.id ? 'bg-brand-50 text-brand-700' : 'bg-surface-100 text-surface-500'
               )}>
                 {tab.count}
               </span>

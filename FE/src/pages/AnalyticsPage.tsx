@@ -1,9 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BarChart3, Activity, Users, DollarSign, TrendingUp, Clock, Layers, Database } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
-import PageHeader from '@/components/ui/PageHeader';
-import StatCard from '@/components/ui/StatCard';
-import Tabs from '@/components/ui/Tabs';
 import { useAnalyticsDashboard } from '@/hooks/useContracts';
 
 const txData = [
@@ -46,26 +43,38 @@ export default function AnalyticsPage() {
   const analytics = useAnalyticsDashboard();
 
   return (
-    <div>
-      <PageHeader title="Phân tích" description="Thống kê hệ thống, biểu đồ và metrics on-chain" lucideIcon={BarChart3} badge="Analytics" />
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard label="Tổng giao dịch" value="8,000" icon={<Activity className="w-5 h-5" />} color="brand" change="12.5" trend="up" />
-        <StatCard label="Người dùng" value="200" icon={<Users className="w-5 h-5" />} color="success" change="8.3" trend="up" />
-        <StatCard label="Volume (VNDC)" value="1.2M" icon={<DollarSign className="w-5 h-5" />} color="warning" change="15.2" trend="up" />
-        <StatCard label="Contracts" value="18" icon={<Layers className="w-5 h-5" />} color="info" />
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center">
+          <BarChart3 size={20} className="text-brand-600" />
+        </div>
+        <div>
+          <h1 className="text-xl font-bold text-surface-800">Phân tích</h1>
+          <p className="text-sm text-surface-500">Thống kê hệ thống, biểu đồ và metrics on-chain</p>
+        </div>
       </div>
 
-      <Tabs tabs={[
-        { id: 'overview', label: 'Tổng quan', icon: <BarChart3 size={14} /> },
-        { id: 'modules', label: 'Modules', icon: <Layers size={14} /> },
-        { id: 'gas', label: 'Gas Usage', icon: <Activity size={14} /> },
-      ]}>
-        {(active) => active === 'overview' ? (
-          <div className="space-y-6">
-            <div className="card">
-              <h3 className="text-base font-semibold text-white mb-4">Giao dịch & Người dùng theo tháng</h3>
-              <div className="h-72">
+      {/* Inline Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: 'Tổng giao dịch', value: '8,000', sub: '+12.5%' },
+          { label: 'Người dùng', value: '200', sub: '+8.3%' },
+          { label: 'Volume (VNDC)', value: '1.2M', sub: '+15.2%' },
+          { label: 'Contracts', value: '18', sub: '' },
+        ].map(s => (
+          <div key={s.label} className="card p-4">
+            <p className="text-xs text-surface-500">{s.label}</p>
+            <p className="text-2xl font-bold text-surface-800">{s.value}</p>
+            {s.sub && <p className="text-xs text-success-600">{s.sub}</p>}
+          </div>
+        ))}
+      </div>
+
+      {/* Transactions & Users Chart */}
+      <div className="card">
+        <h3 className="text-base font-semibold text-surface-800 mb-4">Giao dịch & Người dùng theo tháng</h3>
+        <div className="h-72">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={txData}>
                     <defs>
@@ -78,18 +87,19 @@ export default function AnalyticsPage() {
                         <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                     <XAxis dataKey="name" stroke="#64748b" fontSize={12} />
                     <YAxis stroke="#64748b" fontSize={12} />
-                    <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '12px', fontSize: '12px', color: '#fff' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '12px', fontSize: '12px', color: '#374151' }} />
                     <Area type="monotone" dataKey="tx" stroke="#6366f1" fill="url(#txGrad)" strokeWidth={2} name="Giao dịch" />
                     <Area type="monotone" dataKey="users" stroke="#10b981" fill="url(#userGrad)" strokeWidth={2} name="Người dùng" />
                   </AreaChart>
                 </ResponsiveContainer>
               </div>
-            </div>
+      </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {/* Quick Metrics */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {[
                 { label: 'Avg. Block Time', value: '2.1s', icon: Clock },
                 { label: 'Total Volume', value: '1,245,000 VNDC', icon: DollarSign },
@@ -98,25 +108,25 @@ export default function AnalyticsPage() {
                 const Icon = m.icon;
                 return (
                   <div key={m.label} className="card text-center">
-                    <Icon size={20} className="text-brand-400 mx-auto mb-2" />
-                    <p className="text-xl font-bold text-white">{m.value}</p>
-                    <p className="text-xs text-surface-400">{m.label}</p>
+                    <Icon size={20} className="text-brand-600 mx-auto mb-2" />
+                    <p className="text-xl font-bold text-surface-800">{m.value}</p>
+                    <p className="text-xs text-surface-500">{m.label}</p>
                   </div>
                 );
               })}
-            </div>
-          </div>
-        ) : active === 'modules' ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      </div>
+
+      {/* Module Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="card">
-              <h3 className="text-base font-semibold text-white mb-4">Giao dịch theo Module</h3>
+              <h3 className="text-base font-semibold text-surface-800 mb-4">Giao dịch theo Module</h3>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie data={moduleData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={2} dataKey="value">
                       {moduleData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                     </Pie>
-                    <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '12px', fontSize: '12px', color: '#fff' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '12px', fontSize: '12px', color: '#374151' }} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -124,60 +134,59 @@ export default function AnalyticsPage() {
                 {moduleData.map((m, i) => (
                   <div key={m.name} className="flex items-center gap-1.5 text-xs">
                     <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
-                    <span className="text-surface-400">{m.name}: {m.value}</span>
+                    <span className="text-surface-500">{m.name}: {m.value}</span>
                   </div>
                 ))}
               </div>
             </div>
             <div className="card">
-              <h3 className="text-base font-semibold text-white mb-4">Module Performance</h3>
+              <h3 className="text-base font-semibold text-surface-800 mb-4">Module Performance</h3>
               <div className="space-y-3">
                 {moduleData.map((m, i) => (
                   <div key={m.name}>
                     <div className="flex justify-between text-xs mb-1">
-                      <span className="text-surface-400">{m.name}</span>
-                      <span className="text-white font-medium">{m.value} tx</span>
+                      <span className="text-surface-500">{m.name}</span>
+                      <span className="text-surface-800 font-medium">{m.value} tx</span>
                     </div>
-                    <div className="h-2 bg-surface-800 rounded-full overflow-hidden">
+                    <div className="h-2 bg-surface-100 rounded-full overflow-hidden">
                       <div className="h-full rounded-full transition-all" style={{ width: `${(m.value / 2500) * 100}%`, backgroundColor: COLORS[i % COLORS.length] }} />
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-          </div>
-        ) : (
-          <div className="card">
-            <h3 className="text-base font-semibold text-white mb-4">Gas Usage (7 ngày)</h3>
+      </div>
+
+      {/* Gas Usage */}
+      <div className="card">
+            <h3 className="text-base font-semibold text-surface-800 mb-4">Gas Usage (7 ngày)</h3>
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={gasData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
                   <XAxis dataKey="name" stroke="#64748b" fontSize={12} />
                   <YAxis stroke="#64748b" fontSize={12} />
-                  <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '12px', fontSize: '12px', color: '#fff' }} />
+                  <Tooltip contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '12px', fontSize: '12px', color: '#374151' }} />
                   <Bar dataKey="avg" fill="#6366f1" radius={[4, 4, 0, 0]} name="Avg Gas (gwei)" />
                   <Bar dataKey="max" fill="#6366f130" radius={[4, 4, 0, 0]} name="Max Gas (gwei)" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
             <div className="grid grid-cols-3 gap-4 mt-4">
-              <div className="p-3 rounded-xl bg-surface-800/30 text-center">
-                <p className="text-lg font-bold text-white">24.7</p>
-                <p className="text-xs text-surface-400">Avg Gas (gwei)</p>
+              <div className="p-3 rounded-xl bg-surface-50 text-center">
+                <p className="text-lg font-bold text-surface-800">24.7</p>
+                <p className="text-xs text-surface-500">Avg Gas (gwei)</p>
               </div>
-              <div className="p-3 rounded-xl bg-surface-800/30 text-center">
-                <p className="text-lg font-bold text-white">60</p>
-                <p className="text-xs text-surface-400">Peak Gas (gwei)</p>
+              <div className="p-3 rounded-xl bg-surface-50 text-center">
+                <p className="text-lg font-bold text-surface-800">60</p>
+                <p className="text-xs text-surface-500">Peak Gas (gwei)</p>
               </div>
-              <div className="p-3 rounded-xl bg-surface-800/30 text-center">
-                <p className="text-lg font-bold text-white">$12.50</p>
-                <p className="text-xs text-surface-400">Total Gas Cost</p>
+              <div className="p-3 rounded-xl bg-surface-50 text-center">
+                <p className="text-lg font-bold text-surface-800">$12.50</p>
+                <p className="text-xs text-surface-500">Total Gas Cost</p>
               </div>
             </div>
-          </div>
-        )}
-      </Tabs>
+      </div>
     </div>
   );
 }

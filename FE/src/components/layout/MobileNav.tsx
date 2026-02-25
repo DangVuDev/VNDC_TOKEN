@@ -18,9 +18,9 @@ export default function MobileNav({ open, onClose }: MobileNavProps) {
       />
 
       {/* Drawer */}
-      <div className="fixed inset-y-0 left-0 w-72 bg-surface-950 border-r border-surface-800 z-50 lg:hidden animate-slide-up">
+      <div className="fixed inset-y-0 left-0 w-72 bg-surface-50 border-r border-surface-200 z-50 lg:hidden animate-slide-up">
         <div className="absolute top-4 right-4">
-          <button onClick={onClose} className="text-surface-400 hover:text-white">
+          <button onClick={onClose} className="text-surface-400 hover:text-surface-700">
             <X size={20} />
           </button>
         </div>

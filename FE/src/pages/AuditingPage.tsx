@@ -1,8 +1,5 @@
 import { useState } from 'react';
 import { ShieldCheck, FileSearch, CheckCircle, AlertTriangle, Clock, Plus, Eye, FileText } from 'lucide-react';
-import PageHeader from '@/components/ui/PageHeader';
-import StatCard from '@/components/ui/StatCard';
-import Tabs from '@/components/ui/Tabs';
 import Modal from '@/components/ui/Modal';
 import { useAuditingSystem } from '@/hooks/useContracts';
 import { useContractAction } from '@/hooks/useContractAction';
@@ -56,73 +53,74 @@ export default function AuditingPage() {
   };
 
   return (
-    <div>
-      <PageHeader title="Kiểm toán" description="Audit smart contract, báo cáo bảo mật và voting on-chain" lucideIcon={ShieldCheck} badge="Auditing"
-        action={<button className="btn-primary btn-sm" onClick={() => setShowCreate(true)}><Plus size={14} /> Tạo audit</button>}
-      />
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard label="Tổng audit" value={demoAudits.length} icon={<ShieldCheck className="w-5 h-5" />} color="brand" />
-        <StatCard label="Hoàn thành" value={demoAudits.filter(a => a.status === 'completed').length} icon={<CheckCircle className="w-5 h-5" />} color="success" />
-        <StatCard label="Findings" value={demoAudits.reduce((a, d) => a + d.findings, 0)} icon={<AlertTriangle className="w-5 h-5" />} color="warning" />
-        <StatCard label="Đang audit" value={demoAudits.filter(a => a.status === 'in-progress').length} icon={<Clock className="w-5 h-5" />} color="info" />
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center">
+            <ShieldCheck size={20} className="text-brand-600" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold text-surface-800">Kiểm toán</h1>
+            <p className="text-sm text-surface-500">{demoAudits.length} audit · {demoAudits.reduce((a, d) => a + d.findings, 0)} findings</p>
+          </div>
+        </div>
+        <button className="btn-primary btn-sm" onClick={() => setShowCreate(true)}><Plus size={14} /> Tạo audit</button>
       </div>
 
-      <Tabs tabs={[
-        { id: 'audits', label: 'Audit Jobs', icon: <FileSearch size={14} />, count: demoAudits.length },
-        { id: 'reports', label: 'Báo cáo', icon: <FileText size={14} /> },
-      ]}>
-        {(active) => active === 'audits' ? (
-          <div className="card p-0 overflow-hidden">
-            <div className="table-container">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-surface-800">
-                    <th className="text-left text-xs font-medium text-surface-400 px-4 py-3">Contract</th>
-                    <th className="text-left text-xs font-medium text-surface-400 px-4 py-3">Auditor</th>
-                    <th className="text-left text-xs font-medium text-surface-400 px-4 py-3">Severity</th>
-                    <th className="text-left text-xs font-medium text-surface-400 px-4 py-3">Status</th>
-                    <th className="text-right text-xs font-medium text-surface-400 px-4 py-3">Findings</th>
-                    <th className="text-right text-xs font-medium text-surface-400 px-4 py-3"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {demoAudits.map(audit => (
-                    <tr key={audit.id} className="border-b border-surface-800/50 hover:bg-surface-800/30 transition-colors">
-                      <td className="px-4 py-3"><span className="text-sm text-white font-medium">{audit.contract}</span></td>
-                      <td className="px-4 py-3 text-sm text-surface-400">{audit.auditor}</td>
-                      <td className="px-4 py-3">{severityBadge(audit.severity)}</td>
-                      <td className="px-4 py-3">{statusBadge(audit.status)}</td>
-                      <td className="px-4 py-3 text-right text-sm text-white">{audit.findings}</td>
-                      <td className="px-4 py-3 text-right">
-                        <button className="btn-ghost btn-sm btn-icon" onClick={() => setShowDetail(audit)}><Eye size={14} /></button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {demoAudits.filter(a => a.status === 'completed').map(a => (
-              <div key={a.id} className="card card-hover">
-                <div className="flex items-start gap-3 mb-3">
-                  <ShieldCheck size={20} className="text-emerald-400 shrink-0 mt-0.5" />
-                  <div>
-                    <h3 className="text-sm font-semibold text-white">{a.contract}</h3>
-                    <p className="text-xs text-surface-400">{a.auditor} • {a.date}</p>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-2">{severityBadge(a.severity)}<span className="badge badge-neutral">{a.findings} findings</span></div>
-                  <button className="btn-ghost btn-sm"><Eye size={12} /> View</button>
+      {/* Audit Table */}
+      <div className="card p-0 overflow-hidden">
+        <div className="table-container">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-surface-200">
+                <th className="text-left text-xs font-medium text-surface-500 px-4 py-3">Contract</th>
+                <th className="text-left text-xs font-medium text-surface-500 px-4 py-3">Auditor</th>
+                <th className="text-left text-xs font-medium text-surface-500 px-4 py-3">Severity</th>
+                <th className="text-left text-xs font-medium text-surface-500 px-4 py-3">Status</th>
+                <th className="text-right text-xs font-medium text-surface-500 px-4 py-3">Findings</th>
+                <th className="text-right text-xs font-medium text-surface-500 px-4 py-3"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {demoAudits.map(audit => (
+                <tr key={audit.id} className="border-b border-surface-200 hover:bg-surface-50 transition-colors">
+                  <td className="px-4 py-3"><span className="text-sm text-surface-800 font-medium">{audit.contract}</span></td>
+                  <td className="px-4 py-3 text-sm text-surface-500">{audit.auditor}</td>
+                  <td className="px-4 py-3">{severityBadge(audit.severity)}</td>
+                  <td className="px-4 py-3">{statusBadge(audit.status)}</td>
+                  <td className="px-4 py-3 text-right text-sm text-surface-800">{audit.findings}</td>
+                  <td className="px-4 py-3 text-right">
+                    <button className="btn-ghost btn-sm btn-icon" onClick={() => setShowDetail(audit)}><Eye size={14} /></button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Reports */}
+      <div>
+        <h3 className="text-sm font-semibold text-surface-500 mb-3">Báo cáo hoàn thành</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {demoAudits.filter(a => a.status === 'completed').map(a => (
+            <div key={a.id} className="card card-hover">
+              <div className="flex items-start gap-3 mb-3">
+                <ShieldCheck size={20} className="text-success-600 shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="text-sm font-semibold text-surface-800">{a.contract}</h3>
+                  <p className="text-xs text-surface-500">{a.auditor} • {a.date}</p>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
-      </Tabs>
+              <div className="flex items-center justify-between">
+                <div className="flex gap-2">{severityBadge(a.severity)}<span className="badge badge-neutral">{a.findings} findings</span></div>
+                <button className="btn-ghost btn-sm"><Eye size={12} /> View</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <Modal open={showCreate} onClose={() => setShowCreate(false)} title="Tạo Audit Job"
         footer={<button className="btn-primary" onClick={handleCreate} disabled={isLoading}>{isLoading ? 'Đang tạo...' : 'Tạo audit'}</button>}>
@@ -136,14 +134,14 @@ export default function AuditingPage() {
         {showDetail && (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div className="p-3 rounded-xl bg-surface-800/30"><p className="text-xs text-surface-500">Auditor</p><p className="text-sm font-semibold text-white">{showDetail.auditor}</p></div>
-              <div className="p-3 rounded-xl bg-surface-800/30"><p className="text-xs text-surface-500">Ngày</p><p className="text-sm font-semibold text-white">{showDetail.date}</p></div>
-              <div className="p-3 rounded-xl bg-surface-800/30"><p className="text-xs text-surface-500">Severity</p><div className="mt-1">{severityBadge(showDetail.severity)}</div></div>
-              <div className="p-3 rounded-xl bg-surface-800/30"><p className="text-xs text-surface-500">Status</p><div className="mt-1">{statusBadge(showDetail.status)}</div></div>
+              <div className="p-3 rounded-xl bg-surface-50"><p className="text-xs text-surface-500">Auditor</p><p className="text-sm font-semibold text-surface-800">{showDetail.auditor}</p></div>
+              <div className="p-3 rounded-xl bg-surface-50"><p className="text-xs text-surface-500">Ngày</p><p className="text-sm font-semibold text-surface-800">{showDetail.date}</p></div>
+              <div className="p-3 rounded-xl bg-surface-50"><p className="text-xs text-surface-500">Severity</p><div className="mt-1">{severityBadge(showDetail.severity)}</div></div>
+              <div className="p-3 rounded-xl bg-surface-50"><p className="text-xs text-surface-500">Status</p><div className="mt-1">{statusBadge(showDetail.status)}</div></div>
             </div>
-            <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
-              <h4 className="text-sm font-medium text-amber-300 mb-2">Findings ({showDetail.findings})</h4>
-              <p className="text-xs text-surface-400">Chi tiết findings sẽ được lưu trên IPFS và hiển thị tại đây.</p>
+            <div className="p-4 rounded-xl bg-warning-50 border border-warning-200">
+              <h4 className="text-sm font-medium text-warning-600 mb-2">Findings ({showDetail.findings})</h4>
+              <p className="text-xs text-surface-500">Chi tiết findings sẽ được lưu trên IPFS và hiển thị tại đây.</p>
             </div>
           </div>
         )}

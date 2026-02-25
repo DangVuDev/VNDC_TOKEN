@@ -104,7 +104,7 @@ const deploy= async function (hre: HardhatRuntimeEnvironment) {
 
     // Verify tiers
     const premiumTier = await reward.getRewardTier(0);
-    log(`✓ Premium tier verified: ${premiumTier.name}, Min GPA: ${(premiumTier as any).minGPA / 100}`);
+    log(`✓ Premium tier verified: ${premiumTier.name}, Min GPA: ${Number((premiumTier as any).minGPA) / 100}`);
 
     // ============ Deployment Summary ============
     log("\n========== Deployment Complete ==========");
@@ -132,6 +132,6 @@ const deploy= async function (hre: HardhatRuntimeEnvironment) {
 };
 
 deploy.tags = ["academic-rewards", "module-003"];
-deploy.dependencies = ["core"]; // Depends on Module 001
+deploy.dependencies = ["Core"]; // Depends on Module 001
 
 export default deploy;

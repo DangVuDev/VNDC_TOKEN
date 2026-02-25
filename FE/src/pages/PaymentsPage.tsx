@@ -1,15 +1,10 @@
 import { useState, useEffect } from 'react';
-import { CreditCard, Send, Store, RefreshCcw, Receipt, Plus, DollarSign, TrendingUp } from 'lucide-react';
-import PageHeader from '@/components/ui/PageHeader';
-import StatCard from '@/components/ui/StatCard';
-import Tabs from '@/components/ui/Tabs';
+import { Send, Store, RefreshCcw, Receipt } from 'lucide-react';
 import Modal from '@/components/ui/Modal';
-import DataTable from '@/components/ui/DataTable';
 import EmptyState from '@/components/ui/EmptyState';
 import { useWeb3 } from '@/contexts/Web3Context';
 import { usePaymentProcessor, useMerchantRegistry } from '@/hooks/useContracts';
 import { useContractAction } from '@/hooks/useContractAction';
-import { shortenAddress, formatDate, formatVNDC } from '@/lib/utils';
 import { parseUnits } from 'ethers';
 
 export default function PaymentsPage() {
@@ -19,7 +14,6 @@ export default function PaymentsPage() {
   const { isLoading, execute } = useContractAction();
 
   const [totalPayments, setTotalPayments] = useState(0);
-  const [showPay, setShowPay] = useState(false);
   const [showRefund, setShowRefund] = useState(false);
   const [payForm, setPayForm] = useState({ merchant: '', amount: '', method: 'VNDC' });
   const [refundForm, setRefundForm] = useState({ paymentId: '', reason: '' });
@@ -27,10 +21,7 @@ export default function PaymentsPage() {
   useEffect(() => {
     async function load() {
       if (!payment) return;
-      try {
-        const total = await payment.getTotalPaymentCount();
-        setTotalPayments(Number(total));
-      } catch {}
+      try { setTotalPayments(Number(await payment.getTotalPaymentCount())); } catch {}
     }
     load();
   }, [payment]);
@@ -38,10 +29,9 @@ export default function PaymentsPage() {
   const handlePayment = () => execute(
     async () => {
       if (!payment) throw new Error('Contract not available');
-      const amount = parseUnits(payForm.amount, 18);
-      return payment.processPayment(payForm.merchant, amount, payForm.method);
+      return payment.processPayment(payForm.merchant, parseUnits(payForm.amount, 18), payForm.method);
     },
-    { successMessage: 'Thanh toán thành công!', onSuccess: () => setShowPay(false) }
+    { successMessage: 'Thanh toán thành công!', onSuccess: () => setPayForm({ merchant: '', amount: '', method: 'VNDC' }) }
   );
 
   const handleRefund = () => execute(
@@ -53,79 +43,70 @@ export default function PaymentsPage() {
   );
 
   return (
-    <div>
-      <PageHeader title="Thanh toán" description="Xử lý thanh toán, hoàn tiền, quản lý phương thức thanh toán" lucideIcon={CreditCard} badge="Payment"
-        action={
-          <div className="flex gap-2">
-            <button className="btn-secondary btn-sm" onClick={() => setShowRefund(true)}><RefreshCcw size={14} /> Hoàn tiền</button>
-            <button className="btn-primary btn-sm" onClick={() => setShowPay(true)}><Send size={14} /> Thanh toán</button>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center">
+            <Send size={20} className="text-brand-600" />
           </div>
-        }
-      />
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard label="Tổng giao dịch" value={totalPayments} icon={<Receipt className="w-5 h-5" />} color="brand" />
-        <StatCard label="Doanh thu" value="0 VNDC" icon={<DollarSign className="w-5 h-5" />} color="success" />
-        <StatCard label="Phương thức" value="3" icon={<CreditCard className="w-5 h-5" />} color="info" subtitle="VNDC, ETH, USDC" />
-        <StatCard label="Merchants" value="0" icon={<Store className="w-5 h-5" />} color="warning" />
-      </div>
-
-      <Tabs tabs={[
-        { id: 'transactions', label: 'Giao dịch', icon: <Receipt size={14} /> },
-        { id: 'merchants', label: 'Merchants', icon: <Store size={14} /> },
-        { id: 'methods', label: 'Phương thức', icon: <CreditCard size={14} /> },
-      ]}>
-        {(active) => active === 'transactions' ? (
-          <EmptyState lucideIcon={Receipt} title="Chưa có giao dịch"
-            description="Thực hiện thanh toán đầu tiên để xem lịch sử giao dịch"
-            action={<button className="btn-primary btn-sm" onClick={() => setShowPay(true)}><Send size={14} /> Thanh toán ngay</button>} />
-        ) : active === 'merchants' ? (
-          <div className="card">
-            <h3 className="text-base font-semibold text-white mb-4">Đăng ký Merchant</h3>
-            <p className="text-sm text-surface-400 mb-4">Merchants có thể nhận thanh toán VNDC từ sinh viên</p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {['Căn-tin', 'Thư viện', 'Ký túc xá'].map(cat => (
-                <div key={cat} className="p-4 rounded-xl bg-surface-800/30 border border-surface-700/30 text-center">
-                  <Store size={24} className="text-brand-400 mx-auto mb-2" />
-                  <p className="text-sm font-medium text-white">{cat}</p>
-                  <p className="text-xs text-surface-500">Danh mục</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {[
-              { name: 'VNDC', desc: 'ERC-20 Token', active: true, color: 'from-indigo-500 to-violet-500' },
-              { name: 'ETH', desc: 'Native currency', active: true, color: 'from-sky-500 to-blue-500' },
-              { name: 'USDC', desc: 'Stablecoin', active: false, color: 'from-emerald-500 to-teal-500' },
-            ].map(m => (
-              <div key={m.name} className="card card-hover">
-                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${m.color} flex items-center justify-center mb-3 shadow-lg`}>
-                  <DollarSign size={18} className="text-white" />
-                </div>
-                <h4 className="text-sm font-semibold text-white">{m.name}</h4>
-                <p className="text-xs text-surface-400 mb-3">{m.desc}</p>
-                <span className={`badge ${m.active ? 'badge-success' : 'badge-neutral'}`}>{m.active ? 'Hỗ trợ' : 'Sắp có'}</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </Tabs>
-
-      <Modal open={showPay} onClose={() => setShowPay(false)} title="Thanh toán" description="Gửi thanh toán đến merchant"
-        footer={<button className="btn-primary" onClick={handlePayment} disabled={isLoading}>{isLoading ? 'Đang thanh toán...' : 'Thanh toán'}</button>}>
-        <div className="space-y-4">
-          <div><label className="label">Địa chỉ Merchant</label><input className="input" placeholder="0x..." value={payForm.merchant} onChange={e => setPayForm(f => ({ ...f, merchant: e.target.value }))} /></div>
-          <div><label className="label">Số tiền (VNDC)</label><input className="input" type="number" placeholder="100" value={payForm.amount} onChange={e => setPayForm(f => ({ ...f, amount: e.target.value }))} /></div>
-          <div><label className="label">Phương thức</label>
-            <select className="select" value={payForm.method} onChange={e => setPayForm(f => ({ ...f, method: e.target.value }))}>
-              <option>VNDC</option><option>ETH</option>
-            </select>
+          <div>
+            <h1 className="text-xl font-bold text-surface-800">Thanh toán</h1>
+            <p className="text-sm text-surface-500">{totalPayments} giao dịch</p>
           </div>
         </div>
-      </Modal>
+        <button className="btn-secondary btn-sm" onClick={() => setShowRefund(true)}>
+          <RefreshCcw size={14} /> Hoàn tiền
+        </button>
+      </div>
 
+      {/* Pay form + history split */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        {/* Payment form */}
+        <div className="lg:col-span-2 card">
+          <h2 className="text-base font-semibold text-surface-800 mb-4">Thanh toán mới</h2>
+          <div className="space-y-4">
+            <div>
+              <label className="label">Merchant</label>
+              <input className="input" placeholder="0x..." value={payForm.merchant} onChange={e => setPayForm(f => ({ ...f, merchant: e.target.value }))} />
+            </div>
+            <div>
+              <label className="label">Số tiền</label>
+              <input className="input" type="number" placeholder="100" value={payForm.amount} onChange={e => setPayForm(f => ({ ...f, amount: e.target.value }))} />
+            </div>
+            <div>
+              <label className="label">Phương thức</label>
+              <select className="select" value={payForm.method} onChange={e => setPayForm(f => ({ ...f, method: e.target.value }))}>
+                <option>VNDC</option><option>ETH</option>
+              </select>
+            </div>
+            <button className="btn-primary w-full" onClick={handlePayment} disabled={isLoading || !payForm.merchant || !payForm.amount}>
+              {isLoading ? 'Đang xử lý...' : 'Thanh toán'}
+            </button>
+          </div>
+        </div>
+
+        {/* Transaction history */}
+        <div className="lg:col-span-3">
+          <EmptyState lucideIcon={Receipt} title="Chưa có giao dịch"
+            description="Thực hiện thanh toán đầu tiên" />
+        </div>
+      </div>
+
+      {/* Merchant categories */}
+      <div>
+        <h2 className="text-base font-semibold text-surface-800 mb-3">Danh mục Merchant</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {['Căn-tin', 'Thư viện', 'Ký túc xá', 'Phòng thí nghiệm'].map(cat => (
+            <div key={cat} className="card text-center py-5">
+              <Store size={22} className="text-brand-600 mx-auto mb-2" />
+              <p className="text-sm font-medium text-surface-800">{cat}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Refund Modal */}
       <Modal open={showRefund} onClose={() => setShowRefund(false)} title="Hoàn tiền"
         footer={<button className="btn-danger" onClick={handleRefund} disabled={isLoading}>{isLoading ? 'Đang xử lý...' : 'Hoàn tiền'}</button>}>
         <div className="space-y-4">

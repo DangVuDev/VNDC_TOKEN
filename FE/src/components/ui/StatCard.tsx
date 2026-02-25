@@ -16,11 +16,11 @@ interface StatCardProps {
 }
 
 const colorMap = {
-  brand: 'bg-brand-500/10 text-brand-400 ring-brand-500/20',
-  success: 'bg-emerald-500/10 text-emerald-400 ring-emerald-500/20',
-  warning: 'bg-amber-500/10 text-amber-400 ring-amber-500/20',
-  danger: 'bg-red-500/10 text-red-400 ring-red-500/20',
-  info: 'bg-sky-500/10 text-sky-400 ring-sky-500/20',
+  brand: 'bg-brand-50 text-brand-600 ring-brand-200',
+  success: 'bg-success-50 text-success-600 ring-success-200',
+  warning: 'bg-warning-50 text-warning-600 ring-warning-200',
+  danger: 'bg-danger-50 text-danger-600 ring-danger-200',
+  info: 'bg-info-50 text-info-600 ring-info-200',
 };
 
 export default function StatCard({
@@ -43,7 +43,7 @@ export default function StatCard({
   return (
     <div className={cn('card card-hover group', className)}>
       <div className="flex items-start justify-between mb-3">
-        <span className="text-sm font-medium text-surface-400">{label}</span>
+        <span className="text-sm font-medium text-surface-500">{label}</span>
         <div className={cn(
           'flex items-center justify-center w-10 h-10 rounded-xl ring-1 transition-transform group-hover:scale-110',
           colorMap[color]
@@ -51,12 +51,12 @@ export default function StatCard({
           {LIcon ? <LIcon className="w-5 h-5" /> : icon}
         </div>
       </div>
-      <div className="text-2xl font-bold text-white mb-1">{value}</div>
+      <div className="text-2xl font-bold text-surface-800 mb-1">{value}</div>
       <div className="flex items-center gap-2">
         {change && (
           <span className={cn(
             'text-xs font-semibold',
-            trend === 'up' ? 'text-emerald-400' : trend === 'down' ? 'text-red-400' : 'text-surface-400'
+            trend === 'up' ? 'text-success-600' : trend === 'down' ? 'text-danger-600' : 'text-surface-400'
           )}>
             {trend === 'up' ? '↑' : trend === 'down' ? '↓' : ''} {change}
           </span>
