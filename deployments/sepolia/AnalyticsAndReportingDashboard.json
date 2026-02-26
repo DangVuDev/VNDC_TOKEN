@@ -1,0 +1,595 @@
+{
+  "address": "0xb32B60D65f20c24d2885FC472D57A4439c4b3061",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "totalUsers",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "totalTransactions",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "MetricsUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "reportId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "reportType",
+          "type": "string"
+        }
+      ],
+      "name": "ReportGenerated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "activityScore",
+          "type": "uint256"
+        }
+      ],
+      "name": "UserActivityTracked",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "reportType",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "dataHash",
+          "type": "string"
+        }
+      ],
+      "name": "generateReport",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "reportId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getReportDetails",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "reportType",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "dataHash",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "generatedAt",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "getSystemMetrics",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "totalUsers",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalTransactions",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalVolume",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalReports",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "getUserAnalytics",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "activityScore",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "engagementLevel",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lastActivity",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "activityScore",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "engagementLevel",
+          "type": "uint256"
+        }
+      ],
+      "name": "trackUserActivity",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "totalUsers",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalTransactions",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalVolume",
+          "type": "uint256"
+        }
+      ],
+      "name": "updateMetrics",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x602e6115a61187ae2fd0fb11e3bc1dc1c1ad7feff07831b08e9e51faa4a4f9d7",
+  "receipt": {
+    "to": null,
+    "from": "0x7EFf82613404AE7Bce622EA1C927214E30F2285e",
+    "contractAddress": "0xb32B60D65f20c24d2885FC472D57A4439c4b3061",
+    "transactionIndex": 71,
+    "gasUsed": "694984",
+    "logsBloom": "0x00000000000004000000000000000000000000000000000000800000000100000000000000040040000000000000000000000000000000040000000000000080000000000000000000000000000000000001000000000000000000000000000000000000020000000000000000000800000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xb54e0443b831e54d9129e05c5889f8d372c7b721ed80077a4d7bb04255d8a7e9",
+    "transactionHash": "0x602e6115a61187ae2fd0fb11e3bc1dc1c1ad7feff07831b08e9e51faa4a4f9d7",
+    "logs": [
+      {
+        "transactionIndex": 71,
+        "blockNumber": 10337745,
+        "transactionHash": "0x602e6115a61187ae2fd0fb11e3bc1dc1c1ad7feff07831b08e9e51faa4a4f9d7",
+        "address": "0xb32B60D65f20c24d2885FC472D57A4439c4b3061",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x0000000000000000000000007eff82613404ae7bce622ea1c927214e30f2285e"
+        ],
+        "data": "0x",
+        "logIndex": 132,
+        "blockHash": "0xb54e0443b831e54d9129e05c5889f8d372c7b721ed80077a4d7bb04255d8a7e9"
+      }
+    ],
+    "blockNumber": 10337745,
+    "cumulativeGasUsed": "10385712",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "5f00d4c9402f980f96140ab3f200c928",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"totalUsers\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"totalTransactions\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"MetricsUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"reportId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"reportType\",\"type\":\"string\"}],\"name\":\"ReportGenerated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"activityScore\",\"type\":\"uint256\"}],\"name\":\"UserActivityTracked\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"reportType\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"dataHash\",\"type\":\"string\"}],\"name\":\"generateReport\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"reportId\",\"type\":\"uint256\"}],\"name\":\"getReportDetails\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"reportType\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"dataHash\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"generatedAt\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"getSystemMetrics\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"totalUsers\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalTransactions\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalVolume\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalReports\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"getUserAnalytics\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"activityScore\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"engagementLevel\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lastActivity\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"activityScore\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"engagementLevel\",\"type\":\"uint256\"}],\"name\":\"trackUserActivity\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"totalUsers\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalTransactions\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalVolume\",\"type\":\"uint256\"}],\"name\":\"updateMetrics\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Module 018: Analytics and reporting dashboard\",\"errors\":{\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}]},\"kind\":\"dev\",\"methods\":{\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"title\":\"AnalyticsAndReportingDashboard\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/modules/018-analytics/AnalyticsAndReportingDashboard.sol\":\"AnalyticsAndReportingDashboard\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"none\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {Context} from \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * The initial owner is set to the address provided by the deployer. This can\\n * later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    /**\\n     * @dev The caller account is not authorized to perform an operation.\\n     */\\n    error OwnableUnauthorizedAccount(address account);\\n\\n    /**\\n     * @dev The owner is not a valid owner account. (eg. `address(0)`)\\n     */\\n    error OwnableInvalidOwner(address owner);\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the address provided by the deployer as the initial owner.\\n     */\\n    constructor(address initialOwner) {\\n        if (initialOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(initialOwner);\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        if (owner() != _msgSender()) {\\n            revert OwnableUnauthorizedAccount(_msgSender());\\n        }\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby disabling any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        if (newOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    function _contextSuffixLength() internal view virtual returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\"},\"contracts/modules/018-analytics/AnalyticsAndReportingDashboard.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.24;\\r\\n\\r\\nimport {Ownable} from \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\r\\n\\r\\n/**\\r\\n * @title AnalyticsAndReportingDashboard\\r\\n * @dev Module 018: Analytics and reporting dashboard\\r\\n */\\r\\ncontract AnalyticsAndReportingDashboard is Ownable {\\r\\n    struct SystemMetrics {\\r\\n        uint256 totalUsers;\\r\\n        uint256 totalTransactions;\\r\\n        uint256 totalVolume;\\r\\n        uint256 timestamp;\\r\\n    }\\r\\n\\r\\n    struct UserAnalytics {\\r\\n        address user;\\r\\n        uint256 activityScore;\\r\\n        uint256 engagementLevel;\\r\\n        uint256 lastActivityTime;\\r\\n    }\\r\\n\\r\\n    struct Report {\\r\\n        uint256 reportId;\\r\\n        string reportType;\\r\\n        string dataHash;\\r\\n        uint256 generatedAt;\\r\\n    }\\r\\n\\r\\n    uint256 private reportCounter;\\r\\n    mapping(uint256 => SystemMetrics) private metrics;\\r\\n    mapping(address => UserAnalytics) private userAnalytics;\\r\\n    mapping(uint256 => Report) private reports;\\r\\n    uint256 private lastMetricsUpdate;\\r\\n\\r\\n    event MetricsUpdated(uint256 totalUsers, uint256 totalTransactions, uint256 timestamp);\\r\\n    event UserActivityTracked(address indexed user, uint256 activityScore);\\r\\n    event ReportGenerated(uint256 indexed reportId, string reportType);\\r\\n\\r\\n    constructor() Ownable(msg.sender) {\\r\\n        reportCounter = 1;\\r\\n    }\\r\\n\\r\\n    function updateMetrics(\\r\\n        uint256 totalUsers,\\r\\n        uint256 totalTransactions,\\r\\n        uint256 totalVolume\\r\\n    ) external onlyOwner {\\r\\n        SystemMetrics memory metric = SystemMetrics({\\r\\n            totalUsers: totalUsers,\\r\\n            totalTransactions: totalTransactions,\\r\\n            totalVolume: totalVolume,\\r\\n            timestamp: block.timestamp\\r\\n        });\\r\\n\\r\\n        metrics[block.timestamp] = metric;\\r\\n        lastMetricsUpdate = block.timestamp;\\r\\n        emit MetricsUpdated(totalUsers, totalTransactions, block.timestamp);\\r\\n    }\\r\\n\\r\\n    function trackUserActivity(\\r\\n        address user,\\r\\n        uint256 activityScore,\\r\\n        uint256 engagementLevel\\r\\n    ) external onlyOwner {\\r\\n        userAnalytics[user] = UserAnalytics({\\r\\n            user: user,\\r\\n            activityScore: activityScore,\\r\\n            engagementLevel: engagementLevel,\\r\\n            lastActivityTime: block.timestamp\\r\\n        });\\r\\n\\r\\n        emit UserActivityTracked(user, activityScore);\\r\\n    }\\r\\n\\r\\n    function generateReport(\\r\\n        string calldata reportType,\\r\\n        string calldata dataHash\\r\\n    ) external onlyOwner returns (uint256) {\\r\\n        uint256 reportId = reportCounter++;\\r\\n        reports[reportId] = Report({\\r\\n            reportId: reportId,\\r\\n            reportType: reportType,\\r\\n            dataHash: dataHash,\\r\\n            generatedAt: block.timestamp\\r\\n        });\\r\\n\\r\\n        emit ReportGenerated(reportId, reportType);\\r\\n        return reportId;\\r\\n    }\\r\\n\\r\\n    function getSystemMetrics(uint256 timestamp)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            uint256 totalUsers,\\r\\n            uint256 totalTransactions,\\r\\n            uint256 totalVolume\\r\\n        )\\r\\n    {\\r\\n        SystemMetrics memory metric = metrics[timestamp];\\r\\n        return (metric.totalUsers, metric.totalTransactions, metric.totalVolume);\\r\\n    }\\r\\n\\r\\n    function getUserAnalytics(address user)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            uint256 activityScore,\\r\\n            uint256 engagementLevel,\\r\\n            uint256 lastActivity\\r\\n        )\\r\\n    {\\r\\n        UserAnalytics memory analytics = userAnalytics[user];\\r\\n        return (analytics.activityScore, analytics.engagementLevel, analytics.lastActivityTime);\\r\\n    }\\r\\n\\r\\n    function getReportDetails(uint256 reportId)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            string memory reportType,\\r\\n            string memory dataHash,\\r\\n            uint256 generatedAt\\r\\n        )\\r\\n    {\\r\\n        Report memory report = reports[reportId];\\r\\n        return (report.reportType, report.dataHash, report.generatedAt);\\r\\n    }\\r\\n\\r\\n    function getTotalReports() external view returns (uint256) {\\r\\n        return reportCounter - 1;\\r\\n    }\\r\\n}\\r\\n\",\"keccak256\":\"0x760f7dbc4b7fcb5d79083f076b5b195cb9f483dc7df776d929968b4132b573b5\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x6080806040523461007e5733156100685760008054336001600160a01b03198216811783556040519290916001600160a01b0316907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09080a360018055610abf90816100848239f35b631e4fbdf760e01b815260006004820152602490fd5b600080fdfe6080604052600436101561001257600080fd5b60003560e01c806309ee697e146104e55780631d87937b146104705780633c047e13146103ba57806352542e9414610301578063715018a6146102a85780637a2adb6e146102115780638598bcc4146101875780638da5cb5b1461015e578063d4e995001461011d5763f2fde38b1461008a57600080fd5b34610118576020366003190112610118576100a36108cc565b6100ab610a86565b6001600160a01b039081169081156100ff57600054826bffffffffffffffffffffffff60a01b821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b604051631e4fbdf760e01b815260006004820152602490fd5b600080fd5b3461011857600036600319011261011857600154600019810190811161014857602090604051908152f35b634e487b7160e01b600052601160045260246000fd5b34610118576000366003190112610118576000546040516001600160a01b039091168152602090f35b34610118576020366003190112610118576001600160a01b03806101a96108cc565b166000526003602052604060002090604051906101c582610922565b825416815261020d6060600184015492836020820152600360028601549586604084015201549182910152604051938493846040919493926060820195825260208201520152565b0390f35b346101185760203660031901126101185760043560005260046020526102906040600020606061029e60405161024681610922565b83548152610256600185016109e1565b9060208101918252600361026c600287016109e1565b958660408401520154938491015251926040519485946060865260608601906108e2565b9084820360208601526108e2565b9060408301520390f35b34610118576000366003190112610118576102c1610a86565b600080546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b346101185760603660031901126101185761031a6108cc565b7f3516582fb4fc31defa2f9631b3082c21dbca07bc9b5e2d722563c697b80fef516020602435610348610a86565b60405161035481610922565b600360018060a01b03809616958683528483018481526040840190604435825260608501924284528960005284885260406000209551166bffffffffffffffffffffffff60a01b86541617855551600185015551600284015551910155604051908152a2005b34610118576060366003190112610118577f30b47c3a685e507da227a870550a387d376e03da27ad5b6a1d8c7517eb2d9b2f6004356024356103fa610a86565b60405161040681610922565b8281526003602082018381526040830160443581526060840191428352426000526002602052604060002094518555516001850155516002840155519101554260055561046b6040519283924291846040919493926060820195825260208201520152565b0390a1005b3461011857602036600319011261011857600435600052600260205260406000206040519061049e82610922565b61020d815491828452600181015493846020820152606060036002840154938460408501520154910152604051938493846040919493926060820195825260208201520152565b346101185760403660031901126101185760043567ffffffffffffffff81116101185761051690369060040161089e565b9060243567ffffffffffffffff81116101185761053790369060040161089e565b610542929192610a86565b60015492600019841461014857600184016001556105836040519161056683610922565b858352610574368887610960565b93602084019485523691610960565b6040820152426060820152836000526004602052604060002091815183555180519067ffffffffffffffff82116107b85781906105c360018601546109a7565b601f811161084b575b50602090601f83116001146107d9576000926107ce575b50508160011b916000199060031b1c19161760018301555b604081015180519067ffffffffffffffff82116107b85761061f60028501546109a7565b601f811161076d575b509160209693918695938890601f83116001146106cc577fa4ffdc6a8572a4d73724f031122f9982560d88aa6d6e99c21c28aefd8b28d80d96959383604096946003946060946000926106c1575b50508160011b9160001990861b1c19161760028501555b0151910155828251938492898452818a850152848401376000828201840152601f01601f19168101030190a2604051908152f35b015190508d80610676565b6002859493929897969501600052896000209060005b601f19841681106107535750926001836060937fa4ffdc6a8572a4d73724f031122f9982560d88aa6d6e99c21c28aefd8b28d80d9a9b6040999897600397601f1981161061073b575b505050811b01600285015561068d565b015160001983881b60f8161c191690558d808061072b565b818a01518355988b01988a98506001909201918b016106e2565b600285016000526020600020601f840160051c810191602085106107ae575b601f0160051c01905b8181106107a25750610628565b60008155600101610795565b909150819061078c565b634e487b7160e01b600052604160045260246000fd5b0151905087806105e3565b9250600185016000526020600020906000935b601f1984168510610830576001945083601f19811610610817575b505050811b0160018301556105fb565b015160001960f88460031b161c19169055878080610807565b818101518355602094850194600190930192909101906107ec565b909150600185016000526020600020601f840160051c810160208510610897575b90849392915b601f830160051c820181106108885750506105cc565b60008155859450600101610872565b508061086c565b9181601f840112156101185782359167ffffffffffffffff8311610118576020838186019501011161011857565b600435906001600160a01b038216820361011857565b919082519283825260005b84811061090e575050826000602080949584010152601f8019910116010190565b6020818301810151848301820152016108ed565b6080810190811067ffffffffffffffff8211176107b857604052565b90601f8019910116810190811067ffffffffffffffff8211176107b857604052565b92919267ffffffffffffffff82116107b8576040519161098a601f8201601f19166020018461093e565b829481845281830111610118578281602093846000960137010152565b90600182811c921680156109d7575b60208310146109c157565b634e487b7160e01b600052602260045260246000fd5b91607f16916109b6565b906040519182600082546109f4816109a7565b90818452602094600191600181169081600014610a645750600114610a25575b505050610a239250038361093e565b565b600090815285812095935091905b818310610a4c575050610a239350820101388080610a14565b85548884018501529485019487945091830191610a33565b92505050610a2394925060ff191682840152151560051b820101388080610a14565b6000546001600160a01b03163303610a9a57565b60405163118cdaa760e01b8152336004820152602490fdfea164736f6c6343000818000a",
+  "deployedBytecode": "0x6080604052600436101561001257600080fd5b60003560e01c806309ee697e146104e55780631d87937b146104705780633c047e13146103ba57806352542e9414610301578063715018a6146102a85780637a2adb6e146102115780638598bcc4146101875780638da5cb5b1461015e578063d4e995001461011d5763f2fde38b1461008a57600080fd5b34610118576020366003190112610118576100a36108cc565b6100ab610a86565b6001600160a01b039081169081156100ff57600054826bffffffffffffffffffffffff60a01b821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b604051631e4fbdf760e01b815260006004820152602490fd5b600080fd5b3461011857600036600319011261011857600154600019810190811161014857602090604051908152f35b634e487b7160e01b600052601160045260246000fd5b34610118576000366003190112610118576000546040516001600160a01b039091168152602090f35b34610118576020366003190112610118576001600160a01b03806101a96108cc565b166000526003602052604060002090604051906101c582610922565b825416815261020d6060600184015492836020820152600360028601549586604084015201549182910152604051938493846040919493926060820195825260208201520152565b0390f35b346101185760203660031901126101185760043560005260046020526102906040600020606061029e60405161024681610922565b83548152610256600185016109e1565b9060208101918252600361026c600287016109e1565b958660408401520154938491015251926040519485946060865260608601906108e2565b9084820360208601526108e2565b9060408301520390f35b34610118576000366003190112610118576102c1610a86565b600080546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b346101185760603660031901126101185761031a6108cc565b7f3516582fb4fc31defa2f9631b3082c21dbca07bc9b5e2d722563c697b80fef516020602435610348610a86565b60405161035481610922565b600360018060a01b03809616958683528483018481526040840190604435825260608501924284528960005284885260406000209551166bffffffffffffffffffffffff60a01b86541617855551600185015551600284015551910155604051908152a2005b34610118576060366003190112610118577f30b47c3a685e507da227a870550a387d376e03da27ad5b6a1d8c7517eb2d9b2f6004356024356103fa610a86565b60405161040681610922565b8281526003602082018381526040830160443581526060840191428352426000526002602052604060002094518555516001850155516002840155519101554260055561046b6040519283924291846040919493926060820195825260208201520152565b0390a1005b3461011857602036600319011261011857600435600052600260205260406000206040519061049e82610922565b61020d815491828452600181015493846020820152606060036002840154938460408501520154910152604051938493846040919493926060820195825260208201520152565b346101185760403660031901126101185760043567ffffffffffffffff81116101185761051690369060040161089e565b9060243567ffffffffffffffff81116101185761053790369060040161089e565b610542929192610a86565b60015492600019841461014857600184016001556105836040519161056683610922565b858352610574368887610960565b93602084019485523691610960565b6040820152426060820152836000526004602052604060002091815183555180519067ffffffffffffffff82116107b85781906105c360018601546109a7565b601f811161084b575b50602090601f83116001146107d9576000926107ce575b50508160011b916000199060031b1c19161760018301555b604081015180519067ffffffffffffffff82116107b85761061f60028501546109a7565b601f811161076d575b509160209693918695938890601f83116001146106cc577fa4ffdc6a8572a4d73724f031122f9982560d88aa6d6e99c21c28aefd8b28d80d96959383604096946003946060946000926106c1575b50508160011b9160001990861b1c19161760028501555b0151910155828251938492898452818a850152848401376000828201840152601f01601f19168101030190a2604051908152f35b015190508d80610676565b6002859493929897969501600052896000209060005b601f19841681106107535750926001836060937fa4ffdc6a8572a4d73724f031122f9982560d88aa6d6e99c21c28aefd8b28d80d9a9b6040999897600397601f1981161061073b575b505050811b01600285015561068d565b015160001983881b60f8161c191690558d808061072b565b818a01518355988b01988a98506001909201918b016106e2565b600285016000526020600020601f840160051c810191602085106107ae575b601f0160051c01905b8181106107a25750610628565b60008155600101610795565b909150819061078c565b634e487b7160e01b600052604160045260246000fd5b0151905087806105e3565b9250600185016000526020600020906000935b601f1984168510610830576001945083601f19811610610817575b505050811b0160018301556105fb565b015160001960f88460031b161c19169055878080610807565b818101518355602094850194600190930192909101906107ec565b909150600185016000526020600020601f840160051c810160208510610897575b90849392915b601f830160051c820181106108885750506105cc565b60008155859450600101610872565b508061086c565b9181601f840112156101185782359167ffffffffffffffff8311610118576020838186019501011161011857565b600435906001600160a01b038216820361011857565b919082519283825260005b84811061090e575050826000602080949584010152601f8019910116010190565b6020818301810151848301820152016108ed565b6080810190811067ffffffffffffffff8211176107b857604052565b90601f8019910116810190811067ffffffffffffffff8211176107b857604052565b92919267ffffffffffffffff82116107b8576040519161098a601f8201601f19166020018461093e565b829481845281830111610118578281602093846000960137010152565b90600182811c921680156109d7575b60208310146109c157565b634e487b7160e01b600052602260045260246000fd5b91607f16916109b6565b906040519182600082546109f4816109a7565b90818452602094600191600181169081600014610a645750600114610a25575b505050610a239250038361093e565b565b600090815285812095935091905b818310610a4c575050610a239350820101388080610a14565b85548884018501529485019487945091830191610a33565b92505050610a2394925060ff191682840152151560051b820101388080610a14565b6000546001600160a01b03163303610a9a57565b60405163118cdaa760e01b8152336004820152602490fdfea164736f6c6343000818000a",
+  "devdoc": {
+    "details": "Module 018: Analytics and reporting dashboard",
+    "errors": {
+      "OwnableInvalidOwner(address)": [
+        {
+          "details": "The owner is not a valid owner account. (eg. `address(0)`)"
+        }
+      ],
+      "OwnableUnauthorizedAccount(address)": [
+        {
+          "details": "The caller account is not authorized to perform an operation."
+        }
+      ]
+    },
+    "kind": "dev",
+    "methods": {
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "title": "AnalyticsAndReportingDashboard",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 8,
+        "contract": "contracts/modules/018-analytics/AnalyticsAndReportingDashboard.sol:AnalyticsAndReportingDashboard",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 4073,
+        "contract": "contracts/modules/018-analytics/AnalyticsAndReportingDashboard.sol:AnalyticsAndReportingDashboard",
+        "label": "reportCounter",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 4078,
+        "contract": "contracts/modules/018-analytics/AnalyticsAndReportingDashboard.sol:AnalyticsAndReportingDashboard",
+        "label": "metrics",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_uint256,t_struct(SystemMetrics)4053_storage)"
+      },
+      {
+        "astId": 4083,
+        "contract": "contracts/modules/018-analytics/AnalyticsAndReportingDashboard.sol:AnalyticsAndReportingDashboard",
+        "label": "userAnalytics",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_address,t_struct(UserAnalytics)4062_storage)"
+      },
+      {
+        "astId": 4088,
+        "contract": "contracts/modules/018-analytics/AnalyticsAndReportingDashboard.sol:AnalyticsAndReportingDashboard",
+        "label": "reports",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_mapping(t_uint256,t_struct(Report)4071_storage)"
+      },
+      {
+        "astId": 4090,
+        "contract": "contracts/modules/018-analytics/AnalyticsAndReportingDashboard.sol:AnalyticsAndReportingDashboard",
+        "label": "lastMetricsUpdate",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_uint256"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_address,t_struct(UserAnalytics)4062_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => struct AnalyticsAndReportingDashboard.UserAnalytics)",
+        "numberOfBytes": "32",
+        "value": "t_struct(UserAnalytics)4062_storage"
+      },
+      "t_mapping(t_uint256,t_struct(Report)4071_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct AnalyticsAndReportingDashboard.Report)",
+        "numberOfBytes": "32",
+        "value": "t_struct(Report)4071_storage"
+      },
+      "t_mapping(t_uint256,t_struct(SystemMetrics)4053_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct AnalyticsAndReportingDashboard.SystemMetrics)",
+        "numberOfBytes": "32",
+        "value": "t_struct(SystemMetrics)4053_storage"
+      },
+      "t_string_storage": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_struct(Report)4071_storage": {
+        "encoding": "inplace",
+        "label": "struct AnalyticsAndReportingDashboard.Report",
+        "members": [
+          {
+            "astId": 4064,
+            "contract": "contracts/modules/018-analytics/AnalyticsAndReportingDashboard.sol:AnalyticsAndReportingDashboard",
+            "label": "reportId",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 4066,
+            "contract": "contracts/modules/018-analytics/AnalyticsAndReportingDashboard.sol:AnalyticsAndReportingDashboard",
+            "label": "reportType",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 4068,
+            "contract": "contracts/modules/018-analytics/AnalyticsAndReportingDashboard.sol:AnalyticsAndReportingDashboard",
+            "label": "dataHash",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 4070,
+            "contract": "contracts/modules/018-analytics/AnalyticsAndReportingDashboard.sol:AnalyticsAndReportingDashboard",
+            "label": "generatedAt",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "128"
+      },
+      "t_struct(SystemMetrics)4053_storage": {
+        "encoding": "inplace",
+        "label": "struct AnalyticsAndReportingDashboard.SystemMetrics",
+        "members": [
+          {
+            "astId": 4046,
+            "contract": "contracts/modules/018-analytics/AnalyticsAndReportingDashboard.sol:AnalyticsAndReportingDashboard",
+            "label": "totalUsers",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 4048,
+            "contract": "contracts/modules/018-analytics/AnalyticsAndReportingDashboard.sol:AnalyticsAndReportingDashboard",
+            "label": "totalTransactions",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 4050,
+            "contract": "contracts/modules/018-analytics/AnalyticsAndReportingDashboard.sol:AnalyticsAndReportingDashboard",
+            "label": "totalVolume",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 4052,
+            "contract": "contracts/modules/018-analytics/AnalyticsAndReportingDashboard.sol:AnalyticsAndReportingDashboard",
+            "label": "timestamp",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "128"
+      },
+      "t_struct(UserAnalytics)4062_storage": {
+        "encoding": "inplace",
+        "label": "struct AnalyticsAndReportingDashboard.UserAnalytics",
+        "members": [
+          {
+            "astId": 4055,
+            "contract": "contracts/modules/018-analytics/AnalyticsAndReportingDashboard.sol:AnalyticsAndReportingDashboard",
+            "label": "user",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address"
+          },
+          {
+            "astId": 4057,
+            "contract": "contracts/modules/018-analytics/AnalyticsAndReportingDashboard.sol:AnalyticsAndReportingDashboard",
+            "label": "activityScore",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 4059,
+            "contract": "contracts/modules/018-analytics/AnalyticsAndReportingDashboard.sol:AnalyticsAndReportingDashboard",
+            "label": "engagementLevel",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 4061,
+            "contract": "contracts/modules/018-analytics/AnalyticsAndReportingDashboard.sol:AnalyticsAndReportingDashboard",
+            "label": "lastActivityTime",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "128"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

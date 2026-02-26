@@ -1,0 +1,1443 @@
+{
+  "address": "0xfB0E0143Fc5b83b9809aCa6ae7eD040568d1e116",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "applicationId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "status",
+          "type": "string"
+        }
+      ],
+      "name": "ApplicationStatusUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "applicant",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "applicationId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "submittedAt",
+          "type": "uint256"
+        }
+      ],
+      "name": "ApplicationSubmitted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "employer",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "companyName",
+          "type": "string"
+        }
+      ],
+      "name": "EmployerRegistered",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "applicant",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "matchScore",
+          "type": "uint256"
+        }
+      ],
+      "name": "JobMatched",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "employer",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "postedAt",
+          "type": "uint256"
+        }
+      ],
+      "name": "JobPosted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "status",
+          "type": "string"
+        }
+      ],
+      "name": "JobStatusUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "reviewer",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "rating",
+          "type": "uint256"
+        }
+      ],
+      "name": "ReviewSubmitted",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "coverLetter",
+          "type": "string"
+        }
+      ],
+      "name": "applyForJob",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "service",
+          "type": "address"
+        }
+      ],
+      "name": "authorizeMatchingService",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "applicationId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getApplicationDetails",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "applicant",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "coverLetter",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "status",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "submittedAt",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "employer",
+          "type": "address"
+        }
+      ],
+      "name": "getEmployerInfo",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "companyName",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "companyURI",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "jobsPosted",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "registeredAt",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "employer",
+          "type": "address"
+        }
+      ],
+      "name": "getEmployerJobs",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getJobApplications",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getJobDetails",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "employer",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "category",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "location",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "jobType",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minSalary",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxSalary",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "requiredSkills",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "status",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "postedAt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "applicationCount",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "student",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "limit",
+          "type": "uint256"
+        }
+      ],
+      "name": "getJobMatches",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "jobIds",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "scores",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getJobReviews",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "reviewers",
+          "type": "address[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "ratings",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "string[]",
+          "name": "comments",
+          "type": "string[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "timestamps",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getJobStats",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "applicationCount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "acceptedCount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "rejectedCount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "averageRating",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "category",
+          "type": "string"
+        }
+      ],
+      "name": "getJobsByCategory",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "location",
+          "type": "string"
+        }
+      ],
+      "name": "getJobsByLocation",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "student",
+          "type": "address"
+        }
+      ],
+      "name": "getStudentApplications",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalApplications",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalEmployers",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalJobsPosted",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "employer",
+          "type": "address"
+        }
+      ],
+      "name": "isRegisteredEmployer",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "category",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "location",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "jobType",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minSalary",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxSalary",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "requiredSkills",
+          "type": "string"
+        }
+      ],
+      "name": "postJob",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "companyName",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "companyURI",
+          "type": "string"
+        }
+      ],
+      "name": "registerEmployer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "service",
+          "type": "address"
+        }
+      ],
+      "name": "revokeMatchingService",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "rating",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "comment",
+          "type": "string"
+        }
+      ],
+      "name": "submitReview",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "applicationId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "status",
+          "type": "string"
+        }
+      ],
+      "name": "updateApplicationStatus",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "jobId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "status",
+          "type": "string"
+        }
+      ],
+      "name": "updateJobStatus",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x87578d58f02f577da31bc350eaac6835db212087c4fcf9811f3b92c011617398",
+  "receipt": {
+    "to": null,
+    "from": "0x7EFf82613404AE7Bce622EA1C927214E30F2285e",
+    "contractAddress": "0xfB0E0143Fc5b83b9809aCa6ae7eD040568d1e116",
+    "transactionIndex": 57,
+    "gasUsed": "2652124",
+    "logsBloom": "0x00000000000000000000002000000000000000000008000000800000000100000000000000040000000000000000000000000000000000000000000000000080000000000000000000000000000000000001000000000000000000000000000000000000020000000000000000000800000000000000000000000000000000400000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xbe381777e54864f80c33c23eaa9cac9151ca78e8e5e49c8d47c30a0384d8289a",
+    "transactionHash": "0x87578d58f02f577da31bc350eaac6835db212087c4fcf9811f3b92c011617398",
+    "logs": [
+      {
+        "transactionIndex": 57,
+        "blockNumber": 10337738,
+        "transactionHash": "0x87578d58f02f577da31bc350eaac6835db212087c4fcf9811f3b92c011617398",
+        "address": "0xfB0E0143Fc5b83b9809aCa6ae7eD040568d1e116",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x0000000000000000000000007eff82613404ae7bce622ea1c927214e30f2285e"
+        ],
+        "data": "0x",
+        "logIndex": 104,
+        "blockHash": "0xbe381777e54864f80c33c23eaa9cac9151ca78e8e5e49c8d47c30a0384d8289a"
+      }
+    ],
+    "blockNumber": 10337738,
+    "cumulativeGasUsed": "13112120",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "5f00d4c9402f980f96140ab3f200c928",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"applicationId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"status\",\"type\":\"string\"}],\"name\":\"ApplicationStatusUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"jobId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"applicant\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"applicationId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"submittedAt\",\"type\":\"uint256\"}],\"name\":\"ApplicationSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"employer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"companyName\",\"type\":\"string\"}],\"name\":\"EmployerRegistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"jobId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"applicant\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"matchScore\",\"type\":\"uint256\"}],\"name\":\"JobMatched\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"jobId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"employer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"postedAt\",\"type\":\"uint256\"}],\"name\":\"JobPosted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"jobId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"status\",\"type\":\"string\"}],\"name\":\"JobStatusUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"jobId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"reviewer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"rating\",\"type\":\"uint256\"}],\"name\":\"ReviewSubmitted\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"jobId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"coverLetter\",\"type\":\"string\"}],\"name\":\"applyForJob\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"service\",\"type\":\"address\"}],\"name\":\"authorizeMatchingService\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"applicationId\",\"type\":\"uint256\"}],\"name\":\"getApplicationDetails\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"applicant\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"jobId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"coverLetter\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"status\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"submittedAt\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"employer\",\"type\":\"address\"}],\"name\":\"getEmployerInfo\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"companyName\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"companyURI\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"jobsPosted\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"registeredAt\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"employer\",\"type\":\"address\"}],\"name\":\"getEmployerJobs\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"jobId\",\"type\":\"uint256\"}],\"name\":\"getJobApplications\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"jobId\",\"type\":\"uint256\"}],\"name\":\"getJobDetails\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"description\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"employer\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"category\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"location\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"jobType\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"minSalary\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxSalary\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"requiredSkills\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"status\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"postedAt\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"applicationCount\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"student\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"limit\",\"type\":\"uint256\"}],\"name\":\"getJobMatches\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"jobIds\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"scores\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"jobId\",\"type\":\"uint256\"}],\"name\":\"getJobReviews\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"reviewers\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"ratings\",\"type\":\"uint256[]\"},{\"internalType\":\"string[]\",\"name\":\"comments\",\"type\":\"string[]\"},{\"internalType\":\"uint256[]\",\"name\":\"timestamps\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"jobId\",\"type\":\"uint256\"}],\"name\":\"getJobStats\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"applicationCount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"acceptedCount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rejectedCount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"averageRating\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"category\",\"type\":\"string\"}],\"name\":\"getJobsByCategory\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"location\",\"type\":\"string\"}],\"name\":\"getJobsByLocation\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"student\",\"type\":\"address\"}],\"name\":\"getStudentApplications\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalApplications\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalEmployers\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalJobsPosted\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"employer\",\"type\":\"address\"}],\"name\":\"isRegisteredEmployer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"description\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"category\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"location\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"jobType\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"minSalary\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxSalary\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"requiredSkills\",\"type\":\"string\"}],\"name\":\"postJob\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"companyName\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"companyURI\",\"type\":\"string\"}],\"name\":\"registerEmployer\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"service\",\"type\":\"address\"}],\"name\":\"revokeMatchingService\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"jobId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rating\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"comment\",\"type\":\"string\"}],\"name\":\"submitReview\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"applicationId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"status\",\"type\":\"string\"}],\"name\":\"updateApplicationStatus\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"jobId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"status\",\"type\":\"string\"}],\"name\":\"updateJobStatus\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Job board and career opportunities system for students\",\"errors\":{\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}]},\"kind\":\"dev\",\"methods\":{\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"title\":\"JobBoard\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"applyForJob(uint256,string)\":{\"notice\":\"Submit job application\"},\"authorizeMatchingService(address)\":{\"notice\":\"Authorize matching service\"},\"getApplicationDetails(uint256)\":{\"notice\":\"Get application details\"},\"getEmployerInfo(address)\":{\"notice\":\"Get employer info\"},\"getEmployerJobs(address)\":{\"notice\":\"Get employer jobs\"},\"getJobApplications(uint256)\":{\"notice\":\"Get job applications\"},\"getJobDetails(uint256)\":{\"notice\":\"Get job details\"},\"getJobMatches(address,uint256)\":{\"notice\":\"Get job matches (placeholder for AI matching service)\"},\"getJobReviews(uint256)\":{\"notice\":\"Get job reviews\"},\"getJobStats(uint256)\":{\"notice\":\"Get job stats\"},\"getJobsByCategory(string)\":{\"notice\":\"Get jobs by category\"},\"getJobsByLocation(string)\":{\"notice\":\"Get jobs by location\"},\"getStudentApplications(address)\":{\"notice\":\"Get student applications\"},\"getTotalApplications()\":{\"notice\":\"Get total applications\"},\"getTotalEmployers()\":{\"notice\":\"Get total employers\"},\"getTotalJobsPosted()\":{\"notice\":\"Get total jobs\"},\"isRegisteredEmployer(address)\":{\"notice\":\"Check if registered employer\"},\"postJob(string,string,string,string,string,uint256,uint256,string)\":{\"notice\":\"Post a job\"},\"registerEmployer(string,string)\":{\"notice\":\"Register as employer\"},\"revokeMatchingService(address)\":{\"notice\":\"Revoke matching service\"},\"submitReview(uint256,uint256,string)\":{\"notice\":\"Submit review\"},\"updateApplicationStatus(uint256,string)\":{\"notice\":\"Update application status\"},\"updateJobStatus(uint256,string)\":{\"notice\":\"Update job status\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/modules/013-job-board/JobBoard.sol\":\"JobBoard\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"none\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {Context} from \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * The initial owner is set to the address provided by the deployer. This can\\n * later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    /**\\n     * @dev The caller account is not authorized to perform an operation.\\n     */\\n    error OwnableUnauthorizedAccount(address account);\\n\\n    /**\\n     * @dev The owner is not a valid owner account. (eg. `address(0)`)\\n     */\\n    error OwnableInvalidOwner(address owner);\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the address provided by the deployer as the initial owner.\\n     */\\n    constructor(address initialOwner) {\\n        if (initialOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(initialOwner);\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        if (owner() != _msgSender()) {\\n            revert OwnableUnauthorizedAccount(_msgSender());\\n        }\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby disabling any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        if (newOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    function _contextSuffixLength() internal view virtual returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\"},\"contracts/modules/013-job-board/IJobBoard.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.24;\\r\\n\\r\\n/**\\r\\n * @title IJobBoard\\r\\n * @dev Interface for job board and career opportunities system\\r\\n */\\r\\ninterface IJobBoard {\\r\\n    // ============ Events ============\\r\\n    event JobPosted(\\r\\n        uint256 indexed jobId,\\r\\n        string title,\\r\\n        address indexed employer,\\r\\n        uint256 postedAt\\r\\n    );\\r\\n\\r\\n    event JobStatusUpdated(\\r\\n        uint256 indexed jobId,\\r\\n        string status\\r\\n    );\\r\\n\\r\\n    event ApplicationSubmitted(\\r\\n        uint256 indexed jobId,\\r\\n        address indexed applicant,\\r\\n        uint256 applicationId,\\r\\n        uint256 submittedAt\\r\\n    );\\r\\n\\r\\n    event ApplicationStatusUpdated(\\r\\n        uint256 indexed applicationId,\\r\\n        string status\\r\\n    );\\r\\n\\r\\n    event JobMatched(\\r\\n        uint256 indexed jobId,\\r\\n        address indexed applicant,\\r\\n        uint256 matchScore\\r\\n    );\\r\\n\\r\\n    event EmployerRegistered(\\r\\n        address indexed employer,\\r\\n        string companyName\\r\\n    );\\r\\n\\r\\n    event ReviewSubmitted(\\r\\n        uint256 indexed jobId,\\r\\n        address indexed reviewer,\\r\\n        uint256 rating\\r\\n    );\\r\\n\\r\\n    // ============ Mutations ============\\r\\n    /**\\r\\n     * @notice Register as employer\\r\\n     * @param companyName Company name\\r\\n     * @param companyURI IPFS URI with company details\\r\\n     */\\r\\n    function registerEmployer(\\r\\n        string calldata companyName,\\r\\n        string calldata companyURI\\r\\n    ) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Post a job\\r\\n     * @param title Job title\\r\\n     * @param description Job description\\r\\n     * @param category Job category\\r\\n     * @param location Job location\\r\\n     * @param jobType Employment type (full-time, part-time, etc.)\\r\\n     * @param minSalary Minimum salary\\r\\n     * @param maxSalary Maximum salary\\r\\n     * @param requiredSkills Required skills (comma-separated)\\r\\n     * @return jobId ID of posted job\\r\\n     */\\r\\n    function postJob(\\r\\n        string calldata title,\\r\\n        string calldata description,\\r\\n        string calldata category,\\r\\n        string calldata location,\\r\\n        string calldata jobType,\\r\\n        uint256 minSalary,\\r\\n        uint256 maxSalary,\\r\\n        string calldata requiredSkills\\r\\n    ) external returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @notice Submit job application\\r\\n     * @param jobId Job ID\\r\\n     * @param coverLetter Applicant's cover letter\\r\\n     * @return applicationId ID of application\\r\\n     */\\r\\n    function applyForJob(\\r\\n        uint256 jobId,\\r\\n        string calldata coverLetter\\r\\n    ) external returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @notice Update application status\\r\\n     * @param applicationId Application ID\\r\\n     * @param status New status (e.g., \\\"reviewed\\\", \\\"shortlisted\\\", \\\"rejected\\\", \\\"accepted\\\")\\r\\n     */\\r\\n    function updateApplicationStatus(\\r\\n        uint256 applicationId,\\r\\n        string calldata status\\r\\n    ) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Update job status\\r\\n     * @param jobId Job ID\\r\\n     * @param status New status (e.g., \\\"open\\\", \\\"closed\\\", \\\"filled\\\")\\r\\n     */\\r\\n    function updateJobStatus(uint256 jobId, string calldata status) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Submit review for completed job/internship\\r\\n     * @param jobId Job ID\\r\\n     * @param rating Rating (1-5)\\r\\n     * @param comment Review comment\\r\\n     */\\r\\n    function submitReview(\\r\\n        uint256 jobId,\\r\\n        uint256 rating,\\r\\n        string calldata comment\\r\\n    ) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Get job matches for student (AI/scoring based)\\r\\n     * @param student Student address\\r\\n     * @param limit Number of matches to return\\r\\n     */\\r\\n    function getJobMatches(address student, uint256 limit)\\r\\n        external\\r\\n        view\\r\\n        returns (uint256[] memory jobIds, uint256[] memory scores);\\r\\n\\r\\n    /**\\r\\n     * @notice Authorize matching service\\r\\n     * @param service Service address\\r\\n     */\\r\\n    function authorizeMatchingService(address service) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Revoke matching service authorization\\r\\n     * @param service Service address\\r\\n     */\\r\\n    function revokeMatchingService(address service) external;\\r\\n\\r\\n    // ============ Queries ============\\r\\n    /**\\r\\n     * @notice Get job details\\r\\n     * @param jobId Job ID\\r\\n     */\\r\\n    function getJobDetails(uint256 jobId)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            string memory title,\\r\\n            string memory description,\\r\\n            address employer,\\r\\n            string memory category,\\r\\n            string memory location,\\r\\n            string memory jobType,\\r\\n            uint256 minSalary,\\r\\n            uint256 maxSalary,\\r\\n            string memory requiredSkills,\\r\\n            string memory status,\\r\\n            uint256 postedAt,\\r\\n            uint256 applicationCount\\r\\n        );\\r\\n\\r\\n    /**\\r\\n     * @notice Get application details\\r\\n     * @param applicationId Application ID\\r\\n     */\\r\\n    function getApplicationDetails(uint256 applicationId)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            address applicant,\\r\\n            uint256 jobId,\\r\\n            string memory coverLetter,\\r\\n            string memory status,\\r\\n            uint256 submittedAt\\r\\n        );\\r\\n\\r\\n    /**\\r\\n     * @notice Get employer information\\r\\n     * @param employer Employer address\\r\\n     */\\r\\n    function getEmployerInfo(address employer)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            string memory companyName,\\r\\n            string memory companyURI,\\r\\n            uint256 jobsPosted,\\r\\n            uint256 registeredAt\\r\\n        );\\r\\n\\r\\n    /**\\r\\n     * @notice Get job applications\\r\\n     * @param jobId Job ID\\r\\n     */\\r\\n    function getJobApplications(uint256 jobId)\\r\\n        external\\r\\n        view\\r\\n        returns (uint256[] memory);\\r\\n\\r\\n    /**\\r\\n     * @notice Get student applications\\r\\n     * @param student Student address\\r\\n     */\\r\\n    function getStudentApplications(address student)\\r\\n        external\\r\\n        view\\r\\n        returns (uint256[] memory);\\r\\n\\r\\n    /**\\r\\n     * @notice Get applicant's jobs\\r\\n     * @param employer Employer address\\r\\n     */\\r\\n    function getEmployerJobs(address employer)\\r\\n        external\\r\\n        view\\r\\n        returns (uint256[] memory);\\r\\n\\r\\n    /**\\r\\n     * @notice Check if address is registered employer\\r\\n     * @param employer Employer address\\r\\n     */\\r\\n    function isRegisteredEmployer(address employer)\\r\\n        external\\r\\n        view\\r\\n        returns (bool);\\r\\n\\r\\n    /**\\r\\n     * @notice Get job reviews\\r\\n     * @param jobId Job ID\\r\\n     */\\r\\n    function getJobReviews(uint256 jobId)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            address[] memory reviewers,\\r\\n            uint256[] memory ratings,\\r\\n            string[] memory comments,\\r\\n            uint256[] memory timestamps\\r\\n        );\\r\\n\\r\\n    /**\\r\\n     * @notice Get job statistics\\r\\n     * @param jobId Job ID\\r\\n     */\\r\\n    function getJobStats(uint256 jobId)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            uint256 applicationCount,\\r\\n            uint256 acceptedCount,\\r\\n            uint256 rejectedCount,\\r\\n            uint256 averageRating\\r\\n        );\\r\\n\\r\\n    /**\\r\\n     * @notice Get total jobs posted\\r\\n     */\\r\\n    function getTotalJobsPosted() external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @notice Get total applications submitted\\r\\n     */\\r\\n    function getTotalApplications() external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @notice Get total registered employers\\r\\n     */\\r\\n    function getTotalEmployers() external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @notice Search jobs by category\\r\\n     * @param category Job category\\r\\n     */\\r\\n    function getJobsByCategory(string calldata category)\\r\\n        external\\r\\n        view\\r\\n        returns (uint256[] memory);\\r\\n\\r\\n    /**\\r\\n     * @notice Search jobs by location\\r\\n     * @param location Job location\\r\\n     */\\r\\n    function getJobsByLocation(string calldata location)\\r\\n        external\\r\\n        view\\r\\n        returns (uint256[] memory);\\r\\n}\\r\\n\",\"keccak256\":\"0x6922a0e9addce037eb746900780bc6dd2ac41cb96fdfba86cc8c8a830caff080\",\"license\":\"MIT\"},\"contracts/modules/013-job-board/JobBoard.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.24;\\r\\n\\r\\nimport {Ownable} from \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\r\\nimport {IJobBoard} from \\\"./IJobBoard.sol\\\";\\r\\n\\r\\n/**\\r\\n * @title JobBoard\\r\\n * @dev Job board and career opportunities system for students\\r\\n */\\r\\ncontract JobBoard is Ownable, IJobBoard {\\r\\n    // ============ Data Structures ============\\r\\n    struct Job {\\r\\n        string title;\\r\\n        string description;\\r\\n        address employer;\\r\\n        string category;\\r\\n        string location;\\r\\n        string jobType;\\r\\n        uint256 minSalary;\\r\\n        uint256 maxSalary;\\r\\n        string requiredSkills;\\r\\n        string status;\\r\\n        uint256 postedAt;\\r\\n        uint256 applicationCount;\\r\\n        uint256 acceptedCount;\\r\\n        uint256 rejectedCount;\\r\\n        uint256 totalRating;\\r\\n        uint256 reviewCount;\\r\\n    }\\r\\n\\r\\n    struct Application {\\r\\n        address applicant;\\r\\n        uint256 jobId;\\r\\n        string coverLetter;\\r\\n        string status;\\r\\n        uint256 submittedAt;\\r\\n    }\\r\\n\\r\\n    struct Employer {\\r\\n        string companyName;\\r\\n        string companyURI;\\r\\n        uint256 jobsPosted;\\r\\n        uint256 registeredAt;\\r\\n    }\\r\\n\\r\\n    struct Review {\\r\\n        address reviewer;\\r\\n        uint256 rating;\\r\\n        string comment;\\r\\n        uint256 timestamp;\\r\\n    }\\r\\n\\r\\n    // ============ State Variables ============\\r\\n    uint256 private jobCounter;\\r\\n    uint256 private applicationCounter;\\r\\n\\r\\n    mapping(uint256 => Job) private jobs;\\r\\n    mapping(uint256 => Application) private applications;\\r\\n    mapping(address => Employer) private employers;\\r\\n    mapping(uint256 => uint256[]) private jobApplications;\\r\\n    mapping(address => uint256[]) private studentApplications;\\r\\n    mapping(address => uint256[]) private employerJobs;\\r\\n    mapping(uint256 => Review[]) private jobReviews;\\r\\n    mapping(string => uint256[]) private jobsByCategory;\\r\\n    mapping(string => uint256[]) private jobsByLocation;\\r\\n    mapping(address => bool) private authorizedMatchingServices;\\r\\n\\r\\n    // Statistics\\r\\n    uint256 private totalEmployers;\\r\\n\\r\\n    // ============ Modifiers ============\\r\\n    modifier onlyRegisteredEmployer(address employer) {\\r\\n        require(bytes(employers[employer].companyName).length > 0, \\\"JobBoard: Not registered employer\\\");\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    modifier jobExists(uint256 jobId) {\\r\\n        require(jobId > 0 && jobId < jobCounter, \\\"JobBoard: Job does not exist\\\");\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    modifier applicationExists(uint256 applicationId) {\\r\\n        require(applicationId > 0 && applicationId < applicationCounter, \\\"JobBoard: Application does not exist\\\");\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    modifier onlyMatchingService() {\\r\\n        require(\\r\\n            authorizedMatchingServices[msg.sender] || msg.sender == owner(),\\r\\n            \\\"JobBoard: Not authorized matching service\\\"\\r\\n        );\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    // ============ Constructor ============\\r\\n    constructor() Ownable(msg.sender) {\\r\\n        jobCounter = 1;\\r\\n        applicationCounter = 1;\\r\\n        totalEmployers = 0;\\r\\n    }\\r\\n\\r\\n    // ============ Core Functions ============\\r\\n    /**\\r\\n     * @notice Register as employer\\r\\n     */\\r\\n    function registerEmployer(\\r\\n        string calldata companyName,\\r\\n        string calldata companyURI\\r\\n    ) external {\\r\\n        require(bytes(companyName).length > 0, \\\"JobBoard: Company name required\\\");\\r\\n        require(bytes(employers[msg.sender].companyName).length == 0, \\\"JobBoard: Already registered\\\");\\r\\n\\r\\n        employers[msg.sender] = Employer({\\r\\n            companyName: companyName,\\r\\n            companyURI: companyURI,\\r\\n            jobsPosted: 0,\\r\\n            registeredAt: block.timestamp\\r\\n        });\\r\\n\\r\\n        totalEmployers++;\\r\\n\\r\\n        emit EmployerRegistered(msg.sender, companyName);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Post a job\\r\\n     */\\r\\n    function postJob(\\r\\n        string calldata title,\\r\\n        string calldata description,\\r\\n        string calldata category,\\r\\n        string calldata location,\\r\\n        string calldata jobType,\\r\\n        uint256 minSalary,\\r\\n        uint256 maxSalary,\\r\\n        string calldata requiredSkills\\r\\n    ) \\r\\n        external \\r\\n        onlyRegisteredEmployer(msg.sender)\\r\\n        returns (uint256)\\r\\n    {\\r\\n        require(bytes(title).length > 0, \\\"JobBoard: Title required\\\");\\r\\n        require(minSalary <= maxSalary, \\\"JobBoard: Invalid salary range\\\");\\r\\n\\r\\n        uint256 jobId = jobCounter++;\\r\\n\\r\\n        jobs[jobId] = Job({\\r\\n            title: title,\\r\\n            description: description,\\r\\n            employer: msg.sender,\\r\\n            category: category,\\r\\n            location: location,\\r\\n            jobType: jobType,\\r\\n            minSalary: minSalary,\\r\\n            maxSalary: maxSalary,\\r\\n            requiredSkills: requiredSkills,\\r\\n            status: \\\"open\\\",\\r\\n            postedAt: block.timestamp,\\r\\n            applicationCount: 0,\\r\\n            acceptedCount: 0,\\r\\n            rejectedCount: 0,\\r\\n            totalRating: 0,\\r\\n            reviewCount: 0\\r\\n        });\\r\\n\\r\\n        employerJobs[msg.sender].push(jobId);\\r\\n        jobsByCategory[category].push(jobId);\\r\\n        jobsByLocation[location].push(jobId);\\r\\n        employers[msg.sender].jobsPosted++;\\r\\n\\r\\n        emit JobPosted(jobId, title, msg.sender, block.timestamp);\\r\\n\\r\\n        return jobId;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Submit job application\\r\\n     */\\r\\n    function applyForJob(\\r\\n        uint256 jobId,\\r\\n        string calldata coverLetter\\r\\n    ) \\r\\n        external \\r\\n        jobExists(jobId)\\r\\n        returns (uint256)\\r\\n    {\\r\\n        require(bytes(coverLetter).length > 0, \\\"JobBoard: Cover letter required\\\");\\r\\n        require(\\r\\n            keccak256(bytes(jobs[jobId].status)) == keccak256(bytes(\\\"open\\\")),\\r\\n            \\\"JobBoard: Job is not open\\\"\\r\\n        );\\r\\n\\r\\n        uint256 applicationId = applicationCounter++;\\r\\n\\r\\n        applications[applicationId] = Application({\\r\\n            applicant: msg.sender,\\r\\n            jobId: jobId,\\r\\n            coverLetter: coverLetter,\\r\\n            status: \\\"submitted\\\",\\r\\n            submittedAt: block.timestamp\\r\\n        });\\r\\n\\r\\n        jobApplications[jobId].push(applicationId);\\r\\n        studentApplications[msg.sender].push(applicationId);\\r\\n        jobs[jobId].applicationCount++;\\r\\n\\r\\n        emit ApplicationSubmitted(jobId, msg.sender, applicationId, block.timestamp);\\r\\n\\r\\n        return applicationId;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Update application status\\r\\n     */\\r\\n    function updateApplicationStatus(\\r\\n        uint256 applicationId,\\r\\n        string calldata status\\r\\n    ) \\r\\n        external \\r\\n        applicationExists(applicationId)\\r\\n    {\\r\\n        Application storage application = applications[applicationId];\\r\\n        require(\\r\\n            msg.sender == jobs[application.jobId].employer || msg.sender == owner(),\\r\\n            \\\"JobBoard: Only job employer can update\\\"\\r\\n        );\\r\\n\\r\\n        application.status = status;\\r\\n\\r\\n        // Update job statistics\\r\\n        if (keccak256(bytes(status)) == keccak256(bytes(\\\"accepted\\\"))) {\\r\\n            jobs[application.jobId].acceptedCount++;\\r\\n        } else if (keccak256(bytes(status)) == keccak256(bytes(\\\"rejected\\\"))) {\\r\\n            jobs[application.jobId].rejectedCount++;\\r\\n        }\\r\\n\\r\\n        emit ApplicationStatusUpdated(applicationId, status);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Update job status\\r\\n     */\\r\\n    function updateJobStatus(uint256 jobId, string calldata status)\\r\\n        external\\r\\n        jobExists(jobId)\\r\\n    {\\r\\n        require(\\r\\n            msg.sender == jobs[jobId].employer || msg.sender == owner(),\\r\\n            \\\"JobBoard: Only job employer can update\\\"\\r\\n        );\\r\\n\\r\\n        jobs[jobId].status = status;\\r\\n\\r\\n        emit JobStatusUpdated(jobId, status);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Submit review\\r\\n     */\\r\\n    function submitReview(\\r\\n        uint256 jobId,\\r\\n        uint256 rating,\\r\\n        string calldata comment\\r\\n    ) \\r\\n        external \\r\\n        jobExists(jobId)\\r\\n    {\\r\\n        require(rating >= 1 && rating <= 5, \\\"JobBoard: Rating must be 1-5\\\");\\r\\n\\r\\n        jobReviews[jobId].push(Review({\\r\\n            reviewer: msg.sender,\\r\\n            rating: rating,\\r\\n            comment: comment,\\r\\n            timestamp: block.timestamp\\r\\n        }));\\r\\n\\r\\n        jobs[jobId].totalRating += rating;\\r\\n        jobs[jobId].reviewCount++;\\r\\n\\r\\n        emit ReviewSubmitted(jobId, msg.sender, rating);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Authorize matching service\\r\\n     */\\r\\n    function authorizeMatchingService(address service) external onlyOwner {\\r\\n        require(service != address(0), \\\"JobBoard: Invalid service address\\\");\\r\\n        authorizedMatchingServices[service] = true;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Revoke matching service\\r\\n     */\\r\\n    function revokeMatchingService(address service) external onlyOwner {\\r\\n        require(service != address(0), \\\"JobBoard: Invalid service address\\\");\\r\\n        authorizedMatchingServices[service] = false;\\r\\n    }\\r\\n\\r\\n    // ============ Query Functions ============\\r\\n    /**\\r\\n     * @notice Get job details\\r\\n     */\\r\\n    function getJobDetails(uint256 jobId)\\r\\n        external\\r\\n        view\\r\\n        jobExists(jobId)\\r\\n        returns (\\r\\n            string memory title,\\r\\n            string memory description,\\r\\n            address employer,\\r\\n            string memory category,\\r\\n            string memory location,\\r\\n            string memory jobType,\\r\\n            uint256 minSalary,\\r\\n            uint256 maxSalary,\\r\\n            string memory requiredSkills,\\r\\n            string memory status,\\r\\n            uint256 postedAt,\\r\\n            uint256 applicationCount\\r\\n        )\\r\\n    {\\r\\n        Job memory job = jobs[jobId];\\r\\n        return (\\r\\n            job.title,\\r\\n            job.description,\\r\\n            job.employer,\\r\\n            job.category,\\r\\n            job.location,\\r\\n            job.jobType,\\r\\n            job.minSalary,\\r\\n            job.maxSalary,\\r\\n            job.requiredSkills,\\r\\n            job.status,\\r\\n            job.postedAt,\\r\\n            job.applicationCount\\r\\n        );\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get application details\\r\\n     */\\r\\n    function getApplicationDetails(uint256 applicationId)\\r\\n        external\\r\\n        view\\r\\n        applicationExists(applicationId)\\r\\n        returns (\\r\\n            address applicant,\\r\\n            uint256 jobId,\\r\\n            string memory coverLetter,\\r\\n            string memory status,\\r\\n            uint256 submittedAt\\r\\n        )\\r\\n    {\\r\\n        Application memory application = applications[applicationId];\\r\\n        return (\\r\\n            application.applicant,\\r\\n            application.jobId,\\r\\n            application.coverLetter,\\r\\n            application.status,\\r\\n            application.submittedAt\\r\\n        );\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get employer info\\r\\n     */\\r\\n    function getEmployerInfo(address employer)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            string memory companyName,\\r\\n            string memory companyURI,\\r\\n            uint256 jobsPosted,\\r\\n            uint256 registeredAt\\r\\n        )\\r\\n    {\\r\\n        Employer memory emp = employers[employer];\\r\\n        return (\\r\\n            emp.companyName,\\r\\n            emp.companyURI,\\r\\n            emp.jobsPosted,\\r\\n            emp.registeredAt\\r\\n        );\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get job applications\\r\\n     */\\r\\n    function getJobApplications(uint256 jobId)\\r\\n        external\\r\\n        view\\r\\n        jobExists(jobId)\\r\\n        returns (uint256[] memory)\\r\\n    {\\r\\n        return jobApplications[jobId];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get student applications\\r\\n     */\\r\\n    function getStudentApplications(address student)\\r\\n        external\\r\\n        view\\r\\n        returns (uint256[] memory)\\r\\n    {\\r\\n        return studentApplications[student];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get employer jobs\\r\\n     */\\r\\n    function getEmployerJobs(address employer)\\r\\n        external\\r\\n        view\\r\\n        returns (uint256[] memory)\\r\\n    {\\r\\n        return employerJobs[employer];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Check if registered employer\\r\\n     */\\r\\n    function isRegisteredEmployer(address employer)\\r\\n        external\\r\\n        view\\r\\n        returns (bool)\\r\\n    {\\r\\n        return bytes(employers[employer].companyName).length > 0;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get job reviews\\r\\n     */\\r\\n    function getJobReviews(uint256 jobId)\\r\\n        external\\r\\n        view\\r\\n        jobExists(jobId)\\r\\n        returns (\\r\\n            address[] memory reviewers,\\r\\n            uint256[] memory ratings,\\r\\n            string[] memory comments,\\r\\n            uint256[] memory timestamps\\r\\n        )\\r\\n    {\\r\\n        Review[] memory reviews = jobReviews[jobId];\\r\\n        uint256 length = reviews.length;\\r\\n\\r\\n        address[] memory rev = new address[](length);\\r\\n        uint256[] memory rat = new uint256[](length);\\r\\n        string[] memory com = new string[](length);\\r\\n        uint256[] memory times = new uint256[](length);\\r\\n\\r\\n        for (uint256 i = 0; i < length; i++) {\\r\\n            rev[i] = reviews[i].reviewer;\\r\\n            rat[i] = reviews[i].rating;\\r\\n            com[i] = reviews[i].comment;\\r\\n            times[i] = reviews[i].timestamp;\\r\\n        }\\r\\n\\r\\n        return (rev, rat, com, times);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get job stats\\r\\n     */\\r\\n    function getJobStats(uint256 jobId)\\r\\n        external\\r\\n        view\\r\\n        jobExists(jobId)\\r\\n        returns (\\r\\n            uint256 applicationCount,\\r\\n            uint256 acceptedCount,\\r\\n            uint256 rejectedCount,\\r\\n            uint256 averageRating\\r\\n        )\\r\\n    {\\r\\n        Job memory job = jobs[jobId];\\r\\n        uint256 avgRating = job.reviewCount > 0 ? (job.totalRating * 100) / job.reviewCount : 0;\\r\\n\\r\\n        return (\\r\\n            job.applicationCount,\\r\\n            job.acceptedCount,\\r\\n            job.rejectedCount,\\r\\n            avgRating\\r\\n        );\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get total jobs\\r\\n     */\\r\\n    function getTotalJobsPosted() external view returns (uint256) {\\r\\n        return jobCounter - 1;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get total applications\\r\\n     */\\r\\n    function getTotalApplications() external view returns (uint256) {\\r\\n        return applicationCounter - 1;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get total employers\\r\\n     */\\r\\n    function getTotalEmployers() external view returns (uint256) {\\r\\n        return totalEmployers;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get jobs by category\\r\\n     */\\r\\n    function getJobsByCategory(string calldata category)\\r\\n        external\\r\\n        view\\r\\n        returns (uint256[] memory)\\r\\n    {\\r\\n        return jobsByCategory[category];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get jobs by location\\r\\n     */\\r\\n    function getJobsByLocation(string calldata location)\\r\\n        external\\r\\n        view\\r\\n        returns (uint256[] memory)\\r\\n    {\\r\\n        return jobsByLocation[location];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get job matches (placeholder for AI matching service)\\r\\n     */\\r\\n    function getJobMatches(address student, uint256 limit)\\r\\n        external\\r\\n        view\\r\\n        onlyMatchingService\\r\\n        returns (uint256[] memory jobIds, uint256[] memory scores)\\r\\n    {\\r\\n        // This would be populated by the matching service\\r\\n        uint256[] memory emptyJobs = new uint256[](0);\\r\\n        uint256[] memory emptyScores = new uint256[](0);\\r\\n        return (emptyJobs, emptyScores);\\r\\n    }\\r\\n}\\r\\n\",\"keccak256\":\"0xb7a77f20d6cf1da9fd085d143ccc36ebfacdf0c7919cfaf69537a2e79acb86f1\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608080604052346100885733156100725760008054336001600160a01b03198216811783556040519290916001600160a01b0316907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09080a36001805560016002556000600d55612db3908161008e8239f35b631e4fbdf760e01b815260006004820152602490fd5b600080fdfe6080604052600436101561001257600080fd5b60003560e01c8063022124d7146126b25780631298298a14612662578063280dbdfb146125eb578063410abcda146125c05780634cac35c61461234357806354b6e5b1146122b4578063581c091b146122895780635f58cb4f1461221257806363fcf512146121c55780636c09a5e314611e0b578063715018a614611db2578063747143b914611d2c5780637796102d14611c4157806384890f33146112265780638ad9cbd114610f885780638da5cb5b14610f5f5780639335cf3714610f415780639d4dd4dd14610be35780639f54b72914610911578063b41dc5121461065e578063bdb42d531461059d578063cc1326f6146104f6578063d4aa7380146103fe578063f067498c146103ba578063f1826780146101c85763f2fde38b1461013a57600080fd5b346101c35760203660031901126101c35761015361289a565b61015b612d7a565b6001600160a01b039081169081156101aa57600054826001600160601b0360a01b821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b604051631e4fbdf760e01b815260006004820152602490fd5b600080fd5b346101c35760203660031901126101c357600435801515806103af575b6101ee90612924565b6000526003602052604060002060405161020781612ad2565b60405161021f816102188186612b7b565b0382612b5a565b8152604051610235816102188160018701612b7b565b602082015260028201546001600160a01b031660408083019190915251610263816102188160038701612b7b565b606082015260405161027c816102188160048701612b7b565b6080820152604051610295816102188160058701612b7b565b60a0820152600682015460c0820152600782015460e08201526040516102c2816102188160088701612b7b565b6101008201526040516102dc816102188160098701612b7b565b610120820152600a820154610140820152600b8201546101608201908152600c830154916101808101928352600d840154906101a081019182526101e0600f600e87015496876101c0850152015491019080825215156000146103a25760648502948086046064149015171561038c575180156103765760809404915b519251905190604051938452602084015260408301526060820152f35b634e487b7160e01b600052601260045260246000fd5b634e487b7160e01b600052601160045260246000fd5b5060809350600091610359565b5060015481106101e5565b346101c35760203660031901126101c3576001600160a01b036103db61289a565b16600052600560205260206103f46040600020546129cb565b1515604051908152f35b346101c35760203660031901126101c357600435801515806104eb575b61042490612d0e565b600052600460205260406000206040519061043e82612aee565b60018060a01b03918282541681526104e1600183015492602083019384526104d36040519561047b876104748160028701612b7b565b0388612b5a565b604085019687526004604051936104a0856104998160038501612b7b565b0386612b5a565b8460608801520154948560808201525116945195516040519687968752602087015260a0604087015260a08601906128e4565b9084820360608601526128e4565b9060808301520390f35b50600254811061041b565b346101c3576020806003193601126101c3576004356001600160401b0381116101c3576105288291369060040161283a565b91908260405193849283378101600a81520301902090604051808383829554938481520190600052836000209260005b858282106105875750505061056f92500383612b5a565b6105836040519282849384528301906128b0565b0390f35b8554845260019586019588955093019201610558565b346101c35760203660031901126101c3576001600160a01b036105be61289a565b1660005260056020526106416040600020604051906105dc82612b09565b6040516105ed816102188185612b7b565b82526040519161060b836106048160018601612b7b565b0384612b5a565b82602082015261064f600360028401549384604085015201549182606082015251936040519586956080875260808701906128e4565b9085820360208701526128e4565b91604084015260608301520390f35b346101c3576020806003193601126101c35760043580151580610906575b61068590612924565b600052600981526040600020805461069c81612cc5565b916106aa6040519384612b5a565b8183526000908152838120848085015b8484106108ae57508480516106ce81612cc5565b906106dc6040519283612b5a565b8082526106e881612cc5565b82850194601f19949185013687376106ff83612cdc565b9561070984612cc5565b936107176040519586612b5a565b8085528661072482612cc5565b0160005b81811061089f57505061073a81612cdc565b9360005b82811061080e575050506040519687956080870190608088525180915260a08701929060005b8181106107ee575050509061077f91868203848801526128b0565b90848203604086015283519182815281810182808560051b8401019601976000925b8584106107bc5788806105838a8a83820360608501526128b0565b919380809799506107da898486600196989a9c030188528c516128e4565b9a01940194019189979593989694916107a1565b82516001600160a01b031685528a98509385019391850191600101610764565b600190818060a09c9697989a9c9b999b1b0361082a8285612d66565b515116610837828d612d66565b52866108438285612d66565b5101516108508287612d66565b52604061085d8285612d66565b51015161086a828c612d66565b52610875818b612d66565b5060606108828285612d66565b51015161088f828b612d66565b520198969493929897959761073e565b60608782018601528401610728565b6001916004916040516108c081612b09565b848060a01b03865416815284860154838201526040516108e7816102188160028b01612b7b565b60408201526003860154606082015281520192019201919085906106ba565b50600154811061067c565b346101c35760603660031901126101c3576001600160401b03602480356004356044358481116101c35761094990369060040161283a565b9082151580610bd8575b61095c90612924565b6001958685101580610bcd575b15610b895783600052602092600984526040600020916109a06040519461098f86612b09565b338652868601938985523691612c40565b91604085019283526060850193428552805490600160401b821015610b74578b8201808255821015610b5f57600052866000209060021b019460018060a01b039051166001600160601b0360a01b86541617855551898501556002840191518051918211610b4a57610a1c82610a1685546129cb565b85612a05565b8599601f8311600114610ae557509080600395969798999a610a5593600092610ada575b50508160011b916000199060031b1c19161790565b90555b519101558160005260038152600e604060002001805490848201809211610ac557907faf71a7027433dabefc3d502cc399357db67ef33c3ebdfefb919e8bd5af322fe39291558260005260038152600f604060002001610ab88154612c31565b90556040519384523393a3005b85634e487b7160e01b60005260116004526000fd5b015190508b80610a40565b9190601f1982169a84600052876000209160005b8d8110610b35575083600398999a9b9c9d10610b1d575b505050811b019055610a58565b015160001983881b60f8161c191690558a8080610b10565b81830151845592850192918901918901610af9565b88634e487b7160e01b60005260416004526000fd5b8a634e487b7160e01b60005260326004526000fd5b8a634e487b7160e01b60005260416004526000fd5b60405162461bcd60e51b815260206004820152601c818801527f4a6f62426f6172643a20526174696e67206d75737420626520312d35000000006044820152606490fd5b506005851115610969565b506001548310610953565b346101c35760403660031901126101c3576001600160401b036004358181116101c357610c1490369060040161283a565b91906024358281116101c357610c2e90369060040161283a565b84919415610efc573360005260209460058652610c4f6040600020546129cb565b610eb757610c789060405192610c6484612b09565b610c6f368688612c40565b84523691612c40565b8582019081526040820190600082526060830195428752336000526005885260406000209351805190828211610e3a57610cbc82610cb688546129cb565b88612a05565b8990601f8311600114610e5057610ceb929160009183610ada5750508160011b916000199060031b1c19161790565b84555b600180850192518051928311610e3a57610d1283610d0c86546129cb565b86612a05565b8991601f8411600114610daa575082600395937f6c0e8aabac6898602e5264c9a24b2394d9895a70bd2f4c44c8ca0fcfcec6477f9a9593610d6993600092610d9f5750508160011b916000199060031b1c19161790565b90555b51600284015551910155610d81600d54612c31565b600d55610d9a6040519283928684523396840191612a5b565b0390a2005b015190508c80610a40565b9190601f198416856000528b600020936000905b8d838310610e2257505050926001928592600398967f6c0e8aabac6898602e5264c9a24b2394d9895a70bd2f4c44c8ca0fcfcec6477f9d989610610e0a575b505050811b019055610d6c565b015160001983891b60f8161c191690558b8080610dfd565b84860151875595810195948501949190910190610dbe565b634e487b7160e01b600052604160045260246000fd5b90601f19831691876000528b6000209260005b8d828210610ea1575050908460019594939210610e88575b505050811b018455610cee565b015160001960f88460031b161c191690558a8080610e7b565b6001859682939686015181550195019301610e63565b60405162461bcd60e51b815260048101879052601c60248201527f4a6f62426f6172643a20416c72656164792072656769737465726564000000006044820152606490fd5b60405162461bcd60e51b815260206004820152601f60248201527f4a6f62426f6172643a20436f6d70616e79206e616d65207265717569726564006044820152606490fd5b346101c35760003660031901126101c3576020600d54604051908152f35b346101c35760003660031901126101c3576000546040516001600160a01b039091168152602090f35b346101c357610f9636612867565b908215158061121b575b610fa990612d0e565b826000526020906004825260406000206001600360018301928354600052818652610fef60018060a01b038060026040600020015416331490811561120d575b50612970565b01906001600160401b038611610e3a576110138661100d84546129cb565b84612a05565b600090601f871160011461117e5750918594939161106d867f982d2f50711b24245cf16c2aeb3f5f7b969553aa8d2b227e40edd3619f83fe5998610d9a96600091611173575b508160011b916000199060031b1c19161790565b90555b7f7d104161c45a3245104f4140c83d1fe11fd80f76a0a34cf58df6d5011f4b287061109c368785612c40565b858151910120671858d8d95c1d195960c21b866040516110bb81612b24565b600881520152036110f4575460005260038352600c6040600020016110e08154612c31565b90555b604051938385948552840191612a5b565b7f5e679716a01be890d854f2c1c5cb5336603215e65ff238044a5b11c586f61c1d611120368785612c40565b858151910120671c995a9958dd195960c21b8660405161113f81612b24565b60088152015214611151575b506110e3565b5460005260038352600d60406000200161116b8154612c31565b90558661114b565b90508501358b611059565b90601f1987168360005286600020926000905b8282106111f65750509187969593917f982d2f50711b24245cf16c2aeb3f5f7b969553aa8d2b227e40edd3619f83fe5998610d9a9694106111dc575b5050600186811b019055611070565b840135600019600389901b60f8161c1916905588806111cd565b878401358555938401939288019290880190611191565b90506000541633148a610fe9565b506002548310610fa0565b346101c3576101003660031901126101c3576004356001600160401b0381116101c35761125790369060040161283a565b906024356001600160401b0381116101c35761127790369060040161283a565b9290916044356001600160401b0381116101c35761129990369060040161283a565b6064929192356001600160401b0381116101c3576112bb90369060040161283a565b916084356001600160401b0381116101c3576112db90369060040161283a565b9060e4356001600160401b0381116101c3576112fb90369060040161283a565b9190923360005260056020526113156040600020546129cb565b15611bf2578915611bad5760c43560a43511611b68576001549a6113388c612c31565b6001556040519c6113488e612ad2565b8d611354368e8d612c40565b9052369061136192612c40565b60208d01523360408d015261137736868b612c40565b60608d0152611387368888612c40565b60808d0152369061139792612c40565b60a08b015260a43560c08b015260c43560e08b015236906113b792612c40565b6101008901526113c5612c11565b610120890152426101408901526101608801600090526101808801600090526101a08801600090526101c08801600090526101e088016000905286600052600360205260406000209488518051906001600160401b038211610e3a576114358261142f8a546129cb565b8a612a05565b602090601f8311600114611afc57611465929160009183610d9f5750508160011b916000199060031b1c19161790565b86555b60208901518051906001600160401b038211610e3a576114988261148f60018b01546129cb565b60018b01612a05565b602090601f8311600114611a8a576114c8929160009183610d9f5750508160011b916000199060031b1c19161790565b60018701555b6002860160018060a01b0360408b0151166001600160601b0360a01b82541617905560608901518051906001600160401b038211610e3a576115208261151760038b01546129cb565b60038b01612a05565b602090601f8311600114611a1857611550929160009183610d9f5750508160011b916000199060031b1c19161790565b60038701555b60808901518051906001600160401b038211610e3a576115868261157d60048b01546129cb565b60048b01612a05565b602090601f83116001146119a6576115b6929160009183610d9f5750508160011b916000199060031b1c19161790565b60048701555b60a08901518051906001600160401b038211610e3a576115ec826115e360058b01546129cb565b60058b01612a05565b602090601f83116001146119345761161c929160009183610d9f5750508160011b916000199060031b1c19161790565b60058701555b60c0890151600687015560e089015160078701556101008901518051906001600160401b038211610e3a576116678261165e60088b01546129cb565b60088b01612a05565b602090601f83116001146118c257611697929160009183610d9f5750508160011b916000199060031b1c19161790565b60088701555b610120890151958651996001600160401b038b11610e3a578a8a986116d460209d6116cb60098701546129cb565b60098701612a05565b8c90601f8311600114611815576117c8968e8c976117f69b97600f6101e07f74004a5a54c19445adf1f172db8769f1bdca0591237196dc5fdaa50d0c4084b09f9d98996117408b879c8f9a9b6117b09c60009261180a5750508160011b916000199060031b1c19161790565b60098501555b610140810151600a850155610160810151600b850155610180810151600c8501556101a0810151600d8501556101c0810151600e85015501519101553360005260088252611798846040600020612c86565b8260405193849283378101600a815203019020612c86565b8260405193849283378101600b815203019020612c86565b336000526005875260026040600020016117e28154612c31565b905560405194604086526040860191612a5b565b9242868201528033940390a3604051908152f35b015190503880610a40565b90600985016000528d6000209160005b601f19851681106118a85750968e8c976117f69b97600f6101e07f74004a5a54c19445adf1f172db8769f1bdca0591237196dc5fdaa50d0c4084b09f9d989960018b6117c89f9a8f9a6117b09c8a9f601f1981161061188f575b505050811b016009850155611746565b015160001960f88460031b161c1916905538808061187f565b8282015184558e9c50600190930192918f01918f01611825565b9190600889016000526020600020906000935b601f1984168510611919576001945083601f19811610611900575b505050811b01600887015561169d565b015160001960f88460031b161c191690558b80806118f0565b818101518355602094850194600190930192909101906118d5565b9190600589016000526020600020906000935b601f198416851061198b576001945083601f19811610611972575b505050811b016005870155611622565b015160001960f88460031b161c191690558b8080611962565b81810151835560209485019460019093019290910190611947565b9190600489016000526020600020906000935b601f19841685106119fd576001945083601f198116106119e4575b505050811b0160048701556115bc565b015160001960f88460031b161c191690558b80806119d4565b818101518355602094850194600190930192909101906119b9565b9190600389016000526020600020906000935b601f1984168510611a6f576001945083601f19811610611a56575b505050811b016003870155611556565b015160001960f88460031b161c191690558b8080611a46565b81810151835560209485019460019093019290910190611a2b565b9190600189016000526020600020906000935b601f1984168510611ae1576001945083601f19811610611ac8575b505050811b0160018701556114ce565b015160001960f88460031b161c191690558b8080611ab8565b81810151835560209485019460019093019290910190611a9d565b9190886000526020600020906000935b601f1984168510611b4d576001945083601f19811610611b34575b505050811b018655611468565b015160001960f88460031b161c191690558b8080611b27565b81810151835560209485019460019093019290910190611b0c565b60405162461bcd60e51b815260206004820152601e60248201527f4a6f62426f6172643a20496e76616c69642073616c6172792072616e676500006044820152606490fd5b60405162461bcd60e51b815260206004820152601860248201527f4a6f62426f6172643a205469746c6520726571756972656400000000000000006044820152606490fd5b60405162461bcd60e51b815260206004820152602160248201527f4a6f62426f6172643a204e6f74207265676973746572656420656d706c6f79656044820152603960f91b6064820152608490fd5b346101c35760403660031901126101c357611c5a61289a565b5033600052600c60205260ff604060002054168015611d18575b15611cc157611cb3604051611c8881612b3f565b60008152610583604051611c9b81612b3f565b600081526040519384936040855260408501906128b0565b9083820360208501526128b0565b60405162461bcd60e51b815260206004820152602960248201527f4a6f62426f6172643a204e6f7420617574686f72697a6564206d61746368696e60448201526867207365727669636560b81b6064820152608490fd5b506000546001600160a01b03163314611c74565b346101c3576020806003193601126101c35760043580151580611da7575b611d5390612924565b60005260068152604060002090604051808383829554938481520190600052836000209260005b85828210611d915750505061056f92500383612b5a565b8554845260019586019588955093019201611d7a565b506001548110611d4a565b346101c35760003660031901126101c357611dcb612d7a565b600080546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b346101c357611e1936612867565b91801515806121ba575b611e2c90612924565b821561217557806000526003602052610218611e55600960406000200160405192838092612b7b565b60208151910120611e64612c11565b60208151910120036121305760025491611e7d83612c31565b600255611ea260405191611e9083612aee565b33835260208301958487523691612c40565b906040810191825260405191611eb783612b24565b60098352681cdd589b5a5d1d195960ba1b60208401526060820192835242608083015284600052600460205260406000209260018060a01b038351166001600160601b0360a01b85541617845560019651878501556002840191519182516001600160401b0393848211610e3a57611f3382610a1685546129cb565b602090601f83116001146120cd57611f63929160009183610ada5750508160011b916000199060031b1c19161790565b90555b51958651918211610e3a57602096611f8e83611f8560038801546129cb565b60038801612a05565b8791601f841160011461205c57508260809360049593611fc4936000926120515750508160011b916000199060031b1c19161790565b60038501555b01519101558060005260068352611fe5826040600020612c86565b3360005260078352611ffb826040600020612c86565b8060005260038352600b6040600020016120158154612c31565b90556040519082825242848301527fc2995a34b85b7a073c64bec2281799f70b766948ee79218351ab700b7cbc48e960403393a3604051908152f35b015190508a80610a40565b929160038601600052886000209160005b601f19851681106120b857509183916080959360049795601f1981161061209f575b505050811b016003850155611fca565b015160001960f88460031b161c1916905589808061208f565b81830151845592850192918a01918a0161206d565b8a9291601f198316918560005260206000209260005b818110612118575084116120ff575b505050811b019055611f66565b015160001960f88460031b161c191690558a80806120f2565b8284015185558e9690940193602093840193016120e3565b60405162461bcd60e51b815260206004820152601960248201527f4a6f62426f6172643a204a6f62206973206e6f74206f70656e000000000000006044820152606490fd5b60405162461bcd60e51b815260206004820152601f60248201527f4a6f62426f6172643a20436f766572206c6574746572207265717569726564006044820152606490fd5b506001548110611e23565b346101c35760203660031901126101c3576121de61289a565b6121e6612d7a565b6001600160a01b03166121fa811515612a7c565b6000908152600c60205260409020805460ff19169055005b346101c3576020806003193601126101c3576001600160a01b0361223461289a565b1660005260088152604060002090604051808383829554938481520190600052836000209260005b858282106122735750505061056f92500383612b5a565b855484526001958601958895509301920161225c565b346101c35760003660031901126101c357600254600019810190811161038c57602090604051908152f35b346101c3576020806003193601126101c3576004356001600160401b0381116101c3576122e68291369060040161283a565b91908260405193849283378101600b81520301902090604051808383829554938481520190600052836000209260005b8582821061232d5750505061056f92500383612b5a565b8554845260019586019588955093019201612316565b346101c35760203660031901126101c357600435801515806125b5575b61236990612924565b600052600360205260406000206040519061238382612ad2565b604051806123918184612b7b565b0361239c9082612b5a565b8252604051806123af8160018501612b7b565b036123ba9082612b5a565b602083015260028101546001600160a01b031660408084019190915251806123e58160038501612b7b565b036123f09082612b5a565b6060830152604051806124068160048501612b7b565b036124119082612b5a565b6080830152604051806124278160058501612b7b565b036124329082612b5a565b60a0830152600681015460c0830152600781015460e08301526040518061245c8160088501612b7b565b036124679082612b5a565b610100830152604051908161247f8160098401612b7b565b0361248a9083612b5a565b81610120840152600a8101549081610140850152600b8101549081610160860152600c810154610180860152600d8101546101a0860152600e8101546101c0860152600f01546101e0850152835192602085015194600160a01b6001900360408201511690606081015190608081015160a08201519060c08301519360e0840151936101000151956040519b8c9b6101808d526101808d0161252b916128e4565b8c810360208e015261253c916128e4565b9060408c01528a810360608c0152612553916128e4565b89810360808b0152612564916128e4565b88810360a08a0152612575916128e4565b9160c088015260e0870152858103610100870152612592916128e4565b8481036101208601526125a4916128e4565b916101408401526101608301520390f35b506001548110612360565b346101c35760003660031901126101c357600154600019810190811161038c57602090604051908152f35b346101c3576020806003193601126101c3576001600160a01b0361260d61289a565b1660005260078152604060002090604051808383829554938481520190600052836000209260005b8582821061264c5750505061056f92500383612b5a565b8554845260019586019588955093019201612635565b346101c35760203660031901126101c35761267b61289a565b612683612d7a565b6001600160a01b0316612697811515612a7c565b6000908152600c60205260409020805460ff19166001179055005b346101c3576126c036612867565b908215158061282f575b6126d390612924565b826000526020906003825261270260018060a01b03806002604060002001541633149081156128215750612970565b836000526003825260096040600020016001600160401b038411610e3a576127348461272e83546129cb565b83612a05565b6000601f85116001146127955791610d9a916110e086807fbf9ac41d1c2658162649fdc7739680f4d624cb2190f611d1a1bdc88d6217abb398979660009161278a57508160011b916000199060031b1c19161790565b90508401358a611059565b601f1985169082600052846000209160005b81811061280a575091610d9a9391877fbf9ac41d1c2658162649fdc7739680f4d624cb2190f611d1a1bdc88d6217abb398979694106127f0575b5050600185811b0190556110e3565b830135600019600388901b60f8161c1916905587806127e1565b9192866001819286890135815501940192016127a7565b905060005416331486610fe9565b5060015483106126ca565b9181601f840112156101c3578235916001600160401b0383116101c357602083818601950101116101c357565b9060406003198301126101c35760043591602435906001600160401b0382116101c3576128969160040161283a565b9091565b600435906001600160a01b03821682036101c357565b90815180825260208080930193019160005b8281106128d0575050505090565b8351855293810193928101926001016128c2565b919082519283825260005b848110612910575050826000602080949584010152601f8019910116010190565b6020818301810151848301820152016128ef565b1561292b57565b60405162461bcd60e51b815260206004820152601c60248201527f4a6f62426f6172643a204a6f6220646f6573206e6f74206578697374000000006044820152606490fd5b1561297757565b60405162461bcd60e51b815260206004820152602660248201527f4a6f62426f6172643a204f6e6c79206a6f6220656d706c6f7965722063616e2060448201526575706461746560d01b6064820152608490fd5b90600182811c921680156129fb575b60208310146129e557565b634e487b7160e01b600052602260045260246000fd5b91607f16916129da565b90601f8111612a1357505050565b6000916000526020600020906020601f850160051c83019410612a51575b601f0160051c01915b828110612a4657505050565b818155600101612a3a565b9092508290612a31565b908060209392818452848401376000828201840152601f01601f1916010190565b15612a8357565b60405162461bcd60e51b815260206004820152602160248201527f4a6f62426f6172643a20496e76616c69642073657276696365206164647265736044820152607360f81b6064820152608490fd5b61020081019081106001600160401b03821117610e3a57604052565b60a081019081106001600160401b03821117610e3a57604052565b608081019081106001600160401b03821117610e3a57604052565b604081019081106001600160401b03821117610e3a57604052565b602081019081106001600160401b03821117610e3a57604052565b90601f801991011681019081106001600160401b03821117610e3a57604052565b805460009392612b8a826129cb565b91828252602093600191600181169081600014612bf25750600114612bb1575b5050505050565b90939495506000929192528360002092846000945b838610612bde57505050500101903880808080612baa565b805485870183015294019385908201612bc6565b60ff19168685015250505090151560051b010191503880808080612baa565b60405190612c1e82612b24565b600482526337b832b760e11b6020830152565b600019811461038c5760010190565b9291926001600160401b038211610e3a5760405191612c69601f8201601f191660200184612b5a565b8294818452818301116101c3578281602093846000960137010152565b805490600160401b821015610e3a5760018201808255821015612caf5760005260206000200155565b634e487b7160e01b600052603260045260246000fd5b6001600160401b038111610e3a5760051b60200190565b90612ce682612cc5565b612cf36040519182612b5a565b8281528092612d04601f1991612cc5565b0190602036910137565b15612d1557565b60405162461bcd60e51b8152602060048201526024808201527f4a6f62426f6172643a204170706c69636174696f6e20646f6573206e6f7420656044820152631e1a5cdd60e21b6064820152608490fd5b8051821015612caf5760209160051b010190565b6000546001600160a01b03163303612d8e57565b60405163118cdaa760e01b8152336004820152602490fdfea164736f6c6343000818000a",
+  "deployedBytecode": "0x6080604052600436101561001257600080fd5b60003560e01c8063022124d7146126b25780631298298a14612662578063280dbdfb146125eb578063410abcda146125c05780634cac35c61461234357806354b6e5b1146122b4578063581c091b146122895780635f58cb4f1461221257806363fcf512146121c55780636c09a5e314611e0b578063715018a614611db2578063747143b914611d2c5780637796102d14611c4157806384890f33146112265780638ad9cbd114610f885780638da5cb5b14610f5f5780639335cf3714610f415780639d4dd4dd14610be35780639f54b72914610911578063b41dc5121461065e578063bdb42d531461059d578063cc1326f6146104f6578063d4aa7380146103fe578063f067498c146103ba578063f1826780146101c85763f2fde38b1461013a57600080fd5b346101c35760203660031901126101c35761015361289a565b61015b612d7a565b6001600160a01b039081169081156101aa57600054826001600160601b0360a01b821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b604051631e4fbdf760e01b815260006004820152602490fd5b600080fd5b346101c35760203660031901126101c357600435801515806103af575b6101ee90612924565b6000526003602052604060002060405161020781612ad2565b60405161021f816102188186612b7b565b0382612b5a565b8152604051610235816102188160018701612b7b565b602082015260028201546001600160a01b031660408083019190915251610263816102188160038701612b7b565b606082015260405161027c816102188160048701612b7b565b6080820152604051610295816102188160058701612b7b565b60a0820152600682015460c0820152600782015460e08201526040516102c2816102188160088701612b7b565b6101008201526040516102dc816102188160098701612b7b565b610120820152600a820154610140820152600b8201546101608201908152600c830154916101808101928352600d840154906101a081019182526101e0600f600e87015496876101c0850152015491019080825215156000146103a25760648502948086046064149015171561038c575180156103765760809404915b519251905190604051938452602084015260408301526060820152f35b634e487b7160e01b600052601260045260246000fd5b634e487b7160e01b600052601160045260246000fd5b5060809350600091610359565b5060015481106101e5565b346101c35760203660031901126101c3576001600160a01b036103db61289a565b16600052600560205260206103f46040600020546129cb565b1515604051908152f35b346101c35760203660031901126101c357600435801515806104eb575b61042490612d0e565b600052600460205260406000206040519061043e82612aee565b60018060a01b03918282541681526104e1600183015492602083019384526104d36040519561047b876104748160028701612b7b565b0388612b5a565b604085019687526004604051936104a0856104998160038501612b7b565b0386612b5a565b8460608801520154948560808201525116945195516040519687968752602087015260a0604087015260a08601906128e4565b9084820360608601526128e4565b9060808301520390f35b50600254811061041b565b346101c3576020806003193601126101c3576004356001600160401b0381116101c3576105288291369060040161283a565b91908260405193849283378101600a81520301902090604051808383829554938481520190600052836000209260005b858282106105875750505061056f92500383612b5a565b6105836040519282849384528301906128b0565b0390f35b8554845260019586019588955093019201610558565b346101c35760203660031901126101c3576001600160a01b036105be61289a565b1660005260056020526106416040600020604051906105dc82612b09565b6040516105ed816102188185612b7b565b82526040519161060b836106048160018601612b7b565b0384612b5a565b82602082015261064f600360028401549384604085015201549182606082015251936040519586956080875260808701906128e4565b9085820360208701526128e4565b91604084015260608301520390f35b346101c3576020806003193601126101c35760043580151580610906575b61068590612924565b600052600981526040600020805461069c81612cc5565b916106aa6040519384612b5a565b8183526000908152838120848085015b8484106108ae57508480516106ce81612cc5565b906106dc6040519283612b5a565b8082526106e881612cc5565b82850194601f19949185013687376106ff83612cdc565b9561070984612cc5565b936107176040519586612b5a565b8085528661072482612cc5565b0160005b81811061089f57505061073a81612cdc565b9360005b82811061080e575050506040519687956080870190608088525180915260a08701929060005b8181106107ee575050509061077f91868203848801526128b0565b90848203604086015283519182815281810182808560051b8401019601976000925b8584106107bc5788806105838a8a83820360608501526128b0565b919380809799506107da898486600196989a9c030188528c516128e4565b9a01940194019189979593989694916107a1565b82516001600160a01b031685528a98509385019391850191600101610764565b600190818060a09c9697989a9c9b999b1b0361082a8285612d66565b515116610837828d612d66565b52866108438285612d66565b5101516108508287612d66565b52604061085d8285612d66565b51015161086a828c612d66565b52610875818b612d66565b5060606108828285612d66565b51015161088f828b612d66565b520198969493929897959761073e565b60608782018601528401610728565b6001916004916040516108c081612b09565b848060a01b03865416815284860154838201526040516108e7816102188160028b01612b7b565b60408201526003860154606082015281520192019201919085906106ba565b50600154811061067c565b346101c35760603660031901126101c3576001600160401b03602480356004356044358481116101c35761094990369060040161283a565b9082151580610bd8575b61095c90612924565b6001958685101580610bcd575b15610b895783600052602092600984526040600020916109a06040519461098f86612b09565b338652868601938985523691612c40565b91604085019283526060850193428552805490600160401b821015610b74578b8201808255821015610b5f57600052866000209060021b019460018060a01b039051166001600160601b0360a01b86541617855551898501556002840191518051918211610b4a57610a1c82610a1685546129cb565b85612a05565b8599601f8311600114610ae557509080600395969798999a610a5593600092610ada575b50508160011b916000199060031b1c19161790565b90555b519101558160005260038152600e604060002001805490848201809211610ac557907faf71a7027433dabefc3d502cc399357db67ef33c3ebdfefb919e8bd5af322fe39291558260005260038152600f604060002001610ab88154612c31565b90556040519384523393a3005b85634e487b7160e01b60005260116004526000fd5b015190508b80610a40565b9190601f1982169a84600052876000209160005b8d8110610b35575083600398999a9b9c9d10610b1d575b505050811b019055610a58565b015160001983881b60f8161c191690558a8080610b10565b81830151845592850192918901918901610af9565b88634e487b7160e01b60005260416004526000fd5b8a634e487b7160e01b60005260326004526000fd5b8a634e487b7160e01b60005260416004526000fd5b60405162461bcd60e51b815260206004820152601c818801527f4a6f62426f6172643a20526174696e67206d75737420626520312d35000000006044820152606490fd5b506005851115610969565b506001548310610953565b346101c35760403660031901126101c3576001600160401b036004358181116101c357610c1490369060040161283a565b91906024358281116101c357610c2e90369060040161283a565b84919415610efc573360005260209460058652610c4f6040600020546129cb565b610eb757610c789060405192610c6484612b09565b610c6f368688612c40565b84523691612c40565b8582019081526040820190600082526060830195428752336000526005885260406000209351805190828211610e3a57610cbc82610cb688546129cb565b88612a05565b8990601f8311600114610e5057610ceb929160009183610ada5750508160011b916000199060031b1c19161790565b84555b600180850192518051928311610e3a57610d1283610d0c86546129cb565b86612a05565b8991601f8411600114610daa575082600395937f6c0e8aabac6898602e5264c9a24b2394d9895a70bd2f4c44c8ca0fcfcec6477f9a9593610d6993600092610d9f5750508160011b916000199060031b1c19161790565b90555b51600284015551910155610d81600d54612c31565b600d55610d9a6040519283928684523396840191612a5b565b0390a2005b015190508c80610a40565b9190601f198416856000528b600020936000905b8d838310610e2257505050926001928592600398967f6c0e8aabac6898602e5264c9a24b2394d9895a70bd2f4c44c8ca0fcfcec6477f9d989610610e0a575b505050811b019055610d6c565b015160001983891b60f8161c191690558b8080610dfd565b84860151875595810195948501949190910190610dbe565b634e487b7160e01b600052604160045260246000fd5b90601f19831691876000528b6000209260005b8d828210610ea1575050908460019594939210610e88575b505050811b018455610cee565b015160001960f88460031b161c191690558a8080610e7b565b6001859682939686015181550195019301610e63565b60405162461bcd60e51b815260048101879052601c60248201527f4a6f62426f6172643a20416c72656164792072656769737465726564000000006044820152606490fd5b60405162461bcd60e51b815260206004820152601f60248201527f4a6f62426f6172643a20436f6d70616e79206e616d65207265717569726564006044820152606490fd5b346101c35760003660031901126101c3576020600d54604051908152f35b346101c35760003660031901126101c3576000546040516001600160a01b039091168152602090f35b346101c357610f9636612867565b908215158061121b575b610fa990612d0e565b826000526020906004825260406000206001600360018301928354600052818652610fef60018060a01b038060026040600020015416331490811561120d575b50612970565b01906001600160401b038611610e3a576110138661100d84546129cb565b84612a05565b600090601f871160011461117e5750918594939161106d867f982d2f50711b24245cf16c2aeb3f5f7b969553aa8d2b227e40edd3619f83fe5998610d9a96600091611173575b508160011b916000199060031b1c19161790565b90555b7f7d104161c45a3245104f4140c83d1fe11fd80f76a0a34cf58df6d5011f4b287061109c368785612c40565b858151910120671858d8d95c1d195960c21b866040516110bb81612b24565b600881520152036110f4575460005260038352600c6040600020016110e08154612c31565b90555b604051938385948552840191612a5b565b7f5e679716a01be890d854f2c1c5cb5336603215e65ff238044a5b11c586f61c1d611120368785612c40565b858151910120671c995a9958dd195960c21b8660405161113f81612b24565b60088152015214611151575b506110e3565b5460005260038352600d60406000200161116b8154612c31565b90558661114b565b90508501358b611059565b90601f1987168360005286600020926000905b8282106111f65750509187969593917f982d2f50711b24245cf16c2aeb3f5f7b969553aa8d2b227e40edd3619f83fe5998610d9a9694106111dc575b5050600186811b019055611070565b840135600019600389901b60f8161c1916905588806111cd565b878401358555938401939288019290880190611191565b90506000541633148a610fe9565b506002548310610fa0565b346101c3576101003660031901126101c3576004356001600160401b0381116101c35761125790369060040161283a565b906024356001600160401b0381116101c35761127790369060040161283a565b9290916044356001600160401b0381116101c35761129990369060040161283a565b6064929192356001600160401b0381116101c3576112bb90369060040161283a565b916084356001600160401b0381116101c3576112db90369060040161283a565b9060e4356001600160401b0381116101c3576112fb90369060040161283a565b9190923360005260056020526113156040600020546129cb565b15611bf2578915611bad5760c43560a43511611b68576001549a6113388c612c31565b6001556040519c6113488e612ad2565b8d611354368e8d612c40565b9052369061136192612c40565b60208d01523360408d015261137736868b612c40565b60608d0152611387368888612c40565b60808d0152369061139792612c40565b60a08b015260a43560c08b015260c43560e08b015236906113b792612c40565b6101008901526113c5612c11565b610120890152426101408901526101608801600090526101808801600090526101a08801600090526101c08801600090526101e088016000905286600052600360205260406000209488518051906001600160401b038211610e3a576114358261142f8a546129cb565b8a612a05565b602090601f8311600114611afc57611465929160009183610d9f5750508160011b916000199060031b1c19161790565b86555b60208901518051906001600160401b038211610e3a576114988261148f60018b01546129cb565b60018b01612a05565b602090601f8311600114611a8a576114c8929160009183610d9f5750508160011b916000199060031b1c19161790565b60018701555b6002860160018060a01b0360408b0151166001600160601b0360a01b82541617905560608901518051906001600160401b038211610e3a576115208261151760038b01546129cb565b60038b01612a05565b602090601f8311600114611a1857611550929160009183610d9f5750508160011b916000199060031b1c19161790565b60038701555b60808901518051906001600160401b038211610e3a576115868261157d60048b01546129cb565b60048b01612a05565b602090601f83116001146119a6576115b6929160009183610d9f5750508160011b916000199060031b1c19161790565b60048701555b60a08901518051906001600160401b038211610e3a576115ec826115e360058b01546129cb565b60058b01612a05565b602090601f83116001146119345761161c929160009183610d9f5750508160011b916000199060031b1c19161790565b60058701555b60c0890151600687015560e089015160078701556101008901518051906001600160401b038211610e3a576116678261165e60088b01546129cb565b60088b01612a05565b602090601f83116001146118c257611697929160009183610d9f5750508160011b916000199060031b1c19161790565b60088701555b610120890151958651996001600160401b038b11610e3a578a8a986116d460209d6116cb60098701546129cb565b60098701612a05565b8c90601f8311600114611815576117c8968e8c976117f69b97600f6101e07f74004a5a54c19445adf1f172db8769f1bdca0591237196dc5fdaa50d0c4084b09f9d98996117408b879c8f9a9b6117b09c60009261180a5750508160011b916000199060031b1c19161790565b60098501555b610140810151600a850155610160810151600b850155610180810151600c8501556101a0810151600d8501556101c0810151600e85015501519101553360005260088252611798846040600020612c86565b8260405193849283378101600a815203019020612c86565b8260405193849283378101600b815203019020612c86565b336000526005875260026040600020016117e28154612c31565b905560405194604086526040860191612a5b565b9242868201528033940390a3604051908152f35b015190503880610a40565b90600985016000528d6000209160005b601f19851681106118a85750968e8c976117f69b97600f6101e07f74004a5a54c19445adf1f172db8769f1bdca0591237196dc5fdaa50d0c4084b09f9d989960018b6117c89f9a8f9a6117b09c8a9f601f1981161061188f575b505050811b016009850155611746565b015160001960f88460031b161c1916905538808061187f565b8282015184558e9c50600190930192918f01918f01611825565b9190600889016000526020600020906000935b601f1984168510611919576001945083601f19811610611900575b505050811b01600887015561169d565b015160001960f88460031b161c191690558b80806118f0565b818101518355602094850194600190930192909101906118d5565b9190600589016000526020600020906000935b601f198416851061198b576001945083601f19811610611972575b505050811b016005870155611622565b015160001960f88460031b161c191690558b8080611962565b81810151835560209485019460019093019290910190611947565b9190600489016000526020600020906000935b601f19841685106119fd576001945083601f198116106119e4575b505050811b0160048701556115bc565b015160001960f88460031b161c191690558b80806119d4565b818101518355602094850194600190930192909101906119b9565b9190600389016000526020600020906000935b601f1984168510611a6f576001945083601f19811610611a56575b505050811b016003870155611556565b015160001960f88460031b161c191690558b8080611a46565b81810151835560209485019460019093019290910190611a2b565b9190600189016000526020600020906000935b601f1984168510611ae1576001945083601f19811610611ac8575b505050811b0160018701556114ce565b015160001960f88460031b161c191690558b8080611ab8565b81810151835560209485019460019093019290910190611a9d565b9190886000526020600020906000935b601f1984168510611b4d576001945083601f19811610611b34575b505050811b018655611468565b015160001960f88460031b161c191690558b8080611b27565b81810151835560209485019460019093019290910190611b0c565b60405162461bcd60e51b815260206004820152601e60248201527f4a6f62426f6172643a20496e76616c69642073616c6172792072616e676500006044820152606490fd5b60405162461bcd60e51b815260206004820152601860248201527f4a6f62426f6172643a205469746c6520726571756972656400000000000000006044820152606490fd5b60405162461bcd60e51b815260206004820152602160248201527f4a6f62426f6172643a204e6f74207265676973746572656420656d706c6f79656044820152603960f91b6064820152608490fd5b346101c35760403660031901126101c357611c5a61289a565b5033600052600c60205260ff604060002054168015611d18575b15611cc157611cb3604051611c8881612b3f565b60008152610583604051611c9b81612b3f565b600081526040519384936040855260408501906128b0565b9083820360208501526128b0565b60405162461bcd60e51b815260206004820152602960248201527f4a6f62426f6172643a204e6f7420617574686f72697a6564206d61746368696e60448201526867207365727669636560b81b6064820152608490fd5b506000546001600160a01b03163314611c74565b346101c3576020806003193601126101c35760043580151580611da7575b611d5390612924565b60005260068152604060002090604051808383829554938481520190600052836000209260005b85828210611d915750505061056f92500383612b5a565b8554845260019586019588955093019201611d7a565b506001548110611d4a565b346101c35760003660031901126101c357611dcb612d7a565b600080546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b346101c357611e1936612867565b91801515806121ba575b611e2c90612924565b821561217557806000526003602052610218611e55600960406000200160405192838092612b7b565b60208151910120611e64612c11565b60208151910120036121305760025491611e7d83612c31565b600255611ea260405191611e9083612aee565b33835260208301958487523691612c40565b906040810191825260405191611eb783612b24565b60098352681cdd589b5a5d1d195960ba1b60208401526060820192835242608083015284600052600460205260406000209260018060a01b038351166001600160601b0360a01b85541617845560019651878501556002840191519182516001600160401b0393848211610e3a57611f3382610a1685546129cb565b602090601f83116001146120cd57611f63929160009183610ada5750508160011b916000199060031b1c19161790565b90555b51958651918211610e3a57602096611f8e83611f8560038801546129cb565b60038801612a05565b8791601f841160011461205c57508260809360049593611fc4936000926120515750508160011b916000199060031b1c19161790565b60038501555b01519101558060005260068352611fe5826040600020612c86565b3360005260078352611ffb826040600020612c86565b8060005260038352600b6040600020016120158154612c31565b90556040519082825242848301527fc2995a34b85b7a073c64bec2281799f70b766948ee79218351ab700b7cbc48e960403393a3604051908152f35b015190508a80610a40565b929160038601600052886000209160005b601f19851681106120b857509183916080959360049795601f1981161061209f575b505050811b016003850155611fca565b015160001960f88460031b161c1916905589808061208f565b81830151845592850192918a01918a0161206d565b8a9291601f198316918560005260206000209260005b818110612118575084116120ff575b505050811b019055611f66565b015160001960f88460031b161c191690558a80806120f2565b8284015185558e9690940193602093840193016120e3565b60405162461bcd60e51b815260206004820152601960248201527f4a6f62426f6172643a204a6f62206973206e6f74206f70656e000000000000006044820152606490fd5b60405162461bcd60e51b815260206004820152601f60248201527f4a6f62426f6172643a20436f766572206c6574746572207265717569726564006044820152606490fd5b506001548110611e23565b346101c35760203660031901126101c3576121de61289a565b6121e6612d7a565b6001600160a01b03166121fa811515612a7c565b6000908152600c60205260409020805460ff19169055005b346101c3576020806003193601126101c3576001600160a01b0361223461289a565b1660005260088152604060002090604051808383829554938481520190600052836000209260005b858282106122735750505061056f92500383612b5a565b855484526001958601958895509301920161225c565b346101c35760003660031901126101c357600254600019810190811161038c57602090604051908152f35b346101c3576020806003193601126101c3576004356001600160401b0381116101c3576122e68291369060040161283a565b91908260405193849283378101600b81520301902090604051808383829554938481520190600052836000209260005b8582821061232d5750505061056f92500383612b5a565b8554845260019586019588955093019201612316565b346101c35760203660031901126101c357600435801515806125b5575b61236990612924565b600052600360205260406000206040519061238382612ad2565b604051806123918184612b7b565b0361239c9082612b5a565b8252604051806123af8160018501612b7b565b036123ba9082612b5a565b602083015260028101546001600160a01b031660408084019190915251806123e58160038501612b7b565b036123f09082612b5a565b6060830152604051806124068160048501612b7b565b036124119082612b5a565b6080830152604051806124278160058501612b7b565b036124329082612b5a565b60a0830152600681015460c0830152600781015460e08301526040518061245c8160088501612b7b565b036124679082612b5a565b610100830152604051908161247f8160098401612b7b565b0361248a9083612b5a565b81610120840152600a8101549081610140850152600b8101549081610160860152600c810154610180860152600d8101546101a0860152600e8101546101c0860152600f01546101e0850152835192602085015194600160a01b6001900360408201511690606081015190608081015160a08201519060c08301519360e0840151936101000151956040519b8c9b6101808d526101808d0161252b916128e4565b8c810360208e015261253c916128e4565b9060408c01528a810360608c0152612553916128e4565b89810360808b0152612564916128e4565b88810360a08a0152612575916128e4565b9160c088015260e0870152858103610100870152612592916128e4565b8481036101208601526125a4916128e4565b916101408401526101608301520390f35b506001548110612360565b346101c35760003660031901126101c357600154600019810190811161038c57602090604051908152f35b346101c3576020806003193601126101c3576001600160a01b0361260d61289a565b1660005260078152604060002090604051808383829554938481520190600052836000209260005b8582821061264c5750505061056f92500383612b5a565b8554845260019586019588955093019201612635565b346101c35760203660031901126101c35761267b61289a565b612683612d7a565b6001600160a01b0316612697811515612a7c565b6000908152600c60205260409020805460ff19166001179055005b346101c3576126c036612867565b908215158061282f575b6126d390612924565b826000526020906003825261270260018060a01b03806002604060002001541633149081156128215750612970565b836000526003825260096040600020016001600160401b038411610e3a576127348461272e83546129cb565b83612a05565b6000601f85116001146127955791610d9a916110e086807fbf9ac41d1c2658162649fdc7739680f4d624cb2190f611d1a1bdc88d6217abb398979660009161278a57508160011b916000199060031b1c19161790565b90508401358a611059565b601f1985169082600052846000209160005b81811061280a575091610d9a9391877fbf9ac41d1c2658162649fdc7739680f4d624cb2190f611d1a1bdc88d6217abb398979694106127f0575b5050600185811b0190556110e3565b830135600019600388901b60f8161c1916905587806127e1565b9192866001819286890135815501940192016127a7565b905060005416331486610fe9565b5060015483106126ca565b9181601f840112156101c3578235916001600160401b0383116101c357602083818601950101116101c357565b9060406003198301126101c35760043591602435906001600160401b0382116101c3576128969160040161283a565b9091565b600435906001600160a01b03821682036101c357565b90815180825260208080930193019160005b8281106128d0575050505090565b8351855293810193928101926001016128c2565b919082519283825260005b848110612910575050826000602080949584010152601f8019910116010190565b6020818301810151848301820152016128ef565b1561292b57565b60405162461bcd60e51b815260206004820152601c60248201527f4a6f62426f6172643a204a6f6220646f6573206e6f74206578697374000000006044820152606490fd5b1561297757565b60405162461bcd60e51b815260206004820152602660248201527f4a6f62426f6172643a204f6e6c79206a6f6220656d706c6f7965722063616e2060448201526575706461746560d01b6064820152608490fd5b90600182811c921680156129fb575b60208310146129e557565b634e487b7160e01b600052602260045260246000fd5b91607f16916129da565b90601f8111612a1357505050565b6000916000526020600020906020601f850160051c83019410612a51575b601f0160051c01915b828110612a4657505050565b818155600101612a3a565b9092508290612a31565b908060209392818452848401376000828201840152601f01601f1916010190565b15612a8357565b60405162461bcd60e51b815260206004820152602160248201527f4a6f62426f6172643a20496e76616c69642073657276696365206164647265736044820152607360f81b6064820152608490fd5b61020081019081106001600160401b03821117610e3a57604052565b60a081019081106001600160401b03821117610e3a57604052565b608081019081106001600160401b03821117610e3a57604052565b604081019081106001600160401b03821117610e3a57604052565b602081019081106001600160401b03821117610e3a57604052565b90601f801991011681019081106001600160401b03821117610e3a57604052565b805460009392612b8a826129cb565b91828252602093600191600181169081600014612bf25750600114612bb1575b5050505050565b90939495506000929192528360002092846000945b838610612bde57505050500101903880808080612baa565b805485870183015294019385908201612bc6565b60ff19168685015250505090151560051b010191503880808080612baa565b60405190612c1e82612b24565b600482526337b832b760e11b6020830152565b600019811461038c5760010190565b9291926001600160401b038211610e3a5760405191612c69601f8201601f191660200184612b5a565b8294818452818301116101c3578281602093846000960137010152565b805490600160401b821015610e3a5760018201808255821015612caf5760005260206000200155565b634e487b7160e01b600052603260045260246000fd5b6001600160401b038111610e3a5760051b60200190565b90612ce682612cc5565b612cf36040519182612b5a565b8281528092612d04601f1991612cc5565b0190602036910137565b15612d1557565b60405162461bcd60e51b8152602060048201526024808201527f4a6f62426f6172643a204170706c69636174696f6e20646f6573206e6f7420656044820152631e1a5cdd60e21b6064820152608490fd5b8051821015612caf5760209160051b010190565b6000546001600160a01b03163303612d8e57565b60405163118cdaa760e01b8152336004820152602490fdfea164736f6c6343000818000a",
+  "devdoc": {
+    "details": "Job board and career opportunities system for students",
+    "errors": {
+      "OwnableInvalidOwner(address)": [
+        {
+          "details": "The owner is not a valid owner account. (eg. `address(0)`)"
+        }
+      ],
+      "OwnableUnauthorizedAccount(address)": [
+        {
+          "details": "The caller account is not authorized to perform an operation."
+        }
+      ]
+    },
+    "kind": "dev",
+    "methods": {
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "title": "JobBoard",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "applyForJob(uint256,string)": {
+        "notice": "Submit job application"
+      },
+      "authorizeMatchingService(address)": {
+        "notice": "Authorize matching service"
+      },
+      "getApplicationDetails(uint256)": {
+        "notice": "Get application details"
+      },
+      "getEmployerInfo(address)": {
+        "notice": "Get employer info"
+      },
+      "getEmployerJobs(address)": {
+        "notice": "Get employer jobs"
+      },
+      "getJobApplications(uint256)": {
+        "notice": "Get job applications"
+      },
+      "getJobDetails(uint256)": {
+        "notice": "Get job details"
+      },
+      "getJobMatches(address,uint256)": {
+        "notice": "Get job matches (placeholder for AI matching service)"
+      },
+      "getJobReviews(uint256)": {
+        "notice": "Get job reviews"
+      },
+      "getJobStats(uint256)": {
+        "notice": "Get job stats"
+      },
+      "getJobsByCategory(string)": {
+        "notice": "Get jobs by category"
+      },
+      "getJobsByLocation(string)": {
+        "notice": "Get jobs by location"
+      },
+      "getStudentApplications(address)": {
+        "notice": "Get student applications"
+      },
+      "getTotalApplications()": {
+        "notice": "Get total applications"
+      },
+      "getTotalEmployers()": {
+        "notice": "Get total employers"
+      },
+      "getTotalJobsPosted()": {
+        "notice": "Get total jobs"
+      },
+      "isRegisteredEmployer(address)": {
+        "notice": "Check if registered employer"
+      },
+      "postJob(string,string,string,string,string,uint256,uint256,string)": {
+        "notice": "Post a job"
+      },
+      "registerEmployer(string,string)": {
+        "notice": "Register as employer"
+      },
+      "revokeMatchingService(address)": {
+        "notice": "Revoke matching service"
+      },
+      "submitReview(uint256,uint256,string)": {
+        "notice": "Submit review"
+      },
+      "updateApplicationStatus(uint256,string)": {
+        "notice": "Update application status"
+      },
+      "updateJobStatus(uint256,string)": {
+        "notice": "Update job status"
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 8,
+        "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 565,
+        "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+        "label": "jobCounter",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 567,
+        "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+        "label": "applicationCounter",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 572,
+        "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+        "label": "jobs",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_uint256,t_struct(Job)534_storage)"
+      },
+      {
+        "astId": 577,
+        "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+        "label": "applications",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_mapping(t_uint256,t_struct(Application)545_storage)"
+      },
+      {
+        "astId": 582,
+        "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+        "label": "employers",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_mapping(t_address,t_struct(Employer)554_storage)"
+      },
+      {
+        "astId": 587,
+        "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+        "label": "jobApplications",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_mapping(t_uint256,t_array(t_uint256)dyn_storage)"
+      },
+      {
+        "astId": 592,
+        "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+        "label": "studentApplications",
+        "offset": 0,
+        "slot": "7",
+        "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)"
+      },
+      {
+        "astId": 597,
+        "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+        "label": "employerJobs",
+        "offset": 0,
+        "slot": "8",
+        "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)"
+      },
+      {
+        "astId": 603,
+        "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+        "label": "jobReviews",
+        "offset": 0,
+        "slot": "9",
+        "type": "t_mapping(t_uint256,t_array(t_struct(Review)563_storage)dyn_storage)"
+      },
+      {
+        "astId": 608,
+        "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+        "label": "jobsByCategory",
+        "offset": 0,
+        "slot": "10",
+        "type": "t_mapping(t_string_memory_ptr,t_array(t_uint256)dyn_storage)"
+      },
+      {
+        "astId": 613,
+        "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+        "label": "jobsByLocation",
+        "offset": 0,
+        "slot": "11",
+        "type": "t_mapping(t_string_memory_ptr,t_array(t_uint256)dyn_storage)"
+      },
+      {
+        "astId": 617,
+        "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+        "label": "authorizedMatchingServices",
+        "offset": 0,
+        "slot": "12",
+        "type": "t_mapping(t_address,t_bool)"
+      },
+      {
+        "astId": 619,
+        "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+        "label": "totalEmployers",
+        "offset": 0,
+        "slot": "13",
+        "type": "t_uint256"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_struct(Review)563_storage)dyn_storage": {
+        "base": "t_struct(Review)563_storage",
+        "encoding": "dynamic_array",
+        "label": "struct JobBoard.Review[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_uint256)dyn_storage": {
+        "base": "t_uint256",
+        "encoding": "dynamic_array",
+        "label": "uint256[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => uint256[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_uint256)dyn_storage"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_address,t_struct(Employer)554_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => struct JobBoard.Employer)",
+        "numberOfBytes": "32",
+        "value": "t_struct(Employer)554_storage"
+      },
+      "t_mapping(t_string_memory_ptr,t_array(t_uint256)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_string_memory_ptr",
+        "label": "mapping(string => uint256[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_uint256)dyn_storage"
+      },
+      "t_mapping(t_uint256,t_array(t_struct(Review)563_storage)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct JobBoard.Review[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_struct(Review)563_storage)dyn_storage"
+      },
+      "t_mapping(t_uint256,t_array(t_uint256)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => uint256[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_uint256)dyn_storage"
+      },
+      "t_mapping(t_uint256,t_struct(Application)545_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct JobBoard.Application)",
+        "numberOfBytes": "32",
+        "value": "t_struct(Application)545_storage"
+      },
+      "t_mapping(t_uint256,t_struct(Job)534_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct JobBoard.Job)",
+        "numberOfBytes": "32",
+        "value": "t_struct(Job)534_storage"
+      },
+      "t_string_memory_ptr": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_string_storage": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_struct(Application)545_storage": {
+        "encoding": "inplace",
+        "label": "struct JobBoard.Application",
+        "members": [
+          {
+            "astId": 536,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "applicant",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address"
+          },
+          {
+            "astId": 538,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "jobId",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 540,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "coverLetter",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 542,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "status",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 544,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "submittedAt",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "160"
+      },
+      "t_struct(Employer)554_storage": {
+        "encoding": "inplace",
+        "label": "struct JobBoard.Employer",
+        "members": [
+          {
+            "astId": 547,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "companyName",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 549,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "companyURI",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 551,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "jobsPosted",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 553,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "registeredAt",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "128"
+      },
+      "t_struct(Job)534_storage": {
+        "encoding": "inplace",
+        "label": "struct JobBoard.Job",
+        "members": [
+          {
+            "astId": 503,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "title",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 505,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "description",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 507,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "employer",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_address"
+          },
+          {
+            "astId": 509,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "category",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 511,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "location",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 513,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "jobType",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 515,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "minSalary",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 517,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "maxSalary",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 519,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "requiredSkills",
+            "offset": 0,
+            "slot": "8",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 521,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "status",
+            "offset": 0,
+            "slot": "9",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 523,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "postedAt",
+            "offset": 0,
+            "slot": "10",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 525,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "applicationCount",
+            "offset": 0,
+            "slot": "11",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 527,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "acceptedCount",
+            "offset": 0,
+            "slot": "12",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 529,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "rejectedCount",
+            "offset": 0,
+            "slot": "13",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 531,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "totalRating",
+            "offset": 0,
+            "slot": "14",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 533,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "reviewCount",
+            "offset": 0,
+            "slot": "15",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "512"
+      },
+      "t_struct(Review)563_storage": {
+        "encoding": "inplace",
+        "label": "struct JobBoard.Review",
+        "members": [
+          {
+            "astId": 556,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "reviewer",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address"
+          },
+          {
+            "astId": 558,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "rating",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 560,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "comment",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 562,
+            "contract": "contracts/modules/013-job-board/JobBoard.sol:JobBoard",
+            "label": "timestamp",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "128"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

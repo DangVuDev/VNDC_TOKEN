@@ -33,7 +33,11 @@ export interface ContractAddresses {
   researchPlatform: string;
   auditingSystem: string;
   analyticsDashboard: string;
+  dataMigration: string;
   internalExchange: string;
+  marketplace: string;
+  stakingPool: string;
+  fundraising: string;
 }
 
 const EMPTY_CONTRACTS: ContractAddresses = {
@@ -60,7 +64,11 @@ const EMPTY_CONTRACTS: ContractAddresses = {
   researchPlatform: '',
   auditingSystem: '',
   analyticsDashboard: '',
+  dataMigration: '',
   internalExchange: '',
+  marketplace: '',
+  stakingPool: '',
+  fundraising: '',
 };
 
 export const NETWORKS: Record<number, NetworkConfig> = {
@@ -93,15 +101,48 @@ export const NETWORKS: Record<number, NetworkConfig> = {
       researchPlatform: '0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0',
       auditingSystem: '0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82',
       analyticsDashboard: '0x0B306BF915C4d645ff596e518fAf3F9669b97016',
+      dataMigration: '',
       internalExchange: '',
+      marketplace: '',
+      stakingPool: '',
+      fundraising: '',
     },
   },
   11155111: {
     chainId: 11155111,
     name: 'Sepolia Testnet',
-    rpcUrl: 'https://rpc.sepolia.org',
+    rpcUrl: 'https://1rpc.io/sepolia',
     explorer: 'https://sepolia.etherscan.io',
-    contracts: { ...EMPTY_CONTRACTS },
+    contracts: {
+      vndc: '0x682053A38Dfaae87a6c3e469C61aC798B2a3aD48',
+      registry: '0x7d16b0e9dC98a976F008f5606eE26Bba50FDe2c1',
+      accessControl: '0x69d2F6cD1B6a3E4A273C003DcFf0CDA0CEb1cE65',
+      credentialVerification: '0x2F73B53C805A90C1BB407726c704637C5dC19284',
+      credentialNFT: '0x706Ca9875Ca5bE5214413d1741c38976BBC38c71',
+      academicReward: '0x59D093AF84dD99fe20817075C52527855b8dFB9b',
+      academicBadgeNFT: '0x78d380eeBe479660b37e772Db0404bE62D200851',
+      extracurricularReward: '0x2ec4Cf8Abfb952Eb3d5844C72925Ebe9FBa70B9e',
+      paymentProcessor: '0xe5AA2b90aC87F4271982E26e3D8Be46014f6b30e',
+      merchantRegistry: '0x3e33EFe8cBBb65561d1253FEC9295833cF5D714c',
+      studentRecordManager: '0x319EE1f8094c9fa5E39cB0643A90aDAC18f37bE2',
+      studentDAO: '0x5eCF36478E3989705972775E1A443F53c7c43532',
+      governanceToken: '0x8d05155aA9bAeD9862e44fa5697612B9a21eD2A7',
+      studentIDToken: '0xeeef6d62c071B31C02FA8234a704a3Db9341596F',
+      certificationSystem: '0x5Ec6441A93ff6F505F779468F0bd12F79Ee03D40',
+      scholarshipManager: '0x50Db8937caC9b1D254055438b398a409F9250E03',
+      alumniRegistry: '0xC41EE8f2953d1c8aBa093a591857474a08716636',
+      reputationBadge: '0x4C906f2bC9Cc6Fd0536DB3b6D9962C0819f79C4c',
+      jobBoard: '0xfB0E0143Fc5b83b9809aCa6ae7eD040568d1e116',
+      internshipManager: '0xf41DC2c98852144ec0D7EcEF74D4256BaDdF4460',
+      researchPlatform: '0x6e2B4a19c44623b63379c35F1643fc076765f936',
+      auditingSystem: '0x4AF9eAA67Dc5c5BC9B75f9F0e525aCcAE3A857f5',
+      analyticsDashboard: '0xb32B60D65f20c24d2885FC472D57A4439c4b3061',
+      dataMigration: '0x3d1AD1ebdac6a86C692865C6B5C274EdB57e9445',
+      internalExchange: '',
+      marketplace: '0x4E4721f966F454007127b7f4D049f22961D91596',
+      stakingPool: '0xcbC39F0BF0585A11a86F3391d09D1F18f0b01F40',
+      fundraising: '0x8413712C5C4EeC5a000DB328B50D1Bf738532fEC',
+    },
   },
   137: {
     chainId: 137,
@@ -112,7 +153,7 @@ export const NETWORKS: Record<number, NetworkConfig> = {
   },
 };
 
-export const DEFAULT_CHAIN_ID = 31337;
+export const DEFAULT_CHAIN_ID = 11155111;
 
 export function getContractAddress(chainId: number, contract: keyof ContractAddresses): string {
   return NETWORKS[chainId]?.contracts[contract] ?? '';

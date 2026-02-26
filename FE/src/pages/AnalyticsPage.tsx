@@ -1,192 +1,196 @@
-import { useState, useEffect } from 'react';
-import { BarChart3, Activity, Users, DollarSign, TrendingUp, Clock, Layers, Database } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+import { useState, useEffect, useCallback } from 'react';
+import { BarChart3, Plus, FileText, Loader2 } from 'lucide-react';
+import Modal from '@/components/ui/Modal';
+import EmptyState from '@/components/ui/EmptyState';
+import { useWeb3 } from '@/contexts/Web3Context';
 import { useAnalyticsDashboard } from '@/hooks/useContracts';
+import { useContractAction } from '@/hooks/useContractAction';
+import { formatDate, formatNumber, shortenAddress } from '@/lib/utils';
 
-const txData = [
-  { name: 'T1', tx: 120, users: 45 },
-  { name: 'T2', tx: 180, users: 62 },
-  { name: 'T3', tx: 250, users: 78 },
-  { name: 'T4', tx: 310, users: 95 },
-  { name: 'T5', tx: 280, users: 88 },
-  { name: 'T6', tx: 420, users: 120 },
-  { name: 'T7', tx: 380, users: 110 },
-  { name: 'T8', tx: 510, users: 145 },
-  { name: 'T9', tx: 460, users: 132 },
-  { name: 'T10', tx: 580, users: 160 },
-  { name: 'T11', tx: 620, users: 175 },
-  { name: 'T12', tx: 700, users: 200 },
-];
-
-const moduleData = [
-  { name: 'Token', value: 2500 },
-  { name: 'Credentials', value: 1800 },
-  { name: 'Payments', value: 1200 },
-  { name: 'Governance', value: 800 },
-  { name: 'Jobs', value: 600 },
-  { name: 'Others', value: 1100 },
-];
-
-const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#06b6d4', '#8b5cf6'];
-
-const gasData = [
-  { name: 'Mon', avg: 25, max: 45 },
-  { name: 'Tue', avg: 30, max: 52 },
-  { name: 'Wed', avg: 22, max: 38 },
-  { name: 'Thu', avg: 35, max: 60 },
-  { name: 'Fri', avg: 28, max: 48 },
-  { name: 'Sat', avg: 18, max: 30 },
-  { name: 'Sun', avg: 15, max: 25 },
-];
+interface Metrics { totalUsers: number; totalTransactions: number; totalVolume: number; metricTimestamp: number; }
+interface UserAnalytics { activityScore: number; engagementLevel: number; lastActivityTime: number; }
+interface Report { id: number; reportType: string; dataHash: string; generatedAt: number; }
 
 export default function AnalyticsPage() {
+  const { address } = useWeb3();
   const analytics = useAnalyticsDashboard();
+  const { isLoading, execute } = useContractAction();
+
+  const [metrics, setMetrics] = useState<Metrics | null>(null);
+  const [userAnalytics, setUserAnalytics] = useState<UserAnalytics | null>(null);
+  const [reports, setReports] = useState<Report[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showGenerate, setShowGenerate] = useState(false);
+  const [showUpdate, setShowUpdate] = useState(false);
+  const [showTrack, setShowTrack] = useState(false);
+  const [genForm, setGenForm] = useState({ reportType: '', dataHash: '' });
+  const [updateForm, setUpdateForm] = useState({ totalUsers: '', totalTransactions: '', totalVolume: '' });
+  const [trackForm, setTrackForm] = useState({ user: '', activityScore: '', engagementLevel: '' });
+
+  const loadData = useCallback(async () => {
+    if (!analytics) return;
+    setLoading(true);
+    try {
+      try {
+        const m = await analytics.getLatestMetrics();
+        setMetrics({ totalUsers: Number(m.totalUsers), totalTransactions: Number(m.totalTransactions), totalVolume: Number(m.totalVolume), metricTimestamp: Number(m.metricTimestamp) });
+      } catch {}
+
+      if (address) {
+        try {
+          const ua = await analytics.getUserAnalytics(address);
+          setUserAnalytics({ activityScore: Number(ua.activityScore), engagementLevel: Number(ua.engagementLevel), lastActivityTime: Number(ua.lastActivityTime) });
+        } catch {}
+      }
+
+      const totalReports = await analytics.getTotalReports().catch(() => 0n);
+      const rList: Report[] = [];
+      for (let i = 1; i <= Number(totalReports); i++) {
+        try {
+          const r = await analytics.getReportDetails(i);
+          rList.push({ id: i, reportType: r.reportType, dataHash: r.dataHash, generatedAt: Number(r.generatedAt) });
+        } catch {}
+      }
+      setReports(rList);
+    } catch {}
+    setLoading(false);
+  }, [analytics, address]);
+
+  useEffect(() => { loadData(); }, [loadData]);
+
+  const handleGenerate = () => execute(
+    async () => {
+      if (!analytics) throw new Error('Contract not available');
+      return analytics.generateReport(genForm.reportType, genForm.dataHash);
+    },
+    { successMessage: 'Báo cáo đã được tạo!', onSuccess: () => { setShowGenerate(false); loadData(); } }
+  );
+
+  const handleUpdate = () => execute(
+    async () => {
+      if (!analytics) throw new Error('Contract not available');
+      return analytics.updateMetrics(Number(updateForm.totalUsers), Number(updateForm.totalTransactions), Number(updateForm.totalVolume));
+    },
+    { successMessage: 'Metrics đã cập nhật!', onSuccess: () => { setShowUpdate(false); loadData(); } }
+  );
+
+  const handleTrack = () => execute(
+    async () => {
+      if (!analytics) throw new Error('Contract not available');
+      return analytics.trackUserActivity(trackForm.user, Number(trackForm.activityScore), Number(trackForm.engagementLevel));
+    },
+    { successMessage: 'Activity đã ghi nhận!', onSuccess: () => { setShowTrack(false); loadData(); } }
+  );
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center">
-          <BarChart3 size={20} className="text-brand-600" />
-        </div>
-        <div>
-          <h1 className="text-xl font-bold text-surface-800">Phân tích</h1>
-          <p className="text-sm text-surface-500">Thống kê hệ thống, biểu đồ và metrics on-chain</p>
-        </div>
-      </div>
-
-      {/* Inline Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: 'Tổng giao dịch', value: '8,000', sub: '+12.5%' },
-          { label: 'Người dùng', value: '200', sub: '+8.3%' },
-          { label: 'Volume (VNDC)', value: '1.2M', sub: '+15.2%' },
-          { label: 'Contracts', value: '18', sub: '' },
-        ].map(s => (
-          <div key={s.label} className="card p-4">
-            <p className="text-xs text-surface-500">{s.label}</p>
-            <p className="text-2xl font-bold text-surface-800">{s.value}</p>
-            {s.sub && <p className="text-xs text-success-600">{s.sub}</p>}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center"><BarChart3 size={20} className="text-brand-600" /></div>
+          <div>
+            <h1 className="text-xl font-bold text-surface-800">Phân tích</h1>
+            <p className="text-sm text-surface-500">Thống kê hệ thống & báo cáo on-chain</p>
           </div>
-        ))}
+        </div>
+        <div className="flex gap-2">
+          <button className="btn-ghost btn-sm" onClick={() => setShowUpdate(true)}>Cập nhật</button>
+          <button className="btn-ghost btn-sm" onClick={() => setShowTrack(true)}>Track</button>
+          <button className="btn-primary btn-sm" onClick={() => setShowGenerate(true)}><Plus size={14} /> Tạo báo cáo</button>
+        </div>
       </div>
 
-      {/* Transactions & Users Chart */}
-      <div className="card">
-        <h3 className="text-base font-semibold text-surface-800 mb-4">Giao dịch & Người dùng theo tháng</h3>
-        <div className="h-72">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={txData}>
-                    <defs>
-                      <linearGradient id="txGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
-                      </linearGradient>
-                      <linearGradient id="userGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis dataKey="name" stroke="#64748b" fontSize={12} />
-                    <YAxis stroke="#64748b" fontSize={12} />
-                    <Tooltip contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '12px', fontSize: '12px', color: '#374151' }} />
-                    <Area type="monotone" dataKey="tx" stroke="#6366f1" fill="url(#txGrad)" strokeWidth={2} name="Giao dịch" />
-                    <Area type="monotone" dataKey="users" stroke="#10b981" fill="url(#userGrad)" strokeWidth={2} name="Người dùng" />
-                  </AreaChart>
-                </ResponsiveContainer>
+      {loading ? (
+        <div className="card text-center py-12"><Loader2 size={24} className="animate-spin mx-auto text-brand-600 mb-2" /><p className="text-sm text-surface-500">Đang tải...</p></div>
+      ) : (
+        <>
+          {/* System Metrics */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { label: 'Người dùng', value: metrics ? formatNumber(metrics.totalUsers) : '0', cls: 'text-brand-600' },
+              { label: 'Giao dịch', value: metrics ? formatNumber(metrics.totalTransactions) : '0', cls: 'text-info-600' },
+              { label: 'Volume', value: metrics ? formatNumber(metrics.totalVolume) : '0', cls: 'text-success-600' },
+              { label: 'Cập nhật lần cuối', value: metrics && metrics.metricTimestamp ? formatDate(metrics.metricTimestamp) : '-', cls: 'text-warning-600' },
+            ].map(s => (
+              <div key={s.label} className="card p-4">
+                <p className="text-xs text-surface-500">{s.label}</p>
+                <p className={`text-2xl font-bold ${s.cls}`}>{s.value}</p>
               </div>
-      </div>
+            ))}
+          </div>
 
-      {/* Quick Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {[
-                { label: 'Avg. Block Time', value: '2.1s', icon: Clock },
-                { label: 'Total Volume', value: '1,245,000 VNDC', icon: DollarSign },
-                { label: 'Success Rate', value: '99.2%', icon: TrendingUp },
-              ].map(m => {
-                const Icon = m.icon;
-                return (
-                  <div key={m.label} className="card text-center">
-                    <Icon size={20} className="text-brand-600 mx-auto mb-2" />
-                    <p className="text-xl font-bold text-surface-800">{m.value}</p>
-                    <p className="text-xs text-surface-500">{m.label}</p>
-                  </div>
-                );
-              })}
-      </div>
-
-      {/* Module Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="card">
-              <h3 className="text-base font-semibold text-surface-800 mb-4">Giao dịch theo Module</h3>
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie data={moduleData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={2} dataKey="value">
-                      {moduleData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
-                    </Pie>
-                    <Tooltip contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '12px', fontSize: '12px', color: '#374151' }} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="flex flex-wrap gap-3 justify-center mt-2">
-                {moduleData.map((m, i) => (
-                  <div key={m.name} className="flex items-center gap-1.5 text-xs">
-                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
-                    <span className="text-surface-500">{m.name}: {m.value}</span>
-                  </div>
-                ))}
+          {/* User Analytics */}
+          {userAnalytics && (
+            <div>
+              <h2 className="text-base font-semibold text-surface-800 mb-3">Phân tích người dùng</h2>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="card text-center py-4">
+                  <p className="text-2xl font-bold text-brand-600">{userAnalytics.activityScore}</p>
+                  <p className="text-xs text-surface-500">Activity Score</p>
+                </div>
+                <div className="card text-center py-4">
+                  <p className="text-2xl font-bold text-info-600">{userAnalytics.engagementLevel}</p>
+                  <p className="text-xs text-surface-500">Engagement Level</p>
+                </div>
+                <div className="card text-center py-4">
+                  <p className="text-lg font-bold text-success-600">{userAnalytics.lastActivityTime ? formatDate(userAnalytics.lastActivityTime) : '-'}</p>
+                  <p className="text-xs text-surface-500">Last Activity</p>
+                </div>
               </div>
             </div>
-            <div className="card">
-              <h3 className="text-base font-semibold text-surface-800 mb-4">Module Performance</h3>
+          )}
+
+          {/* Reports */}
+          <div>
+            <h2 className="text-base font-semibold text-surface-800 mb-3">Báo cáo ({reports.length})</h2>
+            {reports.length === 0 ? (
+              <EmptyState lucideIcon={FileText} title="Chưa có báo cáo" description="Tạo báo cáo phân tích đầu tiên" />
+            ) : (
               <div className="space-y-3">
-                {moduleData.map((m, i) => (
-                  <div key={m.name}>
-                    <div className="flex justify-between text-xs mb-1">
-                      <span className="text-surface-500">{m.name}</span>
-                      <span className="text-surface-800 font-medium">{m.value} tx</span>
-                    </div>
-                    <div className="h-2 bg-surface-100 rounded-full overflow-hidden">
-                      <div className="h-full rounded-full transition-all" style={{ width: `${(m.value / 2500) * 100}%`, backgroundColor: COLORS[i % COLORS.length] }} />
+                {reports.map(r => (
+                  <div key={r.id} className="card card-hover">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-sm font-semibold text-surface-800">#{r.id} — {r.reportType}</h3>
+                        <p className="text-xs text-surface-500">{r.generatedAt ? formatDate(r.generatedAt) : ''}</p>
+                      </div>
+                      <p className="text-[10px] text-surface-400 break-all max-w-[200px]">{r.dataHash}</p>
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
-      </div>
+            )}
+          </div>
+        </>
+      )}
 
-      {/* Gas Usage */}
-      <div className="card">
-            <h3 className="text-base font-semibold text-surface-800 mb-4">Gas Usage (7 ngày)</h3>
-            <div className="h-72">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={gasData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis dataKey="name" stroke="#64748b" fontSize={12} />
-                  <YAxis stroke="#64748b" fontSize={12} />
-                  <Tooltip contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #e5e7eb', borderRadius: '12px', fontSize: '12px', color: '#374151' }} />
-                  <Bar dataKey="avg" fill="#6366f1" radius={[4, 4, 0, 0]} name="Avg Gas (gwei)" />
-                  <Bar dataKey="max" fill="#6366f130" radius={[4, 4, 0, 0]} name="Max Gas (gwei)" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="grid grid-cols-3 gap-4 mt-4">
-              <div className="p-3 rounded-xl bg-surface-50 text-center">
-                <p className="text-lg font-bold text-surface-800">24.7</p>
-                <p className="text-xs text-surface-500">Avg Gas (gwei)</p>
-              </div>
-              <div className="p-3 rounded-xl bg-surface-50 text-center">
-                <p className="text-lg font-bold text-surface-800">60</p>
-                <p className="text-xs text-surface-500">Peak Gas (gwei)</p>
-              </div>
-              <div className="p-3 rounded-xl bg-surface-50 text-center">
-                <p className="text-lg font-bold text-surface-800">$12.50</p>
-                <p className="text-xs text-surface-500">Total Gas Cost</p>
-              </div>
-            </div>
-      </div>
+      {/* Generate Report Modal */}
+      <Modal open={showGenerate} onClose={() => setShowGenerate(false)} title="Tạo báo cáo"
+        footer={<button className="btn-primary" onClick={handleGenerate} disabled={isLoading}>{isLoading ? 'Đang tạo...' : 'Tạo báo cáo'}</button>}>
+        <div className="space-y-4">
+          <div><label className="label">Loại báo cáo</label><input className="input" placeholder="monthly, quarterly..." value={genForm.reportType} onChange={e => setGenForm(f => ({ ...f, reportType: e.target.value }))} /></div>
+          <div><label className="label">Data Hash (IPFS)</label><input className="input" placeholder="QmXyz..." value={genForm.dataHash} onChange={e => setGenForm(f => ({ ...f, dataHash: e.target.value }))} /></div>
+        </div>
+      </Modal>
+
+      {/* Update Metrics Modal */}
+      <Modal open={showUpdate} onClose={() => setShowUpdate(false)} title="Cập nhật Metrics"
+        footer={<button className="btn-primary" onClick={handleUpdate} disabled={isLoading}>{isLoading ? 'Đang cập nhật...' : 'Cập nhật'}</button>}>
+        <div className="space-y-4">
+          <div><label className="label">Total Users</label><input className="input" type="number" placeholder="200" value={updateForm.totalUsers} onChange={e => setUpdateForm(f => ({ ...f, totalUsers: e.target.value }))} /></div>
+          <div><label className="label">Total Transactions</label><input className="input" type="number" placeholder="8000" value={updateForm.totalTransactions} onChange={e => setUpdateForm(f => ({ ...f, totalTransactions: e.target.value }))} /></div>
+          <div><label className="label">Total Volume</label><input className="input" type="number" placeholder="1200000" value={updateForm.totalVolume} onChange={e => setUpdateForm(f => ({ ...f, totalVolume: e.target.value }))} /></div>
+        </div>
+      </Modal>
+
+      {/* Track User Activity Modal */}
+      <Modal open={showTrack} onClose={() => setShowTrack(false)} title="Ghi nhận hoạt động"
+        footer={<button className="btn-primary" onClick={handleTrack} disabled={isLoading}>{isLoading ? 'Đang ghi...' : 'Ghi nhận'}</button>}>
+        <div className="space-y-4">
+          <div><label className="label">Địa chỉ người dùng</label><input className="input" placeholder="0x..." value={trackForm.user} onChange={e => setTrackForm(f => ({ ...f, user: e.target.value }))} /></div>
+          <div><label className="label">Activity Score</label><input className="input" type="number" placeholder="100" value={trackForm.activityScore} onChange={e => setTrackForm(f => ({ ...f, activityScore: e.target.value }))} /></div>
+          <div><label className="label">Engagement Level</label><input className="input" type="number" placeholder="5" value={trackForm.engagementLevel} onChange={e => setTrackForm(f => ({ ...f, engagementLevel: e.target.value }))} /></div>
+        </div>
+      </Modal>
     </div>
   );
 }

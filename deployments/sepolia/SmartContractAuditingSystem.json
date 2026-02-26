@@ -1,0 +1,563 @@
+{
+  "address": "0x4AF9eAA67Dc5c5BC9B75f9F0e525aCcAE3A857f5",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "auditId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "criticalIssues",
+          "type": "uint256"
+        }
+      ],
+      "name": "AuditCompleted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "auditId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "contract_",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "auditor",
+          "type": "address"
+        }
+      ],
+      "name": "AuditCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "auditId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "reportHash",
+          "type": "string"
+        }
+      ],
+      "name": "AuditReportSubmitted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "auditor",
+          "type": "address"
+        }
+      ],
+      "name": "authorizeAuditor",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "contractAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "criticalIssues",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "mediumIssues",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lowIssues",
+          "type": "uint256"
+        }
+      ],
+      "name": "createAudit",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "auditId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getAuditDetails",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "contractAddr",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "auditor",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "status",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "criticalIssues",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "mediumIssues",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lowIssues",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalAudits",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "auditId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "reportHash",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "findings",
+          "type": "string"
+        }
+      ],
+      "name": "submitReport",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x685955bfeef6770546059625c2de3b0c48196cb601262fa4c826cfc61061669d",
+  "receipt": {
+    "to": null,
+    "from": "0x7EFf82613404AE7Bce622EA1C927214E30F2285e",
+    "contractAddress": "0x4AF9eAA67Dc5c5BC9B75f9F0e525aCcAE3A857f5",
+    "transactionIndex": 57,
+    "gasUsed": "789213",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000800000000100000000000000040000000000000000000000000000000000000000000000000080000000000000000000000000000000001001000000000000000000000000000000000000020000000000000000000800000000200000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000004000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x40115ad5ebba554d6fc1320b34c44acdb8335a5257b153598160c66876a9b948",
+    "transactionHash": "0x685955bfeef6770546059625c2de3b0c48196cb601262fa4c826cfc61061669d",
+    "logs": [
+      {
+        "transactionIndex": 57,
+        "blockNumber": 10337743,
+        "transactionHash": "0x685955bfeef6770546059625c2de3b0c48196cb601262fa4c826cfc61061669d",
+        "address": "0x4AF9eAA67Dc5c5BC9B75f9F0e525aCcAE3A857f5",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x0000000000000000000000007eff82613404ae7bce622ea1c927214e30f2285e"
+        ],
+        "data": "0x",
+        "logIndex": 103,
+        "blockHash": "0x40115ad5ebba554d6fc1320b34c44acdb8335a5257b153598160c66876a9b948"
+      }
+    ],
+    "blockNumber": 10337743,
+    "cumulativeGasUsed": "6224876",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "5f00d4c9402f980f96140ab3f200c928",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"auditId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"criticalIssues\",\"type\":\"uint256\"}],\"name\":\"AuditCompleted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"auditId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"contract_\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"auditor\",\"type\":\"address\"}],\"name\":\"AuditCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"auditId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"reportHash\",\"type\":\"string\"}],\"name\":\"AuditReportSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"auditor\",\"type\":\"address\"}],\"name\":\"authorizeAuditor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"contractAddress\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"criticalIssues\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"mediumIssues\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lowIssues\",\"type\":\"uint256\"}],\"name\":\"createAudit\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"auditId\",\"type\":\"uint256\"}],\"name\":\"getAuditDetails\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"contractAddr\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"auditor\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"status\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"criticalIssues\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"mediumIssues\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lowIssues\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalAudits\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"auditId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"reportHash\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"findings\",\"type\":\"string\"}],\"name\":\"submitReport\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Module 016: Smart contract auditing and verification\",\"errors\":{\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}]},\"kind\":\"dev\",\"methods\":{\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"title\":\"SmartContractAuditingSystem\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/modules/016-auditing/SmartContractAuditingSystem.sol\":\"SmartContractAuditingSystem\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"none\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {Context} from \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * The initial owner is set to the address provided by the deployer. This can\\n * later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    /**\\n     * @dev The caller account is not authorized to perform an operation.\\n     */\\n    error OwnableUnauthorizedAccount(address account);\\n\\n    /**\\n     * @dev The owner is not a valid owner account. (eg. `address(0)`)\\n     */\\n    error OwnableInvalidOwner(address owner);\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the address provided by the deployer as the initial owner.\\n     */\\n    constructor(address initialOwner) {\\n        if (initialOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(initialOwner);\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        if (owner() != _msgSender()) {\\n            revert OwnableUnauthorizedAccount(_msgSender());\\n        }\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby disabling any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        if (newOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    function _contextSuffixLength() internal view virtual returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\"},\"contracts/modules/016-auditing/SmartContractAuditingSystem.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.24;\\r\\n\\r\\nimport {Ownable} from \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\r\\n\\r\\n/**\\r\\n * @title SmartContractAuditingSystem\\r\\n * @dev Module 016: Smart contract auditing and verification\\r\\n */\\r\\ncontract SmartContractAuditingSystem is Ownable {\\r\\n    struct Audit {\\r\\n        uint256 auditId;\\r\\n        address contractAddress;\\r\\n        address auditor;\\r\\n        string status;\\r\\n        uint256 auditDate;\\r\\n        uint256 criticalIssues;\\r\\n        uint256 mediumIssues;\\r\\n        uint256 lowIssues;\\r\\n    }\\r\\n\\r\\n    struct AuditReport {\\r\\n        uint256 auditId;\\r\\n        string reportHash;\\r\\n        string findings;\\r\\n        uint256 timestamp;\\r\\n    }\\r\\n\\r\\n    uint256 private auditCounter;\\r\\n    mapping(uint256 => Audit) private audits;\\r\\n    mapping(uint256 => AuditReport) private reports;\\r\\n    mapping(address => bool) private authorizedAuditors;\\r\\n    mapping(address => uint256[]) private contractAudits;\\r\\n\\r\\n    event AuditCreated(uint256 indexed auditId, address indexed contract_, address indexed auditor);\\r\\n    event AuditReportSubmitted(uint256 indexed auditId, string reportHash);\\r\\n    event AuditCompleted(uint256 indexed auditId, uint256 criticalIssues);\\r\\n\\r\\n    constructor() Ownable(msg.sender) {\\r\\n        auditCounter = 1;\\r\\n        authorizedAuditors[msg.sender] = true;\\r\\n    }\\r\\n\\r\\n    function authorizeAuditor(address auditor) external onlyOwner {\\r\\n        authorizedAuditors[auditor] = true;\\r\\n    }\\r\\n\\r\\n    function createAudit(\\r\\n        address contractAddress,\\r\\n        uint256 criticalIssues,\\r\\n        uint256 mediumIssues,\\r\\n        uint256 lowIssues\\r\\n    ) external returns (uint256) {\\r\\n        require(authorizedAuditors[msg.sender], \\\"Not authorized auditor\\\");\\r\\n        \\r\\n        uint256 auditId = auditCounter++;\\r\\n        audits[auditId] = Audit({\\r\\n            auditId: auditId,\\r\\n            contractAddress: contractAddress,\\r\\n            auditor: msg.sender,\\r\\n            status: \\\"in_progress\\\",\\r\\n            auditDate: block.timestamp,\\r\\n            criticalIssues: criticalIssues,\\r\\n            mediumIssues: mediumIssues,\\r\\n            lowIssues: lowIssues\\r\\n        });\\r\\n\\r\\n        contractAudits[contractAddress].push(auditId);\\r\\n        emit AuditCreated(auditId, contractAddress, msg.sender);\\r\\n        return auditId;\\r\\n    }\\r\\n\\r\\n    function submitReport(\\r\\n        uint256 auditId,\\r\\n        string calldata reportHash,\\r\\n        string calldata findings\\r\\n    ) external {\\r\\n        require(audits[auditId].auditor == msg.sender, \\\"Not audit owner\\\");\\r\\n        \\r\\n        reports[auditId] = AuditReport({\\r\\n            auditId: auditId,\\r\\n            reportHash: reportHash,\\r\\n            findings: findings,\\r\\n            timestamp: block.timestamp\\r\\n        });\\r\\n\\r\\n        audits[auditId].status = \\\"completed\\\";\\r\\n        emit AuditReportSubmitted(auditId, reportHash);\\r\\n        emit AuditCompleted(auditId, audits[auditId].criticalIssues);\\r\\n    }\\r\\n\\r\\n    function getAuditDetails(uint256 auditId)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            address contractAddr,\\r\\n            address auditor,\\r\\n            string memory status,\\r\\n            uint256 criticalIssues,\\r\\n            uint256 mediumIssues,\\r\\n            uint256 lowIssues\\r\\n        )\\r\\n    {\\r\\n        Audit memory audit = audits[auditId];\\r\\n        return (\\r\\n            audit.contractAddress,\\r\\n            audit.auditor,\\r\\n            audit.status,\\r\\n            audit.criticalIssues,\\r\\n            audit.mediumIssues,\\r\\n            audit.lowIssues\\r\\n        );\\r\\n    }\\r\\n\\r\\n    function getTotalAudits() external view returns (uint256) {\\r\\n        return auditCounter - 1;\\r\\n    }\\r\\n}\\r\\n\",\"keccak256\":\"0x6d9974597c172801c94bf88a6e41d5e366a6b5561a5f0969ca5d32cdd4c65eeb\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x6080806040523461009557331561007f5760008054336001600160a01b0319821681178355604080519390929091906001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08380a360018055338152600460205220600160ff19825416179055610c0d908161009b8239f35b631e4fbdf760e01b815260006004820152602490fd5b600080fdfe6080604052600436101561001257600080fd5b60003560e01c8063715018a614610a195780638da5cb5b146109f0578063964c5123146107215780639cb65039146106dc578063a58704c5146102fe578063b1ccbc0a14610148578063f2fde38b146100ba5763f73642dc1461007457600080fd5b346100b55760003660031901126100b557600154600019810190811161009f57602090604051908152f35b634e487b7160e01b600052601160045260246000fd5b600080fd5b346100b55760203660031901126100b5576100d3610a72565b6100db610bd4565b6001600160a01b0390811690811561012f57600054826bffffffffffffffffffffffff60a01b821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b604051631e4fbdf760e01b815260006004820152602490fd5b346100b55760203660031901126100b557600435600052600260205260406000206040519061017682610ab6565b805482526001808201546001600160a01b039081166020850152600283015416604080850191909152516003830180549193928491600091906101b885610af5565b80855294600181169081156102da5750600114610298575b50506101e192509492940383610ad3565b816060820152600483015460808201526005830154918260a083015260076006850154948560c085015201548060e084015260018060a01b0360208401511692604060018060a01b0391015116946040519586948552602085015260c060408501528251928360c086015260005b84811061028057505060e09460008685870101526060850152608084015260a0830152601f80199101168101030190f35b602082820181015160e08a840101528896500161024f565b6000908152602081209092505b8483106102bf57506101e1935050810160200186806101d0565b81935090816020925483858a010152019101909185926102a5565b915050602092506101e194915060ff191682840152151560051b82010186806101d0565b346100b55760603660031901126100b55767ffffffffffffffff6024358181116100b557610330903690600401610a88565b906044358381116100b557610349903690600401610a88565b9093600435600052600260205260018060a01b036002604060002001541633036106a55760405194608086019086821083831117610612576103a7916040526004358752610398368787610b8d565b93602088019485523691610b8d565b6040860152426060860152600435600052600360205260406000209185518355518051908282116106125781906103ee826103e56001880154610af5565b60018801610b46565b602090601f831160011461063357600092610628575b50508160011b916000199060031b1c19161760018301555b60408501518051918211610612576104448261043b6002860154610af5565b60028601610b46565b602090601f831160011461057c5795826003936060937f65aaa63c7e238c45905869b3da55ebbd0abbe0f6a8eb99eac437e941302959119899600092610571575b50508160011b9160001990861b1c19161760028501555b0151910155600435600052600260205260036040600020016104be8154610af5565b601f811161054f575b5060126818dbdb5c1b195d195960ba1b019055826040519160208352816020840152604083013760006040848301015260408160043594601f80199101168101030190a260043560005260026020526005604060002001546040519081527fdc1e6407cb902c85f8825fe5afb1b7619ebc9320cdb38adc1dcc6d573d1a29b8602060043592a2005b61056b9082600052601f6020600020910160051c810190610b2f565b846104c7565b015190508980610485565b906002840160005260206000209160005b601f19851681106105fa5750836060937f65aaa63c7e238c45905869b3da55ebbd0abbe0f6a8eb99eac437e94130295911989993600193600397601f198116106105e2575b505050811b01600285015561049c565b015160001983881b60f8161c191690558980806105d2565b9192602060018192868501518155019401920161058d565b634e487b7160e01b600052604160045260246000fd5b015190508780610404565b9250600185016000526020600020906000935b601f198416851061068a576001945083601f19811610610671575b505050811b01600183015561041c565b015160001960f88460031b161c19169055878080610661565b81810151835560209485019460019093019290910190610646565b60405162461bcd60e51b815260206004820152600f60248201526e2737ba1030bab234ba1037bbb732b960891b6044820152606490fd5b346100b55760203660031901126100b5576106f5610a72565b6106fd610bd4565b6001600160a01b03166000908152600460205260409020805460ff19166001179055005b346100b55760803660031901126100b55761073a610a72565b33600052600460205260ff60406000205416156109b257600154600019811461009f57600181016001556040519061077182610ab6565b8082526020820160018060a01b0392838516825260408101338152604051604081019167ffffffffffffffff928281108482111761061257604052600b82526a696e5f70726f677265737360a81b60208301526060840191825242608085015260243560a085015260443560c085015260643560e0850152856000526002602052604060002094845186558760018701915116906bffffffffffffffffffffffff60a01b918282541617905587600287019251169082541617905551805191821161061257610850826108476003870154610af5565b60038701610b46565b602090601f831160011461093d5791806007949260e094600092610932575b50508160011b916000199060031b1c19161760038501555b6080810151600485015560a0810151600585015560c081015160068501550151910155818316600052600560205260406000209283549368010000000000000000851015610612576001850180825585101561091c57602094839160005285600020015560405192339116827f74d6b58aed22ac3fed75bcd9cbc819e5c9b85d455cd852a0a862a7b75a927bb7600080a48152f35b634e487b7160e01b600052603260045260246000fd5b01519050898061086f565b906003850160005260206000209160005b601f198516811061099a5750926007949260019260e09583601f19811610610981575b505050811b016003850155610887565b015160001960f88460031b161c19169055898080610971565b9192602060018192868501518155019401920161094e565b60405162461bcd60e51b81526020600482015260166024820152752737ba1030baba3437b934bd32b21030bab234ba37b960511b6044820152606490fd5b346100b55760003660031901126100b5576000546040516001600160a01b039091168152602090f35b346100b55760003660031901126100b557610a32610bd4565b600080546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b600435906001600160a01b03821682036100b557565b9181601f840112156100b55782359167ffffffffffffffff83116100b557602083818601950101116100b557565b610100810190811067ffffffffffffffff82111761061257604052565b90601f8019910116810190811067ffffffffffffffff82111761061257604052565b90600182811c92168015610b25575b6020831014610b0f57565b634e487b7160e01b600052602260045260246000fd5b91607f1691610b04565b818110610b3a575050565b60008155600101610b2f565b9190601f8111610b5557505050565b610b81926000526020600020906020601f840160051c83019310610b83575b601f0160051c0190610b2f565b565b9091508190610b74565b92919267ffffffffffffffff82116106125760405191610bb7601f8201601f191660200184610ad3565b8294818452818301116100b5578281602093846000960137010152565b6000546001600160a01b03163303610be857565b60405163118cdaa760e01b8152336004820152602490fdfea164736f6c6343000818000a",
+  "deployedBytecode": "0x6080604052600436101561001257600080fd5b60003560e01c8063715018a614610a195780638da5cb5b146109f0578063964c5123146107215780639cb65039146106dc578063a58704c5146102fe578063b1ccbc0a14610148578063f2fde38b146100ba5763f73642dc1461007457600080fd5b346100b55760003660031901126100b557600154600019810190811161009f57602090604051908152f35b634e487b7160e01b600052601160045260246000fd5b600080fd5b346100b55760203660031901126100b5576100d3610a72565b6100db610bd4565b6001600160a01b0390811690811561012f57600054826bffffffffffffffffffffffff60a01b821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b604051631e4fbdf760e01b815260006004820152602490fd5b346100b55760203660031901126100b557600435600052600260205260406000206040519061017682610ab6565b805482526001808201546001600160a01b039081166020850152600283015416604080850191909152516003830180549193928491600091906101b885610af5565b80855294600181169081156102da5750600114610298575b50506101e192509492940383610ad3565b816060820152600483015460808201526005830154918260a083015260076006850154948560c085015201548060e084015260018060a01b0360208401511692604060018060a01b0391015116946040519586948552602085015260c060408501528251928360c086015260005b84811061028057505060e09460008685870101526060850152608084015260a0830152601f80199101168101030190f35b602082820181015160e08a840101528896500161024f565b6000908152602081209092505b8483106102bf57506101e1935050810160200186806101d0565b81935090816020925483858a010152019101909185926102a5565b915050602092506101e194915060ff191682840152151560051b82010186806101d0565b346100b55760603660031901126100b55767ffffffffffffffff6024358181116100b557610330903690600401610a88565b906044358381116100b557610349903690600401610a88565b9093600435600052600260205260018060a01b036002604060002001541633036106a55760405194608086019086821083831117610612576103a7916040526004358752610398368787610b8d565b93602088019485523691610b8d565b6040860152426060860152600435600052600360205260406000209185518355518051908282116106125781906103ee826103e56001880154610af5565b60018801610b46565b602090601f831160011461063357600092610628575b50508160011b916000199060031b1c19161760018301555b60408501518051918211610612576104448261043b6002860154610af5565b60028601610b46565b602090601f831160011461057c5795826003936060937f65aaa63c7e238c45905869b3da55ebbd0abbe0f6a8eb99eac437e941302959119899600092610571575b50508160011b9160001990861b1c19161760028501555b0151910155600435600052600260205260036040600020016104be8154610af5565b601f811161054f575b5060126818dbdb5c1b195d195960ba1b019055826040519160208352816020840152604083013760006040848301015260408160043594601f80199101168101030190a260043560005260026020526005604060002001546040519081527fdc1e6407cb902c85f8825fe5afb1b7619ebc9320cdb38adc1dcc6d573d1a29b8602060043592a2005b61056b9082600052601f6020600020910160051c810190610b2f565b846104c7565b015190508980610485565b906002840160005260206000209160005b601f19851681106105fa5750836060937f65aaa63c7e238c45905869b3da55ebbd0abbe0f6a8eb99eac437e94130295911989993600193600397601f198116106105e2575b505050811b01600285015561049c565b015160001983881b60f8161c191690558980806105d2565b9192602060018192868501518155019401920161058d565b634e487b7160e01b600052604160045260246000fd5b015190508780610404565b9250600185016000526020600020906000935b601f198416851061068a576001945083601f19811610610671575b505050811b01600183015561041c565b015160001960f88460031b161c19169055878080610661565b81810151835560209485019460019093019290910190610646565b60405162461bcd60e51b815260206004820152600f60248201526e2737ba1030bab234ba1037bbb732b960891b6044820152606490fd5b346100b55760203660031901126100b5576106f5610a72565b6106fd610bd4565b6001600160a01b03166000908152600460205260409020805460ff19166001179055005b346100b55760803660031901126100b55761073a610a72565b33600052600460205260ff60406000205416156109b257600154600019811461009f57600181016001556040519061077182610ab6565b8082526020820160018060a01b0392838516825260408101338152604051604081019167ffffffffffffffff928281108482111761061257604052600b82526a696e5f70726f677265737360a81b60208301526060840191825242608085015260243560a085015260443560c085015260643560e0850152856000526002602052604060002094845186558760018701915116906bffffffffffffffffffffffff60a01b918282541617905587600287019251169082541617905551805191821161061257610850826108476003870154610af5565b60038701610b46565b602090601f831160011461093d5791806007949260e094600092610932575b50508160011b916000199060031b1c19161760038501555b6080810151600485015560a0810151600585015560c081015160068501550151910155818316600052600560205260406000209283549368010000000000000000851015610612576001850180825585101561091c57602094839160005285600020015560405192339116827f74d6b58aed22ac3fed75bcd9cbc819e5c9b85d455cd852a0a862a7b75a927bb7600080a48152f35b634e487b7160e01b600052603260045260246000fd5b01519050898061086f565b906003850160005260206000209160005b601f198516811061099a5750926007949260019260e09583601f19811610610981575b505050811b016003850155610887565b015160001960f88460031b161c19169055898080610971565b9192602060018192868501518155019401920161094e565b60405162461bcd60e51b81526020600482015260166024820152752737ba1030baba3437b934bd32b21030bab234ba37b960511b6044820152606490fd5b346100b55760003660031901126100b5576000546040516001600160a01b039091168152602090f35b346100b55760003660031901126100b557610a32610bd4565b600080546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b600435906001600160a01b03821682036100b557565b9181601f840112156100b55782359167ffffffffffffffff83116100b557602083818601950101116100b557565b610100810190811067ffffffffffffffff82111761061257604052565b90601f8019910116810190811067ffffffffffffffff82111761061257604052565b90600182811c92168015610b25575b6020831014610b0f57565b634e487b7160e01b600052602260045260246000fd5b91607f1691610b04565b818110610b3a575050565b60008155600101610b2f565b9190601f8111610b5557505050565b610b81926000526020600020906020601f840160051c83019310610b83575b601f0160051c0190610b2f565b565b9091508190610b74565b92919267ffffffffffffffff82116106125760405191610bb7601f8201601f191660200184610ad3565b8294818452818301116100b5578281602093846000960137010152565b6000546001600160a01b03163303610be857565b60405163118cdaa760e01b8152336004820152602490fdfea164736f6c6343000818000a",
+  "devdoc": {
+    "details": "Module 016: Smart contract auditing and verification",
+    "errors": {
+      "OwnableInvalidOwner(address)": [
+        {
+          "details": "The owner is not a valid owner account. (eg. `address(0)`)"
+        }
+      ],
+      "OwnableUnauthorizedAccount(address)": [
+        {
+          "details": "The caller account is not authorized to perform an operation."
+        }
+      ]
+    },
+    "kind": "dev",
+    "methods": {
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "title": "SmartContractAuditingSystem",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 8,
+        "contract": "contracts/modules/016-auditing/SmartContractAuditingSystem.sol:SmartContractAuditingSystem",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 3479,
+        "contract": "contracts/modules/016-auditing/SmartContractAuditingSystem.sol:SmartContractAuditingSystem",
+        "label": "auditCounter",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 3484,
+        "contract": "contracts/modules/016-auditing/SmartContractAuditingSystem.sol:SmartContractAuditingSystem",
+        "label": "audits",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_uint256,t_struct(Audit)3468_storage)"
+      },
+      {
+        "astId": 3489,
+        "contract": "contracts/modules/016-auditing/SmartContractAuditingSystem.sol:SmartContractAuditingSystem",
+        "label": "reports",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_uint256,t_struct(AuditReport)3477_storage)"
+      },
+      {
+        "astId": 3493,
+        "contract": "contracts/modules/016-auditing/SmartContractAuditingSystem.sol:SmartContractAuditingSystem",
+        "label": "authorizedAuditors",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_mapping(t_address,t_bool)"
+      },
+      {
+        "astId": 3498,
+        "contract": "contracts/modules/016-auditing/SmartContractAuditingSystem.sol:SmartContractAuditingSystem",
+        "label": "contractAudits",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_uint256)dyn_storage": {
+        "base": "t_uint256",
+        "encoding": "dynamic_array",
+        "label": "uint256[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => uint256[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_uint256)dyn_storage"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_uint256,t_struct(Audit)3468_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct SmartContractAuditingSystem.Audit)",
+        "numberOfBytes": "32",
+        "value": "t_struct(Audit)3468_storage"
+      },
+      "t_mapping(t_uint256,t_struct(AuditReport)3477_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct SmartContractAuditingSystem.AuditReport)",
+        "numberOfBytes": "32",
+        "value": "t_struct(AuditReport)3477_storage"
+      },
+      "t_string_storage": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_struct(Audit)3468_storage": {
+        "encoding": "inplace",
+        "label": "struct SmartContractAuditingSystem.Audit",
+        "members": [
+          {
+            "astId": 3453,
+            "contract": "contracts/modules/016-auditing/SmartContractAuditingSystem.sol:SmartContractAuditingSystem",
+            "label": "auditId",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 3455,
+            "contract": "contracts/modules/016-auditing/SmartContractAuditingSystem.sol:SmartContractAuditingSystem",
+            "label": "contractAddress",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address"
+          },
+          {
+            "astId": 3457,
+            "contract": "contracts/modules/016-auditing/SmartContractAuditingSystem.sol:SmartContractAuditingSystem",
+            "label": "auditor",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_address"
+          },
+          {
+            "astId": 3459,
+            "contract": "contracts/modules/016-auditing/SmartContractAuditingSystem.sol:SmartContractAuditingSystem",
+            "label": "status",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 3461,
+            "contract": "contracts/modules/016-auditing/SmartContractAuditingSystem.sol:SmartContractAuditingSystem",
+            "label": "auditDate",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 3463,
+            "contract": "contracts/modules/016-auditing/SmartContractAuditingSystem.sol:SmartContractAuditingSystem",
+            "label": "criticalIssues",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 3465,
+            "contract": "contracts/modules/016-auditing/SmartContractAuditingSystem.sol:SmartContractAuditingSystem",
+            "label": "mediumIssues",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 3467,
+            "contract": "contracts/modules/016-auditing/SmartContractAuditingSystem.sol:SmartContractAuditingSystem",
+            "label": "lowIssues",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "256"
+      },
+      "t_struct(AuditReport)3477_storage": {
+        "encoding": "inplace",
+        "label": "struct SmartContractAuditingSystem.AuditReport",
+        "members": [
+          {
+            "astId": 3470,
+            "contract": "contracts/modules/016-auditing/SmartContractAuditingSystem.sol:SmartContractAuditingSystem",
+            "label": "auditId",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 3472,
+            "contract": "contracts/modules/016-auditing/SmartContractAuditingSystem.sol:SmartContractAuditingSystem",
+            "label": "reportHash",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 3474,
+            "contract": "contracts/modules/016-auditing/SmartContractAuditingSystem.sol:SmartContractAuditingSystem",
+            "label": "findings",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 3476,
+            "contract": "contracts/modules/016-auditing/SmartContractAuditingSystem.sol:SmartContractAuditingSystem",
+            "label": "timestamp",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "128"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

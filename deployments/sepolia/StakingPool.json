@@ -1,0 +1,1384 @@
+{
+  "address": "0xcbC39F0BF0585A11a86F3391d09D1F18f0b01F40",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_stakingToken",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ReentrancyGuardReentrantCall",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "stakeId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "reward",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newPrincipal",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "Compounded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "stakeId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "penalty",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "EmergencyWithdraw",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "poolId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "enum IStaking.PoolType",
+          "name": "poolType",
+          "type": "uint8"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "apy",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "minStake",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "lockDays",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "PoolCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "poolId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newApy",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "active",
+          "type": "bool"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "PoolUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "stakeId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "reward",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "RewardsClaimed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "depositor",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "RewardsDeposited",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "poolId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "stakeId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "Staked",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "stakeId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "principal",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "reward",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "Unstaked",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "stakeId",
+          "type": "uint256"
+        }
+      ],
+      "name": "claimRewards",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "stakeId",
+          "type": "uint256"
+        }
+      ],
+      "name": "compound",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "enum IStaking.PoolType",
+          "name": "poolType",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "apyBps",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minStake",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxStake",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lockDays",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxCapacity",
+          "type": "uint256"
+        }
+      ],
+      "name": "createPool",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "poolId",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "depositRewards",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "earlyWithdrawPenaltyBps",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "stakeId",
+          "type": "uint256"
+        }
+      ],
+      "name": "emergencyWithdraw",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "stakeId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getPendingReward",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getPlatformStats",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "totalPools_",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalStaked_",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalStakers_",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalRewardsPaid_",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "rewardBalance_",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "poolId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getPool",
+      "outputs": [
+        {
+          "internalType": "enum IStaking.PoolType",
+          "name": "poolType_",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "apyBps_",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minStake_",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxStake_",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lockDays_",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalStaked_",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalStakers_",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxCapacity_",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "active_",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "createdAt_",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "stakeId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getStakeInfo",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "staker_",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "poolId_",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "principal_",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "pendingReward_",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "stakedAt_",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "unlockAt_",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lastClaimAt_",
+          "type": "uint256"
+        },
+        {
+          "internalType": "enum IStaking.StakeStatus",
+          "name": "status_",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalPools",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalStakes",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "getUserStakes",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "nextPoolId",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "nextStakeId",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "pools",
+      "outputs": [
+        {
+          "internalType": "enum IStaking.PoolType",
+          "name": "poolType",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "apyBps",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minStake",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxStake",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lockDays",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalStaked",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalStakers",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxCapacity",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "active",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "createdAt",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "rewardBalance",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "penaltyBps",
+          "type": "uint256"
+        }
+      ],
+      "name": "setEarlyWithdrawPenaltyBps",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "poolId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "stake",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "stakeId",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "stakes",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "staker",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "poolId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "principal",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "stakedAt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "unlockAt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lastClaimAt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "claimedRewards",
+          "type": "uint256"
+        },
+        {
+          "internalType": "enum IStaking.StakeStatus",
+          "name": "status",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "stakingToken",
+      "outputs": [
+        {
+          "internalType": "contract IERC20",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalPlatformStaked",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalPlatformStakers",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalRewardsPaid",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "stakeId",
+          "type": "uint256"
+        }
+      ],
+      "name": "unstake",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "poolId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "newApyBps",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "active",
+          "type": "bool"
+        }
+      ],
+      "name": "updatePool",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x9a440be942d74dee52f320a6c9efa8f7f1ef613e2fceaeb59bdf62659a0d3875",
+  "receipt": {
+    "to": null,
+    "from": "0x7EFf82613404AE7Bce622EA1C927214E30F2285e",
+    "contractAddress": "0xcbC39F0BF0585A11a86F3391d09D1F18f0b01F40",
+    "transactionIndex": 90,
+    "gasUsed": "1510884",
+    "logsBloom": "0x00004000000000000000000000000000000000000000000000800000000100000000000000040000000000000000000000000000000000000000000000000080000000000000000000000000000000000021000000000000000000000000000000004000020000000000000000000800000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xa810e97c1d884109b873df16f4ba43ecd49545efde33b55aebe2d7449c2b6b16",
+    "transactionHash": "0x9a440be942d74dee52f320a6c9efa8f7f1ef613e2fceaeb59bdf62659a0d3875",
+    "logs": [
+      {
+        "transactionIndex": 90,
+        "blockNumber": 10339236,
+        "transactionHash": "0x9a440be942d74dee52f320a6c9efa8f7f1ef613e2fceaeb59bdf62659a0d3875",
+        "address": "0xcbC39F0BF0585A11a86F3391d09D1F18f0b01F40",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x0000000000000000000000007eff82613404ae7bce622ea1c927214e30f2285e"
+        ],
+        "data": "0x",
+        "logIndex": 226,
+        "blockHash": "0xa810e97c1d884109b873df16f4ba43ecd49545efde33b55aebe2d7449c2b6b16"
+      }
+    ],
+    "blockNumber": 10339236,
+    "cumulativeGasUsed": "15577009",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0xEFaA690F939cac21Cdf197B83742c06FF95298b7"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "893d8b688885d31d35e3b0fd6f1bd1ee",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_stakingToken\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ReentrancyGuardReentrantCall\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"stakeId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"reward\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newPrincipal\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"Compounded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"stakeId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"penalty\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"EmergencyWithdraw\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"poolId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"enum IStaking.PoolType\",\"name\":\"poolType\",\"type\":\"uint8\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"apy\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"minStake\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"lockDays\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"PoolCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"poolId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newApy\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"active\",\"type\":\"bool\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"PoolUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"stakeId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"reward\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"RewardsClaimed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"depositor\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"RewardsDeposited\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"poolId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"stakeId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"Staked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"stakeId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"principal\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"reward\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"Unstaked\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"stakeId\",\"type\":\"uint256\"}],\"name\":\"claimRewards\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"stakeId\",\"type\":\"uint256\"}],\"name\":\"compound\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"enum IStaking.PoolType\",\"name\":\"poolType\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"apyBps\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"minStake\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxStake\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lockDays\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxCapacity\",\"type\":\"uint256\"}],\"name\":\"createPool\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"poolId\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"depositRewards\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"earlyWithdrawPenaltyBps\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"stakeId\",\"type\":\"uint256\"}],\"name\":\"emergencyWithdraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"stakeId\",\"type\":\"uint256\"}],\"name\":\"getPendingReward\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPlatformStats\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"totalPools_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalStaked_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalStakers_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalRewardsPaid_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rewardBalance_\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"poolId\",\"type\":\"uint256\"}],\"name\":\"getPool\",\"outputs\":[{\"internalType\":\"enum IStaking.PoolType\",\"name\":\"poolType_\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"apyBps_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"minStake_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxStake_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lockDays_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalStaked_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalStakers_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxCapacity_\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"active_\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"createdAt_\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"stakeId\",\"type\":\"uint256\"}],\"name\":\"getStakeInfo\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"staker_\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"poolId_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"principal_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"pendingReward_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"stakedAt_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"unlockAt_\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lastClaimAt_\",\"type\":\"uint256\"},{\"internalType\":\"enum IStaking.StakeStatus\",\"name\":\"status_\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalPools\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalStakes\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"getUserStakes\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"nextPoolId\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"nextStakeId\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"pools\",\"outputs\":[{\"internalType\":\"enum IStaking.PoolType\",\"name\":\"poolType\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"apyBps\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"minStake\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxStake\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lockDays\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalStaked\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalStakers\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxCapacity\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"active\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"createdAt\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"rewardBalance\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"penaltyBps\",\"type\":\"uint256\"}],\"name\":\"setEarlyWithdrawPenaltyBps\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"poolId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"stake\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"stakeId\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"stakes\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"staker\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"poolId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"principal\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"stakedAt\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"unlockAt\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"lastClaimAt\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"claimedRewards\",\"type\":\"uint256\"},{\"internalType\":\"enum IStaking.StakeStatus\",\"name\":\"status\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"stakingToken\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalPlatformStaked\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalPlatformStakers\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"totalRewardsPaid\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"stakeId\",\"type\":\"uint256\"}],\"name\":\"unstake\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"poolId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"newApyBps\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"active\",\"type\":\"bool\"}],\"name\":\"updatePool\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"author\":\"VNDC Education Platform\",\"details\":\"Module 018 \\u2013 counters start at 1, Ownable(msg.sender)\",\"errors\":{\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}],\"ReentrancyGuardReentrantCall()\":[{\"details\":\"Unauthorized reentrant call.\"}]},\"kind\":\"dev\",\"methods\":{\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"title\":\"StakingPool\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"notice\":\"Campus staking pool \\u2014 stake VNDC tokens to earn APY rewards.         Supports flexible & fixed-term pools, compound interest,         early-withdrawal penalties, and an on-chain reward treasury.\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/modules/018-staking/StakingPool.sol\":\"StakingPool\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"none\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {Context} from \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * The initial owner is set to the address provided by the deployer. This can\\n * later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    /**\\n     * @dev The caller account is not authorized to perform an operation.\\n     */\\n    error OwnableUnauthorizedAccount(address account);\\n\\n    /**\\n     * @dev The owner is not a valid owner account. (eg. `address(0)`)\\n     */\\n    error OwnableInvalidOwner(address owner);\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the address provided by the deployer as the initial owner.\\n     */\\n    constructor(address initialOwner) {\\n        if (initialOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(initialOwner);\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        if (owner() != _msgSender()) {\\n            revert OwnableUnauthorizedAccount(_msgSender());\\n        }\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby disabling any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        if (newOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"license\":\"MIT\"},\"@openzeppelin/contracts/token/ERC20/IERC20.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.1.0) (token/ERC20/IERC20.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Interface of the ERC-20 standard as defined in the ERC.\\n */\\ninterface IERC20 {\\n    /**\\n     * @dev Emitted when `value` tokens are moved from one account (`from`) to\\n     * another (`to`).\\n     *\\n     * Note that `value` may be zero.\\n     */\\n    event Transfer(address indexed from, address indexed to, uint256 value);\\n\\n    /**\\n     * @dev Emitted when the allowance of a `spender` for an `owner` is set by\\n     * a call to {approve}. `value` is the new allowance.\\n     */\\n    event Approval(address indexed owner, address indexed spender, uint256 value);\\n\\n    /**\\n     * @dev Returns the value of tokens in existence.\\n     */\\n    function totalSupply() external view returns (uint256);\\n\\n    /**\\n     * @dev Returns the value of tokens owned by `account`.\\n     */\\n    function balanceOf(address account) external view returns (uint256);\\n\\n    /**\\n     * @dev Moves a `value` amount of tokens from the caller's account to `to`.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * Emits a {Transfer} event.\\n     */\\n    function transfer(address to, uint256 value) external returns (bool);\\n\\n    /**\\n     * @dev Returns the remaining number of tokens that `spender` will be\\n     * allowed to spend on behalf of `owner` through {transferFrom}. This is\\n     * zero by default.\\n     *\\n     * This value changes when {approve} or {transferFrom} are called.\\n     */\\n    function allowance(address owner, address spender) external view returns (uint256);\\n\\n    /**\\n     * @dev Sets a `value` amount of tokens as the allowance of `spender` over the\\n     * caller's tokens.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * IMPORTANT: Beware that changing an allowance with this method brings the risk\\n     * that someone may use both the old and the new allowance by unfortunate\\n     * transaction ordering. One possible solution to mitigate this race\\n     * condition is to first reduce the spender's allowance to 0 and set the\\n     * desired value afterwards:\\n     * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729\\n     *\\n     * Emits an {Approval} event.\\n     */\\n    function approve(address spender, uint256 value) external returns (bool);\\n\\n    /**\\n     * @dev Moves a `value` amount of tokens from `from` to `to` using the\\n     * allowance mechanism. `value` is then deducted from the caller's\\n     * allowance.\\n     *\\n     * Returns a boolean value indicating whether the operation succeeded.\\n     *\\n     * Emits a {Transfer} event.\\n     */\\n    function transferFrom(address from, address to, uint256 value) external returns (bool);\\n}\\n\",\"keccak256\":\"0xe06a3f08a987af6ad2e1c1e774405d4fe08f1694b67517438b467cecf0da0ef7\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    function _contextSuffixLength() internal view virtual returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/ReentrancyGuard.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.1.0) (utils/ReentrancyGuard.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Contract module that helps prevent reentrant calls to a function.\\n *\\n * Inheriting from `ReentrancyGuard` will make the {nonReentrant} modifier\\n * available, which can be applied to functions to make sure there are no nested\\n * (reentrant) calls to them.\\n *\\n * Note that because there is a single `nonReentrant` guard, functions marked as\\n * `nonReentrant` may not call one another. This can be worked around by making\\n * those functions `private`, and then adding `external` `nonReentrant` entry\\n * points to them.\\n *\\n * TIP: If EIP-1153 (transient storage) is available on the chain you're deploying at,\\n * consider using {ReentrancyGuardTransient} instead.\\n *\\n * TIP: If you would like to learn more about reentrancy and alternative ways\\n * to protect against it, check out our blog post\\n * https://blog.openzeppelin.com/reentrancy-after-istanbul/[Reentrancy After Istanbul].\\n */\\nabstract contract ReentrancyGuard {\\n    // Booleans are more expensive than uint256 or any type that takes up a full\\n    // word because each write operation emits an extra SLOAD to first read the\\n    // slot's contents, replace the bits taken up by the boolean, and then write\\n    // back. This is the compiler's defense against contract upgrades and\\n    // pointer aliasing, and it cannot be disabled.\\n\\n    // The values being non-zero value makes deployment a bit more expensive,\\n    // but in exchange the refund on every call to nonReentrant will be lower in\\n    // amount. Since refunds are capped to a percentage of the total\\n    // transaction's gas, it is best to keep them low in cases like this one, to\\n    // increase the likelihood of the full refund coming into effect.\\n    uint256 private constant NOT_ENTERED = 1;\\n    uint256 private constant ENTERED = 2;\\n\\n    uint256 private _status;\\n\\n    /**\\n     * @dev Unauthorized reentrant call.\\n     */\\n    error ReentrancyGuardReentrantCall();\\n\\n    constructor() {\\n        _status = NOT_ENTERED;\\n    }\\n\\n    /**\\n     * @dev Prevents a contract from calling itself, directly or indirectly.\\n     * Calling a `nonReentrant` function from another `nonReentrant`\\n     * function is not supported. It is possible to prevent this from happening\\n     * by making the `nonReentrant` function external, and making it call a\\n     * `private` function that does the actual work.\\n     */\\n    modifier nonReentrant() {\\n        _nonReentrantBefore();\\n        _;\\n        _nonReentrantAfter();\\n    }\\n\\n    function _nonReentrantBefore() private {\\n        // On the first call to nonReentrant, _status will be NOT_ENTERED\\n        if (_status == ENTERED) {\\n            revert ReentrancyGuardReentrantCall();\\n        }\\n\\n        // Any calls to nonReentrant after this point will fail\\n        _status = ENTERED;\\n    }\\n\\n    function _nonReentrantAfter() private {\\n        // By storing the original value once again, a refund is triggered (see\\n        // https://eips.ethereum.org/EIPS/eip-2200)\\n        _status = NOT_ENTERED;\\n    }\\n\\n    /**\\n     * @dev Returns true if the reentrancy guard is currently set to \\\"entered\\\", which indicates there is a\\n     * `nonReentrant` function in the call stack.\\n     */\\n    function _reentrancyGuardEntered() internal view returns (bool) {\\n        return _status == ENTERED;\\n    }\\n}\\n\",\"keccak256\":\"0x11a5a79827df29e915a12740caf62fe21ebe27c08c9ae3e09abe9ee3ba3866d3\",\"license\":\"MIT\"},\"contracts/modules/018-staking/IStaking.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.24;\\r\\n\\r\\n/**\\r\\n * @title IStaking\\r\\n * @notice Interface for the Campus Staking Pool \\u2014 stake VNDC tokens to earn\\r\\n *         rewards, supporting flexible & fixed-term pools with compound interest.\\r\\n */\\r\\ninterface IStaking {\\r\\n    // \\u2500\\u2500\\u2500 Enums \\u2500\\u2500\\u2500\\r\\n    enum PoolType { Flexible, Fixed30, Fixed90, Fixed180, Fixed365 }\\r\\n    enum StakeStatus { Active, Unstaked, Emergency }\\r\\n\\r\\n    // \\u2500\\u2500\\u2500 Events \\u2500\\u2500\\u2500\\r\\n    event PoolCreated(uint256 indexed poolId, PoolType poolType, uint256 apy, uint256 minStake, uint256 lockDays, uint256 timestamp);\\r\\n    event PoolUpdated(uint256 indexed poolId, uint256 newApy, bool active, uint256 timestamp);\\r\\n    event Staked(address indexed user, uint256 indexed poolId, uint256 indexed stakeId, uint256 amount, uint256 timestamp);\\r\\n    event Unstaked(address indexed user, uint256 indexed stakeId, uint256 principal, uint256 reward, uint256 timestamp);\\r\\n    event RewardsClaimed(address indexed user, uint256 indexed stakeId, uint256 reward, uint256 timestamp);\\r\\n    event Compounded(address indexed user, uint256 indexed stakeId, uint256 reward, uint256 newPrincipal, uint256 timestamp);\\r\\n    event EmergencyWithdraw(address indexed user, uint256 indexed stakeId, uint256 amount, uint256 penalty, uint256 timestamp);\\r\\n    event RewardsDeposited(address indexed depositor, uint256 amount, uint256 timestamp);\\r\\n\\r\\n    // \\u2500\\u2500\\u2500 Pool Management (Admin) \\u2500\\u2500\\u2500\\r\\n    function createPool(PoolType poolType, uint256 apyBps, uint256 minStake, uint256 maxStake, uint256 lockDays, uint256 maxCapacity) external returns (uint256 poolId);\\r\\n    function updatePool(uint256 poolId, uint256 newApyBps, bool active) external;\\r\\n    function getPool(uint256 poolId) external view returns (\\r\\n        PoolType poolType, uint256 apyBps, uint256 minStake, uint256 maxStake,\\r\\n        uint256 lockDays, uint256 totalStaked, uint256 totalStakers,\\r\\n        uint256 maxCapacity, bool active, uint256 createdAt\\r\\n    );\\r\\n    function getTotalPools() external view returns (uint256);\\r\\n\\r\\n    // \\u2500\\u2500\\u2500 Staking \\u2500\\u2500\\u2500\\r\\n    function stake(uint256 poolId, uint256 amount) external returns (uint256 stakeId);\\r\\n    function unstake(uint256 stakeId) external;\\r\\n    function claimRewards(uint256 stakeId) external;\\r\\n    function compound(uint256 stakeId) external;\\r\\n    function emergencyWithdraw(uint256 stakeId) external;\\r\\n\\r\\n    // \\u2500\\u2500\\u2500 View: Stake Info \\u2500\\u2500\\u2500\\r\\n    function getStakeInfo(uint256 stakeId) external view returns (\\r\\n        address staker, uint256 poolId, uint256 principal, uint256 pendingReward,\\r\\n        uint256 stakedAt, uint256 unlockAt, uint256 lastClaimAt,\\r\\n        StakeStatus status\\r\\n    );\\r\\n    function getUserStakes(address user) external view returns (uint256[] memory);\\r\\n    function getTotalStakes() external view returns (uint256);\\r\\n    function getPendingReward(uint256 stakeId) external view returns (uint256);\\r\\n\\r\\n    // \\u2500\\u2500\\u2500 View: Platform Stats \\u2500\\u2500\\u2500\\r\\n    function getPlatformStats() external view returns (\\r\\n        uint256 totalPools, uint256 totalStaked, uint256 totalStakers,\\r\\n        uint256 totalRewardsPaid, uint256 rewardBalance\\r\\n    );\\r\\n\\r\\n    // \\u2500\\u2500\\u2500 Rewards Treasury \\u2500\\u2500\\u2500\\r\\n    function depositRewards(uint256 amount) external;\\r\\n    function setEarlyWithdrawPenaltyBps(uint256 penaltyBps) external;\\r\\n}\\r\\n\",\"keccak256\":\"0x5ea1b07f71c741608adf56eb9e7fe33f655d3c347deafe5dbc5bff46d9d9db0f\",\"license\":\"MIT\"},\"contracts/modules/018-staking/StakingPool.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.24;\\r\\n\\r\\nimport {Ownable} from \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\r\\nimport {ReentrancyGuard} from \\\"@openzeppelin/contracts/utils/ReentrancyGuard.sol\\\";\\r\\nimport {IERC20} from \\\"@openzeppelin/contracts/token/ERC20/IERC20.sol\\\";\\r\\nimport \\\"./IStaking.sol\\\";\\r\\n\\r\\n/**\\r\\n * @title StakingPool\\r\\n * @author VNDC Education Platform\\r\\n * @notice Campus staking pool \\u2014 stake VNDC tokens to earn APY rewards.\\r\\n *         Supports flexible & fixed-term pools, compound interest,\\r\\n *         early-withdrawal penalties, and an on-chain reward treasury.\\r\\n * @dev Module 018 \\u2013 counters start at 1, Ownable(msg.sender)\\r\\n */\\r\\ncontract StakingPool is IStaking, Ownable, ReentrancyGuard {\\r\\n\\r\\n    // \\u2500\\u2500\\u2500 Counters \\u2500\\u2500\\u2500\\r\\n    uint256 public nextPoolId;\\r\\n    uint256 public nextStakeId;\\r\\n\\r\\n    // \\u2500\\u2500\\u2500 Token & Config \\u2500\\u2500\\u2500\\r\\n    IERC20 public stakingToken;\\r\\n    uint256 public earlyWithdrawPenaltyBps; // basis-points penalty for early unstake from fixed pool\\r\\n    uint256 public totalRewardsPaid;\\r\\n    uint256 public rewardBalance;           // deposited reward treasury\\r\\n    uint256 public totalPlatformStaked;\\r\\n    uint256 public totalPlatformStakers;\\r\\n\\r\\n    // \\u2500\\u2500\\u2500 Structs \\u2500\\u2500\\u2500\\r\\n    struct Pool {\\r\\n        PoolType poolType;\\r\\n        uint256  apyBps;        // annual yield in basis points (e.g. 1200 = 12%)\\r\\n        uint256  minStake;\\r\\n        uint256  maxStake;\\r\\n        uint256  lockDays;      // 0 for flexible\\r\\n        uint256  totalStaked;\\r\\n        uint256  totalStakers;\\r\\n        uint256  maxCapacity;   // max total staked, 0 = unlimited\\r\\n        bool     active;\\r\\n        uint256  createdAt;\\r\\n    }\\r\\n\\r\\n    struct StakeRecord {\\r\\n        address  staker;\\r\\n        uint256  poolId;\\r\\n        uint256  principal;\\r\\n        uint256  stakedAt;\\r\\n        uint256  unlockAt;\\r\\n        uint256  lastClaimAt;\\r\\n        uint256  claimedRewards;\\r\\n        StakeStatus status;\\r\\n    }\\r\\n\\r\\n    // \\u2500\\u2500\\u2500 Storage \\u2500\\u2500\\u2500\\r\\n    mapping(uint256 => Pool)        public pools;\\r\\n    mapping(uint256 => StakeRecord) public stakes;\\r\\n    mapping(address => uint256[])   private _userStakes;\\r\\n\\r\\n    // \\u2500\\u2500\\u2500 Constructor \\u2500\\u2500\\u2500\\r\\n    constructor(address _stakingToken) Ownable(msg.sender) {\\r\\n        require(_stakingToken != address(0), \\\"Zero token\\\");\\r\\n        stakingToken = IERC20(_stakingToken);\\r\\n        nextPoolId   = 1;\\r\\n        nextStakeId  = 1;\\r\\n        earlyWithdrawPenaltyBps = 1000; // 10% default penalty\\r\\n    }\\r\\n\\r\\n    // \\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\r\\n    // \\u2500\\u2500\\u2500 Admin: Pool Management \\u2500\\u2500\\u2500\\r\\n    // \\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\r\\n\\r\\n    function createPool(\\r\\n        PoolType poolType,\\r\\n        uint256 apyBps,\\r\\n        uint256 minStake,\\r\\n        uint256 maxStake,\\r\\n        uint256 lockDays,\\r\\n        uint256 maxCapacity\\r\\n    ) external onlyOwner returns (uint256 poolId) {\\r\\n        require(apyBps > 0 && apyBps <= 50000, \\\"APY 0-500%\\\");\\r\\n        require(minStake > 0, \\\"Min > 0\\\");\\r\\n\\r\\n        poolId = nextPoolId++;\\r\\n        Pool storage p = pools[poolId];\\r\\n        p.poolType    = poolType;\\r\\n        p.apyBps      = apyBps;\\r\\n        p.minStake    = minStake;\\r\\n        p.maxStake    = maxStake;\\r\\n        p.lockDays    = lockDays;\\r\\n        p.maxCapacity = maxCapacity;\\r\\n        p.active      = true;\\r\\n        p.createdAt   = block.timestamp;\\r\\n\\r\\n        emit PoolCreated(poolId, poolType, apyBps, minStake, lockDays, block.timestamp);\\r\\n    }\\r\\n\\r\\n    function updatePool(uint256 poolId, uint256 newApyBps, bool active) external onlyOwner {\\r\\n        Pool storage p = pools[poolId];\\r\\n        require(p.createdAt > 0, \\\"Pool not found\\\");\\r\\n        require(newApyBps <= 50000, \\\"APY too high\\\");\\r\\n        p.apyBps = newApyBps;\\r\\n        p.active = active;\\r\\n        emit PoolUpdated(poolId, newApyBps, active, block.timestamp);\\r\\n    }\\r\\n\\r\\n    function setEarlyWithdrawPenaltyBps(uint256 penaltyBps) external onlyOwner {\\r\\n        require(penaltyBps <= 5000, \\\"Max 50%\\\");\\r\\n        earlyWithdrawPenaltyBps = penaltyBps;\\r\\n    }\\r\\n\\r\\n    function depositRewards(uint256 amount) external {\\r\\n        require(amount > 0, \\\"Zero amount\\\");\\r\\n        stakingToken.transferFrom(msg.sender, address(this), amount);\\r\\n        rewardBalance += amount;\\r\\n        emit RewardsDeposited(msg.sender, amount, block.timestamp);\\r\\n    }\\r\\n\\r\\n    // \\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\r\\n    // \\u2500\\u2500\\u2500 Staking \\u2500\\u2500\\u2500\\r\\n    // \\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\r\\n\\r\\n    function stake(uint256 poolId, uint256 amount) external nonReentrant returns (uint256 stakeId) {\\r\\n        Pool storage p = pools[poolId];\\r\\n        require(p.active, \\\"Pool inactive\\\");\\r\\n        require(amount >= p.minStake, \\\"Below min\\\");\\r\\n        require(p.maxStake == 0 || amount <= p.maxStake, \\\"Above max\\\");\\r\\n        require(p.maxCapacity == 0 || p.totalStaked + amount <= p.maxCapacity, \\\"Pool full\\\");\\r\\n\\r\\n        stakingToken.transferFrom(msg.sender, address(this), amount);\\r\\n\\r\\n        stakeId = nextStakeId++;\\r\\n        StakeRecord storage s = stakes[stakeId];\\r\\n        s.staker      = msg.sender;\\r\\n        s.poolId      = poolId;\\r\\n        s.principal   = amount;\\r\\n        s.stakedAt    = block.timestamp;\\r\\n        s.unlockAt    = p.lockDays > 0 ? block.timestamp + (p.lockDays * 1 days) : 0;\\r\\n        s.lastClaimAt = block.timestamp;\\r\\n        s.status      = StakeStatus.Active;\\r\\n\\r\\n        p.totalStaked  += amount;\\r\\n        p.totalStakers++;\\r\\n        totalPlatformStaked  += amount;\\r\\n        totalPlatformStakers++;\\r\\n\\r\\n        _userStakes[msg.sender].push(stakeId);\\r\\n\\r\\n        emit Staked(msg.sender, poolId, stakeId, amount, block.timestamp);\\r\\n    }\\r\\n\\r\\n    function unstake(uint256 stakeId) external nonReentrant {\\r\\n        StakeRecord storage s = stakes[stakeId];\\r\\n        require(s.staker == msg.sender, \\\"Not staker\\\");\\r\\n        require(s.status == StakeStatus.Active, \\\"Not active\\\");\\r\\n\\r\\n        Pool storage p = pools[s.poolId];\\r\\n\\r\\n        // Check lock period\\r\\n        bool earlyWithdraw = s.unlockAt > 0 && block.timestamp < s.unlockAt;\\r\\n\\r\\n        // Calculate pending rewards\\r\\n        uint256 reward = _calculateReward(stakeId);\\r\\n        uint256 principal = s.principal;\\r\\n        uint256 penalty;\\r\\n\\r\\n        if (earlyWithdraw) {\\r\\n            penalty = (principal * earlyWithdrawPenaltyBps) / 10000;\\r\\n            principal -= penalty;\\r\\n            reward = 0; // forfeit rewards on early withdraw\\r\\n        }\\r\\n\\r\\n        // Update state\\r\\n        s.status        = StakeStatus.Unstaked;\\r\\n        s.lastClaimAt   = block.timestamp;\\r\\n        s.claimedRewards += reward;\\r\\n        p.totalStaked   -= s.principal;\\r\\n        p.totalStakers--;\\r\\n        totalPlatformStaked -= s.principal;\\r\\n\\r\\n        // Transfer\\r\\n        uint256 totalPayout = principal + reward;\\r\\n        if (reward > 0) {\\r\\n            require(rewardBalance >= reward, \\\"Insufficient rewards\\\");\\r\\n            rewardBalance -= reward;\\r\\n            totalRewardsPaid += reward;\\r\\n        }\\r\\n        stakingToken.transfer(msg.sender, totalPayout);\\r\\n\\r\\n        emit Unstaked(msg.sender, stakeId, principal, reward, block.timestamp);\\r\\n    }\\r\\n\\r\\n    function claimRewards(uint256 stakeId) external nonReentrant {\\r\\n        StakeRecord storage s = stakes[stakeId];\\r\\n        require(s.staker == msg.sender, \\\"Not staker\\\");\\r\\n        require(s.status == StakeStatus.Active, \\\"Not active\\\");\\r\\n\\r\\n        uint256 reward = _calculateReward(stakeId);\\r\\n        require(reward > 0, \\\"No rewards\\\");\\r\\n        require(rewardBalance >= reward, \\\"Insufficient rewards\\\");\\r\\n\\r\\n        s.lastClaimAt    = block.timestamp;\\r\\n        s.claimedRewards += reward;\\r\\n        rewardBalance    -= reward;\\r\\n        totalRewardsPaid += reward;\\r\\n\\r\\n        stakingToken.transfer(msg.sender, reward);\\r\\n\\r\\n        emit RewardsClaimed(msg.sender, stakeId, reward, block.timestamp);\\r\\n    }\\r\\n\\r\\n    function compound(uint256 stakeId) external nonReentrant {\\r\\n        StakeRecord storage s = stakes[stakeId];\\r\\n        require(s.staker == msg.sender, \\\"Not staker\\\");\\r\\n        require(s.status == StakeStatus.Active, \\\"Not active\\\");\\r\\n\\r\\n        uint256 reward = _calculateReward(stakeId);\\r\\n        require(reward > 0, \\\"No rewards\\\");\\r\\n        require(rewardBalance >= reward, \\\"Insufficient rewards\\\");\\r\\n\\r\\n        s.lastClaimAt    = block.timestamp;\\r\\n        s.claimedRewards += reward;\\r\\n        s.principal      += reward;\\r\\n        rewardBalance    -= reward;\\r\\n        totalRewardsPaid += reward;\\r\\n\\r\\n        Pool storage p = pools[s.poolId];\\r\\n        p.totalStaked        += reward;\\r\\n        totalPlatformStaked  += reward;\\r\\n\\r\\n        emit Compounded(msg.sender, stakeId, reward, s.principal, block.timestamp);\\r\\n    }\\r\\n\\r\\n    function emergencyWithdraw(uint256 stakeId) external nonReentrant {\\r\\n        StakeRecord storage s = stakes[stakeId];\\r\\n        require(s.staker == msg.sender, \\\"Not staker\\\");\\r\\n        require(s.status == StakeStatus.Active, \\\"Not active\\\");\\r\\n\\r\\n        uint256 penalty = (s.principal * earlyWithdrawPenaltyBps) / 10000;\\r\\n        uint256 payout  = s.principal - penalty;\\r\\n\\r\\n        Pool storage p = pools[s.poolId];\\r\\n        p.totalStaked   -= s.principal;\\r\\n        p.totalStakers--;\\r\\n        totalPlatformStaked -= s.principal;\\r\\n\\r\\n        s.status = StakeStatus.Emergency;\\r\\n        s.lastClaimAt = block.timestamp;\\r\\n\\r\\n        stakingToken.transfer(msg.sender, payout);\\r\\n\\r\\n        emit EmergencyWithdraw(msg.sender, stakeId, payout, penalty, block.timestamp);\\r\\n    }\\r\\n\\r\\n    // \\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\r\\n    // \\u2500\\u2500\\u2500 View Functions \\u2500\\u2500\\u2500\\r\\n    // \\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\r\\n\\r\\n    function getPool(uint256 poolId) external view returns (\\r\\n        PoolType poolType_, uint256 apyBps_, uint256 minStake_, uint256 maxStake_,\\r\\n        uint256 lockDays_, uint256 totalStaked_, uint256 totalStakers_,\\r\\n        uint256 maxCapacity_, bool active_, uint256 createdAt_\\r\\n    ) {\\r\\n        Pool storage p = pools[poolId];\\r\\n        return (p.poolType, p.apyBps, p.minStake, p.maxStake, p.lockDays,\\r\\n                p.totalStaked, p.totalStakers, p.maxCapacity, p.active, p.createdAt);\\r\\n    }\\r\\n\\r\\n    function getTotalPools() external view returns (uint256) {\\r\\n        return nextPoolId - 1;\\r\\n    }\\r\\n\\r\\n    function getStakeInfo(uint256 stakeId) external view returns (\\r\\n        address staker_, uint256 poolId_, uint256 principal_, uint256 pendingReward_,\\r\\n        uint256 stakedAt_, uint256 unlockAt_, uint256 lastClaimAt_,\\r\\n        StakeStatus status_\\r\\n    ) {\\r\\n        StakeRecord storage s = stakes[stakeId];\\r\\n        uint256 pending = s.status == StakeStatus.Active ? _calculateReward(stakeId) : 0;\\r\\n        return (s.staker, s.poolId, s.principal, pending,\\r\\n                s.stakedAt, s.unlockAt, s.lastClaimAt, s.status);\\r\\n    }\\r\\n\\r\\n    function getUserStakes(address user) external view returns (uint256[] memory) {\\r\\n        return _userStakes[user];\\r\\n    }\\r\\n\\r\\n    function getTotalStakes() external view returns (uint256) {\\r\\n        return nextStakeId - 1;\\r\\n    }\\r\\n\\r\\n    function getPendingReward(uint256 stakeId) external view returns (uint256) {\\r\\n        StakeRecord storage s = stakes[stakeId];\\r\\n        if (s.status != StakeStatus.Active) return 0;\\r\\n        return _calculateReward(stakeId);\\r\\n    }\\r\\n\\r\\n    function getPlatformStats() external view returns (\\r\\n        uint256 totalPools_,\\r\\n        uint256 totalStaked_,\\r\\n        uint256 totalStakers_,\\r\\n        uint256 totalRewardsPaid_,\\r\\n        uint256 rewardBalance_\\r\\n    ) {\\r\\n        return (nextPoolId - 1, totalPlatformStaked, totalPlatformStakers,\\r\\n                totalRewardsPaid, rewardBalance);\\r\\n    }\\r\\n\\r\\n    // \\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\r\\n    // \\u2500\\u2500\\u2500 Internal \\u2500\\u2500\\u2500\\r\\n    // \\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\u2550\\r\\n\\r\\n    /**\\r\\n     * @dev Calculate pending reward for a stake based on elapsed time and pool APY.\\r\\n     *      reward = principal * apyBps / 10000 * elapsedSeconds / 365 days\\r\\n     */\\r\\n    function _calculateReward(uint256 stakeId) internal view returns (uint256) {\\r\\n        StakeRecord storage s = stakes[stakeId];\\r\\n        Pool storage p = pools[s.poolId];\\r\\n\\r\\n        uint256 elapsed = block.timestamp - s.lastClaimAt;\\r\\n        if (elapsed == 0 || s.principal == 0) return 0;\\r\\n\\r\\n        // reward = principal * apyBps * elapsed / (10000 * 365 days)\\r\\n        return (s.principal * p.apyBps * elapsed) / (10000 * 365 days);\\r\\n    }\\r\\n}\\r\\n\",\"keccak256\":\"0xab8095ebc53bc285d9d387cf5a5fafe6aebc20ceb315c4b13cb5e8fd5b47cc1f\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60803461011357601f61190138819003918201601f19168301916001600160401b038311848410176101185780849260209460405283398101031261011357516001600160a01b03808216918290036101135733156100fa576000549060018060a01b0319913383821617600055604051913391167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a36001805582156100cb57506004541617600455600160025560016003556103e86005556040516117d2908161012f8239f35b62461bcd60e51b815260206004820152600a6024820152692d32b937903a37b5b2b760b11b6044820152606490fd5b604051631e4fbdf760e01b815260006004820152602490fd5b600080fd5b634e487b7160e01b600052604160045260246000fdfe608060408181526004908136101561001657600080fd5b600092833560e01c908163068bcd8d1461140f575080630962ef791461129757806309813482146111fb578063136d8883146111ac57806318e561311461118d578063241d5f18146110325780632e17de7814610e185780635312ea8e14610c725780635beec5fd14610c5357806368c3362714610c2657806369ab3e3214610b1c578063715018a614610ac25780637211bbc914610a9b57806372f702f314610a7357806374958e3514610a5457806375506c9614610a355780637b0472f0146106ff578063842e29811461064f5780638bdf67f21461053c5780638da5cb5b14610514578063aa5c3ab4146104f5578063aa5f7e26146103a2578063ac4afa381461033a578063ba70f092146102de578063d3ffe67a1461029e578063d5a44f8614610235578063d8b5d2a714610216578063dc6bf9d8146101f35763f2fde38b1461016357600080fd5b346101ef5760203660031901126101ef576001600160a01b038235818116939192908490036101eb57610194611799565b83156101d557505082546001600160a01b0319811683178455167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08380a380f35b51631e4fbdf760e01b8152908101849052602490fd5b8480fd5b8280fd5b8382346102125781600319360112610212576020906008549051908152f35b5080fd5b8382346102125781600319360112610212576020906005549051908152f35b50823461029b57602036600319011261029b57816102979184358152600b602052209160018060a01b03835416926001810154946002820154906003830154908301549060058401549260ff60076006870154960154169551988998896114e5565b0390f35b80fd5b508290346102125781600319360112610212576002546000198101929083116102cb576020838351908152f35b634e487b7160e01b815260118452602490fd5b5090346101ef5760203660031901126101ef578035916102fc611799565b611388831161030d57505060055580f35b906020606492519162461bcd60e51b835282015260076024820152664d61782035302560c81b6044820152fd5b50823461029b57602036600319011261029b57816102979184358152600a602052209160ff83541692600181015494600282015490600383015490830154600584015490600685015492600786015494600960ff60088901541697015497519a8b9a8b611499565b50346101ef5760203660031901126101ef578135916103bf611702565b828452600b602052818420906103df60018060a01b03835416331461152c565b60ff6007830154169060038210156104e257507f8e1573009e597fe833c94add4c8d91c16e21fbf66f17404e1541a782b6f36ce4916104216104d89215611565565b61042a85611725565b9061043682151561159e565b6104448260075410156115d7565b4260058201556006810161045983825461161a565b90556001600282019161046d84845461161a565b835561047b8460075461163d565b60075561048a8460065461161a565b60065501548752600a6020526005858820016104a783825461161a565b90556104b58260085461161a565b600855549351908152602081019390935242604084015233929081906060820190565b0390a36001805580f35b634e487b7160e01b865260219052602485fd5b8382346102125781600319360112610212576020906007549051908152f35b838234610212578160031936011261021257905490516001600160a01b039091168152602090f35b5082903461021257602090816003193601126101ef57833591821561061f57845482516323b872dd60e01b8152339681019687523060208801526040870185905294958291869182900360600190829089906001600160a01b03165af1938415610615577f6e8a19c7bcac2f8ca75d80a333a2cfffd851001c55ba805c58cc66c70d92bd7493946105e8575b506105d58460075461161a565b600755815193845242908401523392a280f35b61060790823d841161060e575b6105ff818361164a565b810190611682565b50856105c8565b503d6105f5565b82513d87823e3d90fd5b8490606492519162461bcd60e51b8352820152600b60248201526a16995c9bc8185b5bdd5b9d60aa1b6044820152fd5b50913461029b576020918260031936011261021257356001600160a01b03811690819003610212578193929352600c8352818120908251808584549182815201908194845286842090845b8181106106eb57505050816106b091038261164a565b83519485948186019282875251809352850193925b8281106106d457505050500390f35b8351855286955093810193928101926001016106c5565b82548452928801926001928301920161069a565b50346101ef57806003193601126101ef578135602492833590610720611702565b828652602095600a87528481209560ff60088801541615610a0457600287015484106109d757600387015480159081156109cc575b501561099f5760078701548015908115610987575b501561095a57825486516323b872dd60e01b8152338186019081523060208201526040810187905290918a9183916001600160a01b03169082908790829060600103925af1801561095057610933575b50600354966107c88861169f565b600355878352600b8952868320336bffffffffffffffffffffffff60a01b82541617815586600182015585600282015542600382015584820154801580156000146109255762015180808302928304141715610913576006929161082e6007924261161a565b878201554260058201550160ff1981541690556005810161085087825461161a565b90550161085d815461169f565b905561086b8460085461161a565b60085561087960095461169f565b600955338252600c8852858220908154936801000000000000000085101561090257600185018084558510156108f157505091878288969594879452200155835190815242868201527f9cfd25589d1eb8ad71e342a86a8524e83522e3936c0803048c08f6d9ad974f40843392a46001805551908152f35b634e487b7160e01b84526032905282fd5b634e487b7160e01b84526041905282fd5b634e487b7160e01b8552601186528385fd5b50509060076006928561082e565b61094990893d8b1161060e576105ff818361164a565b50386107ba565b87513d85823e3d90fd5b8260096064928a89519362461bcd60e51b855284015282015268141bdbdb08199d5b1b60ba1b6044820152fd5b90506109978560058a015461161a565b11153861076a565b8260096064928a89519362461bcd60e51b855284015282015268082c4deecca40dac2f60bb1b6044820152fd5b905084111538610755565b8260096064928a89519362461bcd60e51b8552840152820152682132b637bb9036b4b760b91b6044820152fd5b82600d6064928a89519362461bcd60e51b85528401528201526c506f6f6c20696e61637469766560981b6044820152fd5b8382346102125781600319360112610212576020906003549051908152f35b8382346102125781600319360112610212576020906006549051908152f35b5090346101ef57826003193601126101ef575490516001600160a01b03909116815260209150f35b50823461029b57602036600319011261029b5750610abb602092356116ce565b9051908152f35b833461029b578060031936011261029b57610adb611799565b80546001600160a01b03198116825581906001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a380f35b5090346101ef5760603660031901126101ef578035916024359160443590811515809203610c2257610b4c611799565b848652600a60205282862090600982015415610bee5761c3508511610bbc57509183916008847f876f2fd71adef90eb6722577f05441562e25e26d9a752efa67ca51607fd8ad8196600160609701550160ff1981541660ff8316179055815192835260208301524290820152a280f35b606490602085519162461bcd60e51b8352820152600c60248201526b082a0b240e8dede40d0d2ced60a31b6044820152fd5b606490602085519162461bcd60e51b8352820152600e60248201526d141bdbdb081b9bdd08199bdd5b9960921b6044820152fd5b8580fd5b508290346102125781600319360112610212576003546000198101929083116102cb576020838351908152f35b8382346102125781600319360112610212576020906009549051908152f35b5082903461021257602090816003193601126101ef57833591610c93611702565b828452600b815281842080546001600160a01b039190610cb6908316331461152c565b6007810160ff8154166003811015610e05579680988594610d8594889794610ce2610d059b9c15611565565b610d3c6002830160068154612710610cfc600554836116ae565b049e8f8261163d565b9d8e9960018801548152600a8c522090610d246005830191825461163d565b905501610d3181546116c1565b90555460085461163d565b600855600260ff19825416179055600542910155815416908a875180968195829463a9059cbb60e01b84523390840160209093929193604081019460018060a01b031681520152565b03925af18015610dfb57916104d893917fc3ae420708f3574e47faed23b534a8e674d4e336521eba18f49bc3ba786117e79593610ddd575b505051908152602081019390935242604084015233929081906060820190565b81610df392903d1061060e576105ff818361164a565b508780610dbd565b83513d89823e3d90fd5b634e487b7160e01b885260218952602488fd5b5090346101ef576020908160031936011261102e57803592610e38611702565b838552600b83528085209260018060a01b03610e5881865416331461152c565b600785019384549460ff8616600381101561101b57610e779015611565565b60018701548952600a8452848920828801548015159081611011575b50610e9d8a611725565b9860028101938454998a93610fd8575b93610eec938c610edb6006610f349b9996819660018f9d9b60ff19161790554260058201550191825461161a565b9055610d246005830191825461163d565b600855610ef9888861161a565b9188610fa9575b8154875163a9059cbb60e01b815233938101938452602084019490945292948593919091169183918c918391604090910190565b03925af18015610dfb57916104d893917fdcfd2b4017d03f7e541021db793b2f9b31e4acdee005f789e52853c390e3e9629593610f8b57505051908152602081019390935242604084015233929081906060820190565b81610fa192903d1061060e576105ff818361164a565b503880610dbd565b610fc189600754610fbc828210156115d7565b61163d565b600755610fd08960065461161a565b600655610f00565b90929a508795939960059795929754610ff190826116ae565b6127109004610fff9161163d565b998d9b93919094965096919496610ead565b9050421038610e93565b634e487b7160e01b8a526021835260248afd5b8380fd5b50823461029b5760c036600319011261029b578235600581101561021257608435604435602435611061611799565b80151580611181575b1561115157811561112457927f9f437e0fe5f816624873d0a88f045ae603420c959c6370f92dcfd6b3e1d417109260a092879695602099600254998a986110b08a61169f565b600255898152600a8d5220908460ff19918284541660ff8916178455846001850155856002850155606435600385015583015560a43560078301556001600883019182541617905560094291015561110a88518095611476565b89840152868301526060820152426080820152a251908152f35b855162461bcd60e51b8152602081890152600760248201526604d696e203e20360cc1b6044820152606490fd5b855162461bcd60e51b8152602081890152600a60248201526941505920302d3530302560b01b6044820152606490fd5b5061c35081111561106a565b8382346102125781600319360112610212576020906002549051908152f35b508290346102125781600319360112610212576002546000198101929083116102cb5760a083836008549060095460065491600754938151958652602086015284015260608301526080820152f35b5090346101ef5760203660031901126101ef57803592838152600b6020528281209260ff60078501541691600383101561128457610297939495831560001461127d576112489150611725565b945b8054600182015460028301546003840154978401546005909401549451988998939092906001600160a01b0316896114e5565b509461124a565b634e487b7160e01b815260218452602490fd5b5082903461021257602090816003193601126101ef578335916112b8611702565b828452600b815281842080546001600160a01b03906112da908216331461152c565b60ff60078301541660038110156113fc579261138c95949288829361130160069715611565565b61130a88611725565b96879361131885151561159e565b6113268560075410156115d7565b4260058201550161133884825461161a565b90556113468360075461163d565b6007556113558360065461161a565b6006558154865163a9059cbb60e01b815233938101938452602084019490945292988993919091169183918b918391604090910190565b03925af19485156113f2577f56253d287efacdb2c4cd76dd03624a4821c1ce721d1152e8f5f5718f6087c9bf9394956113d5575b50815193845242908401523392a36001805580f35b6113eb90823d841161060e576105ff818361164a565b50866113c0565b82513d88823e3d90fd5b634e487b7160e01b875260218852602487fd5b929190503461102e57602036600319011261102e579061029791839482358152600a6020522060ff81541691600182015490600283015490600384015490840154600585015491600686015493600787015495600960ff60088a015416980154988b611499565b9060058210156114835752565b634e487b7160e01b600052602160045260246000fd5b9693909a999895926101209895926114b68961014081019e611476565b602089015260408801526060870152608086015260a085015260c084015260e083015215156101008201520152565b9593919897969492909861010087019960018060a01b03168752602087015260408601526060850152608084015260a083015260c082015260038210156114835760e00152565b1561153357565b60405162461bcd60e51b815260206004820152600a6024820152692737ba1039ba30b5b2b960b11b6044820152606490fd5b1561156c57565b60405162461bcd60e51b815260206004820152600a6024820152694e6f742061637469766560b01b6044820152606490fd5b156115a557565b60405162461bcd60e51b815260206004820152600a6024820152694e6f207265776172647360b01b6044820152606490fd5b156115de57565b60405162461bcd60e51b8152602060048201526014602482015273496e73756666696369656e74207265776172647360601b6044820152606490fd5b9190820180921161162757565b634e487b7160e01b600052601160045260246000fd5b9190820391821161162757565b90601f8019910116810190811067ffffffffffffffff82111761166c57604052565b634e487b7160e01b600052604160045260246000fd5b9081602091031261169a5751801515810361169a5790565b600080fd5b60001981146116275760010190565b8181029291811591840414171561162757565b8015611627576000190190565b80600052600b60205260ff600760406000200154166003811015611483576116fc576116f990611725565b90565b50600090565b600260015414611713576002600155565b604051633ee5aeb560e01b8152600490fd5b600052600b60205260406000206001810154600052600a602052604060002061175260058301544261163d565b8015801561178d575b6117855761177c611781926001600264496cebb800960154910154906116ae565b6116ae565b0490565b505050600090565b5060028301541561175b565b6000546001600160a01b031633036117ad57565b60405163118cdaa760e01b8152336004820152602490fdfea164736f6c6343000818000a",
+  "deployedBytecode": "0x608060408181526004908136101561001657600080fd5b600092833560e01c908163068bcd8d1461140f575080630962ef791461129757806309813482146111fb578063136d8883146111ac57806318e561311461118d578063241d5f18146110325780632e17de7814610e185780635312ea8e14610c725780635beec5fd14610c5357806368c3362714610c2657806369ab3e3214610b1c578063715018a614610ac25780637211bbc914610a9b57806372f702f314610a7357806374958e3514610a5457806375506c9614610a355780637b0472f0146106ff578063842e29811461064f5780638bdf67f21461053c5780638da5cb5b14610514578063aa5c3ab4146104f5578063aa5f7e26146103a2578063ac4afa381461033a578063ba70f092146102de578063d3ffe67a1461029e578063d5a44f8614610235578063d8b5d2a714610216578063dc6bf9d8146101f35763f2fde38b1461016357600080fd5b346101ef5760203660031901126101ef576001600160a01b038235818116939192908490036101eb57610194611799565b83156101d557505082546001600160a01b0319811683178455167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08380a380f35b51631e4fbdf760e01b8152908101849052602490fd5b8480fd5b8280fd5b8382346102125781600319360112610212576020906008549051908152f35b5080fd5b8382346102125781600319360112610212576020906005549051908152f35b50823461029b57602036600319011261029b57816102979184358152600b602052209160018060a01b03835416926001810154946002820154906003830154908301549060058401549260ff60076006870154960154169551988998896114e5565b0390f35b80fd5b508290346102125781600319360112610212576002546000198101929083116102cb576020838351908152f35b634e487b7160e01b815260118452602490fd5b5090346101ef5760203660031901126101ef578035916102fc611799565b611388831161030d57505060055580f35b906020606492519162461bcd60e51b835282015260076024820152664d61782035302560c81b6044820152fd5b50823461029b57602036600319011261029b57816102979184358152600a602052209160ff83541692600181015494600282015490600383015490830154600584015490600685015492600786015494600960ff60088901541697015497519a8b9a8b611499565b50346101ef5760203660031901126101ef578135916103bf611702565b828452600b602052818420906103df60018060a01b03835416331461152c565b60ff6007830154169060038210156104e257507f8e1573009e597fe833c94add4c8d91c16e21fbf66f17404e1541a782b6f36ce4916104216104d89215611565565b61042a85611725565b9061043682151561159e565b6104448260075410156115d7565b4260058201556006810161045983825461161a565b90556001600282019161046d84845461161a565b835561047b8460075461163d565b60075561048a8460065461161a565b60065501548752600a6020526005858820016104a783825461161a565b90556104b58260085461161a565b600855549351908152602081019390935242604084015233929081906060820190565b0390a36001805580f35b634e487b7160e01b865260219052602485fd5b8382346102125781600319360112610212576020906007549051908152f35b838234610212578160031936011261021257905490516001600160a01b039091168152602090f35b5082903461021257602090816003193601126101ef57833591821561061f57845482516323b872dd60e01b8152339681019687523060208801526040870185905294958291869182900360600190829089906001600160a01b03165af1938415610615577f6e8a19c7bcac2f8ca75d80a333a2cfffd851001c55ba805c58cc66c70d92bd7493946105e8575b506105d58460075461161a565b600755815193845242908401523392a280f35b61060790823d841161060e575b6105ff818361164a565b810190611682565b50856105c8565b503d6105f5565b82513d87823e3d90fd5b8490606492519162461bcd60e51b8352820152600b60248201526a16995c9bc8185b5bdd5b9d60aa1b6044820152fd5b50913461029b576020918260031936011261021257356001600160a01b03811690819003610212578193929352600c8352818120908251808584549182815201908194845286842090845b8181106106eb57505050816106b091038261164a565b83519485948186019282875251809352850193925b8281106106d457505050500390f35b8351855286955093810193928101926001016106c5565b82548452928801926001928301920161069a565b50346101ef57806003193601126101ef578135602492833590610720611702565b828652602095600a87528481209560ff60088801541615610a0457600287015484106109d757600387015480159081156109cc575b501561099f5760078701548015908115610987575b501561095a57825486516323b872dd60e01b8152338186019081523060208201526040810187905290918a9183916001600160a01b03169082908790829060600103925af1801561095057610933575b50600354966107c88861169f565b600355878352600b8952868320336bffffffffffffffffffffffff60a01b82541617815586600182015585600282015542600382015584820154801580156000146109255762015180808302928304141715610913576006929161082e6007924261161a565b878201554260058201550160ff1981541690556005810161085087825461161a565b90550161085d815461169f565b905561086b8460085461161a565b60085561087960095461169f565b600955338252600c8852858220908154936801000000000000000085101561090257600185018084558510156108f157505091878288969594879452200155835190815242868201527f9cfd25589d1eb8ad71e342a86a8524e83522e3936c0803048c08f6d9ad974f40843392a46001805551908152f35b634e487b7160e01b84526032905282fd5b634e487b7160e01b84526041905282fd5b634e487b7160e01b8552601186528385fd5b50509060076006928561082e565b61094990893d8b1161060e576105ff818361164a565b50386107ba565b87513d85823e3d90fd5b8260096064928a89519362461bcd60e51b855284015282015268141bdbdb08199d5b1b60ba1b6044820152fd5b90506109978560058a015461161a565b11153861076a565b8260096064928a89519362461bcd60e51b855284015282015268082c4deecca40dac2f60bb1b6044820152fd5b905084111538610755565b8260096064928a89519362461bcd60e51b8552840152820152682132b637bb9036b4b760b91b6044820152fd5b82600d6064928a89519362461bcd60e51b85528401528201526c506f6f6c20696e61637469766560981b6044820152fd5b8382346102125781600319360112610212576020906003549051908152f35b8382346102125781600319360112610212576020906006549051908152f35b5090346101ef57826003193601126101ef575490516001600160a01b03909116815260209150f35b50823461029b57602036600319011261029b5750610abb602092356116ce565b9051908152f35b833461029b578060031936011261029b57610adb611799565b80546001600160a01b03198116825581906001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a380f35b5090346101ef5760603660031901126101ef578035916024359160443590811515809203610c2257610b4c611799565b848652600a60205282862090600982015415610bee5761c3508511610bbc57509183916008847f876f2fd71adef90eb6722577f05441562e25e26d9a752efa67ca51607fd8ad8196600160609701550160ff1981541660ff8316179055815192835260208301524290820152a280f35b606490602085519162461bcd60e51b8352820152600c60248201526b082a0b240e8dede40d0d2ced60a31b6044820152fd5b606490602085519162461bcd60e51b8352820152600e60248201526d141bdbdb081b9bdd08199bdd5b9960921b6044820152fd5b8580fd5b508290346102125781600319360112610212576003546000198101929083116102cb576020838351908152f35b8382346102125781600319360112610212576020906009549051908152f35b5082903461021257602090816003193601126101ef57833591610c93611702565b828452600b815281842080546001600160a01b039190610cb6908316331461152c565b6007810160ff8154166003811015610e05579680988594610d8594889794610ce2610d059b9c15611565565b610d3c6002830160068154612710610cfc600554836116ae565b049e8f8261163d565b9d8e9960018801548152600a8c522090610d246005830191825461163d565b905501610d3181546116c1565b90555460085461163d565b600855600260ff19825416179055600542910155815416908a875180968195829463a9059cbb60e01b84523390840160209093929193604081019460018060a01b031681520152565b03925af18015610dfb57916104d893917fc3ae420708f3574e47faed23b534a8e674d4e336521eba18f49bc3ba786117e79593610ddd575b505051908152602081019390935242604084015233929081906060820190565b81610df392903d1061060e576105ff818361164a565b508780610dbd565b83513d89823e3d90fd5b634e487b7160e01b885260218952602488fd5b5090346101ef576020908160031936011261102e57803592610e38611702565b838552600b83528085209260018060a01b03610e5881865416331461152c565b600785019384549460ff8616600381101561101b57610e779015611565565b60018701548952600a8452848920828801548015159081611011575b50610e9d8a611725565b9860028101938454998a93610fd8575b93610eec938c610edb6006610f349b9996819660018f9d9b60ff19161790554260058201550191825461161a565b9055610d246005830191825461163d565b600855610ef9888861161a565b9188610fa9575b8154875163a9059cbb60e01b815233938101938452602084019490945292948593919091169183918c918391604090910190565b03925af18015610dfb57916104d893917fdcfd2b4017d03f7e541021db793b2f9b31e4acdee005f789e52853c390e3e9629593610f8b57505051908152602081019390935242604084015233929081906060820190565b81610fa192903d1061060e576105ff818361164a565b503880610dbd565b610fc189600754610fbc828210156115d7565b61163d565b600755610fd08960065461161a565b600655610f00565b90929a508795939960059795929754610ff190826116ae565b6127109004610fff9161163d565b998d9b93919094965096919496610ead565b9050421038610e93565b634e487b7160e01b8a526021835260248afd5b8380fd5b50823461029b5760c036600319011261029b578235600581101561021257608435604435602435611061611799565b80151580611181575b1561115157811561112457927f9f437e0fe5f816624873d0a88f045ae603420c959c6370f92dcfd6b3e1d417109260a092879695602099600254998a986110b08a61169f565b600255898152600a8d5220908460ff19918284541660ff8916178455846001850155856002850155606435600385015583015560a43560078301556001600883019182541617905560094291015561110a88518095611476565b89840152868301526060820152426080820152a251908152f35b855162461bcd60e51b8152602081890152600760248201526604d696e203e20360cc1b6044820152606490fd5b855162461bcd60e51b8152602081890152600a60248201526941505920302d3530302560b01b6044820152606490fd5b5061c35081111561106a565b8382346102125781600319360112610212576020906002549051908152f35b508290346102125781600319360112610212576002546000198101929083116102cb5760a083836008549060095460065491600754938151958652602086015284015260608301526080820152f35b5090346101ef5760203660031901126101ef57803592838152600b6020528281209260ff60078501541691600383101561128457610297939495831560001461127d576112489150611725565b945b8054600182015460028301546003840154978401546005909401549451988998939092906001600160a01b0316896114e5565b509461124a565b634e487b7160e01b815260218452602490fd5b5082903461021257602090816003193601126101ef578335916112b8611702565b828452600b815281842080546001600160a01b03906112da908216331461152c565b60ff60078301541660038110156113fc579261138c95949288829361130160069715611565565b61130a88611725565b96879361131885151561159e565b6113268560075410156115d7565b4260058201550161133884825461161a565b90556113468360075461163d565b6007556113558360065461161a565b6006558154865163a9059cbb60e01b815233938101938452602084019490945292988993919091169183918b918391604090910190565b03925af19485156113f2577f56253d287efacdb2c4cd76dd03624a4821c1ce721d1152e8f5f5718f6087c9bf9394956113d5575b50815193845242908401523392a36001805580f35b6113eb90823d841161060e576105ff818361164a565b50866113c0565b82513d88823e3d90fd5b634e487b7160e01b875260218852602487fd5b929190503461102e57602036600319011261102e579061029791839482358152600a6020522060ff81541691600182015490600283015490600384015490840154600585015491600686015493600787015495600960ff60088a015416980154988b611499565b9060058210156114835752565b634e487b7160e01b600052602160045260246000fd5b9693909a999895926101209895926114b68961014081019e611476565b602089015260408801526060870152608086015260a085015260c084015260e083015215156101008201520152565b9593919897969492909861010087019960018060a01b03168752602087015260408601526060850152608084015260a083015260c082015260038210156114835760e00152565b1561153357565b60405162461bcd60e51b815260206004820152600a6024820152692737ba1039ba30b5b2b960b11b6044820152606490fd5b1561156c57565b60405162461bcd60e51b815260206004820152600a6024820152694e6f742061637469766560b01b6044820152606490fd5b156115a557565b60405162461bcd60e51b815260206004820152600a6024820152694e6f207265776172647360b01b6044820152606490fd5b156115de57565b60405162461bcd60e51b8152602060048201526014602482015273496e73756666696369656e74207265776172647360601b6044820152606490fd5b9190820180921161162757565b634e487b7160e01b600052601160045260246000fd5b9190820391821161162757565b90601f8019910116810190811067ffffffffffffffff82111761166c57604052565b634e487b7160e01b600052604160045260246000fd5b9081602091031261169a5751801515810361169a5790565b600080fd5b60001981146116275760010190565b8181029291811591840414171561162757565b8015611627576000190190565b80600052600b60205260ff600760406000200154166003811015611483576116fc576116f990611725565b90565b50600090565b600260015414611713576002600155565b604051633ee5aeb560e01b8152600490fd5b600052600b60205260406000206001810154600052600a602052604060002061175260058301544261163d565b8015801561178d575b6117855761177c611781926001600264496cebb800960154910154906116ae565b6116ae565b0490565b505050600090565b5060028301541561175b565b6000546001600160a01b031633036117ad57565b60405163118cdaa760e01b8152336004820152602490fdfea164736f6c6343000818000a",
+  "devdoc": {
+    "author": "VNDC Education Platform",
+    "details": "Module 018 – counters start at 1, Ownable(msg.sender)",
+    "errors": {
+      "OwnableInvalidOwner(address)": [
+        {
+          "details": "The owner is not a valid owner account. (eg. `address(0)`)"
+        }
+      ],
+      "OwnableUnauthorizedAccount(address)": [
+        {
+          "details": "The caller account is not authorized to perform an operation."
+        }
+      ],
+      "ReentrancyGuardReentrantCall()": [
+        {
+          "details": "Unauthorized reentrant call."
+        }
+      ]
+    },
+    "kind": "dev",
+    "methods": {
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "title": "StakingPool",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "notice": "Campus staking pool — stake VNDC tokens to earn APY rewards.         Supports flexible & fixed-term pools, compound interest,         early-withdrawal penalties, and an on-chain reward treasury.",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 8,
+        "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 266,
+        "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+        "label": "_status",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 599,
+        "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+        "label": "nextPoolId",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 601,
+        "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+        "label": "nextStakeId",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 604,
+        "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+        "label": "stakingToken",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_contract(IERC20)225"
+      },
+      {
+        "astId": 606,
+        "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+        "label": "earlyWithdrawPenaltyBps",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 608,
+        "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+        "label": "totalRewardsPaid",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 610,
+        "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+        "label": "rewardBalance",
+        "offset": 0,
+        "slot": "7",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 612,
+        "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+        "label": "totalPlatformStaked",
+        "offset": 0,
+        "slot": "8",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 614,
+        "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+        "label": "totalPlatformStakers",
+        "offset": 0,
+        "slot": "9",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 659,
+        "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+        "label": "pools",
+        "offset": 0,
+        "slot": "10",
+        "type": "t_mapping(t_uint256,t_struct(Pool)636_storage)"
+      },
+      {
+        "astId": 664,
+        "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+        "label": "stakes",
+        "offset": 0,
+        "slot": "11",
+        "type": "t_mapping(t_uint256,t_struct(StakeRecord)654_storage)"
+      },
+      {
+        "astId": 669,
+        "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+        "label": "_userStakes",
+        "offset": 0,
+        "slot": "12",
+        "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_uint256)dyn_storage": {
+        "base": "t_uint256",
+        "encoding": "dynamic_array",
+        "label": "uint256[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_contract(IERC20)225": {
+        "encoding": "inplace",
+        "label": "contract IERC20",
+        "numberOfBytes": "20"
+      },
+      "t_enum(PoolType)333": {
+        "encoding": "inplace",
+        "label": "enum IStaking.PoolType",
+        "numberOfBytes": "1"
+      },
+      "t_enum(StakeStatus)337": {
+        "encoding": "inplace",
+        "label": "enum IStaking.StakeStatus",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => uint256[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_uint256)dyn_storage"
+      },
+      "t_mapping(t_uint256,t_struct(Pool)636_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct StakingPool.Pool)",
+        "numberOfBytes": "32",
+        "value": "t_struct(Pool)636_storage"
+      },
+      "t_mapping(t_uint256,t_struct(StakeRecord)654_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct StakingPool.StakeRecord)",
+        "numberOfBytes": "32",
+        "value": "t_struct(StakeRecord)654_storage"
+      },
+      "t_struct(Pool)636_storage": {
+        "encoding": "inplace",
+        "label": "struct StakingPool.Pool",
+        "members": [
+          {
+            "astId": 617,
+            "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+            "label": "poolType",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_enum(PoolType)333"
+          },
+          {
+            "astId": 619,
+            "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+            "label": "apyBps",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 621,
+            "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+            "label": "minStake",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 623,
+            "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+            "label": "maxStake",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 625,
+            "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+            "label": "lockDays",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 627,
+            "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+            "label": "totalStaked",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 629,
+            "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+            "label": "totalStakers",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 631,
+            "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+            "label": "maxCapacity",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 633,
+            "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+            "label": "active",
+            "offset": 0,
+            "slot": "8",
+            "type": "t_bool"
+          },
+          {
+            "astId": 635,
+            "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+            "label": "createdAt",
+            "offset": 0,
+            "slot": "9",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "320"
+      },
+      "t_struct(StakeRecord)654_storage": {
+        "encoding": "inplace",
+        "label": "struct StakingPool.StakeRecord",
+        "members": [
+          {
+            "astId": 638,
+            "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+            "label": "staker",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address"
+          },
+          {
+            "astId": 640,
+            "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+            "label": "poolId",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 642,
+            "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+            "label": "principal",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 644,
+            "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+            "label": "stakedAt",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 646,
+            "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+            "label": "unlockAt",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 648,
+            "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+            "label": "lastClaimAt",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 650,
+            "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+            "label": "claimedRewards",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 653,
+            "contract": "contracts/modules/018-staking/StakingPool.sol:StakingPool",
+            "label": "status",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_enum(StakeStatus)337"
+          }
+        ],
+        "numberOfBytes": "256"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

@@ -21,6 +21,9 @@ import IntegrationPage from './pages/IntegrationPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import SettingsPage from './pages/SettingsPage';
 import ExchangePage from './pages/ExchangePage';
+import MarketplacePage from './pages/MarketplacePage';
+import StakingPage from './pages/StakingPage';
+import FundraisingPage from './pages/FundraisingPage';
 import DocumentationPage from './pages/DocumentationPage';
 
 export default function App() {
@@ -44,6 +47,9 @@ export default function App() {
         <Route path="internship" element={<InternshipPage />} />
         <Route path="research" element={<ResearchPage />} />
         <Route path="exchange" element={<ExchangePage />} />
+        <Route path="marketplace" element={<MarketplacePage />} />
+        <Route path="staking" element={<StakingPage />} />
+        <Route path="fundraising" element={<FundraisingPage />} />
         <Route path="auditing" element={<AuditingPage />} />
         <Route path="integration" element={<IntegrationPage />} />
         <Route path="analytics" element={<AnalyticsPage />} />

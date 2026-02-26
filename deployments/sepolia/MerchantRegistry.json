@@ -1,0 +1,986 @@
+{
+  "address": "0x3e33EFe8cBBb65561d1253FEC9295833cF5D714c",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "merchant",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "commissionRate",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "CommissionRateSet",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "merchant",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "MerchantApproved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "merchant",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "MerchantDeactivated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "merchant",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "category",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "MerchantRegistered",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "merchant",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "MerchantRejected",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "merchant",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "category",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "MerchantUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "merchant",
+          "type": "address"
+        }
+      ],
+      "name": "approveMerchant",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "merchant",
+          "type": "address"
+        }
+      ],
+      "name": "deactivateMerchant",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "merchant",
+          "type": "address"
+        }
+      ],
+      "name": "getCommissionRate",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getDefaultCommissionRate",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "merchant",
+          "type": "address"
+        }
+      ],
+      "name": "getMerchant",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "merchantAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "category",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "contactEmail",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "contactPhone",
+              "type": "string"
+            },
+            {
+              "internalType": "bool",
+              "name": "isApproved",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "isActive",
+              "type": "bool"
+            },
+            {
+              "internalType": "uint256",
+              "name": "commissionRate",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "totalTransactions",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "totalRevenue",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "registrationDate",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "approvalDate",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct IMerchantRegistry.Merchant",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getMerchantByIndex",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "category",
+          "type": "string"
+        }
+      ],
+      "name": "getMerchantsByCategory",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalApprovedMerchants",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalMerchants",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "merchant",
+          "type": "address"
+        }
+      ],
+      "name": "isApprovedMerchant",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "merchant",
+          "type": "address"
+        }
+      ],
+      "name": "isMerchantActive",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "merchant",
+          "type": "address"
+        }
+      ],
+      "name": "isMerchantRegistered",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "merchant",
+          "type": "address"
+        }
+      ],
+      "name": "reactivateMerchant",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "category",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "contactEmail",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "contactPhone",
+          "type": "string"
+        }
+      ],
+      "name": "registerMerchant",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "merchantAddress",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "merchant",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        }
+      ],
+      "name": "rejectMerchant",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "merchant",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "commissionRate",
+          "type": "uint256"
+        }
+      ],
+      "name": "setCommissionRate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "rate",
+          "type": "uint256"
+        }
+      ],
+      "name": "setDefaultCommissionRate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "merchant",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "category",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "contactEmail",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "contactPhone",
+          "type": "string"
+        }
+      ],
+      "name": "updateMerchant",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "merchant",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "transactionAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "updateTransactionStats",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x711e745914d7b6b0d23410aadb04a5796d9e57470317bbd9d0301c08be061d55",
+  "receipt": {
+    "to": null,
+    "from": "0x7EFf82613404AE7Bce622EA1C927214E30F2285e",
+    "contractAddress": "0x3e33EFe8cBBb65561d1253FEC9295833cF5D714c",
+    "transactionIndex": 70,
+    "gasUsed": "1666631",
+    "logsBloom": "0x00000000000000000000000000001000000000000000000000800000000100000000000000040000000000000000000000000000000000000000000000000080000000000000000000000000000000000001000000000000000000000000000000000000020000000000000000000800000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xa5b1c6092018e0b566c20f6e288b272fe95671b62e07e791ef6aca19d28c0d9c",
+    "transactionHash": "0x711e745914d7b6b0d23410aadb04a5796d9e57470317bbd9d0301c08be061d55",
+    "logs": [
+      {
+        "transactionIndex": 70,
+        "blockNumber": 10337724,
+        "transactionHash": "0x711e745914d7b6b0d23410aadb04a5796d9e57470317bbd9d0301c08be061d55",
+        "address": "0x3e33EFe8cBBb65561d1253FEC9295833cF5D714c",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x0000000000000000000000007eff82613404ae7bce622ea1c927214e30f2285e"
+        ],
+        "data": "0x",
+        "logIndex": 145,
+        "blockHash": "0xa5b1c6092018e0b566c20f6e288b272fe95671b62e07e791ef6aca19d28c0d9c"
+      }
+    ],
+    "blockNumber": 10337724,
+    "cumulativeGasUsed": "10257506",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "1aa8ff3bf9f59c178ddc86ab91003649",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"merchant\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"commissionRate\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"CommissionRateSet\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"merchant\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"MerchantApproved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"merchant\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"MerchantDeactivated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"merchant\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"category\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"MerchantRegistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"merchant\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"reason\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"MerchantRejected\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"merchant\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"category\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"MerchantUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"merchant\",\"type\":\"address\"}],\"name\":\"approveMerchant\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"merchant\",\"type\":\"address\"}],\"name\":\"deactivateMerchant\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"merchant\",\"type\":\"address\"}],\"name\":\"getCommissionRate\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getDefaultCommissionRate\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"merchant\",\"type\":\"address\"}],\"name\":\"getMerchant\",\"outputs\":[{\"components\":[{\"internalType\":\"address\",\"name\":\"merchantAddress\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"category\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"contactEmail\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"contactPhone\",\"type\":\"string\"},{\"internalType\":\"bool\",\"name\":\"isApproved\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"isActive\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"commissionRate\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalTransactions\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalRevenue\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"registrationDate\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"approvalDate\",\"type\":\"uint256\"}],\"internalType\":\"struct IMerchantRegistry.Merchant\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"getMerchantByIndex\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"category\",\"type\":\"string\"}],\"name\":\"getMerchantsByCategory\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalApprovedMerchants\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalMerchants\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"merchant\",\"type\":\"address\"}],\"name\":\"isApprovedMerchant\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"merchant\",\"type\":\"address\"}],\"name\":\"isMerchantActive\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"merchant\",\"type\":\"address\"}],\"name\":\"isMerchantRegistered\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"merchant\",\"type\":\"address\"}],\"name\":\"reactivateMerchant\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"category\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"contactEmail\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"contactPhone\",\"type\":\"string\"}],\"name\":\"registerMerchant\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"merchantAddress\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"merchant\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"reason\",\"type\":\"string\"}],\"name\":\"rejectMerchant\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"merchant\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"commissionRate\",\"type\":\"uint256\"}],\"name\":\"setCommissionRate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"rate\",\"type\":\"uint256\"}],\"name\":\"setDefaultCommissionRate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"merchant\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"category\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"contactEmail\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"contactPhone\",\"type\":\"string\"}],\"name\":\"updateMerchant\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"merchant\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"transactionAmount\",\"type\":\"uint256\"}],\"name\":\"updateTransactionStats\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Registry for managing merchant registrations, approvals, and information Handles merchant onboarding, verification, and commission management\",\"errors\":{\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}]},\"kind\":\"dev\",\"methods\":{\"approveMerchant(address)\":{\"details\":\"Approve a merchant registration\"},\"deactivateMerchant(address)\":{\"details\":\"Deactivate a merchant account\"},\"getCommissionRate(address)\":{\"details\":\"Get commission rate for merchant\"},\"getDefaultCommissionRate()\":{\"details\":\"Get default commission rate\"},\"getMerchant(address)\":{\"details\":\"Get merchant information\"},\"getMerchantByIndex(uint256)\":{\"details\":\"Get merchant by index\"},\"getMerchantsByCategory(string)\":{\"details\":\"Get all merchants in a category\"},\"getTotalApprovedMerchants()\":{\"details\":\"Get total approved merchants\"},\"getTotalMerchants()\":{\"details\":\"Get total registered merchants\"},\"isApprovedMerchant(address)\":{\"details\":\"Check if address is an approved merchant\"},\"isMerchantActive(address)\":{\"details\":\"Check if merchant is active\"},\"isMerchantRegistered(address)\":{\"details\":\"Check if address is registered merchant\"},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"reactivateMerchant(address)\":{\"details\":\"Reactivate a merchant account\"},\"registerMerchant(string,string,string,string)\":{\"details\":\"Register a new merchant\"},\"rejectMerchant(address,string)\":{\"details\":\"Reject a merchant registration\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"setCommissionRate(address,uint256)\":{\"details\":\"Set commission rate for a merchant\"},\"setDefaultCommissionRate(uint256)\":{\"details\":\"Set default commission rate\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"},\"updateMerchant(address,string,string,string,string)\":{\"details\":\"Update merchant information\"},\"updateTransactionStats(address,uint256)\":{\"details\":\"Update merchant transaction stats\"}},\"title\":\"MerchantRegistry\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/modules/005-payment-processor/MerchantRegistry.sol\":\"MerchantRegistry\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"none\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {Context} from \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * The initial owner is set to the address provided by the deployer. This can\\n * later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    /**\\n     * @dev The caller account is not authorized to perform an operation.\\n     */\\n    error OwnableUnauthorizedAccount(address account);\\n\\n    /**\\n     * @dev The owner is not a valid owner account. (eg. `address(0)`)\\n     */\\n    error OwnableInvalidOwner(address owner);\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the address provided by the deployer as the initial owner.\\n     */\\n    constructor(address initialOwner) {\\n        if (initialOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(initialOwner);\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        if (owner() != _msgSender()) {\\n            revert OwnableUnauthorizedAccount(_msgSender());\\n        }\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby disabling any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        if (newOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    function _contextSuffixLength() internal view virtual returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\"},\"contracts/modules/005-payment-processor/MerchantRegistry.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.24;\\r\\n\\r\\nimport {Ownable} from \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\r\\nimport {IMerchantRegistry} from \\\"./interfaces/IMerchantRegistry.sol\\\";\\r\\n\\r\\n/**\\r\\n * @title MerchantRegistry\\r\\n * @dev Registry for managing merchant registrations, approvals, and information\\r\\n * Handles merchant onboarding, verification, and commission management\\r\\n */\\r\\ncontract MerchantRegistry is IMerchantRegistry, Ownable {\\r\\n    \\r\\n    // ============ State Variables ============\\r\\n    mapping(address => Merchant) private merchants;\\r\\n    mapping(address => bool) private registeredMerchants;\\r\\n    address[] private merchantList;\\r\\n    mapping(string => address[]) private merchantsByCategory;\\r\\n    mapping(address => bool) private approvedMerchants;\\r\\n    \\r\\n    // Default commission rate (in basis points, 250 = 2.5%)\\r\\n    uint256 private defaultCommissionRate = 250;\\r\\n\\r\\n    // ============ Constructor ============\\r\\n    constructor() Ownable(msg.sender) {}\\r\\n\\r\\n    // ============ Modifiers ============\\r\\n    modifier onlyRegistered(address merchant) {\\r\\n        require(registeredMerchants[merchant], \\\"Merchant not registered\\\");\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    modifier onlyApproved(address merchant) {\\r\\n        require(approvedMerchants[merchant], \\\"Merchant not approved\\\");\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    // ============ Merchant Registration ============\\r\\n    /**\\r\\n     * @dev Register a new merchant\\r\\n     */\\r\\n    function registerMerchant(\\r\\n        string calldata name,\\r\\n        string calldata category,\\r\\n        string calldata contactEmail,\\r\\n        string calldata contactPhone\\r\\n    ) external returns (address merchantAddress) {\\r\\n        require(!registeredMerchants[msg.sender], \\\"Already registered\\\");\\r\\n        require(bytes(name).length > 0, \\\"Invalid name\\\");\\r\\n        require(bytes(category).length > 0, \\\"Invalid category\\\");\\r\\n\\r\\n        merchantAddress = msg.sender;\\r\\n        \\r\\n        merchants[merchantAddress] = Merchant({\\r\\n            merchantAddress: merchantAddress,\\r\\n            name: name,\\r\\n            category: category,\\r\\n            contactEmail: contactEmail,\\r\\n            contactPhone: contactPhone,\\r\\n            isApproved: false,\\r\\n            isActive: true,\\r\\n            commissionRate: defaultCommissionRate,\\r\\n            totalTransactions: 0,\\r\\n            totalRevenue: 0,\\r\\n            registrationDate: block.timestamp,\\r\\n            approvalDate: 0\\r\\n        });\\r\\n\\r\\n        registeredMerchants[merchantAddress] = true;\\r\\n        merchantList.push(merchantAddress);\\r\\n        merchantsByCategory[category].push(merchantAddress);\\r\\n\\r\\n        emit MerchantRegistered(\\r\\n            merchantAddress,\\r\\n            name,\\r\\n            category,\\r\\n            block.timestamp\\r\\n        );\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Update merchant information\\r\\n     */\\r\\n    function updateMerchant(\\r\\n        address merchant,\\r\\n        string calldata name,\\r\\n        string calldata category,\\r\\n        string calldata contactEmail,\\r\\n        string calldata contactPhone\\r\\n    ) external onlyRegistered(merchant) {\\r\\n        require(msg.sender == merchant || msg.sender == owner(), \\\"Unauthorized\\\");\\r\\n        require(bytes(name).length > 0, \\\"Invalid name\\\");\\r\\n        require(bytes(category).length > 0, \\\"Invalid category\\\");\\r\\n\\r\\n        Merchant storage merch = merchants[merchant];\\r\\n        merch.name = name;\\r\\n        merch.category = category;\\r\\n        merch.contactEmail = contactEmail;\\r\\n        merch.contactPhone = contactPhone;\\r\\n\\r\\n        emit MerchantUpdated(\\r\\n            merchant,\\r\\n            name,\\r\\n            category,\\r\\n            block.timestamp\\r\\n        );\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Approve a merchant registration\\r\\n     */\\r\\n    function approveMerchant(address merchant) external onlyOwner onlyRegistered(merchant) {\\r\\n        require(!approvedMerchants[merchant], \\\"Already approved\\\");\\r\\n\\r\\n        approvedMerchants[merchant] = true;\\r\\n        merchants[merchant].isApproved = true;\\r\\n        merchants[merchant].approvalDate = block.timestamp;\\r\\n\\r\\n        emit MerchantApproved(merchant, block.timestamp);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Reject a merchant registration\\r\\n     */\\r\\n    function rejectMerchant(address merchant, string calldata reason) external onlyOwner onlyRegistered(merchant) {\\r\\n        require(!approvedMerchants[merchant], \\\"Already approved\\\");\\r\\n\\r\\n        registeredMerchants[merchant] = false;\\r\\n        approvedMerchants[merchant] = false;\\r\\n\\r\\n        emit MerchantRejected(merchant, reason, block.timestamp);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Deactivate a merchant account\\r\\n     */\\r\\n    function deactivateMerchant(address merchant) external onlyOwner onlyRegistered(merchant) {\\r\\n        require(merchants[merchant].isActive, \\\"Already inactive\\\");\\r\\n\\r\\n        merchants[merchant].isActive = false;\\r\\n\\r\\n        emit MerchantDeactivated(merchant, block.timestamp);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Reactivate a merchant account\\r\\n     */\\r\\n    function reactivateMerchant(address merchant) external onlyOwner onlyRegistered(merchant) {\\r\\n        require(!merchants[merchant].isActive, \\\"Already active\\\");\\r\\n\\r\\n        merchants[merchant].isActive = true;\\r\\n\\r\\n        emit MerchantUpdated(\\r\\n            merchant,\\r\\n            merchants[merchant].name,\\r\\n            merchants[merchant].category,\\r\\n            block.timestamp\\r\\n        );\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Set commission rate for a merchant\\r\\n     */\\r\\n    function setCommissionRate(address merchant, uint256 commissionRate) external onlyOwner onlyRegistered(merchant) {\\r\\n        require(commissionRate <= 10000, \\\"Commission rate too high\\\"); // Max 100%\\r\\n\\r\\n        merchants[merchant].commissionRate = commissionRate;\\r\\n\\r\\n        emit CommissionRateSet(merchant, commissionRate, block.timestamp);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Update merchant transaction stats\\r\\n     */\\r\\n    function updateTransactionStats(address merchant, uint256 transactionAmount) external {\\r\\n        require(registeredMerchants[merchant], \\\"Merchant not registered\\\");\\r\\n        \\r\\n        Merchant storage merch = merchants[merchant];\\r\\n        merch.totalTransactions += 1;\\r\\n        merch.totalRevenue += transactionAmount;\\r\\n    }\\r\\n\\r\\n    // ============ Query Functions ============\\r\\n    /**\\r\\n     * @dev Get merchant information\\r\\n     */\\r\\n    function getMerchant(address merchant) external view returns (Merchant memory) {\\r\\n        require(registeredMerchants[merchant], \\\"Merchant not registered\\\");\\r\\n        return merchants[merchant];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Check if address is an approved merchant\\r\\n     */\\r\\n    function isApprovedMerchant(address merchant) external view returns (bool) {\\r\\n        return approvedMerchants[merchant] && merchants[merchant].isActive;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Check if merchant is active\\r\\n     */\\r\\n    function isMerchantActive(address merchant) external view returns (bool) {\\r\\n        return registeredMerchants[merchant] && merchants[merchant].isActive;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Get commission rate for merchant\\r\\n     */\\r\\n    function getCommissionRate(address merchant) external view returns (uint256) {\\r\\n        require(registeredMerchants[merchant], \\\"Merchant not registered\\\");\\r\\n        return merchants[merchant].commissionRate;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Get all merchants in a category\\r\\n     */\\r\\n    function getMerchantsByCategory(string calldata category) external view returns (address[] memory) {\\r\\n        return merchantsByCategory[category];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Get total registered merchants\\r\\n     */\\r\\n    function getTotalMerchants() external view returns (uint256) {\\r\\n        return merchantList.length;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Get total approved merchants\\r\\n     */\\r\\n    function getTotalApprovedMerchants() external view returns (uint256) {\\r\\n        uint256 count = 0;\\r\\n        for (uint256 i = 0; i < merchantList.length; i++) {\\r\\n            if (approvedMerchants[merchantList[i]]) {\\r\\n                count++;\\r\\n            }\\r\\n        }\\r\\n        return count;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Get merchant by index\\r\\n     */\\r\\n    function getMerchantByIndex(uint256 index) external view returns (address) {\\r\\n        require(index < merchantList.length, \\\"Index out of bounds\\\");\\r\\n        return merchantList[index];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Check if address is registered merchant\\r\\n     */\\r\\n    function isMerchantRegistered(address merchant) external view returns (bool) {\\r\\n        return registeredMerchants[merchant];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Set default commission rate\\r\\n     */\\r\\n    function setDefaultCommissionRate(uint256 rate) external onlyOwner {\\r\\n        require(rate <= 10000, \\\"Commission rate too high\\\");\\r\\n        defaultCommissionRate = rate;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Get default commission rate\\r\\n     */\\r\\n    function getDefaultCommissionRate() external view returns (uint256) {\\r\\n        return defaultCommissionRate;\\r\\n    }\\r\\n}\\r\\n\",\"keccak256\":\"0xce565841275b6c7a134836c17df63194812881573b6e365df528adafa6d04c0b\",\"license\":\"MIT\"},\"contracts/modules/005-payment-processor/interfaces/IMerchantRegistry.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.24;\\r\\n\\r\\n/**\\r\\n * @title IMerchantRegistry\\r\\n * @dev Interface for managing merchant registrations and information\\r\\n */\\r\\ninterface IMerchantRegistry {\\r\\n    // ============ Events ============\\r\\n    event MerchantRegistered(\\r\\n        address indexed merchant,\\r\\n        string name,\\r\\n        string category,\\r\\n        uint256 timestamp\\r\\n    );\\r\\n\\r\\n    event MerchantUpdated(\\r\\n        address indexed merchant,\\r\\n        string name,\\r\\n        string category,\\r\\n        uint256 timestamp\\r\\n    );\\r\\n\\r\\n    event MerchantDeactivated(address indexed merchant, uint256 timestamp);\\r\\n    event MerchantApproved(address indexed merchant, uint256 timestamp);\\r\\n    event MerchantRejected(address indexed merchant, string reason, uint256 timestamp);\\r\\n    event CommissionRateSet(address indexed merchant, uint256 commissionRate, uint256 timestamp);\\r\\n\\r\\n    // ============ Structs ============\\r\\n    struct Merchant {\\r\\n        address merchantAddress;\\r\\n        string name;\\r\\n        string category;\\r\\n        string contactEmail;\\r\\n        string contactPhone;\\r\\n        bool isApproved;\\r\\n        bool isActive;\\r\\n        uint256 commissionRate; // Basis points (e.g., 250 = 2.5%)\\r\\n        uint256 totalTransactions;\\r\\n        uint256 totalRevenue;\\r\\n        uint256 registrationDate;\\r\\n        uint256 approvalDate;\\r\\n    }\\r\\n\\r\\n    // ============ Mutation Functions ============\\r\\n    /**\\r\\n     * @dev Register a new merchant\\r\\n     * @param name Merchant name\\r\\n     * @param category Business category\\r\\n     * @param contactEmail Contact email\\r\\n     * @param contactPhone Contact phone\\r\\n     * @return merchantAddress The registered merchant address\\r\\n     */\\r\\n    function registerMerchant(\\r\\n        string calldata name,\\r\\n        string calldata category,\\r\\n        string calldata contactEmail,\\r\\n        string calldata contactPhone\\r\\n    ) external returns (address merchantAddress);\\r\\n\\r\\n    /**\\r\\n     * @dev Update merchant information\\r\\n     * @param merchant Merchant address\\r\\n     * @param name New merchant name\\r\\n     * @param category New business category\\r\\n     * @param contactEmail New contact email\\r\\n     * @param contactPhone New contact phone\\r\\n     */\\r\\n    function updateMerchant(\\r\\n        address merchant,\\r\\n        string calldata name,\\r\\n        string calldata category,\\r\\n        string calldata contactEmail,\\r\\n        string calldata contactPhone\\r\\n    ) external;\\r\\n\\r\\n    /**\\r\\n     * @dev Approve a merchant registration\\r\\n     * @param merchant Merchant address to approve\\r\\n     */\\r\\n    function approveMerchant(address merchant) external;\\r\\n\\r\\n    /**\\r\\n     * @dev Reject a merchant registration\\r\\n     * @param merchant Merchant address to reject\\r\\n     * @param reason Rejection reason\\r\\n     */\\r\\n    function rejectMerchant(address merchant, string calldata reason) external;\\r\\n\\r\\n    /**\\r\\n     * @dev Deactivate a merchant account\\r\\n     * @param merchant Merchant address to deactivate\\r\\n     */\\r\\n    function deactivateMerchant(address merchant) external;\\r\\n\\r\\n    /**\\r\\n     * @dev Reactivate a merchant account\\r\\n     * @param merchant Merchant address to reactivate\\r\\n     */\\r\\n    function reactivateMerchant(address merchant) external;\\r\\n\\r\\n    /**\\r\\n     * @dev Set commission rate for a merchant\\r\\n     * @param merchant Merchant address\\r\\n     * @param commissionRate Commission rate in basis points\\r\\n     */\\r\\n    function setCommissionRate(address merchant, uint256 commissionRate) external;\\r\\n\\r\\n    /**\\r\\n     * @dev Update merchant transaction stats\\r\\n     * @param merchant Merchant address\\r\\n     * @param transactionAmount Amount of transaction\\r\\n     */\\r\\n    function updateTransactionStats(address merchant, uint256 transactionAmount) external;\\r\\n\\r\\n    // ============ Query Functions ============\\r\\n    /**\\r\\n     * @dev Get merchant information\\r\\n     * @param merchant Merchant address\\r\\n     * @return Merchant structure\\r\\n     */\\r\\n    function getMerchant(address merchant) external view returns (Merchant memory);\\r\\n\\r\\n    /**\\r\\n     * @dev Check if address is an approved merchant\\r\\n     * @param merchant Merchant address\\r\\n     * @return true if merchant is approved and active\\r\\n     */\\r\\n    function isApprovedMerchant(address merchant) external view returns (bool);\\r\\n\\r\\n    /**\\r\\n     * @dev Check if merchant is active\\r\\n     * @param merchant Merchant address\\r\\n     * @return true if merchant is active\\r\\n     */\\r\\n    function isMerchantActive(address merchant) external view returns (bool);\\r\\n\\r\\n    /**\\r\\n     * @dev Get commission rate for merchant\\r\\n     * @param merchant Merchant address\\r\\n     * @return Commission rate in basis points\\r\\n     */\\r\\n    function getCommissionRate(address merchant) external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @dev Get all merchants in a category\\r\\n     * @param category Business category\\r\\n     * @return Array of merchant addresses\\r\\n     */\\r\\n    function getMerchantsByCategory(string calldata category) external view returns (address[] memory);\\r\\n\\r\\n    /**\\r\\n     * @dev Get total registered merchants\\r\\n     * @return Count of registered merchants\\r\\n     */\\r\\n    function getTotalMerchants() external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @dev Get total approved merchants\\r\\n     * @return Count of approved merchants\\r\\n     */\\r\\n    function getTotalApprovedMerchants() external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @dev Get merchant by index\\r\\n     * @param index Merchant index\\r\\n     * @return Merchant address\\r\\n     */\\r\\n    function getMerchantByIndex(uint256 index) external view returns (address);\\r\\n\\r\\n    /**\\r\\n     * @dev Check if address is registered merchant\\r\\n     * @param merchant Merchant address\\r\\n     * @return true if merchant is registered\\r\\n     */\\r\\n    function isMerchantRegistered(address merchant) external view returns (bool);\\r\\n}\\r\\n\",\"keccak256\":\"0x6f62e6bc56ed4064aa36a20f51214a5f4f811fa5f94dd65dafa10fdda154c3d7\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x6080806040523461007f5733156100695760008054336001600160a01b03198216811783556040519290916001600160a01b0316907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09080a360fa600655611c5490816100858239f35b631e4fbdf760e01b815260006004820152602490fd5b600080fdfe608080604052600436101561001357600080fd5b60003560e01c9081630d824352146117dc575080630f73d5bd146117ad5780632522bfa2146116d2578063715018a6146116795780637f6164881461165b578063895b42251461154e5780638da5cb5b14611525578063938215cf146114e05780639550b1bc1461146a5780639734a2aa1461140a57806399f320df14610f16578063a190ad3614610881578063a84dea28146107f9578063aabc138b14610761578063b2734eaf14610518578063d12900941461042e578063e0cc26a2146103d7578063e60e5eec146103b9578063eee994b8146102db578063f2fde38b14610252578063fa298d79146101935763ff45f8071461011157600080fd5b3461018e57602036600319011261018e576004356003548110156101535761013a602091611a02565b905460405160039290921b1c6001600160a01b03168152f35b60405162461bcd60e51b8152602060048201526013602482015272496e646578206f7574206f6620626f756e647360681b6044820152606490fd5b600080fd5b3461018e5760208060031936011261018e577f2c0b740fc3ea76243e8f00c8c9aed124c9f722056154e98912d87620774c50856101ce611817565b6101d6611c1b565b60018060a01b03169182600052600281526101f860ff604060002054166118e6565b826000526005815261021260ff6040600020541615611bdc565b8260005260058152604060002060ff19906001828254161790556001825260406000209060016005830191825416179055600a42910155604051428152a2005b3461018e57602036600319011261018e5761026b611817565b610273611c1b565b6001600160a01b039081169081156102c257600054826001600160601b0360a01b821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b604051631e4fbdf760e01b815260006004820152602490fd5b3461018e5760208060031936011261018e576004356001600160401b03811161018e5761030d8291369060040161182d565b91908260405193849283378101600481520301902060405190818382549182815201908192600052846000209060005b8682821061039c57868661035382880383611b75565b604051928392818401908285525180915260408401929160005b82811061037c57505050500390f35b83516001600160a01b03168552869550938101939281019260010161036d565b83546001600160a01b03168552909301926001928301920161033d565b3461018e57600036600319011261018e576020600654604051908152f35b3461018e57602036600319011261018e576001600160a01b036103f8611817565b1680600052600260205261041360ff604060002054166118e6565b60005260016020526020600660406000200154604051908152f35b3461018e57604036600319011261018e57610447611817565b6024356001600160401b03811161018e576104877f2f5fd0418623dbda9219dd8abddc759a249a5ce8be2618b74528ff5b559a55f691369060040161182d565b92610490611c1b565b60018060a01b0316928360005260026020526104b360ff604060002054166118e6565b8360005260056020526104ce60ff6040600020541615611bdc565b836000526002602052604060002060ff19908181541690556005602052604060002090815416905561050d604051928392604084526040840191611b09565b4260208301520390a2005b3461018e57602036600319011261018e57610531611817565b600061016060405161054281611b59565b8281526060602082015260606040820152606080820152606060808201528260a08201528260c08201528260e0820152826101008201528261012082015282610140820152015260018060a01b03168060005260026020526105ab60ff604060002054166118e6565b60005260016020526040600020600a604051916105c783611b59565b80546001600160a01b031683526040516105ef816105e8816001860161196c565b0382611b75565b6020840152604051610608816105e8816002860161196c565b6040840152604051610621816105e8816003860161196c565b606084015260405161063a816105e8816004860161196c565b608084015260ff6005820154818116151560a086015260081c16151560c0840152600681015460e0840152600781015461010084015260088101546101208401526009810154610140840152015461016082015260405180916020825260018060a01b03815116602083015261016061070f6106c7602084015161018060408701526101a086019061185a565b6106fa6106e6604086015192601f1993848983030160608a015261185a565b60608601518388830301608089015261185a565b906080850151908683030160a087015261185a565b9160a0810151151560c085015260c0810151151560e085015260e08101516101008501526101008101516101208501526101208101516101408501526101408101518285015201516101808301520390f35b3461018e57604036600319011261018e5761077a611817565b7f11841078e38c91feada06e1f8ded3697ab2dadc2583c52b14109b82ccd4f77d76040602435926107a9611c1b565b60018060a01b0316928360005260026020526107cb60ff8360002054166118e6565b6107d961271082111561189a565b8360005260016020528060068360002001558151908152426020820152a2005b3461018e57604036600319011261018e576001600160a01b0361081a611817565b1680600052600260205261083560ff604060002054166118e6565b60005260016020526040600020600781019081546001810180911161086b576008925501805490602435820180921161086b5755005b634e487b7160e01b600052601160045260246000fd5b3461018e57608036600319011261018e576004356001600160401b03811161018e576108b190369060040161182d565b906024356001600160401b03811161018e576108d190369060040161182d565b906044356001600160401b03811161018e576108f190369060040161182d565b906064356001600160401b03811161018e5761091190369060040161182d565b9033600052600260205260ff60406000205416610edc5761098c91610937891515611a39565b610942871515611a74565b610980600654946040519661095688611b59565b338852610964368d8d611b96565b6020890152610974368b8b611b96565b60408901523691611b96565b60608601523691611b96565b6080830152600060a0830152600160c083015260e08201526000610100820152600061012082015242610140820152600061016082015233600052600160205260406000209060018060a01b038151166001600160601b0360a01b83541617825560208101518051906001600160401b038211610ce457610a1d82610a146001870154611932565b60018701611ab3565b602090601f8311600114610e6a57610a4e929160009183610d7b575b50508160011b916000199060031b1c19161790565b60018301555b60408101518051906001600160401b038211610ce457610a8482610a7b6002870154611932565b60028701611ab3565b602090601f8311600114610df857610ab4929160009183610d7b5750508160011b916000199060031b1c19161790565b60028301555b60608101518051906001600160401b038211610ce457610aea82610ae16003870154611932565b60038701611ab3565b602090601f8311600114610d8657610b1a929160009183610d7b5750508160011b916000199060031b1c19161790565b60038301555b60808101518051906001600160401b038211610ce457610b5082610b476004870154611932565b60048701611ab3565b602090601f8311600114610d05578261016093600a9593610b8793600092610cfa5750508160011b916000199060031b1c19161790565b60048501555b6005840160a08201511515815460ff61ff0060c0860151151560081b1692169061ffff19161717905560e0810151600685015561010081015160078501556101208101516008850155610140810151600985015501519101553360005260026020526040600020600160ff1982541617905560035492680100000000000000009384811015610ce457806001610c269201600355611a02565b81546001600160a01b0360039290921b91821b19163390911b17905560405183838237602081858101600481520301902090815494851015610ce45760018501808355851015610cce577fcbeaf068d6755181b82ec5e66abfd1a6e243cc14236064cac8b7d1f928a184e794610cc192600052602060002001336001600160601b0360a01b8254161790556040519384933397429386611b2a565b0390a26020604051338152f35b634e487b7160e01b600052603260045260246000fd5b634e487b7160e01b600052604160045260246000fd5b015190508b80610a39565b906004850160005260206000209160005b601f1985168110610d63575092600a94926001926101609583601f19811610610d4a575b505050811b016004850155610b8d565b015160001960f88460031b161c191690558a8080610d3a565b91926020600181928685015181550194019201610d16565b015190508980610a39565b9190600385016000526020600020906000935b601f1984168510610ddd576001945083601f19811610610dc4575b505050811b016003830155610b20565b015160001960f88460031b161c19169055888080610db4565b81810151835560209485019460019093019290910190610d99565b9190600285016000526020600020906000935b601f1984168510610e4f576001945083601f19811610610e36575b505050811b016002830155610aba565b015160001960f88460031b161c19169055888080610e26565b81810151835560209485019460019093019290910190610e0b565b9190600185016000526020600020906000935b601f1984168510610ec1576001945083601f19811610610ea8575b505050811b016001830155610a54565b015160001960f88460031b161c19169055888080610e98565b81810151835560209485019460019093019290910190610e7d565b60405162461bcd60e51b8152602060048201526012602482015271105b1c9958591e481c9959da5cdd195c995960721b6044820152606490fd5b3461018e5760a036600319011261018e57610f2f611817565b6024356001600160401b03811161018e57610f4e90369060040161182d565b90916044356001600160401b03811161018e57610f6f90369060040161182d565b9190936064356001600160401b03811161018e57610f9190369060040161182d565b9390956084356001600160401b03811161018e57610fb390369060040161182d565b909760018060a01b03968787166000526002602052610fd960ff604060002054166118e6565b878716331480156113fd575b156113c957610ff5891515611a39565b611000851515611a74565b87871660005260016020526040600020916001600160401b038a11610ce4576110398a6110306001860154611932565b60018601611ab3565b60008a601f811160011461135c578061106892600091611351575b508160011b916000199060031b1c19161790565b60018401555b6001600160401b038611610ce4576110968661108d6002860154611932565b60028601611ab3565b600086601f81116001146112e457806110c4926000916112d957508160011b916000199060031b1c19161790565b60028401555b6001600160401b038211610ce4576110f2826110e96003860154611932565b60038601611ab3565b600090601f8311600114611268579180611126926004959460009261125d5750508160011b916000199060031b1c19161790565b60038201555b01906001600160401b038111610ce4576111508161114a8454611932565b84611ab3565b6000601f82116001146111cc57816111bc96959493926111a9927fcdfe209f8d94e142215fa2f2eee20d803d4500346801bc808e490abd131783039b9c6000926111c15750508160011b916000199060031b1c19161790565b90555b6040519586951697429386611b2a565b0390a2005b013590508c80610a39565b601f198216908360005260206000209160005b8181106112455750917fcdfe209f8d94e142215fa2f2eee20d803d4500346801bc808e490abd131783039a9b84926111bc99989796956001951061122b575b505050811b0190556111ac565b0135600019600384901b60f8161c191690558b808061121e565b91926020600181928f870135815501940192016111df565b013590508d80610a39565b601f198316916003850160005260206000209260005b8181106112c157509160019391856004979694106112a7575b505050811b01600382015561112c565b0135600019600384901b60f8161c191690558c8080611297565b9193602060018192878701358155019501920161127e565b90508701358e611054565b506002840160005260206000209060005b601f1989168110611339575087601f1981161061131f575b5050600186811b0160028401556110ca565b860135600019600389901b60f8161c191690558b8061130d565b9091602060018192858b0135815501930191016112f5565b90508901358e611054565b506001840160005260206000209060005b601f198d1681106113b157508b601f19811610611397575b505060018a811b01600184015561106e565b88013560001960038d901b60f8161c191690558b80611385565b9091602060018192858d01358155019301910161136d565b60405162461bcd60e51b815260206004820152600c60248201526b155b985d5d1a1bdc9a5e995960a21b6044820152606490fd5b5087600054163314610fe5565b3461018e57602036600319011261018e576001600160a01b0361142b611817565b16600052600260205260ff6040600020541680611450575b6020906040519015158152f35b50600160205260406000206005015460081c60ff16611443565b3461018e57600036600319011261018e5760008060038054915b82811061149657602084604051908152f35b61149f81611a02565b905490831b1c6001600160a01b031660009081526005602052604090205460ff166114cd575b600101611484565b92600019811461086b57600101926114c5565b3461018e57602036600319011261018e576001600160a01b03611501611817565b16600052600560205260ff6040600020541680611450576020906040519015158152f35b3461018e57600036600319011261018e576000546040516001600160a01b039091168152602090f35b3461018e5760208060031936011261018e57611568611817565b611570611c1b565b60018060a01b031690816000526002815261159260ff604060002054166118e6565b816000526001815260ff60056040600020015460081c166116265760027fcdfe209f8d94e142215fa2f2eee20d803d4500346801bc808e490abd1317830391836000526001815261161b6040600020916005830161010061ff00198254161790556040519384936060855261160d606086016001830161196c565b92858403908601520161196c565b4260408301520390a2005b6064906040519062461bcd60e51b82526004820152600e60248201526d416c72656164792061637469766560901b6044820152fd5b3461018e57600036600319011261018e576020600354604051908152f35b3461018e57600036600319011261018e57611692611c1b565b600080546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b3461018e5760208060031936011261018e576116ec611817565b6116f4611c1b565b60018060a01b031690816000526002815261171660ff604060002054166118e6565b816000526001815260ff60056040600020015460081c1615611776577fbf2fc0fae950651decf1e5f4a0fb12760a671f7e99ae3c0be2ac004c763ca1be908260005260018152600560406000200161ff00198154169055604051428152a2005b6064906040519062461bcd60e51b82526004820152601060248201526f416c726561647920696e61637469766560801b6044820152fd5b3461018e57602036600319011261018e576004356117c9611c1b565b6117d761271082111561189a565b600655005b3461018e57602036600319011261018e576020906001600160a01b03611800611817565b166000526002825260ff6040600020541615158152f35b600435906001600160a01b038216820361018e57565b9181601f8401121561018e578235916001600160401b03831161018e576020838186019501011161018e57565b919082519283825260005b848110611886575050826000602080949584010152601f8019910116010190565b602081830181015184830182015201611865565b156118a157565b60405162461bcd60e51b815260206004820152601860248201527f436f6d6d697373696f6e207261746520746f6f206869676800000000000000006044820152606490fd5b156118ed57565b60405162461bcd60e51b815260206004820152601760248201527f4d65726368616e74206e6f7420726567697374657265640000000000000000006044820152606490fd5b90600182811c92168015611962575b602083101461194c57565b634e487b7160e01b600052602260045260246000fd5b91607f1691611941565b80546000939261197b82611932565b918282526020936001916001811690816000146119e357506001146119a2575b5050505050565b90939495506000929192528360002092846000945b8386106119cf5750505050010190388080808061199b565b8054858701830152940193859082016119b7565b60ff19168685015250505090151560051b01019150388080808061199b565b600354811015610cce5760036000527fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85b0190600090565b15611a4057565b60405162461bcd60e51b815260206004820152600c60248201526b496e76616c6964206e616d6560a01b6044820152606490fd5b15611a7b57565b60405162461bcd60e51b815260206004820152601060248201526f496e76616c69642063617465676f727960801b6044820152606490fd5b90601f8111611ac157505050565b6000916000526020600020906020601f850160051c83019410611aff575b601f0160051c01915b828110611af457505050565b818155600101611ae8565b9092508290611adf565b908060209392818452848401376000828201840152601f01601f1916010190565b959493611b4660409492611b549460608a5260608a0191611b09565b918783036020890152611b09565b930152565b61018081019081106001600160401b03821117610ce457604052565b90601f801991011681019081106001600160401b03821117610ce457604052565b9291926001600160401b038211610ce45760405191611bbf601f8201601f191660200184611b75565b82948184528183011161018e578281602093846000960137010152565b15611be357565b60405162461bcd60e51b815260206004820152601060248201526f105b1c9958591e48185c1c1c9bdd995960821b6044820152606490fd5b6000546001600160a01b03163303611c2f57565b60405163118cdaa760e01b8152336004820152602490fdfea164736f6c6343000818000a",
+  "deployedBytecode": "0x608080604052600436101561001357600080fd5b60003560e01c9081630d824352146117dc575080630f73d5bd146117ad5780632522bfa2146116d2578063715018a6146116795780637f6164881461165b578063895b42251461154e5780638da5cb5b14611525578063938215cf146114e05780639550b1bc1461146a5780639734a2aa1461140a57806399f320df14610f16578063a190ad3614610881578063a84dea28146107f9578063aabc138b14610761578063b2734eaf14610518578063d12900941461042e578063e0cc26a2146103d7578063e60e5eec146103b9578063eee994b8146102db578063f2fde38b14610252578063fa298d79146101935763ff45f8071461011157600080fd5b3461018e57602036600319011261018e576004356003548110156101535761013a602091611a02565b905460405160039290921b1c6001600160a01b03168152f35b60405162461bcd60e51b8152602060048201526013602482015272496e646578206f7574206f6620626f756e647360681b6044820152606490fd5b600080fd5b3461018e5760208060031936011261018e577f2c0b740fc3ea76243e8f00c8c9aed124c9f722056154e98912d87620774c50856101ce611817565b6101d6611c1b565b60018060a01b03169182600052600281526101f860ff604060002054166118e6565b826000526005815261021260ff6040600020541615611bdc565b8260005260058152604060002060ff19906001828254161790556001825260406000209060016005830191825416179055600a42910155604051428152a2005b3461018e57602036600319011261018e5761026b611817565b610273611c1b565b6001600160a01b039081169081156102c257600054826001600160601b0360a01b821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b604051631e4fbdf760e01b815260006004820152602490fd5b3461018e5760208060031936011261018e576004356001600160401b03811161018e5761030d8291369060040161182d565b91908260405193849283378101600481520301902060405190818382549182815201908192600052846000209060005b8682821061039c57868661035382880383611b75565b604051928392818401908285525180915260408401929160005b82811061037c57505050500390f35b83516001600160a01b03168552869550938101939281019260010161036d565b83546001600160a01b03168552909301926001928301920161033d565b3461018e57600036600319011261018e576020600654604051908152f35b3461018e57602036600319011261018e576001600160a01b036103f8611817565b1680600052600260205261041360ff604060002054166118e6565b60005260016020526020600660406000200154604051908152f35b3461018e57604036600319011261018e57610447611817565b6024356001600160401b03811161018e576104877f2f5fd0418623dbda9219dd8abddc759a249a5ce8be2618b74528ff5b559a55f691369060040161182d565b92610490611c1b565b60018060a01b0316928360005260026020526104b360ff604060002054166118e6565b8360005260056020526104ce60ff6040600020541615611bdc565b836000526002602052604060002060ff19908181541690556005602052604060002090815416905561050d604051928392604084526040840191611b09565b4260208301520390a2005b3461018e57602036600319011261018e57610531611817565b600061016060405161054281611b59565b8281526060602082015260606040820152606080820152606060808201528260a08201528260c08201528260e0820152826101008201528261012082015282610140820152015260018060a01b03168060005260026020526105ab60ff604060002054166118e6565b60005260016020526040600020600a604051916105c783611b59565b80546001600160a01b031683526040516105ef816105e8816001860161196c565b0382611b75565b6020840152604051610608816105e8816002860161196c565b6040840152604051610621816105e8816003860161196c565b606084015260405161063a816105e8816004860161196c565b608084015260ff6005820154818116151560a086015260081c16151560c0840152600681015460e0840152600781015461010084015260088101546101208401526009810154610140840152015461016082015260405180916020825260018060a01b03815116602083015261016061070f6106c7602084015161018060408701526101a086019061185a565b6106fa6106e6604086015192601f1993848983030160608a015261185a565b60608601518388830301608089015261185a565b906080850151908683030160a087015261185a565b9160a0810151151560c085015260c0810151151560e085015260e08101516101008501526101008101516101208501526101208101516101408501526101408101518285015201516101808301520390f35b3461018e57604036600319011261018e5761077a611817565b7f11841078e38c91feada06e1f8ded3697ab2dadc2583c52b14109b82ccd4f77d76040602435926107a9611c1b565b60018060a01b0316928360005260026020526107cb60ff8360002054166118e6565b6107d961271082111561189a565b8360005260016020528060068360002001558151908152426020820152a2005b3461018e57604036600319011261018e576001600160a01b0361081a611817565b1680600052600260205261083560ff604060002054166118e6565b60005260016020526040600020600781019081546001810180911161086b576008925501805490602435820180921161086b5755005b634e487b7160e01b600052601160045260246000fd5b3461018e57608036600319011261018e576004356001600160401b03811161018e576108b190369060040161182d565b906024356001600160401b03811161018e576108d190369060040161182d565b906044356001600160401b03811161018e576108f190369060040161182d565b906064356001600160401b03811161018e5761091190369060040161182d565b9033600052600260205260ff60406000205416610edc5761098c91610937891515611a39565b610942871515611a74565b610980600654946040519661095688611b59565b338852610964368d8d611b96565b6020890152610974368b8b611b96565b60408901523691611b96565b60608601523691611b96565b6080830152600060a0830152600160c083015260e08201526000610100820152600061012082015242610140820152600061016082015233600052600160205260406000209060018060a01b038151166001600160601b0360a01b83541617825560208101518051906001600160401b038211610ce457610a1d82610a146001870154611932565b60018701611ab3565b602090601f8311600114610e6a57610a4e929160009183610d7b575b50508160011b916000199060031b1c19161790565b60018301555b60408101518051906001600160401b038211610ce457610a8482610a7b6002870154611932565b60028701611ab3565b602090601f8311600114610df857610ab4929160009183610d7b5750508160011b916000199060031b1c19161790565b60028301555b60608101518051906001600160401b038211610ce457610aea82610ae16003870154611932565b60038701611ab3565b602090601f8311600114610d8657610b1a929160009183610d7b5750508160011b916000199060031b1c19161790565b60038301555b60808101518051906001600160401b038211610ce457610b5082610b476004870154611932565b60048701611ab3565b602090601f8311600114610d05578261016093600a9593610b8793600092610cfa5750508160011b916000199060031b1c19161790565b60048501555b6005840160a08201511515815460ff61ff0060c0860151151560081b1692169061ffff19161717905560e0810151600685015561010081015160078501556101208101516008850155610140810151600985015501519101553360005260026020526040600020600160ff1982541617905560035492680100000000000000009384811015610ce457806001610c269201600355611a02565b81546001600160a01b0360039290921b91821b19163390911b17905560405183838237602081858101600481520301902090815494851015610ce45760018501808355851015610cce577fcbeaf068d6755181b82ec5e66abfd1a6e243cc14236064cac8b7d1f928a184e794610cc192600052602060002001336001600160601b0360a01b8254161790556040519384933397429386611b2a565b0390a26020604051338152f35b634e487b7160e01b600052603260045260246000fd5b634e487b7160e01b600052604160045260246000fd5b015190508b80610a39565b906004850160005260206000209160005b601f1985168110610d63575092600a94926001926101609583601f19811610610d4a575b505050811b016004850155610b8d565b015160001960f88460031b161c191690558a8080610d3a565b91926020600181928685015181550194019201610d16565b015190508980610a39565b9190600385016000526020600020906000935b601f1984168510610ddd576001945083601f19811610610dc4575b505050811b016003830155610b20565b015160001960f88460031b161c19169055888080610db4565b81810151835560209485019460019093019290910190610d99565b9190600285016000526020600020906000935b601f1984168510610e4f576001945083601f19811610610e36575b505050811b016002830155610aba565b015160001960f88460031b161c19169055888080610e26565b81810151835560209485019460019093019290910190610e0b565b9190600185016000526020600020906000935b601f1984168510610ec1576001945083601f19811610610ea8575b505050811b016001830155610a54565b015160001960f88460031b161c19169055888080610e98565b81810151835560209485019460019093019290910190610e7d565b60405162461bcd60e51b8152602060048201526012602482015271105b1c9958591e481c9959da5cdd195c995960721b6044820152606490fd5b3461018e5760a036600319011261018e57610f2f611817565b6024356001600160401b03811161018e57610f4e90369060040161182d565b90916044356001600160401b03811161018e57610f6f90369060040161182d565b9190936064356001600160401b03811161018e57610f9190369060040161182d565b9390956084356001600160401b03811161018e57610fb390369060040161182d565b909760018060a01b03968787166000526002602052610fd960ff604060002054166118e6565b878716331480156113fd575b156113c957610ff5891515611a39565b611000851515611a74565b87871660005260016020526040600020916001600160401b038a11610ce4576110398a6110306001860154611932565b60018601611ab3565b60008a601f811160011461135c578061106892600091611351575b508160011b916000199060031b1c19161790565b60018401555b6001600160401b038611610ce4576110968661108d6002860154611932565b60028601611ab3565b600086601f81116001146112e457806110c4926000916112d957508160011b916000199060031b1c19161790565b60028401555b6001600160401b038211610ce4576110f2826110e96003860154611932565b60038601611ab3565b600090601f8311600114611268579180611126926004959460009261125d5750508160011b916000199060031b1c19161790565b60038201555b01906001600160401b038111610ce4576111508161114a8454611932565b84611ab3565b6000601f82116001146111cc57816111bc96959493926111a9927fcdfe209f8d94e142215fa2f2eee20d803d4500346801bc808e490abd131783039b9c6000926111c15750508160011b916000199060031b1c19161790565b90555b6040519586951697429386611b2a565b0390a2005b013590508c80610a39565b601f198216908360005260206000209160005b8181106112455750917fcdfe209f8d94e142215fa2f2eee20d803d4500346801bc808e490abd131783039a9b84926111bc99989796956001951061122b575b505050811b0190556111ac565b0135600019600384901b60f8161c191690558b808061121e565b91926020600181928f870135815501940192016111df565b013590508d80610a39565b601f198316916003850160005260206000209260005b8181106112c157509160019391856004979694106112a7575b505050811b01600382015561112c565b0135600019600384901b60f8161c191690558c8080611297565b9193602060018192878701358155019501920161127e565b90508701358e611054565b506002840160005260206000209060005b601f1989168110611339575087601f1981161061131f575b5050600186811b0160028401556110ca565b860135600019600389901b60f8161c191690558b8061130d565b9091602060018192858b0135815501930191016112f5565b90508901358e611054565b506001840160005260206000209060005b601f198d1681106113b157508b601f19811610611397575b505060018a811b01600184015561106e565b88013560001960038d901b60f8161c191690558b80611385565b9091602060018192858d01358155019301910161136d565b60405162461bcd60e51b815260206004820152600c60248201526b155b985d5d1a1bdc9a5e995960a21b6044820152606490fd5b5087600054163314610fe5565b3461018e57602036600319011261018e576001600160a01b0361142b611817565b16600052600260205260ff6040600020541680611450575b6020906040519015158152f35b50600160205260406000206005015460081c60ff16611443565b3461018e57600036600319011261018e5760008060038054915b82811061149657602084604051908152f35b61149f81611a02565b905490831b1c6001600160a01b031660009081526005602052604090205460ff166114cd575b600101611484565b92600019811461086b57600101926114c5565b3461018e57602036600319011261018e576001600160a01b03611501611817565b16600052600560205260ff6040600020541680611450576020906040519015158152f35b3461018e57600036600319011261018e576000546040516001600160a01b039091168152602090f35b3461018e5760208060031936011261018e57611568611817565b611570611c1b565b60018060a01b031690816000526002815261159260ff604060002054166118e6565b816000526001815260ff60056040600020015460081c166116265760027fcdfe209f8d94e142215fa2f2eee20d803d4500346801bc808e490abd1317830391836000526001815261161b6040600020916005830161010061ff00198254161790556040519384936060855261160d606086016001830161196c565b92858403908601520161196c565b4260408301520390a2005b6064906040519062461bcd60e51b82526004820152600e60248201526d416c72656164792061637469766560901b6044820152fd5b3461018e57600036600319011261018e576020600354604051908152f35b3461018e57600036600319011261018e57611692611c1b565b600080546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b3461018e5760208060031936011261018e576116ec611817565b6116f4611c1b565b60018060a01b031690816000526002815261171660ff604060002054166118e6565b816000526001815260ff60056040600020015460081c1615611776577fbf2fc0fae950651decf1e5f4a0fb12760a671f7e99ae3c0be2ac004c763ca1be908260005260018152600560406000200161ff00198154169055604051428152a2005b6064906040519062461bcd60e51b82526004820152601060248201526f416c726561647920696e61637469766560801b6044820152fd5b3461018e57602036600319011261018e576004356117c9611c1b565b6117d761271082111561189a565b600655005b3461018e57602036600319011261018e576020906001600160a01b03611800611817565b166000526002825260ff6040600020541615158152f35b600435906001600160a01b038216820361018e57565b9181601f8401121561018e578235916001600160401b03831161018e576020838186019501011161018e57565b919082519283825260005b848110611886575050826000602080949584010152601f8019910116010190565b602081830181015184830182015201611865565b156118a157565b60405162461bcd60e51b815260206004820152601860248201527f436f6d6d697373696f6e207261746520746f6f206869676800000000000000006044820152606490fd5b156118ed57565b60405162461bcd60e51b815260206004820152601760248201527f4d65726368616e74206e6f7420726567697374657265640000000000000000006044820152606490fd5b90600182811c92168015611962575b602083101461194c57565b634e487b7160e01b600052602260045260246000fd5b91607f1691611941565b80546000939261197b82611932565b918282526020936001916001811690816000146119e357506001146119a2575b5050505050565b90939495506000929192528360002092846000945b8386106119cf5750505050010190388080808061199b565b8054858701830152940193859082016119b7565b60ff19168685015250505090151560051b01019150388080808061199b565b600354811015610cce5760036000527fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85b0190600090565b15611a4057565b60405162461bcd60e51b815260206004820152600c60248201526b496e76616c6964206e616d6560a01b6044820152606490fd5b15611a7b57565b60405162461bcd60e51b815260206004820152601060248201526f496e76616c69642063617465676f727960801b6044820152606490fd5b90601f8111611ac157505050565b6000916000526020600020906020601f850160051c83019410611aff575b601f0160051c01915b828110611af457505050565b818155600101611ae8565b9092508290611adf565b908060209392818452848401376000828201840152601f01601f1916010190565b959493611b4660409492611b549460608a5260608a0191611b09565b918783036020890152611b09565b930152565b61018081019081106001600160401b03821117610ce457604052565b90601f801991011681019081106001600160401b03821117610ce457604052565b9291926001600160401b038211610ce45760405191611bbf601f8201601f191660200184611b75565b82948184528183011161018e578281602093846000960137010152565b15611be357565b60405162461bcd60e51b815260206004820152601060248201526f105b1c9958591e48185c1c1c9bdd995960821b6044820152606490fd5b6000546001600160a01b03163303611c2f57565b60405163118cdaa760e01b8152336004820152602490fdfea164736f6c6343000818000a",
+  "devdoc": {
+    "details": "Registry for managing merchant registrations, approvals, and information Handles merchant onboarding, verification, and commission management",
+    "errors": {
+      "OwnableInvalidOwner(address)": [
+        {
+          "details": "The owner is not a valid owner account. (eg. `address(0)`)"
+        }
+      ],
+      "OwnableUnauthorizedAccount(address)": [
+        {
+          "details": "The caller account is not authorized to perform an operation."
+        }
+      ]
+    },
+    "kind": "dev",
+    "methods": {
+      "approveMerchant(address)": {
+        "details": "Approve a merchant registration"
+      },
+      "deactivateMerchant(address)": {
+        "details": "Deactivate a merchant account"
+      },
+      "getCommissionRate(address)": {
+        "details": "Get commission rate for merchant"
+      },
+      "getDefaultCommissionRate()": {
+        "details": "Get default commission rate"
+      },
+      "getMerchant(address)": {
+        "details": "Get merchant information"
+      },
+      "getMerchantByIndex(uint256)": {
+        "details": "Get merchant by index"
+      },
+      "getMerchantsByCategory(string)": {
+        "details": "Get all merchants in a category"
+      },
+      "getTotalApprovedMerchants()": {
+        "details": "Get total approved merchants"
+      },
+      "getTotalMerchants()": {
+        "details": "Get total registered merchants"
+      },
+      "isApprovedMerchant(address)": {
+        "details": "Check if address is an approved merchant"
+      },
+      "isMerchantActive(address)": {
+        "details": "Check if merchant is active"
+      },
+      "isMerchantRegistered(address)": {
+        "details": "Check if address is registered merchant"
+      },
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "reactivateMerchant(address)": {
+        "details": "Reactivate a merchant account"
+      },
+      "registerMerchant(string,string,string,string)": {
+        "details": "Register a new merchant"
+      },
+      "rejectMerchant(address,string)": {
+        "details": "Reject a merchant registration"
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+      },
+      "setCommissionRate(address,uint256)": {
+        "details": "Set commission rate for a merchant"
+      },
+      "setDefaultCommissionRate(uint256)": {
+        "details": "Set default commission rate"
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      },
+      "updateMerchant(address,string,string,string,string)": {
+        "details": "Update merchant information"
+      },
+      "updateTransactionStats(address,uint256)": {
+        "details": "Update merchant transaction stats"
+      }
+    },
+    "title": "MerchantRegistry",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 8,
+        "contract": "contracts/modules/005-payment-processor/MerchantRegistry.sol:MerchantRegistry",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 837,
+        "contract": "contracts/modules/005-payment-processor/MerchantRegistry.sol:MerchantRegistry",
+        "label": "merchants",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_address,t_struct(Merchant)2509_storage)"
+      },
+      {
+        "astId": 841,
+        "contract": "contracts/modules/005-payment-processor/MerchantRegistry.sol:MerchantRegistry",
+        "label": "registeredMerchants",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_address,t_bool)"
+      },
+      {
+        "astId": 844,
+        "contract": "contracts/modules/005-payment-processor/MerchantRegistry.sol:MerchantRegistry",
+        "label": "merchantList",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_array(t_address)dyn_storage"
+      },
+      {
+        "astId": 849,
+        "contract": "contracts/modules/005-payment-processor/MerchantRegistry.sol:MerchantRegistry",
+        "label": "merchantsByCategory",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_mapping(t_string_memory_ptr,t_array(t_address)dyn_storage)"
+      },
+      {
+        "astId": 853,
+        "contract": "contracts/modules/005-payment-processor/MerchantRegistry.sol:MerchantRegistry",
+        "label": "approvedMerchants",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_mapping(t_address,t_bool)"
+      },
+      {
+        "astId": 856,
+        "contract": "contracts/modules/005-payment-processor/MerchantRegistry.sol:MerchantRegistry",
+        "label": "defaultCommissionRate",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_uint256"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_address)dyn_storage": {
+        "base": "t_address",
+        "encoding": "dynamic_array",
+        "label": "address[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_address,t_struct(Merchant)2509_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => struct IMerchantRegistry.Merchant)",
+        "numberOfBytes": "32",
+        "value": "t_struct(Merchant)2509_storage"
+      },
+      "t_mapping(t_string_memory_ptr,t_array(t_address)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_string_memory_ptr",
+        "label": "mapping(string => address[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_address)dyn_storage"
+      },
+      "t_string_memory_ptr": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_string_storage": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_struct(Merchant)2509_storage": {
+        "encoding": "inplace",
+        "label": "struct IMerchantRegistry.Merchant",
+        "members": [
+          {
+            "astId": 2486,
+            "contract": "contracts/modules/005-payment-processor/MerchantRegistry.sol:MerchantRegistry",
+            "label": "merchantAddress",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address"
+          },
+          {
+            "astId": 2488,
+            "contract": "contracts/modules/005-payment-processor/MerchantRegistry.sol:MerchantRegistry",
+            "label": "name",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 2490,
+            "contract": "contracts/modules/005-payment-processor/MerchantRegistry.sol:MerchantRegistry",
+            "label": "category",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 2492,
+            "contract": "contracts/modules/005-payment-processor/MerchantRegistry.sol:MerchantRegistry",
+            "label": "contactEmail",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 2494,
+            "contract": "contracts/modules/005-payment-processor/MerchantRegistry.sol:MerchantRegistry",
+            "label": "contactPhone",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 2496,
+            "contract": "contracts/modules/005-payment-processor/MerchantRegistry.sol:MerchantRegistry",
+            "label": "isApproved",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_bool"
+          },
+          {
+            "astId": 2498,
+            "contract": "contracts/modules/005-payment-processor/MerchantRegistry.sol:MerchantRegistry",
+            "label": "isActive",
+            "offset": 1,
+            "slot": "5",
+            "type": "t_bool"
+          },
+          {
+            "astId": 2500,
+            "contract": "contracts/modules/005-payment-processor/MerchantRegistry.sol:MerchantRegistry",
+            "label": "commissionRate",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2502,
+            "contract": "contracts/modules/005-payment-processor/MerchantRegistry.sol:MerchantRegistry",
+            "label": "totalTransactions",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2504,
+            "contract": "contracts/modules/005-payment-processor/MerchantRegistry.sol:MerchantRegistry",
+            "label": "totalRevenue",
+            "offset": 0,
+            "slot": "8",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2506,
+            "contract": "contracts/modules/005-payment-processor/MerchantRegistry.sol:MerchantRegistry",
+            "label": "registrationDate",
+            "offset": 0,
+            "slot": "9",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2508,
+            "contract": "contracts/modules/005-payment-processor/MerchantRegistry.sol:MerchantRegistry",
+            "label": "approvalDate",
+            "offset": 0,
+            "slot": "10",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "352"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

@@ -1,0 +1,1395 @@
+{
+  "address": "0x4C906f2bC9Cc6Fd0536DB3b6D9962C0819f79C4c",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "achievement",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "unlockedAt",
+          "type": "uint256"
+        }
+      ],
+      "name": "AchievementUnlocked",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "badgeTypeId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "awardedAt",
+          "type": "uint256"
+        }
+      ],
+      "name": "BadgeAwarded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "badgeTypeId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "revokedAt",
+          "type": "uint256"
+        }
+      ],
+      "name": "BadgeRevoked",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "badgeTypeId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "requiredPoints",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "createdAt",
+          "type": "uint256"
+        }
+      ],
+      "name": "BadgeTypeCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "points",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "addedAt",
+          "type": "uint256"
+        }
+      ],
+      "name": "ReputationPointsAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "points",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "deductedAt",
+          "type": "uint256"
+        }
+      ],
+      "name": "ReputationPointsDeducted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newTier",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "updatedAt",
+          "type": "uint256"
+        }
+      ],
+      "name": "TierUpdated",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "points",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        }
+      ],
+      "name": "addReputationPoints",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "issuer",
+          "type": "address"
+        }
+      ],
+      "name": "authorizeBadgeIssuer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "editor",
+          "type": "address"
+        }
+      ],
+      "name": "authorizePointsEditor",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "badgeTypeId",
+          "type": "uint256"
+        }
+      ],
+      "name": "awardBadge",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "requiredPoints",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "category",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "iconURI",
+          "type": "string"
+        }
+      ],
+      "name": "createBadgeType",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "points",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "reason",
+          "type": "string"
+        }
+      ],
+      "name": "deductReputationPoints",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "getBadgeHistory",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "badgeTypeIds",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "awardedAt",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "bool[]",
+          "name": "isActive",
+          "type": "bool[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "badgeTypeId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getBadgeTypeInfo",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "requiredPoints",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "category",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "iconURI",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "totalAwarded",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "limit",
+          "type": "uint256"
+        }
+      ],
+      "name": "getLeaderboard",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "users",
+          "type": "address[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "points",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "getReputationHistory",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "points",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "string[]",
+          "name": "reasons",
+          "type": "string[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "timestamps",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tier",
+          "type": "uint256"
+        }
+      ],
+      "name": "getTierInfo",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "minPoints",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxPoints",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalBadgeTypes",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalUsersWithReputation",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "getUserAchievements",
+      "outputs": [
+        {
+          "internalType": "string[]",
+          "name": "",
+          "type": "string[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "getUserBadges",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "getUserReputationPoints",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "getUserTier",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "achievement",
+          "type": "string"
+        }
+      ],
+      "name": "hasAchievement",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "badgeTypeId",
+          "type": "uint256"
+        }
+      ],
+      "name": "hasBadge",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "issuer",
+          "type": "address"
+        }
+      ],
+      "name": "isBadgeIssuer",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "editor",
+          "type": "address"
+        }
+      ],
+      "name": "isPointsEditor",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "badgeTypeId",
+          "type": "uint256"
+        }
+      ],
+      "name": "revokeBadge",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "issuer",
+          "type": "address"
+        }
+      ],
+      "name": "revokeBadgeIssuer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "editor",
+          "type": "address"
+        }
+      ],
+      "name": "revokePointsEditor",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "achievement",
+          "type": "string"
+        }
+      ],
+      "name": "unlockAchievement",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x062f1f28961d6e02434d008e18cf0440e1d7d295dd302cb0c88e8154883bdfcc",
+  "receipt": {
+    "to": null,
+    "from": "0x7EFf82613404AE7Bce622EA1C927214E30F2285e",
+    "contractAddress": "0x4C906f2bC9Cc6Fd0536DB3b6D9962C0819f79C4c",
+    "transactionIndex": 89,
+    "gasUsed": "2558339",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000800000000100000000000000040000020000000000000000000000000000000000000000000080000000000000000000000000000000000001000000000000000000000000000000000000020000000000000000000800000100000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000800000000000000000000000000000000000000000000",
+    "blockHash": "0x190e1844329f056c22688d7e35bd6940860d7b4a6f740574cac82fc67a4e0666",
+    "transactionHash": "0x062f1f28961d6e02434d008e18cf0440e1d7d295dd302cb0c88e8154883bdfcc",
+    "logs": [
+      {
+        "transactionIndex": 89,
+        "blockNumber": 10337737,
+        "transactionHash": "0x062f1f28961d6e02434d008e18cf0440e1d7d295dd302cb0c88e8154883bdfcc",
+        "address": "0x4C906f2bC9Cc6Fd0536DB3b6D9962C0819f79C4c",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x0000000000000000000000007eff82613404ae7bce622ea1c927214e30f2285e"
+        ],
+        "data": "0x",
+        "logIndex": 151,
+        "blockHash": "0x190e1844329f056c22688d7e35bd6940860d7b4a6f740574cac82fc67a4e0666"
+      }
+    ],
+    "blockNumber": 10337737,
+    "cumulativeGasUsed": "11497854",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "58d47254ad59f0e9f735225c32c98fb8",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"achievement\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"unlockedAt\",\"type\":\"uint256\"}],\"name\":\"AchievementUnlocked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"badgeTypeId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"awardedAt\",\"type\":\"uint256\"}],\"name\":\"BadgeAwarded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"badgeTypeId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"revokedAt\",\"type\":\"uint256\"}],\"name\":\"BadgeRevoked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"badgeTypeId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"requiredPoints\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"createdAt\",\"type\":\"uint256\"}],\"name\":\"BadgeTypeCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"points\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"reason\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"addedAt\",\"type\":\"uint256\"}],\"name\":\"ReputationPointsAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"points\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"reason\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"deductedAt\",\"type\":\"uint256\"}],\"name\":\"ReputationPointsDeducted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"newTier\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"updatedAt\",\"type\":\"uint256\"}],\"name\":\"TierUpdated\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"points\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"reason\",\"type\":\"string\"}],\"name\":\"addReputationPoints\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"issuer\",\"type\":\"address\"}],\"name\":\"authorizeBadgeIssuer\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"editor\",\"type\":\"address\"}],\"name\":\"authorizePointsEditor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"badgeTypeId\",\"type\":\"uint256\"}],\"name\":\"awardBadge\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"description\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"requiredPoints\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"category\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"iconURI\",\"type\":\"string\"}],\"name\":\"createBadgeType\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"points\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"reason\",\"type\":\"string\"}],\"name\":\"deductReputationPoints\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"getBadgeHistory\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"badgeTypeIds\",\"type\":\"uint256[]\"},{\"internalType\":\"uint256[]\",\"name\":\"awardedAt\",\"type\":\"uint256[]\"},{\"internalType\":\"bool[]\",\"name\":\"isActive\",\"type\":\"bool[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"badgeTypeId\",\"type\":\"uint256\"}],\"name\":\"getBadgeTypeInfo\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"description\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"requiredPoints\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"category\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"iconURI\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"totalAwarded\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"limit\",\"type\":\"uint256\"}],\"name\":\"getLeaderboard\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"users\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"points\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"getReputationHistory\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"points\",\"type\":\"uint256[]\"},{\"internalType\":\"string[]\",\"name\":\"reasons\",\"type\":\"string[]\"},{\"internalType\":\"uint256[]\",\"name\":\"timestamps\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tier\",\"type\":\"uint256\"}],\"name\":\"getTierInfo\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"minPoints\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxPoints\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalBadgeTypes\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalUsersWithReputation\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"getUserAchievements\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"\",\"type\":\"string[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"getUserBadges\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"getUserReputationPoints\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"getUserTier\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"achievement\",\"type\":\"string\"}],\"name\":\"hasAchievement\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"badgeTypeId\",\"type\":\"uint256\"}],\"name\":\"hasBadge\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"issuer\",\"type\":\"address\"}],\"name\":\"isBadgeIssuer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"editor\",\"type\":\"address\"}],\"name\":\"isPointsEditor\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"badgeTypeId\",\"type\":\"uint256\"}],\"name\":\"revokeBadge\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"issuer\",\"type\":\"address\"}],\"name\":\"revokeBadgeIssuer\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"editor\",\"type\":\"address\"}],\"name\":\"revokePointsEditor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"achievement\",\"type\":\"string\"}],\"name\":\"unlockAchievement\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Manages user reputation points and badges/achievements\",\"errors\":{\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}]},\"kind\":\"dev\",\"methods\":{\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"title\":\"ReputationBadgeSystem\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"addReputationPoints(address,uint256,string)\":{\"notice\":\"Add reputation points\"},\"authorizeBadgeIssuer(address)\":{\"notice\":\"Authorize badge issuer\"},\"authorizePointsEditor(address)\":{\"notice\":\"Authorize points editor\"},\"awardBadge(address,uint256)\":{\"notice\":\"Award badge to user\"},\"createBadgeType(string,string,uint256,string,string)\":{\"notice\":\"Create a badge type\"},\"deductReputationPoints(address,uint256,string)\":{\"notice\":\"Deduct reputation points\"},\"getBadgeHistory(address)\":{\"notice\":\"Get badge history\"},\"getBadgeTypeInfo(uint256)\":{\"notice\":\"Get badge type information\"},\"getLeaderboard(uint256)\":{\"notice\":\"Get leaderboard\"},\"getReputationHistory(address)\":{\"notice\":\"Get reputation history\"},\"getTierInfo(uint256)\":{\"notice\":\"Get tier information\"},\"getTotalBadgeTypes()\":{\"notice\":\"Get total badge types\"},\"getTotalUsersWithReputation()\":{\"notice\":\"Get total users with reputation\"},\"getUserAchievements(address)\":{\"notice\":\"Get user achievements\"},\"getUserBadges(address)\":{\"notice\":\"Get user badges\"},\"getUserReputationPoints(address)\":{\"notice\":\"Get user reputation points\"},\"getUserTier(address)\":{\"notice\":\"Get user tier\"},\"hasAchievement(address,string)\":{\"notice\":\"Check if user has achievement\"},\"hasBadge(address,uint256)\":{\"notice\":\"Check if user has badge\"},\"isBadgeIssuer(address)\":{\"notice\":\"Check if badge issuer\"},\"isPointsEditor(address)\":{\"notice\":\"Check if points editor\"},\"revokeBadge(address,uint256)\":{\"notice\":\"Revoke badge from user\"},\"revokeBadgeIssuer(address)\":{\"notice\":\"Revoke badge issuer authorization\"},\"revokePointsEditor(address)\":{\"notice\":\"Revoke points editor authorization\"},\"unlockAchievement(address,string)\":{\"notice\":\"Unlock achievement\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/modules/012-reputation/ReputationBadgeSystem.sol\":\"ReputationBadgeSystem\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"none\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {Context} from \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * The initial owner is set to the address provided by the deployer. This can\\n * later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    /**\\n     * @dev The caller account is not authorized to perform an operation.\\n     */\\n    error OwnableUnauthorizedAccount(address account);\\n\\n    /**\\n     * @dev The owner is not a valid owner account. (eg. `address(0)`)\\n     */\\n    error OwnableInvalidOwner(address owner);\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the address provided by the deployer as the initial owner.\\n     */\\n    constructor(address initialOwner) {\\n        if (initialOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(initialOwner);\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        if (owner() != _msgSender()) {\\n            revert OwnableUnauthorizedAccount(_msgSender());\\n        }\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby disabling any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        if (newOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    function _contextSuffixLength() internal view virtual returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\"},\"contracts/modules/012-reputation/IReputationBadgeSystem.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.24;\\r\\n\\r\\n/**\\r\\n * @title IReputationBadgeSystem\\r\\n * @dev Interface for reputation and badge management system\\r\\n */\\r\\ninterface IReputationBadgeSystem {\\r\\n    // ============ Events ============\\r\\n    event BadgeTypeCreated(\\r\\n        uint256 indexed badgeTypeId,\\r\\n        string name,\\r\\n        uint256 requiredPoints,\\r\\n        uint256 createdAt\\r\\n    );\\r\\n\\r\\n    event BadgeAwarded(\\r\\n        address indexed user,\\r\\n        uint256 indexed badgeTypeId,\\r\\n        uint256 awardedAt\\r\\n    );\\r\\n\\r\\n    event BadgeRevoked(\\r\\n        address indexed user,\\r\\n        uint256 indexed badgeTypeId,\\r\\n        uint256 revokedAt\\r\\n    );\\r\\n\\r\\n    event ReputationPointsAdded(\\r\\n        address indexed user,\\r\\n        uint256 points,\\r\\n        string reason,\\r\\n        uint256 addedAt\\r\\n    );\\r\\n\\r\\n    event ReputationPointsDeducted(\\r\\n        address indexed user,\\r\\n        uint256 points,\\r\\n        string reason,\\r\\n        uint256 deductedAt\\r\\n    );\\r\\n\\r\\n    event TierUpdated(\\r\\n        address indexed user,\\r\\n        uint256 newTier,\\r\\n        uint256 updatedAt\\r\\n    );\\r\\n\\r\\n    event AchievementUnlocked(\\r\\n        address indexed user,\\r\\n        string achievement,\\r\\n        uint256 unlockedAt\\r\\n    );\\r\\n\\r\\n    // ============ Mutations ============\\r\\n    /**\\r\\n     * @notice Create a badge type\\r\\n     * @param name Badge name\\r\\n     * @param description Badge description\\r\\n     * @param requiredPoints Points required to earn badge\\r\\n     * @param category Badge category\\r\\n     * @param iconURI IPFS URI for badge icon\\r\\n     * @return badgeTypeId ID of the badge type\\r\\n     */\\r\\n    function createBadgeType(\\r\\n        string calldata name,\\r\\n        string calldata description,\\r\\n        uint256 requiredPoints,\\r\\n        string calldata category,\\r\\n        string calldata iconURI\\r\\n    ) external returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @notice Award badge to user\\r\\n     * @param user User address\\r\\n     * @param badgeTypeId Badge type ID\\r\\n     */\\r\\n    function awardBadge(address user, uint256 badgeTypeId) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Revoke badge from user\\r\\n     * @param user User address\\r\\n     * @param badgeTypeId Badge type ID\\r\\n     */\\r\\n    function revokeBadge(address user, uint256 badgeTypeId) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Add reputation points\\r\\n     * @param user User address\\r\\n     * @param points Points to add\\r\\n     * @param reason Reason for points\\r\\n     */\\r\\n    function addReputationPoints(\\r\\n        address user,\\r\\n        uint256 points,\\r\\n        string calldata reason\\r\\n    ) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Deduct reputation points\\r\\n     * @param user User address\\r\\n     * @param points Points to deduct\\r\\n     * @param reason Reason for deduction\\r\\n     */\\r\\n    function deductReputationPoints(\\r\\n        address user,\\r\\n        uint256 points,\\r\\n        string calldata reason\\r\\n    ) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Unlock achievement\\r\\n     * @param user User address\\r\\n     * @param achievement Achievement name\\r\\n     */\\r\\n    function unlockAchievement(address user, string calldata achievement) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Authorize a badge issuer\\r\\n     * @param issuer Issuer address\\r\\n     */\\r\\n    function authorizeBadgeIssuer(address issuer) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Revoke badge issuer authorization\\r\\n     * @param issuer Issuer address\\r\\n     */\\r\\n    function revokeBadgeIssuer(address issuer) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Authorize points editor\\r\\n     * @param editor Editor address\\r\\n     */\\r\\n    function authorizePointsEditor(address editor) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Revoke points editor authorization\\r\\n     * @param editor Editor address\\r\\n     */\\r\\n    function revokePointsEditor(address editor) external;\\r\\n\\r\\n    // ============ Queries ============\\r\\n    /**\\r\\n     * @notice Get user reputation points\\r\\n     * @param user User address\\r\\n     */\\r\\n    function getUserReputationPoints(address user)\\r\\n        external\\r\\n        view\\r\\n        returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @notice Get user tier level\\r\\n     * @param user User address\\r\\n     */\\r\\n    function getUserTier(address user)\\r\\n        external\\r\\n        view\\r\\n        returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @notice Get user badges\\r\\n     * @param user User address\\r\\n     */\\r\\n    function getUserBadges(address user)\\r\\n        external\\r\\n        view\\r\\n        returns (uint256[] memory);\\r\\n\\r\\n    /**\\r\\n     * @notice Check if user has badge\\r\\n     * @param user User address\\r\\n     * @param badgeTypeId Badge type ID\\r\\n     */\\r\\n    function hasBadge(address user, uint256 badgeTypeId)\\r\\n        external\\r\\n        view\\r\\n        returns (bool);\\r\\n\\r\\n    /**\\r\\n     * @notice Get badge type information\\r\\n     * @param badgeTypeId Badge type ID\\r\\n     */\\r\\n    function getBadgeTypeInfo(uint256 badgeTypeId)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            string memory name,\\r\\n            string memory description,\\r\\n            uint256 requiredPoints,\\r\\n            string memory category,\\r\\n            string memory iconURI,\\r\\n            uint256 totalAwarded\\r\\n        );\\r\\n\\r\\n    /**\\r\\n     * @notice Get user achievements\\r\\n     * @param user User address\\r\\n     */\\r\\n    function getUserAchievements(address user)\\r\\n        external\\r\\n        view\\r\\n        returns (string[] memory);\\r\\n\\r\\n    /**\\r\\n     * @notice Check if user has achievement\\r\\n     * @param user User address\\r\\n     * @param achievement Achievement name\\r\\n     */\\r\\n    function hasAchievement(address user, string calldata achievement)\\r\\n        external\\r\\n        view\\r\\n        returns (bool);\\r\\n\\r\\n    /**\\r\\n     * @notice Get reputation history for user\\r\\n     * @param user User address\\r\\n     */\\r\\n    function getReputationHistory(address user)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            uint256[] memory points,\\r\\n            string[] memory reasons,\\r\\n            uint256[] memory timestamps\\r\\n        );\\r\\n\\r\\n    /**\\r\\n     * @notice Get badge history\\r\\n     * @param user User address\\r\\n     */\\r\\n    function getBadgeHistory(address user)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            uint256[] memory badgeTypeIds,\\r\\n            uint256[] memory awardedAt,\\r\\n            bool[] memory isActive\\r\\n        );\\r\\n\\r\\n    /**\\r\\n     * @notice Get total badge types\\r\\n     */\\r\\n    function getTotalBadgeTypes() external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @notice Get total users with reputation\\r\\n     */\\r\\n    function getTotalUsersWithReputation() external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @notice Get leaderboard (top users by reputation)\\r\\n     * @param limit Number of users to return\\r\\n     */\\r\\n    function getLeaderboard(uint256 limit)\\r\\n        external\\r\\n        view\\r\\n        returns (address[] memory users, uint256[] memory points);\\r\\n\\r\\n    /**\\r\\n     * @notice Get tier information\\r\\n     * @param tier Tier level\\r\\n     */\\r\\n    function getTierInfo(uint256 tier)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            uint256 minPoints,\\r\\n            uint256 maxPoints,\\r\\n            string memory name\\r\\n        );\\r\\n\\r\\n    /**\\r\\n     * @notice Check if address is badge issuer\\r\\n     * @param issuer Issuer address\\r\\n     */\\r\\n    function isBadgeIssuer(address issuer)\\r\\n        external\\r\\n        view\\r\\n        returns (bool);\\r\\n\\r\\n    /**\\r\\n     * @notice Check if address is points editor\\r\\n     * @param editor Editor address\\r\\n     */\\r\\n    function isPointsEditor(address editor)\\r\\n        external\\r\\n        view\\r\\n        returns (bool);\\r\\n}\\r\\n\",\"keccak256\":\"0xbe6af8aef0aa72e63e3df6984fceafdd7774525577ac59ac225eb34358a6c73c\",\"license\":\"MIT\"},\"contracts/modules/012-reputation/ReputationBadgeSystem.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.24;\\r\\n\\r\\nimport {Ownable} from \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\r\\nimport {IReputationBadgeSystem} from \\\"./IReputationBadgeSystem.sol\\\";\\r\\n\\r\\n/**\\r\\n * @title ReputationBadgeSystem\\r\\n * @dev Manages user reputation points and badges/achievements\\r\\n */\\r\\ncontract ReputationBadgeSystem is Ownable, IReputationBadgeSystem {\\r\\n    // ============ Data Structures ============\\r\\n    struct BadgeType {\\r\\n        string name;\\r\\n        string description;\\r\\n        uint256 requiredPoints;\\r\\n        string category;\\r\\n        string iconURI;\\r\\n        uint256 totalAwarded;\\r\\n    }\\r\\n\\r\\n    struct ReputationRecord {\\r\\n        uint256 points;\\r\\n        string reason;\\r\\n        uint256 timestamp;\\r\\n        bool isAddition;\\r\\n    }\\r\\n\\r\\n    struct BadgeRecord {\\r\\n        uint256 badgeTypeId;\\r\\n        uint256 awardedAt;\\r\\n        bool isActive;\\r\\n    }\\r\\n\\r\\n    struct TierInfo {\\r\\n        uint256 minPoints;\\r\\n        uint256 maxPoints;\\r\\n        string name;\\r\\n    }\\r\\n\\r\\n    // ============ State Variables ============\\r\\n    uint256 private badgeTypeCounter;\\r\\n    \\r\\n    mapping(address => uint256) private userReputationPoints;\\r\\n    mapping(address => uint256) private userTier;\\r\\n    mapping(address => uint256[]) private userBadges;\\r\\n    mapping(address => mapping(uint256 => bool)) private userHasBadge;\\r\\n    mapping(uint256 => BadgeType) private badgeTypes;\\r\\n    mapping(address => ReputationRecord[]) private reputationHistory;\\r\\n    mapping(address => BadgeRecord[]) private badgeHistory;\\r\\n    mapping(address => mapping(string => bool)) private userAchievements;\\r\\n    mapping(address => string[]) private userAchievementsList;\\r\\n    mapping(address => bool) private authorizedBadgeIssuers;\\r\\n    mapping(address => bool) private authorizedPointsEditors;\\r\\n\\r\\n    // Tier system\\r\\n    mapping(uint256 => TierInfo) private tiers;\\r\\n\\r\\n    // Leaderboard tracking\\r\\n    address[] private usersWithReputation;\\r\\n    mapping(address => bool) private isTrackedUser;\\r\\n\\r\\n    // Statistics\\r\\n    uint256 private totalBadgeTypes;\\r\\n\\r\\n    // ============ Modifiers ============\\r\\n    modifier onlyBadgeIssuer() {\\r\\n        require(\\r\\n            authorizedBadgeIssuers[msg.sender] || msg.sender == owner(),\\r\\n            \\\"ReputationBadgeSystem: Not authorized badge issuer\\\"\\r\\n        );\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    modifier onlyPointsEditor() {\\r\\n        require(\\r\\n            authorizedPointsEditors[msg.sender] || msg.sender == owner(),\\r\\n            \\\"ReputationBadgeSystem: Not authorized points editor\\\"\\r\\n        );\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    modifier badgeTypeExists(uint256 badgeTypeId) {\\r\\n        require(\\r\\n            badgeTypeId > 0 && badgeTypeId < badgeTypeCounter,\\r\\n            \\\"ReputationBadgeSystem: Badge type does not exist\\\"\\r\\n        );\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    // ============ Constructor ============\\r\\n    constructor() Ownable(msg.sender) {\\r\\n        badgeTypeCounter = 1;\\r\\n        totalBadgeTypes = 0;\\r\\n\\r\\n        // Initialize tier system\\r\\n        // Tier 1: 0-999 points (Bronze)\\r\\n        tiers[1] = TierInfo({minPoints: 0, maxPoints: 999, name: \\\"Bronze\\\"});\\r\\n        // Tier 2: 1000-4999 points (Silver)\\r\\n        tiers[2] = TierInfo({minPoints: 1000, maxPoints: 4999, name: \\\"Silver\\\"});\\r\\n        // Tier 3: 5000-9999 points (Gold)\\r\\n        tiers[3] = TierInfo({minPoints: 5000, maxPoints: 9999, name: \\\"Gold\\\"});\\r\\n        // Tier 4: 10000+ points (Platinum)\\r\\n        tiers[4] = TierInfo({minPoints: 10000, maxPoints: type(uint256).max, name: \\\"Platinum\\\"});\\r\\n\\r\\n        // Authorize deployer\\r\\n        authorizedBadgeIssuers[msg.sender] = true;\\r\\n        authorizedPointsEditors[msg.sender] = true;\\r\\n    }\\r\\n\\r\\n    // ============ Core Functions ============\\r\\n    /**\\r\\n     * @notice Create a badge type\\r\\n     */\\r\\n    function createBadgeType(\\r\\n        string calldata name,\\r\\n        string calldata description,\\r\\n        uint256 requiredPoints,\\r\\n        string calldata category,\\r\\n        string calldata iconURI\\r\\n    ) external onlyOwner returns (uint256) {\\r\\n        require(bytes(name).length > 0, \\\"ReputationBadgeSystem: Name required\\\");\\r\\n        require(requiredPoints >= 0, \\\"ReputationBadgeSystem: Points must be valid\\\");\\r\\n\\r\\n        uint256 badgeTypeId = badgeTypeCounter++;\\r\\n\\r\\n        badgeTypes[badgeTypeId] = BadgeType({\\r\\n            name: name,\\r\\n            description: description,\\r\\n            requiredPoints: requiredPoints,\\r\\n            category: category,\\r\\n            iconURI: iconURI,\\r\\n            totalAwarded: 0\\r\\n        });\\r\\n\\r\\n        totalBadgeTypes++;\\r\\n\\r\\n        emit BadgeTypeCreated(badgeTypeId, name, requiredPoints, block.timestamp);\\r\\n\\r\\n        return badgeTypeId;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Award badge to user\\r\\n     */\\r\\n    function awardBadge(address user, uint256 badgeTypeId)\\r\\n        external\\r\\n        onlyBadgeIssuer\\r\\n        badgeTypeExists(badgeTypeId)\\r\\n    {\\r\\n        require(user != address(0), \\\"ReputationBadgeSystem: Invalid user address\\\");\\r\\n        require(!userHasBadge[user][badgeTypeId], \\\"ReputationBadgeSystem: Already has badge\\\");\\r\\n\\r\\n        userHasBadge[user][badgeTypeId] = true;\\r\\n        userBadges[user].push(badgeTypeId);\\r\\n        badgeTypes[badgeTypeId].totalAwarded++;\\r\\n\\r\\n        // Add to badge history\\r\\n        badgeHistory[user].push(BadgeRecord({\\r\\n            badgeTypeId: badgeTypeId,\\r\\n            awardedAt: block.timestamp,\\r\\n            isActive: true\\r\\n        }));\\r\\n\\r\\n        emit BadgeAwarded(user, badgeTypeId, block.timestamp);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Revoke badge from user\\r\\n     */\\r\\n    function revokeBadge(address user, uint256 badgeTypeId)\\r\\n        external\\r\\n        onlyBadgeIssuer\\r\\n        badgeTypeExists(badgeTypeId)\\r\\n    {\\r\\n        require(user != address(0), \\\"ReputationBadgeSystem: Invalid user address\\\");\\r\\n        require(userHasBadge[user][badgeTypeId], \\\"ReputationBadgeSystem: Does not have badge\\\");\\r\\n\\r\\n        userHasBadge[user][badgeTypeId] = false;\\r\\n\\r\\n        // Mark in badge history\\r\\n        for (uint256 i = 0; i < badgeHistory[user].length; i++) {\\r\\n            if (badgeHistory[user][i].badgeTypeId == badgeTypeId && badgeHistory[user][i].isActive) {\\r\\n                badgeHistory[user][i].isActive = false;\\r\\n                break;\\r\\n            }\\r\\n        }\\r\\n\\r\\n        emit BadgeRevoked(user, badgeTypeId, block.timestamp);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Add reputation points\\r\\n     */\\r\\n    function addReputationPoints(\\r\\n        address user,\\r\\n        uint256 points,\\r\\n        string calldata reason\\r\\n    ) external onlyPointsEditor {\\r\\n        require(user != address(0), \\\"ReputationBadgeSystem: Invalid user address\\\");\\r\\n        require(points > 0, \\\"ReputationBadgeSystem: Points must be greater than 0\\\");\\r\\n\\r\\n        userReputationPoints[user] += points;\\r\\n\\r\\n        // Track in history\\r\\n        reputationHistory[user].push(ReputationRecord({\\r\\n            points: points,\\r\\n            reason: reason,\\r\\n            timestamp: block.timestamp,\\r\\n            isAddition: true\\r\\n        }));\\r\\n\\r\\n        // Track user in leaderboard\\r\\n        if (!isTrackedUser[user]) {\\r\\n            usersWithReputation.push(user);\\r\\n            isTrackedUser[user] = true;\\r\\n        }\\r\\n\\r\\n        // Update tier\\r\\n        _updateUserTier(user);\\r\\n\\r\\n        emit ReputationPointsAdded(user, points, reason, block.timestamp);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Deduct reputation points\\r\\n     */\\r\\n    function deductReputationPoints(\\r\\n        address user,\\r\\n        uint256 points,\\r\\n        string calldata reason\\r\\n    ) external onlyPointsEditor {\\r\\n        require(user != address(0), \\\"ReputationBadgeSystem: Invalid user address\\\");\\r\\n        require(points > 0, \\\"ReputationBadgeSystem: Points must be greater than 0\\\");\\r\\n        require(\\r\\n            userReputationPoints[user] >= points,\\r\\n            \\\"ReputationBadgeSystem: Insufficient reputation points\\\"\\r\\n        );\\r\\n\\r\\n        userReputationPoints[user] -= points;\\r\\n\\r\\n        // Track in history\\r\\n        reputationHistory[user].push(ReputationRecord({\\r\\n            points: points,\\r\\n            reason: reason,\\r\\n            timestamp: block.timestamp,\\r\\n            isAddition: false\\r\\n        }));\\r\\n\\r\\n        // Update tier\\r\\n        _updateUserTier(user);\\r\\n\\r\\n        emit ReputationPointsDeducted(user, points, reason, block.timestamp);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Unlock achievement\\r\\n     */\\r\\n    function unlockAchievement(address user, string calldata achievement)\\r\\n        external\\r\\n        onlyPointsEditor\\r\\n    {\\r\\n        require(user != address(0), \\\"ReputationBadgeSystem: Invalid user address\\\");\\r\\n        require(!userAchievements[user][achievement], \\\"ReputationBadgeSystem: Already unlocked\\\");\\r\\n\\r\\n        userAchievements[user][achievement] = true;\\r\\n        userAchievementsList[user].push(achievement);\\r\\n\\r\\n        emit AchievementUnlocked(user, achievement, block.timestamp);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Authorize badge issuer\\r\\n     */\\r\\n    function authorizeBadgeIssuer(address issuer) external onlyOwner {\\r\\n        require(issuer != address(0), \\\"ReputationBadgeSystem: Invalid address\\\");\\r\\n        authorizedBadgeIssuers[issuer] = true;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Revoke badge issuer authorization\\r\\n     */\\r\\n    function revokeBadgeIssuer(address issuer) external onlyOwner {\\r\\n        require(issuer != address(0), \\\"ReputationBadgeSystem: Invalid address\\\");\\r\\n        authorizedBadgeIssuers[issuer] = false;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Authorize points editor\\r\\n     */\\r\\n    function authorizePointsEditor(address editor) external onlyOwner {\\r\\n        require(editor != address(0), \\\"ReputationBadgeSystem: Invalid address\\\");\\r\\n        authorizedPointsEditors[editor] = true;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Revoke points editor authorization\\r\\n     */\\r\\n    function revokePointsEditor(address editor) external onlyOwner {\\r\\n        require(editor != address(0), \\\"ReputationBadgeSystem: Invalid address\\\");\\r\\n        authorizedPointsEditors[editor] = false;\\r\\n    }\\r\\n\\r\\n    // ============ Query Functions ============\\r\\n    /**\\r\\n     * @notice Get user reputation points\\r\\n     */\\r\\n    function getUserReputationPoints(address user)\\r\\n        external\\r\\n        view\\r\\n        returns (uint256)\\r\\n    {\\r\\n        return userReputationPoints[user];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get user tier\\r\\n     */\\r\\n    function getUserTier(address user)\\r\\n        external\\r\\n        view\\r\\n        returns (uint256)\\r\\n    {\\r\\n        return userTier[user] == 0 ? 1 : userTier[user];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get user badges\\r\\n     */\\r\\n    function getUserBadges(address user)\\r\\n        external\\r\\n        view\\r\\n        returns (uint256[] memory)\\r\\n    {\\r\\n        return userBadges[user];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Check if user has badge\\r\\n     */\\r\\n    function hasBadge(address user, uint256 badgeTypeId)\\r\\n        external\\r\\n        view\\r\\n        returns (bool)\\r\\n    {\\r\\n        return userHasBadge[user][badgeTypeId];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get badge type information\\r\\n     */\\r\\n    function getBadgeTypeInfo(uint256 badgeTypeId)\\r\\n        external\\r\\n        view\\r\\n        badgeTypeExists(badgeTypeId)\\r\\n        returns (\\r\\n            string memory name,\\r\\n            string memory description,\\r\\n            uint256 requiredPoints,\\r\\n            string memory category,\\r\\n            string memory iconURI,\\r\\n            uint256 totalAwarded\\r\\n        )\\r\\n    {\\r\\n        BadgeType memory badge = badgeTypes[badgeTypeId];\\r\\n        return (\\r\\n            badge.name,\\r\\n            badge.description,\\r\\n            badge.requiredPoints,\\r\\n            badge.category,\\r\\n            badge.iconURI,\\r\\n            badge.totalAwarded\\r\\n        );\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get user achievements\\r\\n     */\\r\\n    function getUserAchievements(address user)\\r\\n        external\\r\\n        view\\r\\n        returns (string[] memory)\\r\\n    {\\r\\n        return userAchievementsList[user];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Check if user has achievement\\r\\n     */\\r\\n    function hasAchievement(address user, string calldata achievement)\\r\\n        external\\r\\n        view\\r\\n        returns (bool)\\r\\n    {\\r\\n        return userAchievements[user][achievement];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get reputation history\\r\\n     */\\r\\n    function getReputationHistory(address user)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            uint256[] memory points,\\r\\n            string[] memory reasons,\\r\\n            uint256[] memory timestamps\\r\\n        )\\r\\n    {\\r\\n        ReputationRecord[] memory history = reputationHistory[user];\\r\\n        uint256 length = history.length;\\r\\n\\r\\n        uint256[] memory pointsArray = new uint256[](length);\\r\\n        string[] memory reasonsArray = new string[](length);\\r\\n        uint256[] memory timestampsArray = new uint256[](length);\\r\\n\\r\\n        for (uint256 i = 0; i < length; i++) {\\r\\n            pointsArray[i] = history[i].points;\\r\\n            reasonsArray[i] = history[i].reason;\\r\\n            timestampsArray[i] = history[i].timestamp;\\r\\n        }\\r\\n\\r\\n        return (pointsArray, reasonsArray, timestampsArray);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get badge history\\r\\n     */\\r\\n    function getBadgeHistory(address user)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            uint256[] memory badgeTypeIds,\\r\\n            uint256[] memory awardedAt,\\r\\n            bool[] memory isActive\\r\\n        )\\r\\n    {\\r\\n        BadgeRecord[] memory history = badgeHistory[user];\\r\\n        uint256 length = history.length;\\r\\n\\r\\n        uint256[] memory badgeIdsArray = new uint256[](length);\\r\\n        uint256[] memory awardedAtArray = new uint256[](length);\\r\\n        bool[] memory isActiveArray = new bool[](length);\\r\\n\\r\\n        for (uint256 i = 0; i < length; i++) {\\r\\n            badgeIdsArray[i] = history[i].badgeTypeId;\\r\\n            awardedAtArray[i] = history[i].awardedAt;\\r\\n            isActiveArray[i] = history[i].isActive;\\r\\n        }\\r\\n\\r\\n        return (badgeIdsArray, awardedAtArray, isActiveArray);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get total badge types\\r\\n     */\\r\\n    function getTotalBadgeTypes() external view returns (uint256) {\\r\\n        return totalBadgeTypes;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get total users with reputation\\r\\n     */\\r\\n    function getTotalUsersWithReputation() external view returns (uint256) {\\r\\n        return usersWithReputation.length;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get leaderboard\\r\\n     */\\r\\n    function getLeaderboard(uint256 limit)\\r\\n        external\\r\\n        view\\r\\n        returns (address[] memory users, uint256[] memory points)\\r\\n    {\\r\\n        uint256 count = limit < usersWithReputation.length ? limit : usersWithReputation.length;\\r\\n        \\r\\n        address[] memory topUsers = new address[](count);\\r\\n        uint256[] memory topPoints = new uint256[](count);\\r\\n\\r\\n        // Simple selection sort (for small limits)\\r\\n        address[] memory sorted = usersWithReputation;\\r\\n        \\r\\n        uint256 placed = 0;\\r\\n        for (uint256 i = 0; i < sorted.length && placed < count; i++) {\\r\\n            uint256 maxPoints = 0;\\r\\n            uint256 maxIdx = 0;\\r\\n            \\r\\n            for (uint256 j = 0; j < sorted.length; j++) {\\r\\n                if (userReputationPoints[sorted[j]] > maxPoints) {\\r\\n                    bool alreadyAdded = false;\\r\\n                    for (uint256 k = 0; k < placed; k++) {\\r\\n                        if (topUsers[k] == sorted[j]) {\\r\\n                            alreadyAdded = true;\\r\\n                            break;\\r\\n                        }\\r\\n                    }\\r\\n                    if (!alreadyAdded) {\\r\\n                        maxPoints = userReputationPoints[sorted[j]];\\r\\n                        maxIdx = j;\\r\\n                    }\\r\\n                }\\r\\n            }\\r\\n            \\r\\n            if (maxPoints > 0) {\\r\\n                topUsers[placed] = sorted[maxIdx];\\r\\n                topPoints[placed] = maxPoints;\\r\\n                placed++;\\r\\n            }\\r\\n        }\\r\\n\\r\\n        return (topUsers, topPoints);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get tier information\\r\\n     */\\r\\n    function getTierInfo(uint256 tier)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            uint256 minPoints,\\r\\n            uint256 maxPoints,\\r\\n            string memory name\\r\\n        )\\r\\n    {\\r\\n        require(tier >= 1 && tier <= 4, \\\"ReputationBadgeSystem: Invalid tier\\\");\\r\\n        TierInfo memory tierData = tiers[tier];\\r\\n        return (tierData.minPoints, tierData.maxPoints, tierData.name);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Check if badge issuer\\r\\n     */\\r\\n    function isBadgeIssuer(address issuer)\\r\\n        external\\r\\n        view\\r\\n        returns (bool)\\r\\n    {\\r\\n        return authorizedBadgeIssuers[issuer];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Check if points editor\\r\\n     */\\r\\n    function isPointsEditor(address editor)\\r\\n        external\\r\\n        view\\r\\n        returns (bool)\\r\\n    {\\r\\n        return authorizedPointsEditors[editor];\\r\\n    }\\r\\n\\r\\n    // ============ Internal Helper Functions ============\\r\\n    /**\\r\\n     * @notice Update user tier based on reputation points\\r\\n     */\\r\\n    function _updateUserTier(address user) internal {\\r\\n        uint256 points = userReputationPoints[user];\\r\\n\\r\\n        if (points < 1000) {\\r\\n            userTier[user] = 1;\\r\\n        } else if (points < 5000) {\\r\\n            userTier[user] = 2;\\r\\n        } else if (points < 10000) {\\r\\n            userTier[user] = 3;\\r\\n        } else {\\r\\n            userTier[user] = 4;\\r\\n        }\\r\\n\\r\\n        emit TierUpdated(user, userTier[user], block.timestamp);\\r\\n    }\\r\\n}\\r\\n\",\"keccak256\":\"0xe4e65e4b661e73ef008790e377c9d4468394e1efb0e6229426d6dafd042f2b58\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x6080604090808252346200074757331562000731575060008054336001600160a01b0319821681178355919291906001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08480a3600191828055806010556200006e6200074c565b928184526020916002838601956103e787526200008a62000782565b600681526542726f6e7a6560d01b86820152818701908152848452600d8652868420915182559651818501559551805190966001600160401b039201908281116200071d578154978589811c9916801562000712575b878a1014620006fe578190601f998a8111620006ab575b5087908a8311600114620006475786926200063b575b5050600019600383901b1c191690851b1790555b6200012b6200074c565b6103e8815260028582019161138783526200014562000782565b92600684526529b4b63b32b960d11b88850152888201938452828652600d8852888620915182555186820155019051805190838211620006275782548681811c911680156200061c575b88821014620006085790818a849311620005b5575b5087908a83116001146200055157869262000545575b5050600019600383901b1c191690851b1790555b620001d86200074c565b9061138882528482019161270f83526002620001f362000782565b916004948584526311dbdb1960e21b8985015289820193845260038752600d8952898720915182555187820155019051805190838211620005325782548781811c9116801562000527575b89821014620005145790818b849311620004c1575b5088908b83116001146200045d57879262000451575b5050600019600383901b1c191690861b1790555b620002876200074c565b966127108852858801926002600019998a8652620002a462000782565b956008875267506c6174696e756d60c01b8a8801528a8201968752838852600d8a528a88209151825551888201550193519081519384116200043e578454908782811c9216801562000433575b89831014620004205750828111620003d8575b50869183116001146200036e57978291889986999798999362000362575b505082871b9260031b1c19161790555b338152600b8452600c8282209460ff199585878254161790555220918254161790555161269b9081620007a38239f35b01519150388062000322565b97601f1983169184865287862092865b818110620003c2575090899a85899a9b999695949310620003a9575b50505050811b01905562000332565b01519060f88460031b161c19169055388080806200039a565b8b8301518555938801939189019189016200037e565b8486528786208380860160051c8201928a871062000416575b0160051c019087905b8281106200040a57505062000304565b878155018790620003fa565b92508192620003f1565b634e487b7160e01b875260229052602486fd5b91607f1691620002f1565b634e487b7160e01b865260419052602485fd5b01519050388062000269565b8488528988208994509190601f198416895b8c828210620004aa575050841162000490575b505050811b0190556200027d565b015160001960f88460031b161c1916905538808062000482565b8385015186558c979095019493840193016200046f565b9091508387528887208b80850160051c8201928b86106200050a575b918a91869594930160051c01915b828110620004fb57505062000253565b8981558594508a9101620004eb565b92508192620004dd565b634e487b7160e01b875260228652602487fd5b90607f16906200023e565b634e487b7160e01b865260418552602486fd5b015190503880620001ba565b8487528887208894509190601f198416885b8b8282106200059e575050841162000584575b505050811b019055620001ce565b015160001960f88460031b161c1916905538808062000576565b8385015186558b9790950194938401930162000563565b9091508386528786208a80850160051c8201928a8610620005fe575b918991869594930160051c01915b828110620005ef575050620001a4565b888155859450899101620005df565b92508192620005d1565b634e487b7160e01b86526022600452602486fd5b90607f16906200018f565b634e487b7160e01b85526041600452602485fd5b0151905038806200010d565b8487528887208894509190601f198416885b8b8282106200069457505084116200067a575b505050811b01905562000121565b015160001960f88460031b161c191690553880806200066c565b8385015186558b9790950194938401930162000659565b9091508386528786208a80850160051c8201928a8610620006f4575b918991869594930160051c01915b828110620006e5575050620000f7565b888155859450899101620006d5565b92508192620006c7565b634e487b7160e01b85526022600452602485fd5b98607f1698620000e0565b634e487b7160e01b84526041600452602484fd5b631e4fbdf760e01b815260006004820152602490fd5b600080fd5b60405190606082016001600160401b038111838210176200076c57604052565b634e487b7160e01b600052604160045260246000fd5b60408051919082016001600160401b038111838210176200076c5760405256fe608080604052600436101561001357600080fd5b60003560e01c90816315c4286f14611d7f575080631606457214611b1c57806317872b21146118f457806337c245fe146118695780633ff5dbbd1461182f57806348bb0fe4146116825780634c6a70ce1461163557806359bba026146115e85780635e047a07146115a9578063631880af1461156a578063715018a6146115115780637744281514610f785780637b5455df14610d7d5780638da5cb5b14610d5457806394d6f64514610be7578063a34b46fe1461098d578063aed77d5914610885578063b32772ef14610835578063b490b28b14610686578063b9a626ed1461063f578063bc6c141e146105f2578063cc9d751914610510578063ced3442f146104c0578063d02322c5146104a2578063e4d2620e14610453578063f09153c4146103be578063f10d7dcc146101e65763f2fde38b1461015357600080fd5b346101e15760203660031901126101e15761016c611d9a565b6101746125ad565b6001600160a01b039081169081156101c857600054826bffffffffffffffffffffffff60a01b821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b604051631e4fbdf760e01b815260006004820152602490fd5b600080fd5b346101e1576101f436611ef1565b9092919233600052602093600c855260ff6040600020541680156103aa575b61021c90611f33565b6001600160a01b03841694610232861515611f9b565b61023d8215156123d0565b8560005260028152604060002080549083820180921161039457558560005260078152610299604060002060405190610275826121ba565b84825261028336888861238a565b8483015242604083015260016060830152612439565b85600052600f815260ff60406000205416156102f2575b506102ed906102df7f799fd780effbc959307fa674e8ec9190eb205b4e7ffb3243404bdf06af5fa09e956125d9565b60405193849342928561258a565b0390a2005b90600e5491600160401b83101561037e576001830180600e55831015610368577fbb7b4a454dc3493923482f07822329ed19e8244eff582cc204f8554c3620c3fd90920180546001600160a01b031916871790556000868152600f9092526040909120805460ff191660011790556102ed6102b0565b634e487b7160e01b600052603260045260246000fd5b634e487b7160e01b600052604160045260246000fd5b634e487b7160e01b600052601160045260246000fd5b506000546001600160a01b03163314610213565b346101e1576020806003193601126101e1576001600160a01b036103e0611d9a565b16600052600a815260406000209081546103f98161222d565b9261040760405194856121f0565b8184526000908152828120838086015b84841061043557604051828152806104318185018a611e94565b0390f35b600191829161044385612244565b8152019201920191908490610417565b346101e15760203660031901126101e1576001600160a01b03610474611d9a565b166000526003602052604060002054801560001461049a5750602060015b604051908152f35b602090610492565b346101e15760003660031901126101e1576020600e54604051908152f35b346101e15760203660031901126101e1576104d9611d9a565b6104e16125ad565b6001600160a01b03166104f581151561232f565b6000908152600c60205260409020805460ff19166001179055005b346101e15760203660031901126101e1576004356001811015806105e7575b1561059657600052600d60205260406000206040519061054e8261219f565b8054825261043161056d60026001840154936020860194855201612244565b928360408201525191519260405193849384526020840152606060408401526060830190611e54565b60405162461bcd60e51b815260206004820152602360248201527f52657075746174696f6e426164676553797374656d3a20496e76616c6964207460448201526234b2b960e91b6064820152608490fd5b50600481111561052f565b346101e15760203660031901126101e15761060b611d9a565b6106136125ad565b6001600160a01b031661062781151561232f565b6000908152600b60205260409020805460ff19169055005b346101e157602060ff8161065236611ddd565b929160018060a01b031660005260098252604060002083604051948593843782019081520301902054166040519015158152f35b346101e1576020806003193601126101e1576001600160a01b036106a8611d9a565b1660005260088152604060002080546106c08161222d565b916106ce60405193846121f0565b81835260009081528381208484015b8383106107fa57845186866106f1836122e9565b916106fb846122e9565b6107048561222d565b9461071260405196876121f0565b80865261071e8161222d565b8684019490601f190136863760005b82811061079d57505050938161076161075496604051978897606089526060890190611e20565b9087820384890152611e20565b918583036040870152519182815201929160005b82811061078457505050500390f35b8351151585528695509381019392810192600101610775565b806107ae600192849a98999a61231b565b51516107ba828b61231b565b52856107c6828561231b565b5101516107d3828761231b565b5260406107e0828561231b565b51015115156107ef828961231b565b52019695949661072d565b60038660019260405161080c8161219f565b85548152848601548382015260ff600287015416151560408201528152019201920191906106dd565b346101e15760203660031901126101e15761084e611d9a565b6108566125ad565b6001600160a01b031661086a81151561232f565b6000908152600b60205260409020805460ff19166001179055005b346101e15760203660031901126101e15760043580151580610982575b6108ab9061212b565b600052600660205261094960406000206040516108c7816121d5565b6108d082612244565b81526109786108e160018401612244565b926020830193845261096a60028201546040850190815261090460038401612244565b9060608601918252610957600561091d60048701612244565b958660808a01520154968760a08201525197519151925191604051998a9960c08b5260c08b0190611e54565b9089820360208b0152611e54565b9160408801528682036060880152611e54565b908482036080860152611e54565b9060a08301520390f35b5060015481106108a2565b346101e1576020806003193601126101e157600e5460043581811015610bdf579190915b6109ba8161222d565b916109c860405193846121f0565b8183526109d48261222d565b8382019190601f19013683376109e9836122e9565b946040519082828281520190600e6000527fbb7b4a454dc3493923482f07822329ed19e8244eff582cc204f8554c3620c3fd9060005b818110610bc25750505081610a359103826121f0565b60009060005b8151811080610bb9575b15610b645760009460009660005b8451811015610b02576001600160a01b0380610a6f838861231b565b51166000526002908189528960406000205411610a91575b5050600101610a53565b600080828e5b8b8310610ace575b505050610a8757919950919750610ab6898661231b565b5116600052855260406000205495600188908c610a87565b82610ad89161231b565b511683610ae5878c61231b565b511614610af657600101828e610a97565b505060018e828e610a9f565b50969590929581610b21575b5050610b1990612190565b939093610a3b565b9193610b1992610b5c92906001600160a01b0390610b3f908a61231b565b5116610b4b838c61231b565b52610b56828c61231b565b52612190565b929089610b0e565b84878986604051926040840190604085525180915260608401949060005b818110610b9c578587038487015285806104318988611e20565b82516001600160a01b031687529583019591830191600101610b82565b50858310610a45565b82546001600160a01b031684529285019260019283019201610a1f565b5090816109b1565b346101e157610bf536611ef1565b90929192336000526020600c815260ff604060002054168015610d40575b610c1c90611f33565b6001600160a01b03841694610c32861515611f9b565b610c3d8115156123d0565b85600052600282528060406000205410610cdd57856000526002825260406000209485549082820391821161039457610cd86102ed946102df937f0d397ad66069356be3802e3cef538d3a365be471eacdd7579c81eab7c617a2ce99558960005260078152604060002060405191610cb4836121ba565b868352610cc2368b8b61238a565b9083015242604083015260006060830152612439565b6125d9565b60405162461bcd60e51b815260048101839052603560248201527f52657075746174696f6e426164676553797374656d3a20496e73756666696369604482015274656e742072657075746174696f6e20706f696e747360581b6064820152608490fd5b506000546001600160a01b03163314610c13565b346101e15760003660031901126101e1576000546040516001600160a01b039091168152602090f35b346101e15760403660031901126101e157610d96611d9a565b60243590336000526020600b815260ff9160ff604060002054168015610f64575b610dc0906120c4565b83151580610f59575b610dd29061212b565b6001600160a01b031690610de7821515611f9b565b8160005260058152604060002084600052815260ff6040600020541615610f025781600052600581526040600020846000528152604060002060ff199081815416905560005b8360005260088084528660406000208054841015610ed45783610e4f91612211565b50541480610eb2575b610e655750600101610e2d565b849550600291610ea0917f9869998e378ae21335fbb1daeb70fbc8dec023080fefa0d6868e9e4f73e0ce389660005285526040600020612211565b50019081541690555b604051428152a3005b5084600052808452856002610ecb846040600020612211565b50015416610e58565b50505050507f9869998e378ae21335fbb1daeb70fbc8dec023080fefa0d6868e9e4f73e0ce38919250610ea9565b6084906040519062461bcd60e51b82526004820152602a60248201527f52657075746174696f6e426164676553797374656d3a20446f6573206e6f74206044820152696861766520626164676560b01b6064820152fd5b506001548410610dc9565b506000546001600160a01b03163314610db7565b346101e15760a03660031901126101e1576004356001600160401b0381116101e157610fa8903690600401611db0565b602480356001600160401b0381116101e157610fc8903690600401611db0565b906064356001600160401b0381116101e157610fe8903690600401611db0565b6084356001600160401b0381116101e157611007903690600401611db0565b9390946110126125ad565b87156114c05761107b9361103d98969361105b61104a99979461106f946110528e6001549e8f612190565b6001556040519d8e6121d5565b8c369161238a565b8c52369161238a565b60208a015260443560408a0152369161238a565b6060870152369161238a565b6080840152600060a084015283600052600660205260406000209083518051906001600160401b0382116113cd576110bd826110b78654612013565b8661204d565b602090601f8311600114611454576110ee929160009183611350575b50508160011b916000199060031b1c19161790565b82555b60208401518051906001600160401b0382116113cd57611121826111186001870154612013565b6001870161204d565b602090601f83116001146113e2576111519291600091836113505750508160011b916000199060031b1c19161790565b60018301555b6040840151600283015560608401518051906001600160401b0382116113cd57611191826111886003870154612013565b6003870161204d565b602090601f831160011461135b576111c19291600091836113505750508160011b916000199060031b1c19161790565b60038301555b600482019060808501518051916001600160401b03831161133c5750918187959361120060209a96946111fa8554612013565b8561204d565b8990601f83116001146112a857926112588360a0947fc730f27803649f6dbdf355f192745718ea24a9fb7c629a9bb3ee6fe3717a29c49a9b9460059760009261129d5750508160011b916000199060031b1c19161790565b90555b015191015561126b601054612190565b6010556112856040519283926060845260608401916120a3565b604435878301524260408301520390a2604051908152f35b015190508e806110d9565b97929190601f19821698836000528b6000209960005b8181106113225750927fc730f27803649f6dbdf355f192745718ea24a9fb7c629a9bb3ee6fe3717a29c4999a60a09593600193836005999710611309575b505050811b01905561125b565b015160001960f88460031b161c191690558d80806112fc565b838301518c556001909b019a8c9a50928d01928d016112be565b634e487b7160e01b60009081526041600452fd5b0151905089806110d9565b9190600385016000526020600020906000935b601f19841685106113b2576001945083601f19811610611399575b505050811b0160038301556111c7565b015160001960f88460031b161c19169055888080611389565b8181015183556020948501946001909301929091019061136e565b82634e487b7160e01b60005260416004526000fd5b9190600185016000526020600020906000935b601f1984168510611439576001945083601f19811610611420575b505050811b016001830155611157565b015160001960f88460031b161c19169055888080611410565b818101518355602094850194600190930192909101906113f5565b9190846000526020600020906000935b601f19841685106114a5576001945083601f1981161061148c575b505050811b0182556110f1565b015160001960f88460031b161c1916905588808061147f565b81810151835560209485019460019093019290910190611464565b60405162461bcd60e51b8152602060048201528088018890527f52657075746174696f6e426164676553797374656d3a204e616d6520726571756044820152631a5c995960e21b6064820152608490fd5b346101e15760003660031901126101e15761152a6125ad565b600080546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b346101e15760203660031901126101e1576001600160a01b0361158b611d9a565b16600052600c602052602060ff604060002054166040519015158152f35b346101e15760203660031901126101e1576001600160a01b036115ca611d9a565b16600052600b602052602060ff604060002054166040519015158152f35b346101e15760203660031901126101e157611601611d9a565b6116096125ad565b6001600160a01b031661161d81151561232f565b6000908152600c60205260409020805460ff19169055005b346101e15760403660031901126101e1576001600160a01b03611656611d9a565b1660005260056020526040600020602435600052602052602060ff604060002054166040519015158152f35b346101e1576020806003193601126101e1576001600160a01b036116a4611d9a565b1660005260078152604060002080546116bc8161222d565b916116ca60405193846121f0565b8183526000908152838120848085015b8484106117e157508451856116ee826122e9565b916116f88161222d565b9061170660405192836121f0565b808252601f196117158261222d565b018560005b8281106117d25750505061172d816122e9565b9260005b8281106117745761175986610431876117668b89604051968796606088526060880190611e20565b9186830390870152611e94565b908382036040850152611e20565b806117816001928461231b565b515161178d828961231b565b5287611799828561231b565b5101516117a6828761231b565b526117b1818661231b565b5060406117be828561231b565b5101516117cb828861231b565b5201611731565b6060858201830152810161171a565b6001916004916040516117f3816121ba565b85548152611802858701612244565b838201526002860154604082015260ff6003870154161515606082015281520192019201919085906116da565b346101e15760203660031901126101e1576001600160a01b03611850611d9a565b1660005260026020526020604060002054604051908152f35b346101e1576020806003193601126101e1576001600160a01b0361188b611d9a565b1660005260048152604060002090604051808383829554938481520190600052836000209260005b858282106118de575050506118ca925003836121f0565b610431604051928284938452830190611e20565b85548452600195860195889550930192016118b3565b346101e15760403660031901126101e15761190d611d9a565b6024359033600052602090600b825260ff604060002054168015611b08575b611935906120c4565b82151580611afd575b6119479061212b565b6001600160a01b03169061195c821515611f9b565b8160005260058152604060002083600052815260ff60406000205416611aa857816000526005815260406000208360005281526040600020600160ff198254161790558160005260048152604060002090815491600160401b928381101561037e576119cd91600182018155611ffb565b81549060031b9086821b91600019901b1916179055836000526006815260056040600020016119fc8154612190565b905582600052600881526040600020604051611a178161219f565b8581528281019142835260408201946001865281549081101561037e57611a4391600182018155612211565b919091611a92577f3f1171297c35ca225263338ac9a229d96149e8c1eea55d597eaa85b135f8640a94610ea99360029251845551600184015551151591019060ff801983541691151516179055565b634e487b7160e01b600052600060045260246000fd5b6084906040519062461bcd60e51b82526004820152602860248201527f52657075746174696f6e426164676553797374656d3a20416c72656164792068604482015267617320626164676560c01b6064820152fd5b50600154831061193e565b506000546001600160a01b0316331461192c565b346101e157611b2a36611ddd565b9033600052602092600c845260ff604060002054168015611d6b575b611b4f90611f33565b6001600160a01b031691611b64831515611f9b565b826000526009845260ff604060002085604051809285878337858201908152030190205416611d165782600052600984526040600020846040518092848683378482019081520301902093600194600160ff1982541617905583600052600a815260406000208054600160401b81101561037e57611be791600182018155611ffb565b611a92576001600160401b03831161037e57611c0d83611c078354612013565b8361204d565b600095601f8411600114611c905750611c6083807f67a8d47c6ecf3a491ea8a4f20a58352394879c573c678ec5b9abceae075d4dca9798600091611c85575b508160011b916000199060031b1c19161790565b90555b611c7a6040519384936040855260408501916120a3565b9042908301520390a2005b905086013589611c4c565b601f198416968260005283600020916000905b898210611cff575050847f67a8d47c6ecf3a491ea8a4f20a58352394879c573c678ec5b9abceae075d4dca979810611ce5575b5050600183811b019055611c63565b850135600019600386901b60f8161c191690558680611cd6565b878301358455928301929185019190850190611ca3565b60405162461bcd60e51b815260048101859052602760248201527f52657075746174696f6e426164676553797374656d3a20416c726561647920756044820152661b9b1bd8dad95960ca1b6064820152608490fd5b506000546001600160a01b03163314611b46565b346101e15760003660031901126101e1576020906010548152f35b600435906001600160a01b03821682036101e157565b9181601f840112156101e1578235916001600160401b0383116101e157602083818601950101116101e157565b9060406003198301126101e1576004356001600160a01b03811681036101e15791602435906001600160401b0382116101e157611e1c91600401611db0565b9091565b90815180825260208080930193019160005b828110611e40575050505090565b835185529381019392810192600101611e32565b919082519283825260005b848110611e80575050826000602080949584010152601f8019910116010190565b602081830181015184830182015201611e5f565b90808251908181526020809101926020808460051b8301019501936000915b848310611ec35750505050505090565b9091929394958480611ee1600193601f198682030187528a51611e54565b9801930193019194939290611eb3565b60606003198201126101e1576004356001600160a01b03811681036101e1579160243591604435906001600160401b0382116101e157611e1c91600401611db0565b15611f3a57565b60405162461bcd60e51b815260206004820152603360248201527f52657075746174696f6e426164676553797374656d3a204e6f7420617574686f6044820152723934bd32b2103837b4b73a399032b234ba37b960691b6064820152608490fd5b15611fa257565b60405162461bcd60e51b815260206004820152602b60248201527f52657075746174696f6e426164676553797374656d3a20496e76616c6964207560448201526a736572206164647265737360a81b6064820152608490fd5b80548210156103685760005260206000200190600090565b90600182811c92168015612043575b602083101461202d57565b634e487b7160e01b600052602260045260246000fd5b91607f1691612022565b90601f811161205b57505050565b6000916000526020600020906020601f850160051c83019410612099575b601f0160051c01915b82811061208e57505050565b818155600101612082565b9092508290612079565b908060209392818452848401376000828201840152601f01601f1916010190565b156120cb57565b60405162461bcd60e51b815260206004820152603260248201527f52657075746174696f6e426164676553797374656d3a204e6f7420617574686f6044820152713934bd32b2103130b233b29034b9b9bab2b960711b6064820152608490fd5b1561213257565b60405162461bcd60e51b815260206004820152603060248201527f52657075746174696f6e426164676553797374656d3a2042616467652074797060448201526f1948191bd95cc81b9bdd08195e1a5cdd60821b6064820152608490fd5b60001981146103945760010190565b606081019081106001600160401b0382111761037e57604052565b608081019081106001600160401b0382111761037e57604052565b60c081019081106001600160401b0382111761037e57604052565b90601f801991011681019081106001600160401b0382111761037e57604052565b8054821015610368576000526003602060002091020190600090565b6001600160401b03811161037e5760051b60200190565b9060405191826000825461225781612013565b908184526020946001916001811690816000146122c75750600114612288575b505050612286925003836121f0565b565b600090815285812095935091905b8183106122af5750506122869350820101388080612277565b85548884018501529485019487945091830191612296565b9250505061228694925060ff191682840152151560051b820101388080612277565b906122f38261222d565b61230060405191826121f0565b8281528092612311601f199161222d565b0190602036910137565b80518210156103685760209160051b010190565b1561233657565b60405162461bcd60e51b815260206004820152602660248201527f52657075746174696f6e426164676553797374656d3a20496e76616c6964206160448201526564647265737360d01b6064820152608490fd5b9291926001600160401b03821161037e57604051916123b3601f8201601f1916602001846121f0565b8294818452818301116101e1578281602093846000960137010152565b156123d757565b60405162461bcd60e51b815260206004820152603460248201527f52657075746174696f6e426164676553797374656d3a20506f696e7473206d75604482015273073742062652067726561746572207468616e20360641b6064820152608490fd5b90815491600160401b83101561037e5760018084018083558410156103685760009182526020938483209060021b019383518555600185019281850151908151936001600160401b0385116125765761249c856124968854612013565b8861204d565b83601f861160011461250557505083606094612286989794600397946124d694926124fa5750508160011b916000199060031b1c19161790565b90555b604081015160028501550151151591019060ff801983541691151516179055565b0151905038806110d9565b868352808320949392601f198716929091905b83831061255f5750505093612286979693600396936001938360609810612547575b505050811b0190556124d9565b015160001983891b60f8161c1916905538808061253a565b848601518755958601959481019491810191612518565b634e487b7160e01b82526041600452602482fd5b949392916040926125a89287526060602088015260608701916120a3565b930152565b6000546001600160a01b031633036125c157565b60405163118cdaa760e01b8152336004820152602490fd5b60018060a01b03167ff406c17c43e8510021f8e9d634aca0c743b8343139c1e9b0ff49314654be0049600082815260206002815260408281809420546103e881106000146126475750858152600383526001828220555b8581526003835220549082519182524290820152a2565b611388811015612664575085815260038352600282822055612630565b612710111561267f5785815260038352600382822055612630565b6003835260048282205561263056fea164736f6c6343000818000a",
+  "deployedBytecode": "0x608080604052600436101561001357600080fd5b60003560e01c90816315c4286f14611d7f575080631606457214611b1c57806317872b21146118f457806337c245fe146118695780633ff5dbbd1461182f57806348bb0fe4146116825780634c6a70ce1461163557806359bba026146115e85780635e047a07146115a9578063631880af1461156a578063715018a6146115115780637744281514610f785780637b5455df14610d7d5780638da5cb5b14610d5457806394d6f64514610be7578063a34b46fe1461098d578063aed77d5914610885578063b32772ef14610835578063b490b28b14610686578063b9a626ed1461063f578063bc6c141e146105f2578063cc9d751914610510578063ced3442f146104c0578063d02322c5146104a2578063e4d2620e14610453578063f09153c4146103be578063f10d7dcc146101e65763f2fde38b1461015357600080fd5b346101e15760203660031901126101e15761016c611d9a565b6101746125ad565b6001600160a01b039081169081156101c857600054826bffffffffffffffffffffffff60a01b821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b604051631e4fbdf760e01b815260006004820152602490fd5b600080fd5b346101e1576101f436611ef1565b9092919233600052602093600c855260ff6040600020541680156103aa575b61021c90611f33565b6001600160a01b03841694610232861515611f9b565b61023d8215156123d0565b8560005260028152604060002080549083820180921161039457558560005260078152610299604060002060405190610275826121ba565b84825261028336888861238a565b8483015242604083015260016060830152612439565b85600052600f815260ff60406000205416156102f2575b506102ed906102df7f799fd780effbc959307fa674e8ec9190eb205b4e7ffb3243404bdf06af5fa09e956125d9565b60405193849342928561258a565b0390a2005b90600e5491600160401b83101561037e576001830180600e55831015610368577fbb7b4a454dc3493923482f07822329ed19e8244eff582cc204f8554c3620c3fd90920180546001600160a01b031916871790556000868152600f9092526040909120805460ff191660011790556102ed6102b0565b634e487b7160e01b600052603260045260246000fd5b634e487b7160e01b600052604160045260246000fd5b634e487b7160e01b600052601160045260246000fd5b506000546001600160a01b03163314610213565b346101e1576020806003193601126101e1576001600160a01b036103e0611d9a565b16600052600a815260406000209081546103f98161222d565b9261040760405194856121f0565b8184526000908152828120838086015b84841061043557604051828152806104318185018a611e94565b0390f35b600191829161044385612244565b8152019201920191908490610417565b346101e15760203660031901126101e1576001600160a01b03610474611d9a565b166000526003602052604060002054801560001461049a5750602060015b604051908152f35b602090610492565b346101e15760003660031901126101e1576020600e54604051908152f35b346101e15760203660031901126101e1576104d9611d9a565b6104e16125ad565b6001600160a01b03166104f581151561232f565b6000908152600c60205260409020805460ff19166001179055005b346101e15760203660031901126101e1576004356001811015806105e7575b1561059657600052600d60205260406000206040519061054e8261219f565b8054825261043161056d60026001840154936020860194855201612244565b928360408201525191519260405193849384526020840152606060408401526060830190611e54565b60405162461bcd60e51b815260206004820152602360248201527f52657075746174696f6e426164676553797374656d3a20496e76616c6964207460448201526234b2b960e91b6064820152608490fd5b50600481111561052f565b346101e15760203660031901126101e15761060b611d9a565b6106136125ad565b6001600160a01b031661062781151561232f565b6000908152600b60205260409020805460ff19169055005b346101e157602060ff8161065236611ddd565b929160018060a01b031660005260098252604060002083604051948593843782019081520301902054166040519015158152f35b346101e1576020806003193601126101e1576001600160a01b036106a8611d9a565b1660005260088152604060002080546106c08161222d565b916106ce60405193846121f0565b81835260009081528381208484015b8383106107fa57845186866106f1836122e9565b916106fb846122e9565b6107048561222d565b9461071260405196876121f0565b80865261071e8161222d565b8684019490601f190136863760005b82811061079d57505050938161076161075496604051978897606089526060890190611e20565b9087820384890152611e20565b918583036040870152519182815201929160005b82811061078457505050500390f35b8351151585528695509381019392810192600101610775565b806107ae600192849a98999a61231b565b51516107ba828b61231b565b52856107c6828561231b565b5101516107d3828761231b565b5260406107e0828561231b565b51015115156107ef828961231b565b52019695949661072d565b60038660019260405161080c8161219f565b85548152848601548382015260ff600287015416151560408201528152019201920191906106dd565b346101e15760203660031901126101e15761084e611d9a565b6108566125ad565b6001600160a01b031661086a81151561232f565b6000908152600b60205260409020805460ff19166001179055005b346101e15760203660031901126101e15760043580151580610982575b6108ab9061212b565b600052600660205261094960406000206040516108c7816121d5565b6108d082612244565b81526109786108e160018401612244565b926020830193845261096a60028201546040850190815261090460038401612244565b9060608601918252610957600561091d60048701612244565b958660808a01520154968760a08201525197519151925191604051998a9960c08b5260c08b0190611e54565b9089820360208b0152611e54565b9160408801528682036060880152611e54565b908482036080860152611e54565b9060a08301520390f35b5060015481106108a2565b346101e1576020806003193601126101e157600e5460043581811015610bdf579190915b6109ba8161222d565b916109c860405193846121f0565b8183526109d48261222d565b8382019190601f19013683376109e9836122e9565b946040519082828281520190600e6000527fbb7b4a454dc3493923482f07822329ed19e8244eff582cc204f8554c3620c3fd9060005b818110610bc25750505081610a359103826121f0565b60009060005b8151811080610bb9575b15610b645760009460009660005b8451811015610b02576001600160a01b0380610a6f838861231b565b51166000526002908189528960406000205411610a91575b5050600101610a53565b600080828e5b8b8310610ace575b505050610a8757919950919750610ab6898661231b565b5116600052855260406000205495600188908c610a87565b82610ad89161231b565b511683610ae5878c61231b565b511614610af657600101828e610a97565b505060018e828e610a9f565b50969590929581610b21575b5050610b1990612190565b939093610a3b565b9193610b1992610b5c92906001600160a01b0390610b3f908a61231b565b5116610b4b838c61231b565b52610b56828c61231b565b52612190565b929089610b0e565b84878986604051926040840190604085525180915260608401949060005b818110610b9c578587038487015285806104318988611e20565b82516001600160a01b031687529583019591830191600101610b82565b50858310610a45565b82546001600160a01b031684529285019260019283019201610a1f565b5090816109b1565b346101e157610bf536611ef1565b90929192336000526020600c815260ff604060002054168015610d40575b610c1c90611f33565b6001600160a01b03841694610c32861515611f9b565b610c3d8115156123d0565b85600052600282528060406000205410610cdd57856000526002825260406000209485549082820391821161039457610cd86102ed946102df937f0d397ad66069356be3802e3cef538d3a365be471eacdd7579c81eab7c617a2ce99558960005260078152604060002060405191610cb4836121ba565b868352610cc2368b8b61238a565b9083015242604083015260006060830152612439565b6125d9565b60405162461bcd60e51b815260048101839052603560248201527f52657075746174696f6e426164676553797374656d3a20496e73756666696369604482015274656e742072657075746174696f6e20706f696e747360581b6064820152608490fd5b506000546001600160a01b03163314610c13565b346101e15760003660031901126101e1576000546040516001600160a01b039091168152602090f35b346101e15760403660031901126101e157610d96611d9a565b60243590336000526020600b815260ff9160ff604060002054168015610f64575b610dc0906120c4565b83151580610f59575b610dd29061212b565b6001600160a01b031690610de7821515611f9b565b8160005260058152604060002084600052815260ff6040600020541615610f025781600052600581526040600020846000528152604060002060ff199081815416905560005b8360005260088084528660406000208054841015610ed45783610e4f91612211565b50541480610eb2575b610e655750600101610e2d565b849550600291610ea0917f9869998e378ae21335fbb1daeb70fbc8dec023080fefa0d6868e9e4f73e0ce389660005285526040600020612211565b50019081541690555b604051428152a3005b5084600052808452856002610ecb846040600020612211565b50015416610e58565b50505050507f9869998e378ae21335fbb1daeb70fbc8dec023080fefa0d6868e9e4f73e0ce38919250610ea9565b6084906040519062461bcd60e51b82526004820152602a60248201527f52657075746174696f6e426164676553797374656d3a20446f6573206e6f74206044820152696861766520626164676560b01b6064820152fd5b506001548410610dc9565b506000546001600160a01b03163314610db7565b346101e15760a03660031901126101e1576004356001600160401b0381116101e157610fa8903690600401611db0565b602480356001600160401b0381116101e157610fc8903690600401611db0565b906064356001600160401b0381116101e157610fe8903690600401611db0565b6084356001600160401b0381116101e157611007903690600401611db0565b9390946110126125ad565b87156114c05761107b9361103d98969361105b61104a99979461106f946110528e6001549e8f612190565b6001556040519d8e6121d5565b8c369161238a565b8c52369161238a565b60208a015260443560408a0152369161238a565b6060870152369161238a565b6080840152600060a084015283600052600660205260406000209083518051906001600160401b0382116113cd576110bd826110b78654612013565b8661204d565b602090601f8311600114611454576110ee929160009183611350575b50508160011b916000199060031b1c19161790565b82555b60208401518051906001600160401b0382116113cd57611121826111186001870154612013565b6001870161204d565b602090601f83116001146113e2576111519291600091836113505750508160011b916000199060031b1c19161790565b60018301555b6040840151600283015560608401518051906001600160401b0382116113cd57611191826111886003870154612013565b6003870161204d565b602090601f831160011461135b576111c19291600091836113505750508160011b916000199060031b1c19161790565b60038301555b600482019060808501518051916001600160401b03831161133c5750918187959361120060209a96946111fa8554612013565b8561204d565b8990601f83116001146112a857926112588360a0947fc730f27803649f6dbdf355f192745718ea24a9fb7c629a9bb3ee6fe3717a29c49a9b9460059760009261129d5750508160011b916000199060031b1c19161790565b90555b015191015561126b601054612190565b6010556112856040519283926060845260608401916120a3565b604435878301524260408301520390a2604051908152f35b015190508e806110d9565b97929190601f19821698836000528b6000209960005b8181106113225750927fc730f27803649f6dbdf355f192745718ea24a9fb7c629a9bb3ee6fe3717a29c4999a60a09593600193836005999710611309575b505050811b01905561125b565b015160001960f88460031b161c191690558d80806112fc565b838301518c556001909b019a8c9a50928d01928d016112be565b634e487b7160e01b60009081526041600452fd5b0151905089806110d9565b9190600385016000526020600020906000935b601f19841685106113b2576001945083601f19811610611399575b505050811b0160038301556111c7565b015160001960f88460031b161c19169055888080611389565b8181015183556020948501946001909301929091019061136e565b82634e487b7160e01b60005260416004526000fd5b9190600185016000526020600020906000935b601f1984168510611439576001945083601f19811610611420575b505050811b016001830155611157565b015160001960f88460031b161c19169055888080611410565b818101518355602094850194600190930192909101906113f5565b9190846000526020600020906000935b601f19841685106114a5576001945083601f1981161061148c575b505050811b0182556110f1565b015160001960f88460031b161c1916905588808061147f565b81810151835560209485019460019093019290910190611464565b60405162461bcd60e51b8152602060048201528088018890527f52657075746174696f6e426164676553797374656d3a204e616d6520726571756044820152631a5c995960e21b6064820152608490fd5b346101e15760003660031901126101e15761152a6125ad565b600080546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b346101e15760203660031901126101e1576001600160a01b0361158b611d9a565b16600052600c602052602060ff604060002054166040519015158152f35b346101e15760203660031901126101e1576001600160a01b036115ca611d9a565b16600052600b602052602060ff604060002054166040519015158152f35b346101e15760203660031901126101e157611601611d9a565b6116096125ad565b6001600160a01b031661161d81151561232f565b6000908152600c60205260409020805460ff19169055005b346101e15760403660031901126101e1576001600160a01b03611656611d9a565b1660005260056020526040600020602435600052602052602060ff604060002054166040519015158152f35b346101e1576020806003193601126101e1576001600160a01b036116a4611d9a565b1660005260078152604060002080546116bc8161222d565b916116ca60405193846121f0565b8183526000908152838120848085015b8484106117e157508451856116ee826122e9565b916116f88161222d565b9061170660405192836121f0565b808252601f196117158261222d565b018560005b8281106117d25750505061172d816122e9565b9260005b8281106117745761175986610431876117668b89604051968796606088526060880190611e20565b9186830390870152611e94565b908382036040850152611e20565b806117816001928461231b565b515161178d828961231b565b5287611799828561231b565b5101516117a6828761231b565b526117b1818661231b565b5060406117be828561231b565b5101516117cb828861231b565b5201611731565b6060858201830152810161171a565b6001916004916040516117f3816121ba565b85548152611802858701612244565b838201526002860154604082015260ff6003870154161515606082015281520192019201919085906116da565b346101e15760203660031901126101e1576001600160a01b03611850611d9a565b1660005260026020526020604060002054604051908152f35b346101e1576020806003193601126101e1576001600160a01b0361188b611d9a565b1660005260048152604060002090604051808383829554938481520190600052836000209260005b858282106118de575050506118ca925003836121f0565b610431604051928284938452830190611e20565b85548452600195860195889550930192016118b3565b346101e15760403660031901126101e15761190d611d9a565b6024359033600052602090600b825260ff604060002054168015611b08575b611935906120c4565b82151580611afd575b6119479061212b565b6001600160a01b03169061195c821515611f9b565b8160005260058152604060002083600052815260ff60406000205416611aa857816000526005815260406000208360005281526040600020600160ff198254161790558160005260048152604060002090815491600160401b928381101561037e576119cd91600182018155611ffb565b81549060031b9086821b91600019901b1916179055836000526006815260056040600020016119fc8154612190565b905582600052600881526040600020604051611a178161219f565b8581528281019142835260408201946001865281549081101561037e57611a4391600182018155612211565b919091611a92577f3f1171297c35ca225263338ac9a229d96149e8c1eea55d597eaa85b135f8640a94610ea99360029251845551600184015551151591019060ff801983541691151516179055565b634e487b7160e01b600052600060045260246000fd5b6084906040519062461bcd60e51b82526004820152602860248201527f52657075746174696f6e426164676553797374656d3a20416c72656164792068604482015267617320626164676560c01b6064820152fd5b50600154831061193e565b506000546001600160a01b0316331461192c565b346101e157611b2a36611ddd565b9033600052602092600c845260ff604060002054168015611d6b575b611b4f90611f33565b6001600160a01b031691611b64831515611f9b565b826000526009845260ff604060002085604051809285878337858201908152030190205416611d165782600052600984526040600020846040518092848683378482019081520301902093600194600160ff1982541617905583600052600a815260406000208054600160401b81101561037e57611be791600182018155611ffb565b611a92576001600160401b03831161037e57611c0d83611c078354612013565b8361204d565b600095601f8411600114611c905750611c6083807f67a8d47c6ecf3a491ea8a4f20a58352394879c573c678ec5b9abceae075d4dca9798600091611c85575b508160011b916000199060031b1c19161790565b90555b611c7a6040519384936040855260408501916120a3565b9042908301520390a2005b905086013589611c4c565b601f198416968260005283600020916000905b898210611cff575050847f67a8d47c6ecf3a491ea8a4f20a58352394879c573c678ec5b9abceae075d4dca979810611ce5575b5050600183811b019055611c63565b850135600019600386901b60f8161c191690558680611cd6565b878301358455928301929185019190850190611ca3565b60405162461bcd60e51b815260048101859052602760248201527f52657075746174696f6e426164676553797374656d3a20416c726561647920756044820152661b9b1bd8dad95960ca1b6064820152608490fd5b506000546001600160a01b03163314611b46565b346101e15760003660031901126101e1576020906010548152f35b600435906001600160a01b03821682036101e157565b9181601f840112156101e1578235916001600160401b0383116101e157602083818601950101116101e157565b9060406003198301126101e1576004356001600160a01b03811681036101e15791602435906001600160401b0382116101e157611e1c91600401611db0565b9091565b90815180825260208080930193019160005b828110611e40575050505090565b835185529381019392810192600101611e32565b919082519283825260005b848110611e80575050826000602080949584010152601f8019910116010190565b602081830181015184830182015201611e5f565b90808251908181526020809101926020808460051b8301019501936000915b848310611ec35750505050505090565b9091929394958480611ee1600193601f198682030187528a51611e54565b9801930193019194939290611eb3565b60606003198201126101e1576004356001600160a01b03811681036101e1579160243591604435906001600160401b0382116101e157611e1c91600401611db0565b15611f3a57565b60405162461bcd60e51b815260206004820152603360248201527f52657075746174696f6e426164676553797374656d3a204e6f7420617574686f6044820152723934bd32b2103837b4b73a399032b234ba37b960691b6064820152608490fd5b15611fa257565b60405162461bcd60e51b815260206004820152602b60248201527f52657075746174696f6e426164676553797374656d3a20496e76616c6964207560448201526a736572206164647265737360a81b6064820152608490fd5b80548210156103685760005260206000200190600090565b90600182811c92168015612043575b602083101461202d57565b634e487b7160e01b600052602260045260246000fd5b91607f1691612022565b90601f811161205b57505050565b6000916000526020600020906020601f850160051c83019410612099575b601f0160051c01915b82811061208e57505050565b818155600101612082565b9092508290612079565b908060209392818452848401376000828201840152601f01601f1916010190565b156120cb57565b60405162461bcd60e51b815260206004820152603260248201527f52657075746174696f6e426164676553797374656d3a204e6f7420617574686f6044820152713934bd32b2103130b233b29034b9b9bab2b960711b6064820152608490fd5b1561213257565b60405162461bcd60e51b815260206004820152603060248201527f52657075746174696f6e426164676553797374656d3a2042616467652074797060448201526f1948191bd95cc81b9bdd08195e1a5cdd60821b6064820152608490fd5b60001981146103945760010190565b606081019081106001600160401b0382111761037e57604052565b608081019081106001600160401b0382111761037e57604052565b60c081019081106001600160401b0382111761037e57604052565b90601f801991011681019081106001600160401b0382111761037e57604052565b8054821015610368576000526003602060002091020190600090565b6001600160401b03811161037e5760051b60200190565b9060405191826000825461225781612013565b908184526020946001916001811690816000146122c75750600114612288575b505050612286925003836121f0565b565b600090815285812095935091905b8183106122af5750506122869350820101388080612277565b85548884018501529485019487945091830191612296565b9250505061228694925060ff191682840152151560051b820101388080612277565b906122f38261222d565b61230060405191826121f0565b8281528092612311601f199161222d565b0190602036910137565b80518210156103685760209160051b010190565b1561233657565b60405162461bcd60e51b815260206004820152602660248201527f52657075746174696f6e426164676553797374656d3a20496e76616c6964206160448201526564647265737360d01b6064820152608490fd5b9291926001600160401b03821161037e57604051916123b3601f8201601f1916602001846121f0565b8294818452818301116101e1578281602093846000960137010152565b156123d757565b60405162461bcd60e51b815260206004820152603460248201527f52657075746174696f6e426164676553797374656d3a20506f696e7473206d75604482015273073742062652067726561746572207468616e20360641b6064820152608490fd5b90815491600160401b83101561037e5760018084018083558410156103685760009182526020938483209060021b019383518555600185019281850151908151936001600160401b0385116125765761249c856124968854612013565b8861204d565b83601f861160011461250557505083606094612286989794600397946124d694926124fa5750508160011b916000199060031b1c19161790565b90555b604081015160028501550151151591019060ff801983541691151516179055565b0151905038806110d9565b868352808320949392601f198716929091905b83831061255f5750505093612286979693600396936001938360609810612547575b505050811b0190556124d9565b015160001983891b60f8161c1916905538808061253a565b848601518755958601959481019491810191612518565b634e487b7160e01b82526041600452602482fd5b949392916040926125a89287526060602088015260608701916120a3565b930152565b6000546001600160a01b031633036125c157565b60405163118cdaa760e01b8152336004820152602490fd5b60018060a01b03167ff406c17c43e8510021f8e9d634aca0c743b8343139c1e9b0ff49314654be0049600082815260206002815260408281809420546103e881106000146126475750858152600383526001828220555b8581526003835220549082519182524290820152a2565b611388811015612664575085815260038352600282822055612630565b612710111561267f5785815260038352600382822055612630565b6003835260048282205561263056fea164736f6c6343000818000a",
+  "devdoc": {
+    "details": "Manages user reputation points and badges/achievements",
+    "errors": {
+      "OwnableInvalidOwner(address)": [
+        {
+          "details": "The owner is not a valid owner account. (eg. `address(0)`)"
+        }
+      ],
+      "OwnableUnauthorizedAccount(address)": [
+        {
+          "details": "The caller account is not authorized to perform an operation."
+        }
+      ]
+    },
+    "kind": "dev",
+    "methods": {
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "title": "ReputationBadgeSystem",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "addReputationPoints(address,uint256,string)": {
+        "notice": "Add reputation points"
+      },
+      "authorizeBadgeIssuer(address)": {
+        "notice": "Authorize badge issuer"
+      },
+      "authorizePointsEditor(address)": {
+        "notice": "Authorize points editor"
+      },
+      "awardBadge(address,uint256)": {
+        "notice": "Award badge to user"
+      },
+      "createBadgeType(string,string,uint256,string,string)": {
+        "notice": "Create a badge type"
+      },
+      "deductReputationPoints(address,uint256,string)": {
+        "notice": "Deduct reputation points"
+      },
+      "getBadgeHistory(address)": {
+        "notice": "Get badge history"
+      },
+      "getBadgeTypeInfo(uint256)": {
+        "notice": "Get badge type information"
+      },
+      "getLeaderboard(uint256)": {
+        "notice": "Get leaderboard"
+      },
+      "getReputationHistory(address)": {
+        "notice": "Get reputation history"
+      },
+      "getTierInfo(uint256)": {
+        "notice": "Get tier information"
+      },
+      "getTotalBadgeTypes()": {
+        "notice": "Get total badge types"
+      },
+      "getTotalUsersWithReputation()": {
+        "notice": "Get total users with reputation"
+      },
+      "getUserAchievements(address)": {
+        "notice": "Get user achievements"
+      },
+      "getUserBadges(address)": {
+        "notice": "Get user badges"
+      },
+      "getUserReputationPoints(address)": {
+        "notice": "Get user reputation points"
+      },
+      "getUserTier(address)": {
+        "notice": "Get user tier"
+      },
+      "hasAchievement(address,string)": {
+        "notice": "Check if user has achievement"
+      },
+      "hasBadge(address,uint256)": {
+        "notice": "Check if user has badge"
+      },
+      "isBadgeIssuer(address)": {
+        "notice": "Check if badge issuer"
+      },
+      "isPointsEditor(address)": {
+        "notice": "Check if points editor"
+      },
+      "revokeBadge(address,uint256)": {
+        "notice": "Revoke badge from user"
+      },
+      "revokeBadgeIssuer(address)": {
+        "notice": "Revoke badge issuer authorization"
+      },
+      "revokePointsEditor(address)": {
+        "notice": "Revoke points editor authorization"
+      },
+      "unlockAchievement(address,string)": {
+        "notice": "Unlock achievement"
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 8,
+        "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 530,
+        "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+        "label": "badgeTypeCounter",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 534,
+        "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+        "label": "userReputationPoints",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_address,t_uint256)"
+      },
+      {
+        "astId": 538,
+        "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+        "label": "userTier",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_address,t_uint256)"
+      },
+      {
+        "astId": 543,
+        "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+        "label": "userBadges",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)"
+      },
+      {
+        "astId": 549,
+        "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+        "label": "userHasBadge",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_mapping(t_address,t_mapping(t_uint256,t_bool))"
+      },
+      {
+        "astId": 554,
+        "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+        "label": "badgeTypes",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_mapping(t_uint256,t_struct(BadgeType)505_storage)"
+      },
+      {
+        "astId": 560,
+        "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+        "label": "reputationHistory",
+        "offset": 0,
+        "slot": "7",
+        "type": "t_mapping(t_address,t_array(t_struct(ReputationRecord)514_storage)dyn_storage)"
+      },
+      {
+        "astId": 566,
+        "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+        "label": "badgeHistory",
+        "offset": 0,
+        "slot": "8",
+        "type": "t_mapping(t_address,t_array(t_struct(BadgeRecord)521_storage)dyn_storage)"
+      },
+      {
+        "astId": 572,
+        "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+        "label": "userAchievements",
+        "offset": 0,
+        "slot": "9",
+        "type": "t_mapping(t_address,t_mapping(t_string_memory_ptr,t_bool))"
+      },
+      {
+        "astId": 577,
+        "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+        "label": "userAchievementsList",
+        "offset": 0,
+        "slot": "10",
+        "type": "t_mapping(t_address,t_array(t_string_storage)dyn_storage)"
+      },
+      {
+        "astId": 581,
+        "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+        "label": "authorizedBadgeIssuers",
+        "offset": 0,
+        "slot": "11",
+        "type": "t_mapping(t_address,t_bool)"
+      },
+      {
+        "astId": 585,
+        "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+        "label": "authorizedPointsEditors",
+        "offset": 0,
+        "slot": "12",
+        "type": "t_mapping(t_address,t_bool)"
+      },
+      {
+        "astId": 590,
+        "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+        "label": "tiers",
+        "offset": 0,
+        "slot": "13",
+        "type": "t_mapping(t_uint256,t_struct(TierInfo)528_storage)"
+      },
+      {
+        "astId": 593,
+        "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+        "label": "usersWithReputation",
+        "offset": 0,
+        "slot": "14",
+        "type": "t_array(t_address)dyn_storage"
+      },
+      {
+        "astId": 597,
+        "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+        "label": "isTrackedUser",
+        "offset": 0,
+        "slot": "15",
+        "type": "t_mapping(t_address,t_bool)"
+      },
+      {
+        "astId": 599,
+        "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+        "label": "totalBadgeTypes",
+        "offset": 0,
+        "slot": "16",
+        "type": "t_uint256"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_address)dyn_storage": {
+        "base": "t_address",
+        "encoding": "dynamic_array",
+        "label": "address[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_string_storage)dyn_storage": {
+        "base": "t_string_storage",
+        "encoding": "dynamic_array",
+        "label": "string[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_struct(BadgeRecord)521_storage)dyn_storage": {
+        "base": "t_struct(BadgeRecord)521_storage",
+        "encoding": "dynamic_array",
+        "label": "struct ReputationBadgeSystem.BadgeRecord[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_struct(ReputationRecord)514_storage)dyn_storage": {
+        "base": "t_struct(ReputationRecord)514_storage",
+        "encoding": "dynamic_array",
+        "label": "struct ReputationBadgeSystem.ReputationRecord[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_uint256)dyn_storage": {
+        "base": "t_uint256",
+        "encoding": "dynamic_array",
+        "label": "uint256[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_address,t_array(t_string_storage)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => string[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_string_storage)dyn_storage"
+      },
+      "t_mapping(t_address,t_array(t_struct(BadgeRecord)521_storage)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => struct ReputationBadgeSystem.BadgeRecord[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_struct(BadgeRecord)521_storage)dyn_storage"
+      },
+      "t_mapping(t_address,t_array(t_struct(ReputationRecord)514_storage)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => struct ReputationBadgeSystem.ReputationRecord[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_struct(ReputationRecord)514_storage)dyn_storage"
+      },
+      "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => uint256[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_uint256)dyn_storage"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_address,t_mapping(t_string_memory_ptr,t_bool))": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => mapping(string => bool))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_string_memory_ptr,t_bool)"
+      },
+      "t_mapping(t_address,t_mapping(t_uint256,t_bool))": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => mapping(uint256 => bool))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_uint256,t_bool)"
+      },
+      "t_mapping(t_address,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_mapping(t_string_memory_ptr,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_string_memory_ptr",
+        "label": "mapping(string => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_uint256,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_uint256,t_struct(BadgeType)505_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct ReputationBadgeSystem.BadgeType)",
+        "numberOfBytes": "32",
+        "value": "t_struct(BadgeType)505_storage"
+      },
+      "t_mapping(t_uint256,t_struct(TierInfo)528_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct ReputationBadgeSystem.TierInfo)",
+        "numberOfBytes": "32",
+        "value": "t_struct(TierInfo)528_storage"
+      },
+      "t_string_memory_ptr": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_string_storage": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_struct(BadgeRecord)521_storage": {
+        "encoding": "inplace",
+        "label": "struct ReputationBadgeSystem.BadgeRecord",
+        "members": [
+          {
+            "astId": 516,
+            "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+            "label": "badgeTypeId",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 518,
+            "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+            "label": "awardedAt",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 520,
+            "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+            "label": "isActive",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_bool"
+          }
+        ],
+        "numberOfBytes": "96"
+      },
+      "t_struct(BadgeType)505_storage": {
+        "encoding": "inplace",
+        "label": "struct ReputationBadgeSystem.BadgeType",
+        "members": [
+          {
+            "astId": 494,
+            "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+            "label": "name",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 496,
+            "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+            "label": "description",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 498,
+            "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+            "label": "requiredPoints",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 500,
+            "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+            "label": "category",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 502,
+            "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+            "label": "iconURI",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 504,
+            "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+            "label": "totalAwarded",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "192"
+      },
+      "t_struct(ReputationRecord)514_storage": {
+        "encoding": "inplace",
+        "label": "struct ReputationBadgeSystem.ReputationRecord",
+        "members": [
+          {
+            "astId": 507,
+            "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+            "label": "points",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 509,
+            "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+            "label": "reason",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 511,
+            "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+            "label": "timestamp",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 513,
+            "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+            "label": "isAddition",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_bool"
+          }
+        ],
+        "numberOfBytes": "128"
+      },
+      "t_struct(TierInfo)528_storage": {
+        "encoding": "inplace",
+        "label": "struct ReputationBadgeSystem.TierInfo",
+        "members": [
+          {
+            "astId": 523,
+            "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+            "label": "minPoints",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 525,
+            "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+            "label": "maxPoints",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 527,
+            "contract": "contracts/modules/012-reputation/ReputationBadgeSystem.sol:ReputationBadgeSystem",
+            "label": "name",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_string_storage"
+          }
+        ],
+        "numberOfBytes": "96"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

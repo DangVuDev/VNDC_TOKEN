@@ -10,250 +10,213 @@ import {
   CrosshairMode,
   LineStyle,
 } from 'lightweight-charts';
+import { useTheme } from '@/contexts/ThemeContext';
+import { TIMEFRAMES, type Candle } from '@/lib/exchange';
 
-// ─── Types ───
-export interface OHLCVData {
-  time: Time;
-  open: number;
-  high: number;
-  low: number;
-  close: number;
-  volume: number;
-}
+// ─── Props ───
 
 interface TradingChartProps {
-  data: OHLCVData[];
+  candles: Candle[];
   pair: string;
   height?: number;
   className?: string;
+  timeframe: string;
+  onTimeframeChange?: (tf: string) => void;
 }
 
-// ─── Generate realistic mock OHLCV data ───
-function generateMockData(days: number, basePrice: number): OHLCVData[] {
-  const data: OHLCVData[] = [];
-  let price = basePrice;
-  const now = Math.floor(Date.now() / 1000);
-  const daySeconds = 86400;
+// ─── Helpers ───
 
-  for (let i = days; i >= 0; i--) {
-    const time = (now - i * daySeconds) as Time;
-    const volatility = 0.02 + Math.random() * 0.03;
-    const change = (Math.random() - 0.48) * volatility;
-    const open = price;
-    const close = price * (1 + change);
-    const high = Math.max(open, close) * (1 + Math.random() * 0.015);
-    const low = Math.min(open, close) * (1 - Math.random() * 0.015);
-    const volume = 10000 + Math.random() * 90000;
-
-    data.push({
-      time,
-      open: parseFloat(open.toFixed(6)),
-      high: parseFloat(high.toFixed(6)),
-      low: parseFloat(low.toFixed(6)),
-      close: parseFloat(close.toFixed(6)),
-      volume: parseFloat(volume.toFixed(0)),
-    });
-
-    price = close;
-  }
-  return data;
+function toCD(c: Candle): CandlestickData {
+  return { time: c.time as Time, open: c.open, high: c.high, low: c.low, close: c.close };
+}
+function toHD(c: Candle): HistogramData {
+  return {
+    time: c.time as Time,
+    value: c.volume,
+    color: c.close >= c.open ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)',
+  };
 }
 
-// ─── Timeframes ───
-const TIMEFRAMES = [
-  { label: '1H', value: '1h' },
-  { label: '4H', value: '4h' },
-  { label: '1D', value: '1d' },
-  { label: '1W', value: '1w' },
-  { label: '1M', value: '1m' },
-] as const;
+function calcMA(candles: Candle[], period: number): { time: Time; value: number }[] {
+  if (candles.length < period) return [];
+  return candles
+    .map((d, i) => {
+      if (i < period - 1) return null;
+      const sum = candles.slice(i - period + 1, i + 1).reduce((a, c) => a + c.close, 0);
+      return { time: d.time as Time, value: sum / period };
+    })
+    .filter(Boolean) as { time: Time; value: number }[];
+}
 
-// ─── Preset Pairs ───
-export const TRADING_PAIRS = [
-  { pair: 'VNDC/ETH', basePrice: 0.00001 },
-  { pair: 'VNDC/SGOV', basePrice: 50 },
-  { pair: 'SGOV/ETH', basePrice: 0.0002 },
-] as const;
+// ─── Component ───
 
-export default function TradingChart({ data, pair, height = 420, className = '' }: TradingChartProps) {
-  const chartContainerRef = useRef<HTMLDivElement>(null);
+export default function TradingChart({
+  candles,
+  pair,
+  height = 400,
+  className = '',
+  timeframe,
+  onTimeframeChange,
+}: TradingChartProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
-  const candlestickRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
-  const volumeRef = useRef<ISeriesApi<'Histogram'> | null>(null);
+  const csRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
+  const volRef = useRef<ISeriesApi<'Histogram'> | null>(null);
+  const maRef = useRef<ISeriesApi<'Line'> | null>(null);
+  const initRef = useRef(false);
 
-  const [timeframe, setTimeframe] = useState('1d');
+  const { isDark } = useTheme();
   const [showMA, setShowMA] = useState(true);
 
-  // Calculate MA20
-  const ma20 = useMemo(() => {
-    if (data.length < 20) return [];
-    return data.map((d, i) => {
-      if (i < 19) return null;
-      const sum = data.slice(i - 19, i + 1).reduce((acc, cur) => acc + cur.close, 0);
-      return { time: d.time, value: parseFloat((sum / 20).toFixed(6)) };
-    }).filter(Boolean) as { time: Time; value: number }[];
-  }, [data]);
+  // Theme colors
+  const bg = isDark ? '#1a1b2e' : '#ffffff';
+  const text = isDark ? '#94a3b8' : '#6b7280';
+  const grid = isDark ? 'rgba(148,163,184,0.06)' : 'rgba(100,116,139,0.08)';
+  const border = isDark ? 'rgba(148,163,184,0.1)' : 'rgba(100,116,139,0.1)';
 
-  // Current price info
-  const currentPrice = data.length > 0 ? data[data.length - 1] : null;
-  const prevClose = data.length > 1 ? data[data.length - 2].close : currentPrice?.open || 0;
-  const priceChange = currentPrice ? currentPrice.close - prevClose : 0;
-  const priceChangePercent = prevClose ? (priceChange / prevClose) * 100 : 0;
-  const isPositive = priceChange >= 0;
-
+  // Create chart once
   useEffect(() => {
-    if (!chartContainerRef.current) return;
+    if (!containerRef.current) return;
 
-    const chart = createChart(chartContainerRef.current, {
-      width: chartContainerRef.current.clientWidth,
+    const chart = createChart(containerRef.current, {
+      width: containerRef.current.clientWidth,
       height,
       layout: {
-        background: { type: ColorType.Solid, color: '#ffffff' },
-        textColor: '#6b7280',
+        background: { type: ColorType.Solid, color: bg },
+        textColor: text,
         fontFamily: "'Inter', sans-serif",
         fontSize: 11,
       },
-      grid: {
-        vertLines: { color: 'rgba(100, 116, 139, 0.08)' },
-        horzLines: { color: 'rgba(100, 116, 139, 0.08)' },
-      },
+      grid: { vertLines: { color: grid }, horzLines: { color: grid } },
       crosshair: {
         mode: CrosshairMode.Normal,
-        vertLine: {
-          color: 'rgba(99, 102, 241, 0.4)',
-          width: 1,
-          style: LineStyle.Dashed,
-          labelBackgroundColor: '#6366f1',
-        },
-        horzLine: {
-          color: 'rgba(99, 102, 241, 0.4)',
-          width: 1,
-          style: LineStyle.Dashed,
-          labelBackgroundColor: '#6366f1',
-        },
+        vertLine: { color: 'rgba(99,102,241,0.4)', width: 1, style: LineStyle.Dashed, labelBackgroundColor: '#6366f1' },
+        horzLine: { color: 'rgba(99,102,241,0.4)', width: 1, style: LineStyle.Dashed, labelBackgroundColor: '#6366f1' },
       },
-      rightPriceScale: {
-        borderColor: 'rgba(100, 116, 139, 0.1)',
-        scaleMargins: { top: 0.1, bottom: 0.25 },
-      },
-      timeScale: {
-        borderColor: 'rgba(100, 116, 139, 0.1)',
-        timeVisible: true,
-        secondsVisible: false,
-      },
+      rightPriceScale: { borderColor: border, scaleMargins: { top: 0.1, bottom: 0.25 } },
+      timeScale: { borderColor: border, timeVisible: true, secondsVisible: false },
       handleScroll: { vertTouchDrag: false },
     });
 
-    // Candlestick series
-    const candlestickSeries = chart.addCandlestickSeries({
-      upColor: '#10b981',
-      downColor: '#ef4444',
-      borderUpColor: '#10b981',
-      borderDownColor: '#ef4444',
-      wickUpColor: '#10b981',
-      wickDownColor: '#ef4444',
+    const cs = chart.addCandlestickSeries({
+      upColor: '#10b981', downColor: '#ef4444',
+      borderUpColor: '#10b981', borderDownColor: '#ef4444',
+      wickUpColor: '#10b981', wickDownColor: '#ef4444',
     });
 
-    const candleData: CandlestickData[] = data.map(d => ({
-      time: d.time,
-      open: d.open,
-      high: d.high,
-      low: d.low,
-      close: d.close,
-    }));
-    candlestickSeries.setData(candleData);
-
-    // Volume series
-    const volumeSeries = chart.addHistogramSeries({
+    const vol = chart.addHistogramSeries({
       priceFormat: { type: 'volume' },
       priceScaleId: 'volume',
     });
+    chart.priceScale('volume').applyOptions({ scaleMargins: { top: 0.8, bottom: 0 } });
 
-    chart.priceScale('volume').applyOptions({
-      scaleMargins: { top: 0.8, bottom: 0 },
+    const ma = chart.addLineSeries({
+      color: '#f59e0b', lineWidth: 1,
+      priceLineVisible: false, lastValueVisible: false, crosshairMarkerVisible: false,
     });
 
-    const volumeData: HistogramData[] = data.map(d => ({
-      time: d.time,
-      value: d.volume,
-      color: d.close >= d.open ? 'rgba(16, 185, 129, 0.25)' : 'rgba(239, 68, 68, 0.25)',
-    }));
-    volumeSeries.setData(volumeData);
-
-    // MA20 line
-    if (showMA && ma20.length > 0) {
-      const maSeries = chart.addLineSeries({
-        color: '#f59e0b',
-        lineWidth: 1,
-        priceLineVisible: false,
-        lastValueVisible: false,
-        crosshairMarkerVisible: false,
-      });
-      maSeries.setData(ma20);
-    }
-
-    chart.timeScale().fitContent();
-
     chartRef.current = chart;
-    candlestickRef.current = candlestickSeries;
-    volumeRef.current = volumeSeries;
+    csRef.current = cs;
+    volRef.current = vol;
+    maRef.current = ma;
+    initRef.current = false;
 
-    // Resize handler
-    const handleResize = () => {
-      if (chartContainerRef.current) {
-        chart.applyOptions({ width: chartContainerRef.current.clientWidth });
+    const ro = new ResizeObserver(() => {
+      if (containerRef.current) chart.applyOptions({ width: containerRef.current.clientWidth });
+    });
+    ro.observe(containerRef.current);
+
+    return () => { ro.disconnect(); chart.remove(); chartRef.current = null; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [height]);
+
+  // Update theme
+  useEffect(() => {
+    chartRef.current?.applyOptions({
+      layout: { background: { type: ColorType.Solid, color: bg }, textColor: text },
+      grid: { vertLines: { color: grid }, horzLines: { color: grid } },
+    });
+  }, [bg, text, grid]);
+
+  // Update data
+  useEffect(() => {
+    const cs = csRef.current;
+    const vol = volRef.current;
+    const ma = maRef.current;
+    if (!cs || !vol || candles.length === 0) return;
+
+    if (!initRef.current) {
+      cs.setData(candles.map(toCD));
+      vol.setData(candles.map(toHD));
+      if (showMA && ma) ma.setData(calcMA(candles, 20));
+      chartRef.current?.timeScale().fitContent();
+      initRef.current = true;
+    } else {
+      const last = candles[candles.length - 1];
+      cs.update(toCD(last));
+      vol.update(toHD(last));
+      if (showMA && ma) {
+        const maData = calcMA(candles, 20);
+        if (maData.length > 0) ma.update(maData[maData.length - 1]);
       }
-    };
-    const observer = new ResizeObserver(handleResize);
-    observer.observe(chartContainerRef.current);
+    }
+  }, [candles, showMA]);
 
-    return () => {
-      observer.disconnect();
-      chart.remove();
-    };
-  }, [data, height, showMA, ma20]);
+  // Reset initialization flag on timeframe/pair change
+  useEffect(() => {
+    initRef.current = false;
+  }, [timeframe, pair]);
+
+  // Toggle MA visibility
+  useEffect(() => {
+    if (maRef.current) {
+      maRef.current.applyOptions({ visible: showMA });
+    }
+  }, [showMA]);
+
+  // Derived values
+  const last = candles.length > 0 ? candles[candles.length - 1] : null;
+  const prev = candles.length > 1 ? candles[candles.length - 2] : null;
+  const change = last && prev ? last.close - prev.close : 0;
+  const changePct = prev && prev.close > 0 ? (change / prev.close) * 100 : 0;
+  const isUp = change >= 0;
+  const dp = last && last.close < 1 ? 6 : 2;
 
   return (
     <div className={`card overflow-hidden ${className}`}>
-      {/* Chart Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 pb-0">
-        <div className="flex items-center gap-4">
-          <h3 className="text-lg font-bold text-surface-800">{pair}</h3>
-          {currentPrice && (
-            <div className="flex items-center gap-3">
-              <span className="text-xl font-bold text-surface-800">
-                {currentPrice.close.toFixed(currentPrice.close < 1 ? 6 : 2)}
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 pb-0">
+        <div className="flex items-center gap-3 min-w-0">
+          <span className="text-base font-bold text-surface-800 shrink-0">{pair}</span>
+          {last && (
+            <>
+              <span className="text-lg font-bold text-surface-800 font-mono">{last.close.toFixed(dp)}</span>
+              <span className={`text-xs font-semibold ${isUp ? 'text-success' : 'text-danger'}`}>
+                {isUp ? '+' : ''}{change.toFixed(dp)} ({isUp ? '+' : ''}{changePct.toFixed(2)}%)
               </span>
-              <span className={`text-sm font-semibold ${isPositive ? 'text-emerald-600' : 'text-red-600'}`}>
-                {isPositive ? '+' : ''}{priceChange.toFixed(currentPrice.close < 1 ? 8 : 4)}
-                ({isPositive ? '+' : ''}{priceChangePercent.toFixed(2)}%)
-              </span>
-            </div>
+            </>
           )}
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* MA Toggle */}
+        <div className="flex items-center gap-1.5 shrink-0">
           <button
             onClick={() => setShowMA(!showMA)}
-            className={`px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition-all ${
+            className={`px-2 py-1 rounded-md text-[10px] font-semibold transition-all border ${
               showMA
-                ? 'bg-amber-50 text-amber-600 border border-amber-200'
-                : 'bg-surface-50 text-surface-500 border border-surface-200'
+                ? 'bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-700'
+                : 'bg-surface-50 text-surface-500 border-surface-200'
             }`}
           >
             MA20
           </button>
-
-          {/* Timeframes */}
-          <div className="flex rounded-xl bg-surface-50 border border-surface-200 p-0.5">
+          <div className="flex rounded-lg bg-surface-50 border border-surface-200 p-0.5">
             {TIMEFRAMES.map(tf => (
               <button
-                key={tf.value}
-                onClick={() => setTimeframe(tf.value)}
-                className={`px-2.5 py-1.5 rounded-lg text-[11px] font-semibold transition-all ${
-                  timeframe === tf.value
-                    ? 'bg-brand-50 text-brand-600'
+                key={tf.label}
+                onClick={() => onTimeframeChange?.(tf.label)}
+                className={`px-2 py-1 rounded-md text-[10px] font-semibold transition-all ${
+                  timeframe === tf.label
+                    ? 'bg-brand-50 text-brand-600 dark:bg-brand-900/30 dark:text-brand-400'
                     : 'text-surface-500 hover:text-surface-700'
                 }`}
               >
@@ -264,27 +227,19 @@ export default function TradingChart({ data, pair, height = 420, className = '' 
         </div>
       </div>
 
-      {/* OHLCV Summary Bar */}
-      {currentPrice && (
-        <div className="flex gap-4 px-4 py-2 text-[11px]">
-          <span className="text-surface-500">O <span className="text-surface-700 font-mono">{currentPrice.open.toFixed(currentPrice.open < 1 ? 6 : 2)}</span></span>
-          <span className="text-surface-500">H <span className="text-emerald-600 font-mono">{currentPrice.high.toFixed(currentPrice.high < 1 ? 6 : 2)}</span></span>
-          <span className="text-surface-500">L <span className="text-red-600 font-mono">{currentPrice.low.toFixed(currentPrice.low < 1 ? 6 : 2)}</span></span>
-          <span className="text-surface-500">C <span className={`font-mono ${isPositive ? 'text-emerald-600' : 'text-red-600'}`}>{currentPrice.close.toFixed(currentPrice.close < 1 ? 6 : 2)}</span></span>
-          <span className="text-surface-500">Vol <span className="text-surface-700 font-mono">{(currentPrice.volume / 1000).toFixed(1)}K</span></span>
+      {/* OHLCV mini bar */}
+      {last && (
+        <div className="flex flex-wrap gap-3 px-3 py-1.5 text-[10px]">
+          <span className="text-surface-500">O <span className="text-surface-700 font-mono">{last.open.toFixed(dp)}</span></span>
+          <span className="text-surface-500">H <span className="text-success font-mono">{last.high.toFixed(dp)}</span></span>
+          <span className="text-surface-500">L <span className="text-danger font-mono">{last.low.toFixed(dp)}</span></span>
+          <span className="text-surface-500">C <span className={`font-mono ${isUp ? 'text-success' : 'text-danger'}`}>{last.close.toFixed(dp)}</span></span>
+          <span className="text-surface-500">Vol <span className="text-surface-700 font-mono">{last.volume > 999 ? `${(last.volume / 1000).toFixed(1)}K` : last.volume}</span></span>
         </div>
       )}
 
-      {/* Chart Container */}
-      <div ref={chartContainerRef} className="w-full" />
+      {/* Chart */}
+      <div ref={containerRef} className="w-full" />
     </div>
   );
-}
-
-// ─── Hook to generate mock data for a pair ───
-export function useTradingData(pairIndex: number, days = 90): OHLCVData[] {
-  return useMemo(() => {
-    const p = TRADING_PAIRS[pairIndex] || TRADING_PAIRS[0];
-    return generateMockData(days, p.basePrice);
-  }, [pairIndex, days]);
 }

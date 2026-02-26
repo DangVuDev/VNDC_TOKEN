@@ -16,7 +16,7 @@ export default function Sidebar({ collapsed, onToggle, onItemClick }: SidebarPro
     <div className="flex flex-col h-full">
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 h-16 border-b border-surface-200 shrink-0">
-          <div className="w-9 h-9 rounded-lg bg-brand-600 flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0">
             <img src="/logo.png" alt="VNDC Logo" className="w-9 h-9" />
           </div>
         {!collapsed && (

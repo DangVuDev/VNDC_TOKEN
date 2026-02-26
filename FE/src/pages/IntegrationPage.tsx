@@ -1,115 +1,163 @@
-import { useState } from 'react';
-import { Plug, ArrowRightLeft, CheckCircle, XCircle, RefreshCw, Database, Globe, Shield } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { Plug, ArrowRightLeft, Plus, Loader2 } from 'lucide-react';
+import Modal from '@/components/ui/Modal';
+import EmptyState from '@/components/ui/EmptyState';
+import { useWeb3 } from '@/contexts/Web3Context';
+import { useDataMigration } from '@/hooks/useContracts';
+import { useContractAction } from '@/hooks/useContractAction';
+import { shortenAddress } from '@/lib/utils';
 
-interface Integration {
-  id: string;
-  name: string;
-  description: string;
-  status: 'connected' | 'disconnected' | 'pending';
-  category: string;
-  icon: typeof Plug;
-}
-
-const integrations: Integration[] = [
-  { id: 'ipfs', name: 'IPFS / Pinata', description: 'Lưu trữ phi tập trung cho metadata, chứng chỉ', status: 'connected', category: 'Storage', icon: Database },
-  { id: 'chainlink', name: 'Chainlink Oracle', description: 'Price feeds và VRF cho random', status: 'disconnected', category: 'Oracle', icon: Globe },
-  { id: 'thegraph', name: 'The Graph', description: 'Indexing và query dữ liệu blockchain', status: 'pending', category: 'Indexer', icon: Database },
-  { id: 'metamask', name: 'MetaMask', description: 'Kết nối ví Web3', status: 'connected', category: 'Wallet', icon: Shield },
-  { id: 'polygon', name: 'Polygon Bridge', description: 'Bridge token cross-chain', status: 'disconnected', category: 'Bridge', icon: ArrowRightLeft },
-  { id: 'openai', name: 'AI Matching', description: 'AI cho job/scholarship matching', status: 'pending', category: 'AI', icon: Globe },
-];
+interface MigrationTask { id: number; status: string; progress: number; }
 
 export default function IntegrationPage() {
-  const [filter, setFilter] = useState('all');
+  const { address } = useWeb3();
+  const migration = useDataMigration();
+  const { isLoading, execute } = useContractAction();
 
-  const categories = ['all', ...new Set(integrations.map(i => i.category))];
-  const filtered = filter === 'all' ? integrations : integrations.filter(i => i.category === filter);
+  const [tasks, setTasks] = useState<MigrationTask[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showCreate, setShowCreate] = useState(false);
+  const [showMapping, setShowMapping] = useState(false);
+  const [showAuthorize, setShowAuthorize] = useState(false);
+  const [taskForm, setTaskForm] = useState({ dataType: '', destinationSystem: '', recordCount: '' });
+  const [mapForm, setMapForm] = useState({ sourceField: '', destinationField: '', transformationRules: '' });
+  const [authAddr, setAuthAddr] = useState('');
 
-  const statusIcon = (s: string) => s === 'connected' ? <CheckCircle size={16} className="text-success-600" /> : s === 'pending' ? <RefreshCw size={16} className="text-warning-600 animate-spin" /> : <XCircle size={16} className="text-danger-600" />;
-  const statusLabel = (s: string) => s === 'connected' ? 'Đã kết nối' : s === 'pending' ? 'Đang xử lý' : 'Chưa kết nối';
+  const loadData = useCallback(async () => {
+    if (!migration) return;
+    setLoading(true);
+    try {
+      const total = await migration.getTotalTasks().catch(() => 0n);
+      const list: MigrationTask[] = [];
+      for (let i = 1; i <= Number(total); i++) {
+        try {
+          const ms = await migration.getMigrationStatus(i);
+          list.push({ id: i, status: ms.status, progress: Number(ms.progress) });
+        } catch {}
+      }
+      setTasks(list);
+    } catch {}
+    setLoading(false);
+  }, [migration]);
+
+  useEffect(() => { loadData(); }, [loadData]);
+
+  const handleCreateTask = () => execute(
+    async () => {
+      if (!migration) throw new Error('Contract not available');
+      return migration.createMigrationTask(taskForm.dataType, taskForm.destinationSystem, Number(taskForm.recordCount));
+    },
+    { successMessage: 'Migration task đã tạo!', onSuccess: () => { setShowCreate(false); loadData(); } }
+  );
+
+  const handleComplete = (taskId: number) => execute(
+    async () => { if (!migration) throw new Error('Contract not available'); return migration.completeMigration(taskId); },
+    { successMessage: 'Migration hoàn thành!', onSuccess: loadData }
+  );
+
+  const handleVerify = (taskId: number) => execute(
+    async () => { if (!migration) throw new Error('Contract not available'); return migration.verifyIntegration(taskId); },
+    { successMessage: 'Integration verified!', onSuccess: loadData }
+  );
+
+  const handleCreateMapping = () => execute(
+    async () => {
+      if (!migration) throw new Error('Contract not available');
+      return migration.createMapping(mapForm.sourceField, mapForm.destinationField, mapForm.transformationRules);
+    },
+    { successMessage: 'Mapping đã tạo!', onSuccess: () => setShowMapping(false) }
+  );
+
+  const handleAuthorize = () => execute(
+    async () => { if (!migration) throw new Error('Contract not available'); return migration.authorizeSystem(authAddr); },
+    { successMessage: 'System đã được ủy quyền!', onSuccess: () => { setShowAuthorize(false); setAuthAddr(''); } }
+  );
+
+  const statusBadge = (s: string) => s === 'completed' ? <span className="badge badge-success">Hoàn thành</span> : s === 'pending' ? <span className="badge badge-neutral">Chờ</span> : <span className="badge badge-brand">{s}</span>;
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center">
-          <Plug size={20} className="text-brand-600" />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center"><Plug size={20} className="text-brand-600" /></div>
+          <div>
+            <h1 className="text-xl font-bold text-surface-800">Tích hợp & Migration</h1>
+            <p className="text-sm text-surface-500">{tasks.length} tasks · {tasks.filter(t => t.status === 'completed').length} hoàn thành</p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-xl font-bold text-surface-800">Tích hợp</h1>
-          <p className="text-sm text-surface-500">{integrations.filter(i => i.status === 'connected').length}/{integrations.length} đã kết nối</p>
-        </div>
-      </div>
-
-      {/* Filter + Grid */}
-      <div>
-        <div className="flex gap-2 mb-4 flex-wrap">
-          {categories.map(c => (
-            <button key={c} className={`btn-sm ${filter === c ? 'btn-primary' : 'btn-ghost'}`} onClick={() => setFilter(c)}>
-              {c === 'all' ? 'Tất cả' : c}
-            </button>
-          ))}
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filtered.map(int => {
-            const Icon = int.icon;
-            return (
-              <div key={int.id} className="card card-hover">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-600 flex items-center justify-center">
-                    <Icon size={20} />
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    {statusIcon(int.status)}
-                    <span className="text-xs text-surface-500">{statusLabel(int.status)}</span>
-                  </div>
-                </div>
-                <h3 className="text-sm font-semibold text-surface-800">{int.name}</h3>
-                <p className="text-xs text-surface-500 mt-1">{int.description}</p>
-                <div className="flex items-center justify-between mt-4">
-                  <span className="badge badge-neutral">{int.category}</span>
-                  <button className={int.status === 'connected' ? 'btn-ghost btn-sm' : 'btn-primary btn-sm'}>
-                    {int.status === 'connected' ? 'Cấu hình' : 'Kết nối'}
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+        <div className="flex gap-2">
+          <button className="btn-ghost btn-sm" onClick={() => setShowAuthorize(true)}>Authorize</button>
+          <button className="btn-ghost btn-sm" onClick={() => setShowMapping(true)}>Mapping</button>
+          <button className="btn-primary btn-sm" onClick={() => setShowCreate(true)}><Plus size={14} /> Tạo task</button>
         </div>
       </div>
 
-      {/* Data Migration */}
-      <div className="card">
-        <h3 className="text-base font-semibold text-surface-800 mb-4">Data Migration</h3>
-        <p className="text-sm text-surface-500 mb-6">Di chuyển dữ liệu giữa các contract hoặc từ hệ thống cũ sang blockchain.</p>
-        <div className="space-y-4">
-          {[
-            { from: 'Legacy Database', to: 'StudentRecordManager', status: 'completed', records: 1500 },
-            { from: 'CSV Import', to: 'CredentialNFT', status: 'in-progress', records: 350 },
-            { from: 'Manual Entry', to: 'AlumniRegistry', status: 'pending', records: 0 },
-          ].map((m, i) => (
-            <div key={i} className="p-4 rounded-xl bg-surface-50 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="text-center">
-                  <p className="text-xs text-surface-500">Nguồn</p>
-                  <p className="text-sm text-surface-800 font-medium">{m.from}</p>
+      <div className="grid grid-cols-3 gap-3">
+        {[
+          { label: 'Tổng tasks', value: tasks.length, cls: 'text-brand-600' },
+          { label: 'Hoàn thành', value: tasks.filter(t => t.status === 'completed').length, cls: 'text-success-600' },
+          { label: 'Đang chờ', value: tasks.filter(t => t.status === 'pending').length, cls: 'text-warning-600' },
+        ].map(s => (
+          <div key={s.label} className="card text-center py-3">
+            <p className={`text-lg font-bold ${s.cls}`}>{s.value}</p>
+            <p className="text-xs text-surface-500">{s.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {loading ? (
+        <div className="card text-center py-12"><Loader2 size={24} className="animate-spin mx-auto text-brand-600 mb-2" /><p className="text-sm text-surface-500">Đang tải...</p></div>
+      ) : tasks.length === 0 ? (
+        <EmptyState lucideIcon={ArrowRightLeft} title="Chưa có migration task" description="Tạo task đầu tiên để bắt đầu" />
+      ) : (
+        <div className="space-y-3">
+          {tasks.map(t => (
+            <div key={t.id} className="card">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-semibold text-surface-800">Task #{t.id}</h3>
+                  <p className="text-xs text-surface-500">{t.progress} records</p>
                 </div>
-                <ArrowRightLeft size={16} className="text-brand-600" />
-                <div className="text-center">
-                  <p className="text-xs text-surface-500">Đích</p>
-                  <p className="text-sm text-surface-800 font-medium">{m.to}</p>
+                <div className="flex items-center gap-2">
+                  {statusBadge(t.status)}
+                  {t.status === 'pending' && (
+                    <button className="btn-primary btn-sm" onClick={() => handleComplete(t.id)} disabled={isLoading}>Complete</button>
+                  )}
+                  {t.status === 'completed' && (
+                    <button className="btn-ghost btn-sm" onClick={() => handleVerify(t.id)} disabled={isLoading}>Verify</button>
+                  )}
                 </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-xs text-surface-500">{m.records} records</span>
-                <span className={m.status === 'completed' ? 'badge badge-success' : m.status === 'in-progress' ? 'badge badge-brand' : 'badge badge-neutral'}>
-                  {m.status === 'completed' ? 'Hoàn thành' : m.status === 'in-progress' ? 'Đang chạy' : 'Chờ'}
-                </span>
               </div>
             </div>
           ))}
         </div>
-      </div>
+      )}
+
+      {/* Create Task Modal */}
+      <Modal open={showCreate} onClose={() => setShowCreate(false)} title="Tạo Migration Task"
+        footer={<button className="btn-primary" onClick={handleCreateTask} disabled={isLoading}>{isLoading ? 'Đang tạo...' : 'Tạo task'}</button>}>
+        <div className="space-y-4">
+          <div><label className="label">Loại dữ liệu</label><input className="input" placeholder="student_records, credentials..." value={taskForm.dataType} onChange={e => setTaskForm(f => ({ ...f, dataType: e.target.value }))} /></div>
+          <div><label className="label">Destination System (address)</label><input className="input" placeholder="0x..." value={taskForm.destinationSystem} onChange={e => setTaskForm(f => ({ ...f, destinationSystem: e.target.value }))} /></div>
+          <div><label className="label">Số lượng records</label><input className="input" type="number" placeholder="1000" value={taskForm.recordCount} onChange={e => setTaskForm(f => ({ ...f, recordCount: e.target.value }))} /></div>
+        </div>
+      </Modal>
+
+      {/* Create Mapping Modal */}
+      <Modal open={showMapping} onClose={() => setShowMapping(false)} title="Tạo Integration Mapping"
+        footer={<button className="btn-primary" onClick={handleCreateMapping} disabled={isLoading}>{isLoading ? 'Đang tạo...' : 'Tạo mapping'}</button>}>
+        <div className="space-y-4">
+          <div><label className="label">Source Field</label><input className="input" placeholder="legacy_student_id" value={mapForm.sourceField} onChange={e => setMapForm(f => ({ ...f, sourceField: e.target.value }))} /></div>
+          <div><label className="label">Destination Field</label><input className="input" placeholder="blockchain_address" value={mapForm.destinationField} onChange={e => setMapForm(f => ({ ...f, destinationField: e.target.value }))} /></div>
+          <div><label className="label">Transformation Rules</label><textarea className="textarea" rows={3} placeholder="JSON transform rules..." value={mapForm.transformationRules} onChange={e => setMapForm(f => ({ ...f, transformationRules: e.target.value }))} /></div>
+        </div>
+      </Modal>
+
+      {/* Authorize System Modal */}
+      <Modal open={showAuthorize} onClose={() => setShowAuthorize(false)} title="Ủy quyền System"
+        footer={<button className="btn-primary" onClick={handleAuthorize} disabled={isLoading}>{isLoading ? 'Đang xử lý...' : 'Ủy quyền'}</button>}>
+        <div><label className="label">Địa chỉ System</label><input className="input" placeholder="0x..." value={authAddr} onChange={e => setAuthAddr(e.target.value)} /></div>
+      </Modal>
     </div>
   );
 }

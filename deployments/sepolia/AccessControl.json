@@ -1,0 +1,961 @@
+{
+  "address": "0x69d2F6cD1B6a3E4A273C003DcFf0CDA0CEb1cE65",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "module",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "ModuleInitialized",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "assignedBy",
+          "type": "address"
+        }
+      ],
+      "name": "RoleAssigned",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "grantedBy",
+          "type": "address"
+        }
+      ],
+      "name": "RoleGranted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "removedBy",
+          "type": "address"
+        }
+      ],
+      "name": "RoleRemoved",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "revokedBy",
+          "type": "address"
+        }
+      ],
+      "name": "RoleRevoked",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "TokenBurned",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "TokenMinted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        }
+      ],
+      "name": "UserRegistered",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "newName",
+          "type": "string"
+        }
+      ],
+      "name": "UserUpdated",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "getAccessStats",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "adminCount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "teacherCount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "studentCount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "merchantCount",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "getRoleCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getRoleMemberCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getRoleMembers",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "getRoles",
+      "outputs": [
+        {
+          "internalType": "bytes32[]",
+          "name": "",
+          "type": "bytes32[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "grantRole",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address[]",
+          "name": "accounts",
+          "type": "address[]"
+        }
+      ],
+      "name": "grantRoleBatch",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "hasRole",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "isAdmin",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "isAuthorized",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "isIssuer",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "isMerchant",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "isStudent",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "isTeacher",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "revokeRole",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address[]",
+          "name": "accounts",
+          "type": "address[]"
+        }
+      ],
+      "name": "revokeRoleBatch",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        }
+      ],
+      "name": "roleExists",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x081f5a696d31411fe20790e91584551d7dd912cd65f02810c3c8473cd8001535",
+  "receipt": {
+    "to": null,
+    "from": "0x7EFf82613404AE7Bce622EA1C927214E30F2285e",
+    "contractAddress": "0x69d2F6cD1B6a3E4A273C003DcFf0CDA0CEb1cE65",
+    "transactionIndex": 76,
+    "gasUsed": "1244046",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000800000000100000000000000040000000000000000000000000000000000000004000000000280000000000000000000000000000000000001000000000000000000000000000000000000020000000000000000000800000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xd11b195fbd401bcb8c786473ce4bb7f9fd5b27b2d74d46eac8fbe1f800306677",
+    "transactionHash": "0x081f5a696d31411fe20790e91584551d7dd912cd65f02810c3c8473cd8001535",
+    "logs": [
+      {
+        "transactionIndex": 76,
+        "blockNumber": 10337753,
+        "transactionHash": "0x081f5a696d31411fe20790e91584551d7dd912cd65f02810c3c8473cd8001535",
+        "address": "0x69d2F6cD1B6a3E4A273C003DcFf0CDA0CEb1cE65",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x0000000000000000000000007eff82613404ae7bce622ea1c927214e30f2285e"
+        ],
+        "data": "0x",
+        "logIndex": 129,
+        "blockHash": "0xd11b195fbd401bcb8c786473ce4bb7f9fd5b27b2d74d46eac8fbe1f800306677"
+      }
+    ],
+    "blockNumber": 10337753,
+    "cumulativeGasUsed": "16948888",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "1db8a709fc5834c8ae09030b1f2db26f",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"module\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"ModuleInitialized\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"assignedBy\",\"type\":\"address\"}],\"name\":\"RoleAssigned\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"grantedBy\",\"type\":\"address\"}],\"name\":\"RoleGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"removedBy\",\"type\":\"address\"}],\"name\":\"RoleRemoved\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"revokedBy\",\"type\":\"address\"}],\"name\":\"RoleRevoked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"TokenBurned\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"TokenMinted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"UserRegistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"newName\",\"type\":\"string\"}],\"name\":\"UserUpdated\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"getAccessStats\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"adminCount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"teacherCount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"studentCount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"merchantCount\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"getRoleCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleMemberCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleMembers\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"getRoles\",\"outputs\":[{\"internalType\":\"bytes32[]\",\"name\":\"\",\"type\":\"bytes32[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address[]\",\"name\":\"accounts\",\"type\":\"address[]\"}],\"name\":\"grantRoleBatch\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"isAdmin\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"isAuthorized\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"isIssuer\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"isMerchant\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"isStudent\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"isTeacher\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address[]\",\"name\":\"accounts\",\"type\":\"address[]\"}],\"name\":\"revokeRoleBatch\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"roleExists\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Simple RBAC implementation for the ecosystem\",\"errors\":{\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}]},\"kind\":\"dev\",\"methods\":{\"getAccessStats()\":{\"returns\":{\"adminCount\":\"Total admins\",\"merchantCount\":\"Total merchants\",\"studentCount\":\"Total students\",\"teacherCount\":\"Total teachers\"}},\"getRoleCount(address)\":{\"params\":{\"account\":\"Account to query\"},\"returns\":{\"_0\":\"Number of roles\"}},\"getRoleMemberCount(bytes32)\":{\"params\":{\"role\":\"Role to query\"},\"returns\":{\"_0\":\"Number of members\"}},\"getRoleMembers(bytes32)\":{\"params\":{\"role\":\"Role to query\"},\"returns\":{\"_0\":\"Array of addresses with that role\"}},\"getRoles(address)\":{\"params\":{\"account\":\"Account to query\"},\"returns\":{\"_0\":\"Array of roles for that account\"}},\"grantRole(bytes32,address)\":{\"params\":{\"account\":\"Account to grant role to\",\"role\":\"Role to grant\"}},\"grantRoleBatch(bytes32,address[])\":{\"params\":{\"accounts\":\"Array of accounts\",\"role\":\"Role to grant\"}},\"hasRole(bytes32,address)\":{\"params\":{\"account\":\"Account to check\",\"role\":\"Role to check\"},\"returns\":{\"_0\":\"True if account has the role\"}},\"isAdmin(address)\":{\"params\":{\"account\":\"Account to check\"},\"returns\":{\"_0\":\"True if admin\"}},\"isAuthorized(address)\":{\"params\":{\"account\":\"Account to check\"},\"returns\":{\"_0\":\"True if account has at least one role\"}},\"isIssuer(address)\":{\"params\":{\"account\":\"Account to check\"},\"returns\":{\"_0\":\"True if issuer\"}},\"isMerchant(address)\":{\"params\":{\"account\":\"Account to check\"},\"returns\":{\"_0\":\"True if merchant\"}},\"isStudent(address)\":{\"params\":{\"account\":\"Account to check\"},\"returns\":{\"_0\":\"True if student\"}},\"isTeacher(address)\":{\"params\":{\"account\":\"Account to check\"},\"returns\":{\"_0\":\"True if teacher\"}},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"revokeRole(bytes32,address)\":{\"params\":{\"account\":\"Account to revoke role from\",\"role\":\"Role to revoke\"}},\"revokeRoleBatch(bytes32,address[])\":{\"params\":{\"accounts\":\"Array of accounts\",\"role\":\"Role to revoke\"}},\"roleExists(bytes32)\":{\"params\":{\"role\":\"Role to check\"},\"returns\":{\"_0\":\"True if role has at least one member\"}},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"title\":\"VNDC Access Control\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"constructor\":{\"notice\":\"Initialize access control\"},\"getAccessStats()\":{\"notice\":\"Get access control stats\"},\"getRoleCount(address)\":{\"notice\":\"Get role count for account\"},\"getRoleMemberCount(bytes32)\":{\"notice\":\"Get member count for a role\"},\"getRoleMembers(bytes32)\":{\"notice\":\"Get all members of a role\"},\"getRoles(address)\":{\"notice\":\"Get all roles of an account\"},\"grantRole(bytes32,address)\":{\"notice\":\"Grant role to account\"},\"grantRoleBatch(bytes32,address[])\":{\"notice\":\"Grant role to multiple accounts\"},\"hasRole(bytes32,address)\":{\"notice\":\"Check if account has role\"},\"isAdmin(address)\":{\"notice\":\"Check if account is admin\"},\"isAuthorized(address)\":{\"notice\":\"Check if account has ANY role\"},\"isIssuer(address)\":{\"notice\":\"Check if account is issuer\"},\"isMerchant(address)\":{\"notice\":\"Check if account is merchant\"},\"isStudent(address)\":{\"notice\":\"Check if account is student\"},\"isTeacher(address)\":{\"notice\":\"Check if account is teacher\"},\"revokeRole(bytes32,address)\":{\"notice\":\"Revoke role from account\"},\"revokeRoleBatch(bytes32,address[])\":{\"notice\":\"Revoke role from multiple accounts\"},\"roleExists(bytes32)\":{\"notice\":\"Check if role exists (has members)\"}},\"notice\":\"Role-based access control for all VNDC modules\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/modules/001-core/AccessControl.sol\":\"AccessControl\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"none\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {Context} from \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * The initial owner is set to the address provided by the deployer. This can\\n * later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    /**\\n     * @dev The caller account is not authorized to perform an operation.\\n     */\\n    error OwnableUnauthorizedAccount(address account);\\n\\n    /**\\n     * @dev The owner is not a valid owner account. (eg. `address(0)`)\\n     */\\n    error OwnableInvalidOwner(address owner);\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the address provided by the deployer as the initial owner.\\n     */\\n    constructor(address initialOwner) {\\n        if (initialOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(initialOwner);\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        if (owner() != _msgSender()) {\\n            revert OwnableUnauthorizedAccount(_msgSender());\\n        }\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby disabling any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        if (newOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    function _contextSuffixLength() internal view virtual returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\"},\"contracts/modules/001-core/AccessControl.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.24;\\r\\n\\r\\nimport \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\r\\nimport \\\"./IVNDCCore.sol\\\";\\r\\n\\r\\n/// @title VNDC Access Control\\r\\n/// @notice Role-based access control for all VNDC modules\\r\\n/// @dev Simple RBAC implementation for the ecosystem\\r\\ncontract AccessControl is Ownable, IAccessControl, IVNDCEvents {\\r\\n    // Role assignments: role => address => isGranted\\r\\n    mapping(bytes32 => mapping(address => bool)) private _roles;\\r\\n\\r\\n    // User roles: address => array of roles\\r\\n    mapping(address => bytes32[]) private _userRoles;\\r\\n\\r\\n    // Role members: role => array of addresses\\r\\n    mapping(bytes32 => address[]) private _roleMembers;\\r\\n\\r\\n    // Events\\r\\n    event RoleAssigned(\\r\\n        bytes32 indexed role,\\r\\n        address indexed account,\\r\\n        address indexed assignedBy\\r\\n    );\\r\\n    event RoleRemoved(\\r\\n        bytes32 indexed role,\\r\\n        address indexed account,\\r\\n        address indexed removedBy\\r\\n    );\\r\\n\\r\\n    /// @notice Initialize access control\\r\\n    constructor() Ownable(msg.sender) {\\r\\n        // Grant owner admin role by default\\r\\n        _grantRole(Roles.ADMIN_ROLE, msg.sender);\\r\\n    }\\r\\n\\r\\n    // ================== Role Management ==================\\r\\n\\r\\n    /// @notice Grant role to account\\r\\n    /// @param role Role to grant\\r\\n    /// @param account Account to grant role to\\r\\n    function grantRole(bytes32 role, address account)\\r\\n        public\\r\\n        onlyOwner\\r\\n    {\\r\\n        require(account != address(0), \\\"AccessControl: Invalid address\\\");\\r\\n        require(role != bytes32(0), \\\"AccessControl: Invalid role\\\");\\r\\n\\r\\n        _grantRole(role, account);\\r\\n        emit RoleAssigned(role, account, msg.sender);\\r\\n    }\\r\\n\\r\\n    /// @notice Revoke role from account\\r\\n    /// @param role Role to revoke\\r\\n    /// @param account Account to revoke role from\\r\\n    function revokeRole(bytes32 role, address account)\\r\\n        public\\r\\n        onlyOwner\\r\\n    {\\r\\n        require(account != address(0), \\\"AccessControl: Invalid address\\\");\\r\\n        require(role != bytes32(0), \\\"AccessControl: Invalid role\\\");\\r\\n        require(_roles[role][account], \\\"AccessControl: Account doesn't have role\\\");\\r\\n\\r\\n        _revokeRole(role, account);\\r\\n        emit RoleRemoved(role, account, msg.sender);\\r\\n    }\\r\\n\\r\\n    /// @notice Internal function to grant role\\r\\n    function _grantRole(bytes32 role, address account) internal {\\r\\n        if (!_roles[role][account]) {\\r\\n            _roles[role][account] = true;\\r\\n            _userRoles[account].push(role);\\r\\n            _roleMembers[role].push(account);\\r\\n        }\\r\\n    }\\r\\n\\r\\n    /// @notice Internal function to revoke role\\r\\n    function _revokeRole(bytes32 role, address account) internal {\\r\\n        if (_roles[role][account]) {\\r\\n            _roles[role][account] = false;\\r\\n\\r\\n            // Remove from user roles array\\r\\n            bytes32[] storage userRoles = _userRoles[account];\\r\\n            for (uint256 i = 0; i < userRoles.length; i++) {\\r\\n                if (userRoles[i] == role) {\\r\\n                    userRoles[i] = userRoles[userRoles.length - 1];\\r\\n                    userRoles.pop();\\r\\n                    break;\\r\\n                }\\r\\n            }\\r\\n\\r\\n            // Remove from role members array\\r\\n            address[] storage roleMembers = _roleMembers[role];\\r\\n            for (uint256 i = 0; i < roleMembers.length; i++) {\\r\\n                if (roleMembers[i] == account) {\\r\\n                    roleMembers[i] = roleMembers[roleMembers.length - 1];\\r\\n                    roleMembers.pop();\\r\\n                    break;\\r\\n                }\\r\\n            }\\r\\n        }\\r\\n    }\\r\\n\\r\\n    // ================== Role Queries ==================\\r\\n\\r\\n    /// @notice Check if account has role\\r\\n    /// @param role Role to check\\r\\n    /// @param account Account to check\\r\\n    /// @return True if account has the role\\r\\n    function hasRole(bytes32 role, address account)\\r\\n        public\\r\\n        view\\r\\n        returns (bool)\\r\\n    {\\r\\n        return _roles[role][account];\\r\\n    }\\r\\n\\r\\n    /// @notice Check if account has ANY role\\r\\n    /// @param account Account to check\\r\\n    /// @return True if account has at least one role\\r\\n    function isAuthorized(address account) public view returns (bool) {\\r\\n        return _userRoles[account].length > 0;\\r\\n    }\\r\\n\\r\\n    /// @notice Get all roles of an account\\r\\n    /// @param account Account to query\\r\\n    /// @return Array of roles for that account\\r\\n    function getRoles(address account)\\r\\n        public\\r\\n        view\\r\\n        returns (bytes32[] memory)\\r\\n    {\\r\\n        return _userRoles[account];\\r\\n    }\\r\\n\\r\\n    /// @notice Get role count for account\\r\\n    /// @param account Account to query\\r\\n    /// @return Number of roles\\r\\n    function getRoleCount(address account) public view returns (uint256) {\\r\\n        return _userRoles[account].length;\\r\\n    }\\r\\n\\r\\n    /// @notice Get all members of a role\\r\\n    /// @param role Role to query\\r\\n    /// @return Array of addresses with that role\\r\\n    function getRoleMembers(bytes32 role)\\r\\n        public\\r\\n        view\\r\\n        returns (address[] memory)\\r\\n    {\\r\\n        return _roleMembers[role];\\r\\n    }\\r\\n\\r\\n    /// @notice Get member count for a role\\r\\n    /// @param role Role to query\\r\\n    /// @return Number of members\\r\\n    function getRoleMemberCount(bytes32 role) public view returns (uint256) {\\r\\n        return _roleMembers[role].length;\\r\\n    }\\r\\n\\r\\n    // ================== Convenience Checks ==================\\r\\n\\r\\n    /// @notice Check if account is admin\\r\\n    /// @param account Account to check\\r\\n    /// @return True if admin\\r\\n    function isAdmin(address account) external view returns (bool) {\\r\\n        return hasRole(Roles.ADMIN_ROLE, account);\\r\\n    }\\r\\n\\r\\n    /// @notice Check if account is teacher\\r\\n    /// @param account Account to check\\r\\n    /// @return True if teacher\\r\\n    function isTeacher(address account) external view returns (bool) {\\r\\n        return hasRole(Roles.TEACHER_ROLE, account);\\r\\n    }\\r\\n\\r\\n    /// @notice Check if account is student\\r\\n    /// @param account Account to check\\r\\n    /// @return True if student\\r\\n    function isStudent(address account) external view returns (bool) {\\r\\n        return hasRole(Roles.STUDENT_ROLE, account);\\r\\n    }\\r\\n\\r\\n    /// @notice Check if account is merchant\\r\\n    /// @param account Account to check\\r\\n    /// @return True if merchant\\r\\n    function isMerchant(address account) external view returns (bool) {\\r\\n        return hasRole(Roles.MERCHANT_ROLE, account);\\r\\n    }\\r\\n\\r\\n    /// @notice Check if account is issuer\\r\\n    /// @param account Account to check\\r\\n    /// @return True if issuer\\r\\n    function isIssuer(address account) external view returns (bool) {\\r\\n        return hasRole(Roles.ISSUER_ROLE, account);\\r\\n    }\\r\\n\\r\\n    // ================== Batch Operations ==================\\r\\n\\r\\n    /// @notice Grant role to multiple accounts\\r\\n    /// @param role Role to grant\\r\\n    /// @param accounts Array of accounts\\r\\n    function grantRoleBatch(bytes32 role, address[] calldata accounts)\\r\\n        external\\r\\n        onlyOwner\\r\\n    {\\r\\n        require(accounts.length > 0, \\\"AccessControl: Empty array\\\");\\r\\n        require(accounts.length <= 100, \\\"AccessControl: Too many accounts\\\");\\r\\n\\r\\n        for (uint256 i = 0; i < accounts.length; i++) {\\r\\n            if (!hasRole(role, accounts[i])) {\\r\\n                grantRole(role, accounts[i]);\\r\\n            }\\r\\n        }\\r\\n    }\\r\\n\\r\\n    /// @notice Revoke role from multiple accounts\\r\\n    /// @param role Role to revoke\\r\\n    /// @param accounts Array of accounts\\r\\n    function revokeRoleBatch(bytes32 role, address[] calldata accounts)\\r\\n        external\\r\\n        onlyOwner\\r\\n    {\\r\\n        require(accounts.length > 0, \\\"AccessControl: Empty array\\\");\\r\\n        require(accounts.length <= 100, \\\"AccessControl: Too many accounts\\\");\\r\\n\\r\\n        for (uint256 i = 0; i < accounts.length; i++) {\\r\\n            if (hasRole(role, accounts[i])) {\\r\\n                revokeRole(role, accounts[i]);\\r\\n            }\\r\\n        }\\r\\n    }\\r\\n\\r\\n    // ================== Utility ==================\\r\\n\\r\\n    /// @notice Get access control stats\\r\\n    /// @return adminCount Total admins\\r\\n    /// @return teacherCount Total teachers\\r\\n    /// @return studentCount Total students\\r\\n    /// @return merchantCount Total merchants\\r\\n    function getAccessStats()\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            uint256 adminCount,\\r\\n            uint256 teacherCount,\\r\\n            uint256 studentCount,\\r\\n            uint256 merchantCount\\r\\n        )\\r\\n    {\\r\\n        return (\\r\\n            _roleMembers[Roles.ADMIN_ROLE].length,\\r\\n            _roleMembers[Roles.TEACHER_ROLE].length,\\r\\n            _roleMembers[Roles.STUDENT_ROLE].length,\\r\\n            _roleMembers[Roles.MERCHANT_ROLE].length\\r\\n        );\\r\\n    }\\r\\n\\r\\n    /// @notice Check if role exists (has members)\\r\\n    /// @param role Role to check\\r\\n    /// @return True if role has at least one member\\r\\n    function roleExists(bytes32 role) external view returns (bool) {\\r\\n        return _roleMembers[role].length > 0;\\r\\n    }\\r\\n}\\r\\n\",\"keccak256\":\"0xaf4a84d6e008669c4a0a69a5560d7dd25fb3898fbdae877546cd3bfd22b06f16\",\"license\":\"MIT\"},\"contracts/modules/001-core/IVNDCCore.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.24;\\r\\n\\r\\n/// @title IVNDCCore\\r\\n/// @notice Core interfaces for VNDC system\\r\\n/// @dev Base interfaces used across all modules\\r\\n\\r\\ninterface IVNDCToken {\\r\\n    /// @notice Mint new tokens\\r\\n    function mint(address to, uint256 amount) external;\\r\\n\\r\\n    /// @notice Burn tokens from a specific account\\r\\n    function burnFrom(address account, uint256 amount) external;\\r\\n\\r\\n    /// @notice Permit function for ERC-2612 (gas-free approvals)\\r\\n    function permit(\\r\\n        address owner,\\r\\n        address spender,\\r\\n        uint256 amount,\\r\\n        uint256 deadline,\\r\\n        uint8 v,\\r\\n        bytes32 r,\\r\\n        bytes32 s\\r\\n    ) external;\\r\\n\\r\\n    /// @notice Check if an account is authorized as minter\\r\\n    function isMinter(address account) external view returns (bool);\\r\\n\\r\\n    /// @notice Check if an account is authorized as burner\\r\\n    function isBurner(address account) external view returns (bool);\\r\\n}\\r\\n\\r\\ninterface IVNDCRegistry {\\r\\n    /// @notice User profile struct\\r\\n    struct UserProfile {\\r\\n        address userAddress;\\r\\n        string name;\\r\\n        bytes32 role;\\r\\n        string metadataUri;\\r\\n        uint256 registeredAt;\\r\\n        bool exists;\\r\\n    }\\r\\n\\r\\n    /// @notice Register a new user\\r\\n    function registerUser(\\r\\n        address user,\\r\\n        string calldata name,\\r\\n        bytes32 role\\r\\n    ) external;\\r\\n\\r\\n    /// @notice Update user profile\\r\\n    function updateProfile(\\r\\n        address user,\\r\\n        string calldata newName,\\r\\n        string calldata metadataUri\\r\\n    ) external;\\r\\n\\r\\n    /// @notice Get user profile\\r\\n    function getUserProfile(address user)\\r\\n        external\\r\\n        view\\r\\n        returns (UserProfile memory);\\r\\n\\r\\n    /// @notice Check if user exists\\r\\n    function userExists(address user) external view returns (bool);\\r\\n\\r\\n    /// @notice Get user role\\r\\n    function getUserRole(address user) external view returns (bytes32);\\r\\n}\\r\\n\\r\\ninterface IAccessControl {\\r\\n    /// @notice Check if account has role\\r\\n    function hasRole(bytes32 role, address account)\\r\\n        external\\r\\n        view\\r\\n        returns (bool);\\r\\n\\r\\n    /// @notice Grant role to account\\r\\n    function grantRole(bytes32 role, address account) external;\\r\\n\\r\\n    /// @notice Revoke role from account\\r\\n    function revokeRole(bytes32 role, address account) external;\\r\\n\\r\\n    /// @notice Check if account has ANY role\\r\\n    function isAuthorized(address account) external view returns (bool);\\r\\n\\r\\n    /// @notice Get all roles of an account\\r\\n    function getRoles(address account)\\r\\n        external\\r\\n        view\\r\\n        returns (bytes32[] memory);\\r\\n}\\r\\n\\r\\n/// @notice Role definitions\\r\\nlibrary Roles {\\r\\n    bytes32 public constant ADMIN_ROLE = keccak256(\\\"ADMIN_ROLE\\\");\\r\\n    bytes32 public constant TEACHER_ROLE = keccak256(\\\"TEACHER_ROLE\\\");\\r\\n    bytes32 public constant STUDENT_ROLE = keccak256(\\\"STUDENT_ROLE\\\");\\r\\n    bytes32 public constant MERCHANT_ROLE = keccak256(\\\"MERCHANT_ROLE\\\");\\r\\n    bytes32 public constant ISSUER_ROLE = keccak256(\\\"ISSUER_ROLE\\\");\\r\\n    bytes32 public constant MINTER_ROLE = keccak256(\\\"MINTER_ROLE\\\");\\r\\n}\\r\\n\\r\\n/// @notice Common events for all modules\\r\\ninterface IVNDCEvents {\\r\\n    event ModuleInitialized(address indexed module, uint256 timestamp);\\r\\n    event RoleGranted(\\r\\n        bytes32 indexed role,\\r\\n        address indexed account,\\r\\n        address indexed grantedBy\\r\\n    );\\r\\n    event RoleRevoked(\\r\\n        bytes32 indexed role,\\r\\n        address indexed account,\\r\\n        address indexed revokedBy\\r\\n    );\\r\\n    event TokenMinted(address indexed to, uint256 amount);\\r\\n    event TokenBurned(address indexed from, uint256 amount);\\r\\n    event UserRegistered(address indexed user, bytes32 role);\\r\\n    event UserUpdated(address indexed user, string newName);\\r\\n}\\r\\n\",\"keccak256\":\"0x57c3c7fb0cf070053a0fe0c9910a12a59b31d8c682cb7e4332ea430f2f1da552\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60806040908082523461018357331561016d575060008054336001600160a01b03198216811783556001600160a01b03929183167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08380a37fa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c2177590818152602060018152848220338352815260ff8583205416156100a5575b84516112f490816101b78239f35b828252600181528482203383528152848220600160ff198254161790556002815284822092835468010000000000000000948582101561015957816100f39160016003969594018155610188565b815490851b9083821b91600019901b19161790558352528381209081549283101561014557509061012991600182018155610188565b819291549060031b9133831b921b191617905538808080610097565b634e487b7160e01b81526041600452602490fd5b634e487b7160e01b85526041600452602485fd5b631e4fbdf760e01b815260006004820152602490fd5b600080fd5b80548210156101a05760005260206000200190600090565b634e487b7160e01b600052603260045260246000fdfe608060408181526004918236101561001657600080fd5b600092833560e01c9182631a2f71671461101d5750816324d7806c14610fb75781632f2ff15d14610e83578163715018a614610e2957816382f51fa614610b0157816382f7d39214610a9b578163877b9a6714610a3557816387e705ed146109675781638da5cb5b1461093f57816391d14854146108f8578163a3246ad314610847578163aca5a8a71461080f578163aec37eb3146107a9578163b41406f91461077f578163ca15c87314610757578163ce6ccfaf146106a7578163d547741f146103bb578163f2fde38b14610334578163fd47852b1461013d575063fe9fbb801461010157600080fd5b346101395760203660031901126101395760209181906001600160a01b03610127611081565b16815260028452205415159051908152f35b5080fd5b919050346103305761014e366110b2565b61015a939291936112a3565b61016581151561119a565b61017260648211156111e6565b855b81811061017f578680f35b6101be610195610190838589611231565b611257565b84600052600160205260406000209060018060a01b031660005260205260ff6040600020541690565b156101cc575b600101610174565b6101da610190828488611231565b6101e26112a3565b6001600160a01b038116906101f8821515611102565b61020385151561114e565b8489526001602090808252878b20848c52825260ff888c20541615610258575b505050906001913390857fd3c3c74ac78e01f4affcaa9191550c84a2b0b79d8f0dfcee7645eda13a90c6c78b80a490506101c4565b868b52808252878b20848c528252878b20805460ff19168217905560028252878b208054600160401b93918482101561031d57896102a1836102ba9387600397960181556112cf565b90919082549060031b91821b91600019901b1916179055565b888d5252878b209081549283101561030a57826001969594926102e392610301950181556112cf565b90919060018060a01b038084549260031b9316831b921b1916179055565b90913880610223565b634e487b7160e01b8c5260418b5260248cfd5b634e487b7160e01b8e5260418d5260248efd5b8280fd5b9050346103305760203660031901126103305761034f611081565b906103586112a3565b6001600160a01b039182169283156103a557505082546001600160a01b0319811683178455167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08380a380f35b51631e4fbdf760e01b8152908101849052602490fd5b839150346101395782600319360112610139578035906103d961109c565b906103e26112a3565b6001600160a01b03918216916103f9831515611102565b61040484151561114e565b838552600191602090838252878720858852825260ff88882054161561065557858752838252878720858852825260ff888820541661046b575b5050505033917fcde326cb82cf43f1de7d4eba1f282d6875e840ed6166c5f57d4228a3349495928480a480f35b8397868852848352808820868952835280882060ff1981541690556002835280882088995b610581575b50879850868596979852600380935288209288955b6104ba575b50879695945061043e565b83548087101561057b5787826104d089886112cf565b905490871b1c16146104e7575084809601956104aa565b9450909294916000199485810190811161056857916102e39161050e61051b9594896112cf565b9054911b1c1691866112cf565b82549081156105555750019061054961053483836112cf565b81549060018060a01b039060031b1b19169055565b558380808080806104af565b634e487b7160e01b875260319052602486fd5b634e487b7160e01b8a526011855260248afd5b506104af565b80989796959854998a81101561064a578761059c82846112cf565b919054600392831b1c146105bb5750899a509880969798990199610490565b60009a9798999a199b8c8101908111610637576105ec92916105e06102a192866112cf565b9054911b1c91846112cf565b8054998a1561062457869798999a019061061a61060983836112cf565b8154906000199060031b1b19169055565b5588979695610495565b634e487b7160e01b8a526031845260248afd5b634e487b7160e01b8c526011865260248cfd5b509794959697610495565b60849188519162461bcd60e51b8352820152602860248201527f416363657373436f6e74726f6c3a204163636f756e7420646f65736e2774206860448201526761766520726f6c6560c01b6064820152fd5b82843461075457602090816003193601126107545782906001600160a01b036106ce611081565b16815260028352818120908251808584549182815201908194845286842090845b818110610740575050508161070591038261126b565b83519485948186019282875251809352850193925b82811061072957505050500390f35b83518552869550938101939281019260010161071a565b8254845292880192600192830192016106ef565b80fd5b9050346103305760203660031901126103305760209282913581526003845220549051908152f35b90503461033057602036600319011261033057602092829135815260038452205415159051908152f35b5050346101395760203660031901126101395760ff816020936107ca611081565b7fd16e204b8a42a15ab0ea6bb8ec1ecdfbe69f38074fc865323af19efe7d9573d98252600186528282206001600160a01b039091168252855220549151911615158152f35b5050346101395760203660031901126101395760209181906001600160a01b03610837611081565b1681526002845220549051908152f35b9050823461075457602091826003193601126101395792919235815260038352818120908251808584549182815201908194845286842090845b8181106108db575050508161089791038261126b565b83519485948186019282875251809352850193925b8281106108bb57505050500390f35b83516001600160a01b0316855286955093810193928101926001016108ac565b82546001600160a01b031684529288019260019283019201610881565b9050346103305781600319360112610330578160209360ff9261091961109c565b90358252600186528282206001600160a01b039091168252855220549151911615158152f35b505034610139578160031936011261013957905490516001600160a01b039091168152602090f35b505034610139578160031936011261013957906080917fa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c217758252600360205280822054917fd16e204b8a42a15ab0ea6bb8ec1ecdfbe69f38074fc865323af19efe7d9573d9815281812054917f36a5c4aaacb6b388bbd448bf11096b7dafc5652bcc9046084fd0e95b1fb0b2cc82528080832054927f3c4a2d89ed8b4cf4347fec87df1c38410f8fc538bf9fd64c10f2717bc0feff368152205492815194855260208501528301526060820152f35b5050346101395760203660031901126101395760ff81602093610a56611081565b7f114e74f6ea3bd819998f78687bfcb11b140da08e9b7d222fa9c1f1ba1f2aa1228252600186528282206001600160a01b039091168252855220549151911615158152f35b5050346101395760203660031901126101395760ff81602093610abc611081565b7f36a5c4aaacb6b388bbd448bf11096b7dafc5652bcc9046084fd0e95b1fb0b2cc8252600186528282206001600160a01b039091168252855220549151911615158152f35b90503461033057610b11366110b2565b610b1d939291936112a3565b610b2881151561119a565b606490610b3860648211156111e6565b865b818110610b45578780f35b610b7f610b5661019083858a611231565b85600052600160205260406000209060018060a01b031660005260205260ff6040600020541690565b610b8c575b600101610b3a565b610b9a610190828489611231565b610ba26112a3565b6001600160a01b0390811690610bb9821515611102565b610bc486151561114e565b858a5260019060208281528a8c20848d5281528a8c60ff91829120541615610dd657888d528382528b8d20858e5282528b8d205416610c33575b505050906001913390867fcde326cb82cf43f1de7d4eba1f282d6875e840ed6166c5f57d4228a3349495928c80a49050610b84565b878c528281528a8c20848d5281528a8c20805460ff19169055600281528a8c20838d815b610d2d575b505050878c5260038091528a8c2091838d905b610c7b575b5050610bfe565b835480821015610d27578683610c9184886112cf565b905490871b1c1614610ca65750840184610c6f565b9394509160001993848101908111610d1457916102e391610ccb610cd89594886112cf565b9054911b1c1691856112cf565b81548015610d01576001949392910190610cf561053483836112cf565b55909138808080610c74565b634e487b7160e01b8c526031895260248cfd5b634e487b7160e01b8f5260118c5260248ffd5b50610c74565b825480821015610dd0578b610d4283866112cf565b919054600392831b1c14610d5a575050810181610c57565b600019935090838101908111610dbb57610d889291610d7c6102a192876112cf565b9054911b1c91856112cf565b81548015610da8570190610d9f61060983836112cf565b55388381610c5c565b634e487b7160e01b8f5260318c5260248ffd5b5050634e487b7160e01b8f5260118c5260248ffd5b50610c5c565b50886761766520726f6c6560c01b886084938e519362461bcd60e51b8552840152602860248401527f416363657373436f6e74726f6c3a204163636f756e7420646f65736e277420686044840152820152fd5b8334610754578060031936011261075457610e426112a3565b80546001600160a01b03198116825581906001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a380f35b905034610330578160031936011261033057803591610ea061109c565b90610ea96112a3565b6001600160a01b03821692610ebf841515611102565b610eca85151561114e565b84865260209160018352808720858852835260ff818820541615610f16575b5050505033917fd3c3c74ac78e01f4affcaa9191550c84a2b0b79d8f0dfcee7645eda13a90c6c78480a480f35b858752600183528087208588528352808720600160ff1982541617905560028352808720928354600160401b9485821015610fa457886102a183610f62936001600397960181556112cf565b87895252862090815492831015610f915750816102e3916001610f8895940181556112cf565b38808080610ee9565b634e487b7160e01b875260419052602486fd5b634e487b7160e01b8a526041855260248afd5b5050346101395760203660031901126101395760ff81602093610fd8611081565b7fa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c217758252600186528282206001600160a01b039091168252855220549151911615158152f35b849084346103305760203660031901126103305760ff9060209361103f611081565b7f3c4a2d89ed8b4cf4347fec87df1c38410f8fc538bf9fd64c10f2717bc0feff368252600186528282206001600160a01b039091168252855220541615158152f35b600435906001600160a01b038216820361109757565b600080fd5b602435906001600160a01b038216820361109757565b6040600319820112611097576004359160243567ffffffffffffffff9283821161109757806023830112156110975781600401359384116110975760248460051b83010111611097576024019190565b1561110957565b60405162461bcd60e51b815260206004820152601e60248201527f416363657373436f6e74726f6c3a20496e76616c6964206164647265737300006044820152606490fd5b1561115557565b60405162461bcd60e51b815260206004820152601b60248201527f416363657373436f6e74726f6c3a20496e76616c696420726f6c6500000000006044820152606490fd5b156111a157565b60405162461bcd60e51b815260206004820152601a60248201527f416363657373436f6e74726f6c3a20456d7074792061727261790000000000006044820152606490fd5b156111ed57565b606460405162461bcd60e51b815260206004820152602060248201527f416363657373436f6e74726f6c3a20546f6f206d616e79206163636f756e74736044820152fd5b91908110156112415760051b0190565b634e487b7160e01b600052603260045260246000fd5b356001600160a01b03811681036110975790565b90601f8019910116810190811067ffffffffffffffff82111761128d57604052565b634e487b7160e01b600052604160045260246000fd5b6000546001600160a01b031633036112b757565b60405163118cdaa760e01b8152336004820152602490fd5b8054821015611241576000526020600020019060009056fea164736f6c6343000818000a",
+  "deployedBytecode": "0x608060408181526004918236101561001657600080fd5b600092833560e01c9182631a2f71671461101d5750816324d7806c14610fb75781632f2ff15d14610e83578163715018a614610e2957816382f51fa614610b0157816382f7d39214610a9b578163877b9a6714610a3557816387e705ed146109675781638da5cb5b1461093f57816391d14854146108f8578163a3246ad314610847578163aca5a8a71461080f578163aec37eb3146107a9578163b41406f91461077f578163ca15c87314610757578163ce6ccfaf146106a7578163d547741f146103bb578163f2fde38b14610334578163fd47852b1461013d575063fe9fbb801461010157600080fd5b346101395760203660031901126101395760209181906001600160a01b03610127611081565b16815260028452205415159051908152f35b5080fd5b919050346103305761014e366110b2565b61015a939291936112a3565b61016581151561119a565b61017260648211156111e6565b855b81811061017f578680f35b6101be610195610190838589611231565b611257565b84600052600160205260406000209060018060a01b031660005260205260ff6040600020541690565b156101cc575b600101610174565b6101da610190828488611231565b6101e26112a3565b6001600160a01b038116906101f8821515611102565b61020385151561114e565b8489526001602090808252878b20848c52825260ff888c20541615610258575b505050906001913390857fd3c3c74ac78e01f4affcaa9191550c84a2b0b79d8f0dfcee7645eda13a90c6c78b80a490506101c4565b868b52808252878b20848c528252878b20805460ff19168217905560028252878b208054600160401b93918482101561031d57896102a1836102ba9387600397960181556112cf565b90919082549060031b91821b91600019901b1916179055565b888d5252878b209081549283101561030a57826001969594926102e392610301950181556112cf565b90919060018060a01b038084549260031b9316831b921b1916179055565b90913880610223565b634e487b7160e01b8c5260418b5260248cfd5b634e487b7160e01b8e5260418d5260248efd5b8280fd5b9050346103305760203660031901126103305761034f611081565b906103586112a3565b6001600160a01b039182169283156103a557505082546001600160a01b0319811683178455167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08380a380f35b51631e4fbdf760e01b8152908101849052602490fd5b839150346101395782600319360112610139578035906103d961109c565b906103e26112a3565b6001600160a01b03918216916103f9831515611102565b61040484151561114e565b838552600191602090838252878720858852825260ff88882054161561065557858752838252878720858852825260ff888820541661046b575b5050505033917fcde326cb82cf43f1de7d4eba1f282d6875e840ed6166c5f57d4228a3349495928480a480f35b8397868852848352808820868952835280882060ff1981541690556002835280882088995b610581575b50879850868596979852600380935288209288955b6104ba575b50879695945061043e565b83548087101561057b5787826104d089886112cf565b905490871b1c16146104e7575084809601956104aa565b9450909294916000199485810190811161056857916102e39161050e61051b9594896112cf565b9054911b1c1691866112cf565b82549081156105555750019061054961053483836112cf565b81549060018060a01b039060031b1b19169055565b558380808080806104af565b634e487b7160e01b875260319052602486fd5b634e487b7160e01b8a526011855260248afd5b506104af565b80989796959854998a81101561064a578761059c82846112cf565b919054600392831b1c146105bb5750899a509880969798990199610490565b60009a9798999a199b8c8101908111610637576105ec92916105e06102a192866112cf565b9054911b1c91846112cf565b8054998a1561062457869798999a019061061a61060983836112cf565b8154906000199060031b1b19169055565b5588979695610495565b634e487b7160e01b8a526031845260248afd5b634e487b7160e01b8c526011865260248cfd5b509794959697610495565b60849188519162461bcd60e51b8352820152602860248201527f416363657373436f6e74726f6c3a204163636f756e7420646f65736e2774206860448201526761766520726f6c6560c01b6064820152fd5b82843461075457602090816003193601126107545782906001600160a01b036106ce611081565b16815260028352818120908251808584549182815201908194845286842090845b818110610740575050508161070591038261126b565b83519485948186019282875251809352850193925b82811061072957505050500390f35b83518552869550938101939281019260010161071a565b8254845292880192600192830192016106ef565b80fd5b9050346103305760203660031901126103305760209282913581526003845220549051908152f35b90503461033057602036600319011261033057602092829135815260038452205415159051908152f35b5050346101395760203660031901126101395760ff816020936107ca611081565b7fd16e204b8a42a15ab0ea6bb8ec1ecdfbe69f38074fc865323af19efe7d9573d98252600186528282206001600160a01b039091168252855220549151911615158152f35b5050346101395760203660031901126101395760209181906001600160a01b03610837611081565b1681526002845220549051908152f35b9050823461075457602091826003193601126101395792919235815260038352818120908251808584549182815201908194845286842090845b8181106108db575050508161089791038261126b565b83519485948186019282875251809352850193925b8281106108bb57505050500390f35b83516001600160a01b0316855286955093810193928101926001016108ac565b82546001600160a01b031684529288019260019283019201610881565b9050346103305781600319360112610330578160209360ff9261091961109c565b90358252600186528282206001600160a01b039091168252855220549151911615158152f35b505034610139578160031936011261013957905490516001600160a01b039091168152602090f35b505034610139578160031936011261013957906080917fa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c217758252600360205280822054917fd16e204b8a42a15ab0ea6bb8ec1ecdfbe69f38074fc865323af19efe7d9573d9815281812054917f36a5c4aaacb6b388bbd448bf11096b7dafc5652bcc9046084fd0e95b1fb0b2cc82528080832054927f3c4a2d89ed8b4cf4347fec87df1c38410f8fc538bf9fd64c10f2717bc0feff368152205492815194855260208501528301526060820152f35b5050346101395760203660031901126101395760ff81602093610a56611081565b7f114e74f6ea3bd819998f78687bfcb11b140da08e9b7d222fa9c1f1ba1f2aa1228252600186528282206001600160a01b039091168252855220549151911615158152f35b5050346101395760203660031901126101395760ff81602093610abc611081565b7f36a5c4aaacb6b388bbd448bf11096b7dafc5652bcc9046084fd0e95b1fb0b2cc8252600186528282206001600160a01b039091168252855220549151911615158152f35b90503461033057610b11366110b2565b610b1d939291936112a3565b610b2881151561119a565b606490610b3860648211156111e6565b865b818110610b45578780f35b610b7f610b5661019083858a611231565b85600052600160205260406000209060018060a01b031660005260205260ff6040600020541690565b610b8c575b600101610b3a565b610b9a610190828489611231565b610ba26112a3565b6001600160a01b0390811690610bb9821515611102565b610bc486151561114e565b858a5260019060208281528a8c20848d5281528a8c60ff91829120541615610dd657888d528382528b8d20858e5282528b8d205416610c33575b505050906001913390867fcde326cb82cf43f1de7d4eba1f282d6875e840ed6166c5f57d4228a3349495928c80a49050610b84565b878c528281528a8c20848d5281528a8c20805460ff19169055600281528a8c20838d815b610d2d575b505050878c5260038091528a8c2091838d905b610c7b575b5050610bfe565b835480821015610d27578683610c9184886112cf565b905490871b1c1614610ca65750840184610c6f565b9394509160001993848101908111610d1457916102e391610ccb610cd89594886112cf565b9054911b1c1691856112cf565b81548015610d01576001949392910190610cf561053483836112cf565b55909138808080610c74565b634e487b7160e01b8c526031895260248cfd5b634e487b7160e01b8f5260118c5260248ffd5b50610c74565b825480821015610dd0578b610d4283866112cf565b919054600392831b1c14610d5a575050810181610c57565b600019935090838101908111610dbb57610d889291610d7c6102a192876112cf565b9054911b1c91856112cf565b81548015610da8570190610d9f61060983836112cf565b55388381610c5c565b634e487b7160e01b8f5260318c5260248ffd5b5050634e487b7160e01b8f5260118c5260248ffd5b50610c5c565b50886761766520726f6c6560c01b886084938e519362461bcd60e51b8552840152602860248401527f416363657373436f6e74726f6c3a204163636f756e7420646f65736e277420686044840152820152fd5b8334610754578060031936011261075457610e426112a3565b80546001600160a01b03198116825581906001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a380f35b905034610330578160031936011261033057803591610ea061109c565b90610ea96112a3565b6001600160a01b03821692610ebf841515611102565b610eca85151561114e565b84865260209160018352808720858852835260ff818820541615610f16575b5050505033917fd3c3c74ac78e01f4affcaa9191550c84a2b0b79d8f0dfcee7645eda13a90c6c78480a480f35b858752600183528087208588528352808720600160ff1982541617905560028352808720928354600160401b9485821015610fa457886102a183610f62936001600397960181556112cf565b87895252862090815492831015610f915750816102e3916001610f8895940181556112cf565b38808080610ee9565b634e487b7160e01b875260419052602486fd5b634e487b7160e01b8a526041855260248afd5b5050346101395760203660031901126101395760ff81602093610fd8611081565b7fa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c217758252600186528282206001600160a01b039091168252855220549151911615158152f35b849084346103305760203660031901126103305760ff9060209361103f611081565b7f3c4a2d89ed8b4cf4347fec87df1c38410f8fc538bf9fd64c10f2717bc0feff368252600186528282206001600160a01b039091168252855220541615158152f35b600435906001600160a01b038216820361109757565b600080fd5b602435906001600160a01b038216820361109757565b6040600319820112611097576004359160243567ffffffffffffffff9283821161109757806023830112156110975781600401359384116110975760248460051b83010111611097576024019190565b1561110957565b60405162461bcd60e51b815260206004820152601e60248201527f416363657373436f6e74726f6c3a20496e76616c6964206164647265737300006044820152606490fd5b1561115557565b60405162461bcd60e51b815260206004820152601b60248201527f416363657373436f6e74726f6c3a20496e76616c696420726f6c6500000000006044820152606490fd5b156111a157565b60405162461bcd60e51b815260206004820152601a60248201527f416363657373436f6e74726f6c3a20456d7074792061727261790000000000006044820152606490fd5b156111ed57565b606460405162461bcd60e51b815260206004820152602060248201527f416363657373436f6e74726f6c3a20546f6f206d616e79206163636f756e74736044820152fd5b91908110156112415760051b0190565b634e487b7160e01b600052603260045260246000fd5b356001600160a01b03811681036110975790565b90601f8019910116810190811067ffffffffffffffff82111761128d57604052565b634e487b7160e01b600052604160045260246000fd5b6000546001600160a01b031633036112b757565b60405163118cdaa760e01b8152336004820152602490fd5b8054821015611241576000526020600020019060009056fea164736f6c6343000818000a",
+  "devdoc": {
+    "details": "Simple RBAC implementation for the ecosystem",
+    "errors": {
+      "OwnableInvalidOwner(address)": [
+        {
+          "details": "The owner is not a valid owner account. (eg. `address(0)`)"
+        }
+      ],
+      "OwnableUnauthorizedAccount(address)": [
+        {
+          "details": "The caller account is not authorized to perform an operation."
+        }
+      ]
+    },
+    "kind": "dev",
+    "methods": {
+      "getAccessStats()": {
+        "returns": {
+          "adminCount": "Total admins",
+          "merchantCount": "Total merchants",
+          "studentCount": "Total students",
+          "teacherCount": "Total teachers"
+        }
+      },
+      "getRoleCount(address)": {
+        "params": {
+          "account": "Account to query"
+        },
+        "returns": {
+          "_0": "Number of roles"
+        }
+      },
+      "getRoleMemberCount(bytes32)": {
+        "params": {
+          "role": "Role to query"
+        },
+        "returns": {
+          "_0": "Number of members"
+        }
+      },
+      "getRoleMembers(bytes32)": {
+        "params": {
+          "role": "Role to query"
+        },
+        "returns": {
+          "_0": "Array of addresses with that role"
+        }
+      },
+      "getRoles(address)": {
+        "params": {
+          "account": "Account to query"
+        },
+        "returns": {
+          "_0": "Array of roles for that account"
+        }
+      },
+      "grantRole(bytes32,address)": {
+        "params": {
+          "account": "Account to grant role to",
+          "role": "Role to grant"
+        }
+      },
+      "grantRoleBatch(bytes32,address[])": {
+        "params": {
+          "accounts": "Array of accounts",
+          "role": "Role to grant"
+        }
+      },
+      "hasRole(bytes32,address)": {
+        "params": {
+          "account": "Account to check",
+          "role": "Role to check"
+        },
+        "returns": {
+          "_0": "True if account has the role"
+        }
+      },
+      "isAdmin(address)": {
+        "params": {
+          "account": "Account to check"
+        },
+        "returns": {
+          "_0": "True if admin"
+        }
+      },
+      "isAuthorized(address)": {
+        "params": {
+          "account": "Account to check"
+        },
+        "returns": {
+          "_0": "True if account has at least one role"
+        }
+      },
+      "isIssuer(address)": {
+        "params": {
+          "account": "Account to check"
+        },
+        "returns": {
+          "_0": "True if issuer"
+        }
+      },
+      "isMerchant(address)": {
+        "params": {
+          "account": "Account to check"
+        },
+        "returns": {
+          "_0": "True if merchant"
+        }
+      },
+      "isStudent(address)": {
+        "params": {
+          "account": "Account to check"
+        },
+        "returns": {
+          "_0": "True if student"
+        }
+      },
+      "isTeacher(address)": {
+        "params": {
+          "account": "Account to check"
+        },
+        "returns": {
+          "_0": "True if teacher"
+        }
+      },
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+      },
+      "revokeRole(bytes32,address)": {
+        "params": {
+          "account": "Account to revoke role from",
+          "role": "Role to revoke"
+        }
+      },
+      "revokeRoleBatch(bytes32,address[])": {
+        "params": {
+          "accounts": "Array of accounts",
+          "role": "Role to revoke"
+        }
+      },
+      "roleExists(bytes32)": {
+        "params": {
+          "role": "Role to check"
+        },
+        "returns": {
+          "_0": "True if role has at least one member"
+        }
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "title": "VNDC Access Control",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "constructor": {
+        "notice": "Initialize access control"
+      },
+      "getAccessStats()": {
+        "notice": "Get access control stats"
+      },
+      "getRoleCount(address)": {
+        "notice": "Get role count for account"
+      },
+      "getRoleMemberCount(bytes32)": {
+        "notice": "Get member count for a role"
+      },
+      "getRoleMembers(bytes32)": {
+        "notice": "Get all members of a role"
+      },
+      "getRoles(address)": {
+        "notice": "Get all roles of an account"
+      },
+      "grantRole(bytes32,address)": {
+        "notice": "Grant role to account"
+      },
+      "grantRoleBatch(bytes32,address[])": {
+        "notice": "Grant role to multiple accounts"
+      },
+      "hasRole(bytes32,address)": {
+        "notice": "Check if account has role"
+      },
+      "isAdmin(address)": {
+        "notice": "Check if account is admin"
+      },
+      "isAuthorized(address)": {
+        "notice": "Check if account has ANY role"
+      },
+      "isIssuer(address)": {
+        "notice": "Check if account is issuer"
+      },
+      "isMerchant(address)": {
+        "notice": "Check if account is merchant"
+      },
+      "isStudent(address)": {
+        "notice": "Check if account is student"
+      },
+      "isTeacher(address)": {
+        "notice": "Check if account is teacher"
+      },
+      "revokeRole(bytes32,address)": {
+        "notice": "Revoke role from account"
+      },
+      "revokeRoleBatch(bytes32,address[])": {
+        "notice": "Revoke role from multiple accounts"
+      },
+      "roleExists(bytes32)": {
+        "notice": "Check if role exists (has members)"
+      }
+    },
+    "notice": "Role-based access control for all VNDC modules",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 8,
+        "contract": "contracts/modules/001-core/AccessControl.sol:AccessControl",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 11085,
+        "contract": "contracts/modules/001-core/AccessControl.sol:AccessControl",
+        "label": "_roles",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_bytes32,t_mapping(t_address,t_bool))"
+      },
+      {
+        "astId": 11090,
+        "contract": "contracts/modules/001-core/AccessControl.sol:AccessControl",
+        "label": "_userRoles",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_address,t_array(t_bytes32)dyn_storage)"
+      },
+      {
+        "astId": 11095,
+        "contract": "contracts/modules/001-core/AccessControl.sol:AccessControl",
+        "label": "_roleMembers",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_bytes32,t_array(t_address)dyn_storage)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_address)dyn_storage": {
+        "base": "t_address",
+        "encoding": "dynamic_array",
+        "label": "address[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_bytes32)dyn_storage": {
+        "base": "t_bytes32",
+        "encoding": "dynamic_array",
+        "label": "bytes32[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_mapping(t_address,t_array(t_bytes32)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bytes32[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_bytes32)dyn_storage"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_bytes32,t_array(t_address)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => address[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_address)dyn_storage"
+      },
+      "t_mapping(t_bytes32,t_mapping(t_address,t_bool))": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => mapping(address => bool))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_address,t_bool)"
+      }
+    }
+  }
+}

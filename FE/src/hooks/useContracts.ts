@@ -13,7 +13,9 @@ import {
   ALUMNI_REGISTRY_ABI, REPUTATION_BADGE_ABI,
   INTERNSHIP_MANAGER_ABI, RESEARCH_PLATFORM_ABI,
   AUDITING_SYSTEM_ABI, ANALYTICS_DASHBOARD_ABI,
-  INTERNAL_EXCHANGE_ABI,
+  DATA_MIGRATION_ABI, INTERNAL_EXCHANGE_ABI,
+  MARKETPLACE_ABI, STAKING_POOL_ABI,
+  FUNDRAISING_ABI,
 } from '@/contracts/abis';
 
 /**
@@ -133,6 +135,22 @@ export function useAnalyticsDashboard() {
   return useContract('analyticsDashboard', ANALYTICS_DASHBOARD_ABI);
 }
 
+export function useDataMigration() {
+  return useContract('dataMigration', DATA_MIGRATION_ABI);
+}
+
 export function useInternalExchange() {
   return useContract('internalExchange', INTERNAL_EXCHANGE_ABI);
+}
+
+export function useMarketplace() {
+  return useContract('marketplace', MARKETPLACE_ABI);
+}
+
+export function useStakingPool() {
+  return useContract('stakingPool', STAKING_POOL_ABI);
+}
+
+export function useFundraising() {
+  return useContract('fundraising', FUNDRAISING_ABI);
 }

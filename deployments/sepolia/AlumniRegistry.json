@@ -1,0 +1,1438 @@
+{
+  "address": "0xC41EE8f2953d1c8aBa093a591857474a08716636",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "alumni",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "updatedField",
+          "type": "string"
+        }
+      ],
+      "name": "AlumniProfileUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "alumni",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "program",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "graduationYear",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "registeredAt",
+          "type": "uint256"
+        }
+      ],
+      "name": "AlumniRegistered",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "alumni",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "status",
+          "type": "string"
+        }
+      ],
+      "name": "AlumniStatusUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "alumni1",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "alumni2",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "connectedAt",
+          "type": "uint256"
+        }
+      ],
+      "name": "ConnectionMade",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "donor",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "purpose",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "madeAt",
+          "type": "uint256"
+        }
+      ],
+      "name": "DonationMade",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "eventDate",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "organizer",
+          "type": "address"
+        }
+      ],
+      "name": "EventCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "alumni",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "registeredAt",
+          "type": "uint256"
+        }
+      ],
+      "name": "EventRegistered",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "mentorshipId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "mentor",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "mentee",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "createdAt",
+          "type": "uint256"
+        }
+      ],
+      "name": "MentorshipCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "alumni1",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "alumni2",
+          "type": "address"
+        }
+      ],
+      "name": "areConnected",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "mentor",
+          "type": "address"
+        }
+      ],
+      "name": "authorizeMentor",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "otherAlumni",
+          "type": "address"
+        }
+      ],
+      "name": "connectWithAlumni",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "eventDate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "location",
+          "type": "string"
+        }
+      ],
+      "name": "createEvent",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "mentee",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "duration",
+          "type": "uint256"
+        }
+      ],
+      "name": "createMentorship",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "year",
+          "type": "uint256"
+        }
+      ],
+      "name": "getAlumniByGraduationYear",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "program",
+          "type": "string"
+        }
+      ],
+      "name": "getAlumniByProgram",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "alumni",
+          "type": "address"
+        }
+      ],
+      "name": "getAlumniProfile",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "program",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "graduationYear",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "status",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "registeredAt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "profileURI",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "alumni",
+          "type": "address"
+        }
+      ],
+      "name": "getConnections",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getEventInfo",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "eventDate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "location",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "organizer",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "registrationCount",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getEventRegistrations",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "mentorshipId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getMentorshipInfo",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "mentor",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "mentee",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "startDate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "endDate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "isActive",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "alumni",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "field",
+          "type": "string"
+        }
+      ],
+      "name": "getProfileField",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalAlumni",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalDonationAmount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalDonations",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalEvents",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalMentorships",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "alumni",
+          "type": "address"
+        }
+      ],
+      "name": "isRegisteredAlumni",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "purpose",
+          "type": "string"
+        }
+      ],
+      "name": "makeDonation",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "program",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "graduationYear",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "profileURI",
+          "type": "string"
+        }
+      ],
+      "name": "registerAlumni",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "eventId",
+          "type": "uint256"
+        }
+      ],
+      "name": "registerForEvent",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "mentor",
+          "type": "address"
+        }
+      ],
+      "name": "revokeMentor",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "field",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "value",
+          "type": "string"
+        }
+      ],
+      "name": "updateProfile",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "status",
+          "type": "string"
+        }
+      ],
+      "name": "updateStatus",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x4e49dc7eb6aa69449d47aec9b016a07eef699513bf5a142725b2a8baaffe36c9",
+  "receipt": {
+    "to": null,
+    "from": "0x7EFf82613404AE7Bce622EA1C927214E30F2285e",
+    "contractAddress": "0xC41EE8f2953d1c8aBa093a591857474a08716636",
+    "transactionIndex": 82,
+    "gasUsed": "2208266",
+    "logsBloom": "0x00000000000000000000000000000001000000000000000000800000000100000000000000040000000000000000000001000000000000000000000000000080000000000000080000000000000000000001000000000000000000000000000000000000020000000000000000000800000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x14692006065bc5adef44967a8bc7736b69d249c5f920b4da8cc198a81e6c7c39",
+    "transactionHash": "0x4e49dc7eb6aa69449d47aec9b016a07eef699513bf5a142725b2a8baaffe36c9",
+    "logs": [
+      {
+        "transactionIndex": 82,
+        "blockNumber": 10337736,
+        "transactionHash": "0x4e49dc7eb6aa69449d47aec9b016a07eef699513bf5a142725b2a8baaffe36c9",
+        "address": "0xC41EE8f2953d1c8aBa093a591857474a08716636",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x0000000000000000000000007eff82613404ae7bce622ea1c927214e30f2285e"
+        ],
+        "data": "0x",
+        "logIndex": 129,
+        "blockHash": "0x14692006065bc5adef44967a8bc7736b69d249c5f920b4da8cc198a81e6c7c39"
+      }
+    ],
+    "blockNumber": 10337736,
+    "cumulativeGasUsed": "10642100",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "6c6f2925310e8590f924cce783408068",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"alumni\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"updatedField\",\"type\":\"string\"}],\"name\":\"AlumniProfileUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"alumni\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"program\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"graduationYear\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"registeredAt\",\"type\":\"uint256\"}],\"name\":\"AlumniRegistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"alumni\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"status\",\"type\":\"string\"}],\"name\":\"AlumniStatusUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"alumni1\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"alumni2\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"connectedAt\",\"type\":\"uint256\"}],\"name\":\"ConnectionMade\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"donor\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"purpose\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"madeAt\",\"type\":\"uint256\"}],\"name\":\"DonationMade\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"eventId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"eventDate\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"organizer\",\"type\":\"address\"}],\"name\":\"EventCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"eventId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"alumni\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"registeredAt\",\"type\":\"uint256\"}],\"name\":\"EventRegistered\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"mentorshipId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"mentor\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"mentee\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"createdAt\",\"type\":\"uint256\"}],\"name\":\"MentorshipCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"alumni1\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"alumni2\",\"type\":\"address\"}],\"name\":\"areConnected\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"mentor\",\"type\":\"address\"}],\"name\":\"authorizeMentor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"otherAlumni\",\"type\":\"address\"}],\"name\":\"connectWithAlumni\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"description\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"eventDate\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"location\",\"type\":\"string\"}],\"name\":\"createEvent\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"mentee\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"duration\",\"type\":\"uint256\"}],\"name\":\"createMentorship\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"year\",\"type\":\"uint256\"}],\"name\":\"getAlumniByGraduationYear\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"program\",\"type\":\"string\"}],\"name\":\"getAlumniByProgram\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"alumni\",\"type\":\"address\"}],\"name\":\"getAlumniProfile\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"program\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"graduationYear\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"status\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"registeredAt\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"profileURI\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"alumni\",\"type\":\"address\"}],\"name\":\"getConnections\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"eventId\",\"type\":\"uint256\"}],\"name\":\"getEventInfo\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"description\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"eventDate\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"location\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"organizer\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"registrationCount\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"eventId\",\"type\":\"uint256\"}],\"name\":\"getEventRegistrations\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"mentorshipId\",\"type\":\"uint256\"}],\"name\":\"getMentorshipInfo\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"mentor\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"mentee\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"startDate\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"endDate\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"isActive\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"alumni\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"field\",\"type\":\"string\"}],\"name\":\"getProfileField\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalAlumni\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalDonationAmount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalDonations\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalEvents\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalMentorships\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"alumni\",\"type\":\"address\"}],\"name\":\"isRegisteredAlumni\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"purpose\",\"type\":\"string\"}],\"name\":\"makeDonation\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"program\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"graduationYear\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"profileURI\",\"type\":\"string\"}],\"name\":\"registerAlumni\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"eventId\",\"type\":\"uint256\"}],\"name\":\"registerForEvent\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"mentor\",\"type\":\"address\"}],\"name\":\"revokeMentor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"field\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\"}],\"name\":\"updateProfile\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"status\",\"type\":\"string\"}],\"name\":\"updateStatus\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Alumni management and networking system\",\"errors\":{\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}]},\"kind\":\"dev\",\"methods\":{\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"title\":\"AlumniRegistry\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"areConnected(address,address)\":{\"notice\":\"Check if connected\"},\"authorizeMentor(address)\":{\"notice\":\"Authorize mentor\"},\"connectWithAlumni(address)\":{\"notice\":\"Connect with another alumni\"},\"createEvent(string,string,uint256,string)\":{\"notice\":\"Create alumni event\"},\"createMentorship(address,uint256)\":{\"notice\":\"Create mentorship\"},\"getAlumniByGraduationYear(uint256)\":{\"notice\":\"Get alumni by graduation year\"},\"getAlumniByProgram(string)\":{\"notice\":\"Get alumni by program\"},\"getAlumniProfile(address)\":{\"notice\":\"Get alumni profile\"},\"getConnections(address)\":{\"notice\":\"Get connections\"},\"getEventInfo(uint256)\":{\"notice\":\"Get event info\"},\"getEventRegistrations(uint256)\":{\"notice\":\"Get event registrations\"},\"getMentorshipInfo(uint256)\":{\"notice\":\"Get mentorship info\"},\"getProfileField(address,string)\":{\"notice\":\"Get profile field\"},\"getTotalAlumni()\":{\"notice\":\"Get total alumni\"},\"getTotalDonationAmount()\":{\"notice\":\"Get total donation amount\"},\"getTotalDonations()\":{\"notice\":\"Get total donations\"},\"getTotalEvents()\":{\"notice\":\"Get total events\"},\"getTotalMentorships()\":{\"notice\":\"Get total mentorships\"},\"isRegisteredAlumni(address)\":{\"notice\":\"Check if registered alumni\"},\"makeDonation(uint256,string)\":{\"notice\":\"Make a donation\"},\"registerAlumni(string,string,uint256,string)\":{\"notice\":\"Register as alumni\"},\"registerForEvent(uint256)\":{\"notice\":\"Register for event\"},\"revokeMentor(address)\":{\"notice\":\"Revoke mentor authorization\"},\"updateProfile(string,string)\":{\"notice\":\"Update alumni profile\"},\"updateStatus(string)\":{\"notice\":\"Update alumni status\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/modules/011-alumni/AlumniRegistry.sol\":\"AlumniRegistry\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"none\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {Context} from \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * The initial owner is set to the address provided by the deployer. This can\\n * later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    /**\\n     * @dev The caller account is not authorized to perform an operation.\\n     */\\n    error OwnableUnauthorizedAccount(address account);\\n\\n    /**\\n     * @dev The owner is not a valid owner account. (eg. `address(0)`)\\n     */\\n    error OwnableInvalidOwner(address owner);\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the address provided by the deployer as the initial owner.\\n     */\\n    constructor(address initialOwner) {\\n        if (initialOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(initialOwner);\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        if (owner() != _msgSender()) {\\n            revert OwnableUnauthorizedAccount(_msgSender());\\n        }\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby disabling any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        if (newOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    function _contextSuffixLength() internal view virtual returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\"},\"contracts/modules/011-alumni/AlumniRegistry.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.24;\\r\\n\\r\\nimport {Ownable} from \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\r\\nimport {IAlumniRegistry} from \\\"./IAlumniRegistry.sol\\\";\\r\\n\\r\\n/**\\r\\n * @title AlumniRegistry\\r\\n * @dev Alumni management and networking system\\r\\n */\\r\\ncontract AlumniRegistry is Ownable, IAlumniRegistry {\\r\\n    // ============ Data Structures ============\\r\\n    struct AlumniProfile {\\r\\n        string name;\\r\\n        string program;\\r\\n        uint256 graduationYear;\\r\\n        string status;\\r\\n        uint256 registeredAt;\\r\\n        string profileURI;\\r\\n    }\\r\\n\\r\\n    struct Event {\\r\\n        string name;\\r\\n        string description;\\r\\n        uint256 eventDate;\\r\\n        string location;\\r\\n        address organizer;\\r\\n        uint256 registrationCount;\\r\\n    }\\r\\n\\r\\n    struct Mentorship {\\r\\n        address mentor;\\r\\n        address mentee;\\r\\n        uint256 startDate;\\r\\n        uint256 endDate;\\r\\n        bool isActive;\\r\\n    }\\r\\n\\r\\n    // ============ State Variables ============\\r\\n    uint256 private alumniCounter;\\r\\n    uint256 private eventCounter;\\r\\n    uint256 private mentorshipCounter;\\r\\n    uint256 private totalDonationAmount;\\r\\n\\r\\n    mapping(address => AlumniProfile) private alumniProfiles;\\r\\n    mapping(address => mapping(string => string)) private customProfileFields;\\r\\n    mapping(uint256 => Event) private events;\\r\\n    mapping(uint256 => address[]) private eventRegistrations;\\r\\n    mapping(uint256 => mapping(address => bool)) private eventParticipants;\\r\\n    mapping(uint256 => Mentorship) private mentorships;\\r\\n    mapping(address => uint256[]) private mentorships_;\\r\\n    mapping(address => address[]) private connections;\\r\\n    mapping(address => mapping(address => bool)) private isConnected;\\r\\n    mapping(address => uint256) private totalDonatedBy;\\r\\n    mapping(address => bool) private authorizedMentors;\\r\\n    mapping(string => address[]) private alumniByProgram;\\r\\n    mapping(uint256 => address[]) private alumniByYear;\\r\\n\\r\\n    // Statistics\\r\\n    uint256 private totalAlumni;\\r\\n    uint256 private totalEvents;\\r\\n    uint256 private totalMentorships;\\r\\n    uint256 private totalDonations;\\r\\n\\r\\n    // ============ Modifiers ============\\r\\n    modifier onlyRegisteredAlumni(address alumni) {\\r\\n        require(alumniProfiles[alumni].registeredAt > 0, \\\"AlumniRegistry: Not registered alumni\\\");\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    modifier eventExists(uint256 eventId) {\\r\\n        require(eventId > 0 && eventId < eventCounter, \\\"AlumniRegistry: Event does not exist\\\");\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    modifier mentorshipExists(uint256 mentorshipId) {\\r\\n        require(mentorshipId > 0 && mentorshipId < mentorshipCounter, \\r\\n            \\\"AlumniRegistry: Mentorship does not exist\\\"\\r\\n        );\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    // ============ Constructor ============\\r\\n    constructor() Ownable(msg.sender) {\\r\\n        alumniCounter = 1;\\r\\n        eventCounter = 1;\\r\\n        mentorshipCounter = 1;\\r\\n        totalDonationAmount = 0;\\r\\n        totalAlumni = 0;\\r\\n        totalEvents = 0;\\r\\n        totalMentorships = 0;\\r\\n        totalDonations = 0;\\r\\n    }\\r\\n\\r\\n    // ============ Core Functions ============\\r\\n    /**\\r\\n     * @notice Register as alumni\\r\\n     */\\r\\n    function registerAlumni(\\r\\n        string calldata name,\\r\\n        string calldata program,\\r\\n        uint256 graduationYear,\\r\\n        string calldata profileURI\\r\\n    ) external {\\r\\n        require(bytes(name).length > 0, \\\"AlumniRegistry: Name required\\\");\\r\\n        require(bytes(program).length > 0, \\\"AlumniRegistry: Program required\\\");\\r\\n        require(graduationYear > 0, \\\"AlumniRegistry: Graduation year required\\\");\\r\\n        require(alumniProfiles[msg.sender].registeredAt == 0, \\\"AlumniRegistry: Already registered\\\");\\r\\n\\r\\n        alumniProfiles[msg.sender] = AlumniProfile({\\r\\n            name: name,\\r\\n            program: program,\\r\\n            graduationYear: graduationYear,\\r\\n            status: \\\"active\\\",\\r\\n            registeredAt: block.timestamp,\\r\\n            profileURI: profileURI\\r\\n        });\\r\\n\\r\\n        // Add to program and year lists\\r\\n        alumniByProgram[program].push(msg.sender);\\r\\n        alumniByYear[graduationYear].push(msg.sender);\\r\\n\\r\\n        totalAlumni++;\\r\\n\\r\\n        emit AlumniRegistered(msg.sender, name, program, graduationYear, block.timestamp);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Update alumni profile\\r\\n     */\\r\\n    function updateProfile(\\r\\n        string calldata field,\\r\\n        string calldata value\\r\\n    ) external onlyRegisteredAlumni(msg.sender) {\\r\\n        require(bytes(field).length > 0, \\\"AlumniRegistry: Field name required\\\");\\r\\n\\r\\n        customProfileFields[msg.sender][field] = value;\\r\\n        emit AlumniProfileUpdated(msg.sender, field);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Update alumni status\\r\\n     */\\r\\n    function updateStatus(string calldata status) external onlyRegisteredAlumni(msg.sender) {\\r\\n        require(bytes(status).length > 0, \\\"AlumniRegistry: Status required\\\");\\r\\n\\r\\n        alumniProfiles[msg.sender].status = status;\\r\\n        emit AlumniStatusUpdated(msg.sender, status);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Create alumni event\\r\\n     */\\r\\n    function createEvent(\\r\\n        string calldata name,\\r\\n        string calldata description,\\r\\n        uint256 eventDate,\\r\\n        string calldata location\\r\\n    ) external onlyRegisteredAlumni(msg.sender) returns (uint256) {\\r\\n        require(bytes(name).length > 0, \\\"AlumniRegistry: Event name required\\\");\\r\\n        require(eventDate > block.timestamp, \\\"AlumniRegistry: Event date must be in future\\\");\\r\\n\\r\\n        uint256 eventId = eventCounter++;\\r\\n\\r\\n        events[eventId] = Event({\\r\\n            name: name,\\r\\n            description: description,\\r\\n            eventDate: eventDate,\\r\\n            location: location,\\r\\n            organizer: msg.sender,\\r\\n            registrationCount: 0\\r\\n        });\\r\\n\\r\\n        totalEvents++;\\r\\n\\r\\n        emit EventCreated(eventId, name, eventDate, msg.sender);\\r\\n\\r\\n        return eventId;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Register for event\\r\\n     */\\r\\n    function registerForEvent(uint256 eventId)\\r\\n        external\\r\\n        onlyRegisteredAlumni(msg.sender)\\r\\n        eventExists(eventId)\\r\\n    {\\r\\n        require(!eventParticipants[eventId][msg.sender], \\\"AlumniRegistry: Already registered\\\");\\r\\n\\r\\n        eventParticipants[eventId][msg.sender] = true;\\r\\n        eventRegistrations[eventId].push(msg.sender);\\r\\n        events[eventId].registrationCount++;\\r\\n\\r\\n        emit EventRegistered(eventId, msg.sender, block.timestamp);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Create mentorship\\r\\n     */\\r\\n    function createMentorship(\\r\\n        address mentee,\\r\\n        uint256 duration\\r\\n    ) external onlyRegisteredAlumni(msg.sender) returns (uint256) {\\r\\n        require(mentee != address(0), \\\"AlumniRegistry: Invalid mentee address\\\");\\r\\n        require(mentee != msg.sender, \\\"AlumniRegistry: Cannot mentor yourself\\\");\\r\\n        require(alumniProfiles[mentee].registeredAt > 0, \\\"AlumniRegistry: Mentee not registered\\\");\\r\\n        require(authorizedMentors[msg.sender], \\\"AlumniRegistry: Not authorized mentor\\\");\\r\\n        require(duration > 0, \\\"AlumniRegistry: Duration required\\\");\\r\\n\\r\\n        uint256 mentorshipId = mentorshipCounter++;\\r\\n        uint256 endDate = block.timestamp + (duration * 1 days);\\r\\n\\r\\n        mentorships[mentorshipId] = Mentorship({\\r\\n            mentor: msg.sender,\\r\\n            mentee: mentee,\\r\\n            startDate: block.timestamp,\\r\\n            endDate: endDate,\\r\\n            isActive: true\\r\\n        });\\r\\n\\r\\n        mentorships_[msg.sender].push(mentorshipId);\\r\\n        totalMentorships++;\\r\\n\\r\\n        emit MentorshipCreated(mentorshipId, msg.sender, mentee, block.timestamp);\\r\\n\\r\\n        return mentorshipId;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Connect with another alumni\\r\\n     */\\r\\n    function connectWithAlumni(address otherAlumni)\\r\\n        external\\r\\n        onlyRegisteredAlumni(msg.sender)\\r\\n        onlyRegisteredAlumni(otherAlumni)\\r\\n    {\\r\\n        require(otherAlumni != msg.sender, \\\"AlumniRegistry: Cannot connect with yourself\\\");\\r\\n        require(!isConnected[msg.sender][otherAlumni], \\\"AlumniRegistry: Already connected\\\");\\r\\n\\r\\n        // Add bidirectional connection\\r\\n        connections[msg.sender].push(otherAlumni);\\r\\n        connections[otherAlumni].push(msg.sender);\\r\\n        isConnected[msg.sender][otherAlumni] = true;\\r\\n        isConnected[otherAlumni][msg.sender] = true;\\r\\n\\r\\n        emit ConnectionMade(msg.sender, otherAlumni, block.timestamp);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Make a donation\\r\\n     */\\r\\n    function makeDonation(uint256 amount, string calldata purpose)\\r\\n        external\\r\\n        onlyRegisteredAlumni(msg.sender)\\r\\n    {\\r\\n        require(amount > 0, \\\"AlumniRegistry: Amount must be greater than 0\\\");\\r\\n        require(bytes(purpose).length > 0, \\\"AlumniRegistry: Purpose required\\\");\\r\\n\\r\\n        totalDonationAmount += amount;\\r\\n        totalDonatedBy[msg.sender] += amount;\\r\\n        totalDonations++;\\r\\n\\r\\n        emit DonationMade(msg.sender, amount, purpose, block.timestamp);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Authorize mentor\\r\\n     */\\r\\n    function authorizeMentor(address mentor) external onlyOwner {\\r\\n        require(mentor != address(0), \\\"AlumniRegistry: Invalid mentor address\\\");\\r\\n        authorizedMentors[mentor] = true;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Revoke mentor authorization\\r\\n     */\\r\\n    function revokeMentor(address mentor) external onlyOwner {\\r\\n        require(mentor != address(0), \\\"AlumniRegistry: Invalid mentor address\\\");\\r\\n        authorizedMentors[mentor] = false;\\r\\n    }\\r\\n\\r\\n    // ============ Query Functions ============\\r\\n    /**\\r\\n     * @notice Get alumni profile\\r\\n     */\\r\\n    function getAlumniProfile(address alumni)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            string memory name,\\r\\n            string memory program,\\r\\n            uint256 graduationYear,\\r\\n            string memory status,\\r\\n            uint256 registeredAt,\\r\\n            string memory profileURI\\r\\n        )\\r\\n    {\\r\\n        AlumniProfile memory profile = alumniProfiles[alumni];\\r\\n        return (\\r\\n            profile.name,\\r\\n            profile.program,\\r\\n            profile.graduationYear,\\r\\n            profile.status,\\r\\n            profile.registeredAt,\\r\\n            profile.profileURI\\r\\n        );\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get profile field\\r\\n     */\\r\\n    function getProfileField(address alumni, string calldata field)\\r\\n        external\\r\\n        view\\r\\n        returns (string memory)\\r\\n    {\\r\\n        return customProfileFields[alumni][field];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get event info\\r\\n     */\\r\\n    function getEventInfo(uint256 eventId)\\r\\n        external\\r\\n        view\\r\\n        eventExists(eventId)\\r\\n        returns (\\r\\n            string memory name,\\r\\n            string memory description,\\r\\n            uint256 eventDate,\\r\\n            string memory location,\\r\\n            address organizer,\\r\\n            uint256 registrationCount\\r\\n        )\\r\\n    {\\r\\n        Event memory eventData = events[eventId];\\r\\n        return (\\r\\n            eventData.name,\\r\\n            eventData.description,\\r\\n            eventData.eventDate,\\r\\n            eventData.location,\\r\\n            eventData.organizer,\\r\\n            eventData.registrationCount\\r\\n        );\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get event registrations\\r\\n     */\\r\\n    function getEventRegistrations(uint256 eventId)\\r\\n        external\\r\\n        view\\r\\n        eventExists(eventId)\\r\\n        returns (address[] memory)\\r\\n    {\\r\\n        return eventRegistrations[eventId];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get connections\\r\\n     */\\r\\n    function getConnections(address alumni)\\r\\n        external\\r\\n        view\\r\\n        returns (address[] memory)\\r\\n    {\\r\\n        return connections[alumni];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get mentorship info\\r\\n     */\\r\\n    function getMentorshipInfo(uint256 mentorshipId)\\r\\n        external\\r\\n        view\\r\\n        mentorshipExists(mentorshipId)\\r\\n        returns (\\r\\n            address mentor,\\r\\n            address mentee,\\r\\n            uint256 startDate,\\r\\n            uint256 endDate,\\r\\n            bool isActive\\r\\n        )\\r\\n    {\\r\\n        Mentorship memory mentorship = mentorships[mentorshipId];\\r\\n        return (\\r\\n            mentorship.mentor,\\r\\n            mentorship.mentee,\\r\\n            mentorship.startDate,\\r\\n            mentorship.endDate,\\r\\n            mentorship.isActive && mentorship.endDate > block.timestamp\\r\\n        );\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Check if registered alumni\\r\\n     */\\r\\n    function isRegisteredAlumni(address alumni)\\r\\n        external\\r\\n        view\\r\\n        returns (bool)\\r\\n    {\\r\\n        return alumniProfiles[alumni].registeredAt > 0;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Check if connected\\r\\n     */\\r\\n    function areConnected(address alumni1, address alumni2)\\r\\n        external\\r\\n        view\\r\\n        returns (bool)\\r\\n    {\\r\\n        return isConnected[alumni1][alumni2];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get total alumni\\r\\n     */\\r\\n    function getTotalAlumni() external view returns (uint256) {\\r\\n        return totalAlumni;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get total events\\r\\n     */\\r\\n    function getTotalEvents() external view returns (uint256) {\\r\\n        return totalEvents;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get total mentorships\\r\\n     */\\r\\n    function getTotalMentorships() external view returns (uint256) {\\r\\n        return totalMentorships;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get total donations\\r\\n     */\\r\\n    function getTotalDonations() external view returns (uint256) {\\r\\n        return totalDonations;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get total donation amount\\r\\n     */\\r\\n    function getTotalDonationAmount() external view returns (uint256) {\\r\\n        return totalDonationAmount;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get alumni by program\\r\\n     */\\r\\n    function getAlumniByProgram(string calldata program)\\r\\n        external\\r\\n        view\\r\\n        returns (address[] memory)\\r\\n    {\\r\\n        return alumniByProgram[program];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get alumni by graduation year\\r\\n     */\\r\\n    function getAlumniByGraduationYear(uint256 year)\\r\\n        external\\r\\n        view\\r\\n        returns (address[] memory)\\r\\n    {\\r\\n        return alumniByYear[year];\\r\\n    }\\r\\n}\\r\\n\",\"keccak256\":\"0xe91353c5419785cf77d6ec5eadd1b98ffaa9dfdcebfbc3b0baf9b24e2e7a4785\",\"license\":\"MIT\"},\"contracts/modules/011-alumni/IAlumniRegistry.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.24;\\r\\n\\r\\n/**\\r\\n * @title IAlumniRegistry\\r\\n * @dev Interface for alumni management and networking system\\r\\n */\\r\\ninterface IAlumniRegistry {\\r\\n    // ============ Events ============\\r\\n    event AlumniRegistered(\\r\\n        address indexed alumni,\\r\\n        string name,\\r\\n        string program,\\r\\n        uint256 graduationYear,\\r\\n        uint256 registeredAt\\r\\n    );\\r\\n\\r\\n    event AlumniStatusUpdated(\\r\\n        address indexed alumni,\\r\\n        string status\\r\\n    );\\r\\n\\r\\n    event AlumniProfileUpdated(\\r\\n        address indexed alumni,\\r\\n        string updatedField\\r\\n    );\\r\\n\\r\\n    event EventCreated(\\r\\n        uint256 indexed eventId,\\r\\n        string name,\\r\\n        uint256 eventDate,\\r\\n        address organizer\\r\\n    );\\r\\n\\r\\n    event EventRegistered(\\r\\n        uint256 indexed eventId,\\r\\n        address indexed alumni,\\r\\n        uint256 registeredAt\\r\\n    );\\r\\n\\r\\n    event MentorshipCreated(\\r\\n        uint256 indexed mentorshipId,\\r\\n        address indexed mentor,\\r\\n        address indexed mentee,\\r\\n        uint256 createdAt\\r\\n    );\\r\\n\\r\\n    event ConnectionMade(\\r\\n        address indexed alumni1,\\r\\n        address indexed alumni2,\\r\\n        uint256 connectedAt\\r\\n    );\\r\\n\\r\\n    event DonationMade(\\r\\n        address indexed donor,\\r\\n        uint256 amount,\\r\\n        string purpose,\\r\\n        uint256 madeAt\\r\\n    );\\r\\n\\r\\n    // ============ Mutations ============\\r\\n    /**\\r\\n     * @notice Register as alumni\\r\\n     * @param name Alumni name\\r\\n     * @param program Graduation program\\r\\n     * @param graduationYear Graduation year\\r\\n     * @param profileURI IPFS URI for profile\\r\\n     */\\r\\n    function registerAlumni(\\r\\n        string calldata name,\\r\\n        string calldata program,\\r\\n        uint256 graduationYear,\\r\\n        string calldata profileURI\\r\\n    ) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Update alumni profile\\r\\n     * @param field Field name to update (e.g., \\\"contactInfo\\\", \\\"bio\\\")\\r\\n     * @param value New value for field\\r\\n     */\\r\\n    function updateProfile(\\r\\n        string calldata field,\\r\\n        string calldata value\\r\\n    ) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Update alumni status\\r\\n     * @param status New status (e.g., \\\"active\\\", \\\"inactive\\\")\\r\\n     */\\r\\n    function updateStatus(string calldata status) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Create alumni event\\r\\n     * @param name Event name\\r\\n     * @param description Event description\\r\\n     * @param eventDate Unix timestamp for event\\r\\n     * @param location Event location\\r\\n     * @return eventId ID of created event\\r\\n     */\\r\\n    function createEvent(\\r\\n        string calldata name,\\r\\n        string calldata description,\\r\\n        uint256 eventDate,\\r\\n        string calldata location\\r\\n    ) external returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @notice Register for an event\\r\\n     * @param eventId Event ID\\r\\n     */\\r\\n    function registerForEvent(uint256 eventId) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Create mentorship relationship\\r\\n     * @param mentee Mentee address\\r\\n     * @param duration Mentorship duration in days\\r\\n     * @return mentorshipId ID of mentorship\\r\\n     */\\r\\n    function createMentorship(\\r\\n        address mentee,\\r\\n        uint256 duration\\r\\n    ) external returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @notice Connect with another alumni\\r\\n     * @param otherAlumni Address of alumni to connect with\\r\\n     */\\r\\n    function connectWithAlumni(address otherAlumni) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Make a donation\\r\\n     * @param amount Donation amount\\r\\n     * @param purpose Donation purpose\\r\\n     */\\r\\n    function makeDonation(uint256 amount, string calldata purpose) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Authorize mentor for community\\r\\n     * @param mentor Mentor address\\r\\n     */\\r\\n    function authorizeMentor(address mentor) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Revoke mentor authorization\\r\\n     * @param mentor Mentor address\\r\\n     */\\r\\n    function revokeMentor(address mentor) external;\\r\\n\\r\\n    // ============ Queries ============\\r\\n    /**\\r\\n     * @notice Get alumni profile\\r\\n     * @param alumni Alumni address\\r\\n     */\\r\\n    function getAlumniProfile(address alumni)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            string memory name,\\r\\n            string memory program,\\r\\n            uint256 graduationYear,\\r\\n            string memory status,\\r\\n            uint256 registeredAt,\\r\\n            string memory profileURI\\r\\n        );\\r\\n\\r\\n    /**\\r\\n     * @notice Get alumni custom profile field\\r\\n     * @param alumni Alumni address\\r\\n     * @param field Field name\\r\\n     */\\r\\n    function getProfileField(address alumni, string calldata field)\\r\\n        external\\r\\n        view\\r\\n        returns (string memory);\\r\\n\\r\\n    /**\\r\\n     * @notice Get event information\\r\\n     * @param eventId Event ID\\r\\n     */\\r\\n    function getEventInfo(uint256 eventId)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            string memory name,\\r\\n            string memory description,\\r\\n            uint256 eventDate,\\r\\n            string memory location,\\r\\n            address organizer,\\r\\n            uint256 registrationCount\\r\\n        );\\r\\n\\r\\n    /**\\r\\n     * @notice Get alumni registered for event\\r\\n     * @param eventId Event ID\\r\\n     */\\r\\n    function getEventRegistrations(uint256 eventId)\\r\\n        external\\r\\n        view\\r\\n        returns (address[] memory);\\r\\n\\r\\n    /**\\r\\n     * @notice Get connections for alumni\\r\\n     * @param alumni Alumni address\\r\\n     */\\r\\n    function getConnections(address alumni)\\r\\n        external\\r\\n        view\\r\\n        returns (address[] memory);\\r\\n\\r\\n    /**\\r\\n     * @notice Get mentorship information\\r\\n     * @param mentorshipId Mentorship ID\\r\\n     */\\r\\n    function getMentorshipInfo(uint256 mentorshipId)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            address mentor,\\r\\n            address mentee,\\r\\n            uint256 startDate,\\r\\n            uint256 endDate,\\r\\n            bool isActive\\r\\n        );\\r\\n\\r\\n    /**\\r\\n     * @notice Check if address is registered alumni\\r\\n     * @param alumni Alumni address\\r\\n     */\\r\\n    function isRegisteredAlumni(address alumni)\\r\\n        external\\r\\n        view\\r\\n        returns (bool);\\r\\n\\r\\n    /**\\r\\n     * @notice Check if addresses are connected\\r\\n     * @param alumni1 First alumni address\\r\\n     * @param alumni2 Second alumni address\\r\\n     */\\r\\n    function areConnected(address alumni1, address alumni2)\\r\\n        external\\r\\n        view\\r\\n        returns (bool);\\r\\n\\r\\n    /**\\r\\n     * @notice Get total registered alumni\\r\\n     */\\r\\n    function getTotalAlumni() external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @notice Get total events created\\r\\n     */\\r\\n    function getTotalEvents() external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @notice Get total mentorships\\r\\n     */\\r\\n    function getTotalMentorships() external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @notice Get total donations\\r\\n     */\\r\\n    function getTotalDonations() external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @notice Get total donation amount\\r\\n     */\\r\\n    function getTotalDonationAmount() external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @notice Get alumni by program\\r\\n     * @param program Program name\\r\\n     */\\r\\n    function getAlumniByProgram(string calldata program)\\r\\n        external\\r\\n        view\\r\\n        returns (address[] memory);\\r\\n\\r\\n    /**\\r\\n     * @notice Get alumni by graduation year\\r\\n     * @param year Graduation year\\r\\n     */\\r\\n    function getAlumniByGraduationYear(uint256 year)\\r\\n        external\\r\\n        view\\r\\n        returns (address[] memory);\\r\\n}\\r\\n\",\"keccak256\":\"0x6305184711a21f5e2ecc4ef54438461777aa3e97468199265fbe2cb042306d73\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608080604052346100995733156100835760008054336001600160a01b031982168117835560405192916001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08380a360018055600160025560016003558060045580601255806013558060145560155561251b908161009f8239f35b631e4fbdf760e01b815260006004820152602490fd5b600080fdfe608080604052600436101561001357600080fd5b60003560e01c9081630865146a14611f8b575080631d645b1214611e9157806321c80de6146118b957806323bc1fa1146117a8578063269e381e146116af57806328b285d1146116135780632c215998146114705780632fd900ab14611416578063406db8431461132257806346552e61146112a45780634f879f281461126557806361606940146112475780636c010095146111fa578063715018a6146111a1578063777c658f146111835780637c8b1ed3146110f05780638da5cb5b146110c7578063918c1eda146110a957806398e3718414610ee35780639e36f04314610e61578063aa735fb214610e11578063aec8d85914610c96578063afbf811a14610c16578063c9d3cc6a14610a1f578063d8eea4db146106a9578063f1a3ed1c1461068b578063f2fde38b146106025763ff3a0fb61461015357600080fd5b346105fd5761016136612013565b939490959192953360005260056020526101846004604060002001541515612420565b81156105ac5742841115610552576101df906101ca600254976101a6896123da565b600255604051996101b68b612169565b6101c13687896122bc565b8b5236916122bc565b95602089019687528560408a015236916122bc565b6060870152336080870152600060a087015284600052600760205260406000209386518051906001600160401b03821161045e5761022782610221895461212f565b89612302565b602090601f83116001146104e6576102589291600091836103ba575b50508160011b916000199060031b1c19161790565b85555b518051906001600160401b03821161045e576102878261027e600189015461212f565b60018901612302565b602090601f8311600114610474576102b79291600091836103ba5750508160011b916000199060031b1c19161790565b60018501555b604086015160028501556060860151928351946001600160401b03861161045e5760209787956102fd886102f4600386015461212f565b60038601612302565b8990601f89116001146103c55791610354897f9c2f02f9bc3109d6ef9e6ddb6bd47137ccc8e9deabc67b747c58342a70d9e2c8999a60a0946005966000926103ba5750508160011b916000199060031b1c19161790565b60038501555b60048401600180841b036080830151166001600160601b03841b825416179055015191015561038a6013546123da565b6013556103a46040519384936060855260608501916123ff565b90878301523360408301520390a2604051908152f35b015190503880610243565b9790600384016000528a6000209860005b601f19841681106104445750827f9c2f02f9bc3109d6ef9e6ddb6bd47137ccc8e9deabc67b747c58342a70d9e2c8999a6005959360019360a096601f1981161061042b575b505050811b01600385015561035a565b015160001960f88460031b161c1916905538808061041b565b828201518b556001909a01998b9950918c01918c016103d6565b634e487b7160e01b600052604160045260246000fd5b9190600187016000526020600020906000935b601f19841685106104cb576001945083601f198116106104b2575b505050811b0160018501556102bd565b015160001960f88460031b161c191690553880806104a2565b81810151835560209485019460019093019290910190610487565b9190876000526020600020906000935b601f1984168510610537576001945083601f1981161061051e575b505050811b01855561025b565b015160001960f88460031b161c19169055388080610511565b818101518355602094850194600190930192909101906104f6565b60405162461bcd60e51b815260206004820152602c60248201527f416c756d6e6952656769737472793a204576656e742064617465206d7573742060448201526b626520696e2066757475726560a01b6064820152608490fd5b60405162461bcd60e51b815260206004820152602360248201527f416c756d6e6952656769737472793a204576656e74206e616d652072657175696044820152621c995960ea1b6064820152608490fd5b600080fd5b346105fd5760203660031901126105fd5761061b61207c565b6106236124e2565b6001600160a01b0390811690811561067257600054826001600160601b0360a01b821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b604051631e4fbdf760e01b815260006004820152602490fd5b346105fd5760003660031901126105fd576020601454604051908152f35b346105fd5760403660031901126105fd576106c261207c565b60249081359033600052602092600584526106e66004604060002001541515612420565b6001600160a01b039182169182156109cc57338314610979578260005260058552600460406000200154156109275733600052600f855260ff60406000205416156108d5578315610887576003549361073e856123da565b60035562015180808202918204036108725761075c600491426124d5565b6040519061076982612184565b33825287820186815260408301904282526060840192835260808401956001875289600052600a8b52806040600020955116906001600160601b0360a01b91828754161786556001860192511690825416179055516002830155516003820155019051151560ff8019835416911617905533600052600b84526040600020805491600160401b83101561085e57509061080791600182018155612371565b81549060031b9084821b91600019901b19161790556108276014546123da565b601455604051428152827f6f3610c774a622f882f2012d91ffb66948396780214dfa0b6db0f6e3093e0493853393a4604051908152f35b634e487b7160e01b60009081526041600452fd5b82634e487b7160e01b60005260116004526000fd5b60405162461bcd60e51b8152600481018690526021818401527f416c756d6e6952656769737472793a204475726174696f6e20726571756972656044820152601960fa1b6064820152608490fd5b60405162461bcd60e51b8152600481018690526025818401527f416c756d6e6952656769737472793a204e6f7420617574686f72697a6564206d60448201526432b73a37b960d91b6064820152608490fd5b60405162461bcd60e51b8152600481018690526025818401527f416c756d6e6952656769737472793a204d656e746565206e6f742072656769736044820152641d195c995960da1b6064820152608490fd5b60405162461bcd60e51b8152600481018690526026818401527f416c756d6e6952656769737472793a2043616e6e6f74206d656e746f7220796f6044820152653ab939b2b63360d11b6064820152608490fd5b60405162461bcd60e51b8152600481018690526026818401527f416c756d6e6952656769737472793a20496e76616c6964206d656e746565206160448201526564647265737360d01b6064820152608490fd5b346105fd5760403660031901126105fd576001600160401b036004358181116105fd57610a50903690600401611fe6565b906024358381116105fd57610a69903690600401611fe6565b9290933360005260209460058652610a8a6004604060002001541515612420565b8215610bc5573360005260068652610aa760406000208486612358565b91851161045e57610ac285610abc845461212f565b84612302565b600090601f8611600114610b3d579480610b14927f8ccc695be1673afcf2a1f41d579a6fd0eaf1c5cbc4ee9342e6245eedecf5627597600092610b325750508160011b916000199060031b1c19161790565b90555b610b2d60405192839286845233968401916123ff565b0390a2005b013590508880610243565b601f1986169183600052876000209260005b89828210610baf5750509160019391887f8ccc695be1673afcf2a1f41d579a6fd0eaf1c5cbc4ee9342e6245eedecf56275999410610b95575b505050811b019055610b17565b0135600019600384901b60f8161c19169055878080610b88565b6001849682939587013581550195019201610b4f565b60405162461bcd60e51b815260048101879052602360248201527f416c756d6e6952656769737472793a204669656c64206e616d652072657175696044820152621c995960ea1b6064820152608490fd5b346105fd5760403660031901126105fd57610c2f61207c565b602435906001600160401b0382116105fd57610c79610c7e91610c59610c92943690600401611fe6565b6001600160a01b0390921660009081526006602052604090209190612358565b6121c0565b604051918291602083526020830190611fa6565b0390f35b346105fd5760403660031901126105fd576004356024356001600160401b0381116105fd57610cc9903690600401611fe6565b33600052602060058152610ce66004604060002001541515612420565b8315610db7578115610d745791610d659160607f8580ecae95ac2e0205deed43d40b277d8d0329bbd0adeb855e64c9e88737340f94610d27876004546124d5565b60045533600052600e81526040600020610d428882546124d5565b9055610d4f6015546123da565b60155560405196875286015260608501916123ff565b914260408201528033930390a2005b6064906040519062461bcd60e51b825280600483015260248201527f416c756d6e6952656769737472793a20507572706f73652072657175697265646044820152fd5b6084906040519062461bcd60e51b82526004820152602d60248201527f416c756d6e6952656769737472793a20416d6f756e74206d757374206265206760448201526c0726561746572207468616e203609c1b6064820152fd5b346105fd5760203660031901126105fd57610e2a61207c565b610e326124e2565b6001600160a01b0316610e4681151561247a565b6000908152600f60205260409020805460ff19166001179055005b346105fd576020806003193601126105fd5760043560005260116020526040600020906040519081602084549182815201936000526020600020916000905b828210610ec357610c9285610eb78189038261219f565b60405191829182612092565b83546001600160a01b031686529485019460019384019390910190610ea0565b346105fd576020806003193601126105fd57610efd61207c565b903360005260058152610f196004604060002001541515612420565b60018060a01b038216918260005260058252610f3e6004604060002001541515612420565b33831461104f5733600052600d8252604060002083600052825260ff6040600020541661100057610f7b9033600052600c8352604060002061239f565b81600052600c8152610f9133604060002061239f565b33600052600d81526040600020826000528152604060002060ff1990600182825416179055600d8252604060002033600052825260016040600020918254161790557f1b2b13b519507cc21f94ff37d8c20336899f6143c4309028b86bd4710373f367604051914283523392a3005b60405162461bcd60e51b815260048101839052602160248201527f416c756d6e6952656769737472793a20416c726561647920636f6e6e656374656044820152601960fa1b6064820152608490fd5b60405162461bcd60e51b815260048101839052602c60248201527f416c756d6e6952656769737472793a2043616e6e6f7420636f6e6e656374207760448201526b34ba34103cb7bab939b2b63360a11b6064820152608490fd5b346105fd5760003660031901126105fd576020601254604051908152f35b346105fd5760003660031901126105fd576000546040516001600160a01b039091168152602090f35b346105fd576020806003193601126105fd5760043580151580611178575b611117906120d7565b60005260086020526040600020906040519081602084549182815201936000526020600020916000905b82821061115857610c9285610eb78189038261219f565b83546001600160a01b031686529485019460019384019390910190611141565b50600254811061110e565b346105fd5760003660031901126105fd576020601554604051908152f35b346105fd5760003660031901126105fd576111ba6124e2565b600080546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b346105fd5760203660031901126105fd5761121361207c565b61121b6124e2565b6001600160a01b031661122f81151561247a565b6000908152600f60205260409020805460ff19169055005b346105fd5760003660031901126105fd576020601354604051908152f35b346105fd5760203660031901126105fd576001600160a01b0361128661207c565b16600052600560205260206004604060002001541515604051908152f35b346105fd576020806003193601126105fd576001600160a01b03806112c761207c565b16600052600c6020526040600020916040518092602085549283815201946000526020600020926000915b83831061130957610c9286610eb7818a038261219f565b84548116875295810195600194850194909201916112f2565b346105fd576020806003193601126105fd5760043533600052600582526113526004604060002001541515612420565b8015158061140b575b611364906120d7565b8060005260098252604060002033600052825261138960ff6040600020541615612265565b806000526009825260406000203360005282526040600020600160ff1982541617905580600052600882526113c233604060002061239f565b806000526007825260056040600020016113dc81546123da565b90557f992fab36eae044cb10bbca598664ac6112f28a1b0a180a89a47e9b3cc5e2d384604051924284523393a3005b50600254811061135b565b346105fd5760403660031901126105fd5761142f61207c565b6001600160a01b0360243581811692908390036105fd5716600052600d602052604060002090600052602052602060ff604060002054166040519015158152f35b346105fd576020806003193601126105fd576001600160401b036004358181116105fd576114a2903690600401611fe6565b33600052600584526114bd6004604060002001541515612420565b80156115ce573360005260058452600360406000200192811161045e576114ee816114e8855461212f565b85612302565b600092601f821160011461154a57610b1482807f33f698d68dca869073a792459ab7f3686cfccd00a2e8b131ee9357c8f1f5dfbc9660009161153f575b508160011b916000199060031b1c19161790565b90508501358861152b565b601f1982169381600052856000209060005b878782106115b8575050837f33f698d68dca869073a792459ab7f3686cfccd00a2e8b131ee9357c8f1f5dfbc961061159e575b5050600182811b019055610b17565b840135600019600385901b60f8161c19169055858061158f565b600183948293948901358155019301910161155c565b60405162461bcd60e51b815260048101859052601f60248201527f416c756d6e6952656769737472793a20537461747573207265717569726564006044820152606490fd5b346105fd576020806003193601126105fd576004356001600160401b0381116105fd576116466020913690600401611fe6565b919082604051938492833781016010815203019020906040519081602084549182815201936000526020600020916000905b82821061168f57610c9285610eb78189038261219f565b83546001600160a01b031686529485019460019384019390910190611678565b346105fd5760203660031901126105fd576001600160a01b036116d061207c565b1660005260056020526117746040600020610c92604051916116f183612169565b6116fa816121c0565b8352611708600182016121c0565b92602081019384526117956002830154926040830193845261172c600382016121c0565b906060840191825261178261174f600560048401549360808801948552016121c0565b948560a082015251975195519251915195604051998a9960c08b5260c08b0190611fa6565b9089820360208b0152611fa6565b9160408801528682036060880152611fa6565b91608085015283820360a0850152611fa6565b346105fd5760203660031901126105fd57600435801515806118ae575b1561185757600052600a60205260a060406000206080604051916117e883612184565b600180851b0392838254169384825260018301541680602083015260028301549182604082015260ff6004600386015495866060850152015416151594859101528361184d575b60405194855260208501526040840152606083015215156080820152f35b428311935061182f565b60405162461bcd60e51b815260206004820152602960248201527f416c756d6e6952656769737472793a204d656e746f727368697020646f6573206044820152681b9bdd08195e1a5cdd60ba1b6064820152608490fd5b5060035481106117c5565b346105fd576118c736612013565b859493929596919615611e4c578215611e08578515611db2573360005260056020526118fb60046040600020015415612265565b6040519661190888612169565b6119133687856122bc565b88526119203685876122bc565b6020890152866040890152604051918260408101106001600160401b0360408501111761045e578260406119779401604052600681526561637469766560d01b602082015260608a01524260808a015236916122bc565b60a0870152336000526005602052604060002086518051906001600160401b03821161045e576119ab826114e8855461212f565b602090601f8311600114611d46576119db929160009183611cc95750508160011b916000199060031b1c19161790565b81555b60208701518051906001600160401b03821161045e57611a0e82611a05600186015461212f565b60018601612302565b602090601f8311600114611cd457611a3e929160009183611cc95750508160011b916000199060031b1c19161790565b60018201555b6040870151600282015560608701518051906001600160401b03821161045e57611a75826102f4600386015461212f565b602090601f8311600114611c54578260059360a09593611aab93600092611bb65750508160011b916000199060031b1c19161790565b60038201555b60808901516004820155019601519586516001600160401b03811161045e57611ade81610abc845461212f565b6020601f8211600114611bc15791611b3a82611ba297969593611b94957f8edb17ae1cdaf2807de42e8dee8a7cda9ec04ac26d983205518690bdefa4bacb9b9c600092611bb65750508160011b916000199060031b1c19161790565b90555b611b5d60405184868237848101906010825260208133930301902061239f565b876000526011602052611b7433604060002061239f565b611b7f6012546123da565b601255604051956080875260808701916123ff565b9184830360208601526123ff565b9260408201524260608201528033930390a2005b015190508c80610243565b601f198216988360005260206000209960005b818110611c3c5750927f8edb17ae1cdaf2807de42e8dee8a7cda9ec04ac26d983205518690bdefa4bacb999a611b94959360019383611ba29b9a999710611c23575b505050811b019055611b3d565b015160001960f88460031b161c191690558b8080611c16565b838301518c556001909b019a60209384019301611bd4565b906003840160005260206000209160005b601f1985168110611cb157509260a0949260019260059583601f19811610611c98575b505050811b016003820155611ab1565b015160001960f88460031b161c191690558b8080611c88565b91926020600181928685015181550194019201611c65565b015190508a80610243565b9190600184016000526020600020906000935b601f1984168510611d2b576001945083601f19811610611d12575b505050811b016001820155611a44565b015160001960f88460031b161c19169055898080611d02565b81810151835560209485019460019093019290910190611ce7565b9190836000526020600020906000935b601f1984168510611d97576001945083601f19811610611d7e575b505050811b0181556119de565b015160001960f88460031b161c19169055898080611d71565b81810151835560209485019460019093019290910190611d56565b60405162461bcd60e51b815260206004820152602860248201527f416c756d6e6952656769737472793a2047726164756174696f6e2079656172206044820152671c995c5d5a5c995960c21b6064820152608490fd5b606460405162461bcd60e51b815260206004820152602060248201527f416c756d6e6952656769737472793a2050726f6772616d2072657175697265646044820152fd5b60405162461bcd60e51b815260206004820152601d60248201527f416c756d6e6952656769737472793a204e616d652072657175697265640000006044820152606490fd5b346105fd5760203660031901126105fd5760043580151580611f80575b611eb7906120d7565b6000526007602052611f50604060002060405190611ed482612169565b611edd816121c0565b8252611eeb600182016121c0565b9160208101928352611f71600283015460408301908152611f0e600385016121c0565b806060850152611f5e600560018060a01b03600488015416968760808801520154948560a082015251965192519260405198899860c08a5260c08a0190611fa6565b9088820360208a0152611fa6565b9160408701528582036060870152611fa6565b91608084015260a08301520390f35b506002548110611eae565b346105fd5760003660031901126105fd576020906004548152f35b919082519283825260005b848110611fd2575050826000602080949584010152601f8019910116010190565b602081830181015184830182015201611fb1565b9181601f840112156105fd578235916001600160401b0383116105fd57602083818601950101116105fd57565b60806003198201126105fd576001600160401b03916004358381116105fd578261203f91600401611fe6565b939093926024358281116105fd578161205a91600401611fe6565b93909392604435926064359182116105fd5761207891600401611fe6565b9091565b600435906001600160a01b03821682036105fd57565b602090602060408183019282815285518094520193019160005b8281106120ba575050505090565b83516001600160a01b0316855293810193928101926001016120ac565b156120de57565b60405162461bcd60e51b8152602060048201526024808201527f416c756d6e6952656769737472793a204576656e7420646f6573206e6f7420656044820152631e1a5cdd60e21b6064820152608490fd5b90600182811c9216801561215f575b602083101461214957565b634e487b7160e01b600052602260045260246000fd5b91607f169161213e565b60c081019081106001600160401b0382111761045e57604052565b60a081019081106001600160401b0382111761045e57604052565b90601f801991011681019081106001600160401b0382111761045e57604052565b906040519182600082546121d38161212f565b908184526020946001916001811690816000146122435750600114612204575b5050506122029250038361219f565b565b600090815285812095935091905b81831061222b57505061220293508201013880806121f3565b85548884018501529485019487945091830191612212565b9250505061220294925060ff191682840152151560051b8201013880806121f3565b1561226c57565b60405162461bcd60e51b815260206004820152602260248201527f416c756d6e6952656769737472793a20416c7265616479207265676973746572604482015261195960f21b6064820152608490fd5b9291926001600160401b03821161045e57604051916122e5601f8201601f19166020018461219f565b8294818452818301116105fd578281602093846000960137010152565b90601f811161231057505050565b6000916000526020600020906020601f850160051c8301941061234e575b601f0160051c01915b82811061234357505050565b818155600101612337565b909250829061232e565b6020919283604051948593843782019081520301902090565b80548210156123895760005260206000200190600090565b634e487b7160e01b600052603260045260246000fd5b8054600160401b81101561045e576123bc91600182018155612371565b60018060a09493941b038084549260031b9316831b921b1916179055565b60001981146123e95760010190565b634e487b7160e01b600052601160045260246000fd5b908060209392818452848401376000828201840152601f01601f1916010190565b1561242757565b60405162461bcd60e51b815260206004820152602560248201527f416c756d6e6952656769737472793a204e6f74207265676973746572656420616044820152646c756d6e6960d81b6064820152608490fd5b1561248157565b60405162461bcd60e51b815260206004820152602660248201527f416c756d6e6952656769737472793a20496e76616c6964206d656e746f72206160448201526564647265737360d01b6064820152608490fd5b919082018092116123e957565b6000546001600160a01b031633036124f657565b60405163118cdaa760e01b8152336004820152602490fdfea164736f6c6343000818000a",
+  "deployedBytecode": "0x608080604052600436101561001357600080fd5b60003560e01c9081630865146a14611f8b575080631d645b1214611e9157806321c80de6146118b957806323bc1fa1146117a8578063269e381e146116af57806328b285d1146116135780632c215998146114705780632fd900ab14611416578063406db8431461132257806346552e61146112a45780634f879f281461126557806361606940146112475780636c010095146111fa578063715018a6146111a1578063777c658f146111835780637c8b1ed3146110f05780638da5cb5b146110c7578063918c1eda146110a957806398e3718414610ee35780639e36f04314610e61578063aa735fb214610e11578063aec8d85914610c96578063afbf811a14610c16578063c9d3cc6a14610a1f578063d8eea4db146106a9578063f1a3ed1c1461068b578063f2fde38b146106025763ff3a0fb61461015357600080fd5b346105fd5761016136612013565b939490959192953360005260056020526101846004604060002001541515612420565b81156105ac5742841115610552576101df906101ca600254976101a6896123da565b600255604051996101b68b612169565b6101c13687896122bc565b8b5236916122bc565b95602089019687528560408a015236916122bc565b6060870152336080870152600060a087015284600052600760205260406000209386518051906001600160401b03821161045e5761022782610221895461212f565b89612302565b602090601f83116001146104e6576102589291600091836103ba575b50508160011b916000199060031b1c19161790565b85555b518051906001600160401b03821161045e576102878261027e600189015461212f565b60018901612302565b602090601f8311600114610474576102b79291600091836103ba5750508160011b916000199060031b1c19161790565b60018501555b604086015160028501556060860151928351946001600160401b03861161045e5760209787956102fd886102f4600386015461212f565b60038601612302565b8990601f89116001146103c55791610354897f9c2f02f9bc3109d6ef9e6ddb6bd47137ccc8e9deabc67b747c58342a70d9e2c8999a60a0946005966000926103ba5750508160011b916000199060031b1c19161790565b60038501555b60048401600180841b036080830151166001600160601b03841b825416179055015191015561038a6013546123da565b6013556103a46040519384936060855260608501916123ff565b90878301523360408301520390a2604051908152f35b015190503880610243565b9790600384016000528a6000209860005b601f19841681106104445750827f9c2f02f9bc3109d6ef9e6ddb6bd47137ccc8e9deabc67b747c58342a70d9e2c8999a6005959360019360a096601f1981161061042b575b505050811b01600385015561035a565b015160001960f88460031b161c1916905538808061041b565b828201518b556001909a01998b9950918c01918c016103d6565b634e487b7160e01b600052604160045260246000fd5b9190600187016000526020600020906000935b601f19841685106104cb576001945083601f198116106104b2575b505050811b0160018501556102bd565b015160001960f88460031b161c191690553880806104a2565b81810151835560209485019460019093019290910190610487565b9190876000526020600020906000935b601f1984168510610537576001945083601f1981161061051e575b505050811b01855561025b565b015160001960f88460031b161c19169055388080610511565b818101518355602094850194600190930192909101906104f6565b60405162461bcd60e51b815260206004820152602c60248201527f416c756d6e6952656769737472793a204576656e742064617465206d7573742060448201526b626520696e2066757475726560a01b6064820152608490fd5b60405162461bcd60e51b815260206004820152602360248201527f416c756d6e6952656769737472793a204576656e74206e616d652072657175696044820152621c995960ea1b6064820152608490fd5b600080fd5b346105fd5760203660031901126105fd5761061b61207c565b6106236124e2565b6001600160a01b0390811690811561067257600054826001600160601b0360a01b821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b604051631e4fbdf760e01b815260006004820152602490fd5b346105fd5760003660031901126105fd576020601454604051908152f35b346105fd5760403660031901126105fd576106c261207c565b60249081359033600052602092600584526106e66004604060002001541515612420565b6001600160a01b039182169182156109cc57338314610979578260005260058552600460406000200154156109275733600052600f855260ff60406000205416156108d5578315610887576003549361073e856123da565b60035562015180808202918204036108725761075c600491426124d5565b6040519061076982612184565b33825287820186815260408301904282526060840192835260808401956001875289600052600a8b52806040600020955116906001600160601b0360a01b91828754161786556001860192511690825416179055516002830155516003820155019051151560ff8019835416911617905533600052600b84526040600020805491600160401b83101561085e57509061080791600182018155612371565b81549060031b9084821b91600019901b19161790556108276014546123da565b601455604051428152827f6f3610c774a622f882f2012d91ffb66948396780214dfa0b6db0f6e3093e0493853393a4604051908152f35b634e487b7160e01b60009081526041600452fd5b82634e487b7160e01b60005260116004526000fd5b60405162461bcd60e51b8152600481018690526021818401527f416c756d6e6952656769737472793a204475726174696f6e20726571756972656044820152601960fa1b6064820152608490fd5b60405162461bcd60e51b8152600481018690526025818401527f416c756d6e6952656769737472793a204e6f7420617574686f72697a6564206d60448201526432b73a37b960d91b6064820152608490fd5b60405162461bcd60e51b8152600481018690526025818401527f416c756d6e6952656769737472793a204d656e746565206e6f742072656769736044820152641d195c995960da1b6064820152608490fd5b60405162461bcd60e51b8152600481018690526026818401527f416c756d6e6952656769737472793a2043616e6e6f74206d656e746f7220796f6044820152653ab939b2b63360d11b6064820152608490fd5b60405162461bcd60e51b8152600481018690526026818401527f416c756d6e6952656769737472793a20496e76616c6964206d656e746565206160448201526564647265737360d01b6064820152608490fd5b346105fd5760403660031901126105fd576001600160401b036004358181116105fd57610a50903690600401611fe6565b906024358381116105fd57610a69903690600401611fe6565b9290933360005260209460058652610a8a6004604060002001541515612420565b8215610bc5573360005260068652610aa760406000208486612358565b91851161045e57610ac285610abc845461212f565b84612302565b600090601f8611600114610b3d579480610b14927f8ccc695be1673afcf2a1f41d579a6fd0eaf1c5cbc4ee9342e6245eedecf5627597600092610b325750508160011b916000199060031b1c19161790565b90555b610b2d60405192839286845233968401916123ff565b0390a2005b013590508880610243565b601f1986169183600052876000209260005b89828210610baf5750509160019391887f8ccc695be1673afcf2a1f41d579a6fd0eaf1c5cbc4ee9342e6245eedecf56275999410610b95575b505050811b019055610b17565b0135600019600384901b60f8161c19169055878080610b88565b6001849682939587013581550195019201610b4f565b60405162461bcd60e51b815260048101879052602360248201527f416c756d6e6952656769737472793a204669656c64206e616d652072657175696044820152621c995960ea1b6064820152608490fd5b346105fd5760403660031901126105fd57610c2f61207c565b602435906001600160401b0382116105fd57610c79610c7e91610c59610c92943690600401611fe6565b6001600160a01b0390921660009081526006602052604090209190612358565b6121c0565b604051918291602083526020830190611fa6565b0390f35b346105fd5760403660031901126105fd576004356024356001600160401b0381116105fd57610cc9903690600401611fe6565b33600052602060058152610ce66004604060002001541515612420565b8315610db7578115610d745791610d659160607f8580ecae95ac2e0205deed43d40b277d8d0329bbd0adeb855e64c9e88737340f94610d27876004546124d5565b60045533600052600e81526040600020610d428882546124d5565b9055610d4f6015546123da565b60155560405196875286015260608501916123ff565b914260408201528033930390a2005b6064906040519062461bcd60e51b825280600483015260248201527f416c756d6e6952656769737472793a20507572706f73652072657175697265646044820152fd5b6084906040519062461bcd60e51b82526004820152602d60248201527f416c756d6e6952656769737472793a20416d6f756e74206d757374206265206760448201526c0726561746572207468616e203609c1b6064820152fd5b346105fd5760203660031901126105fd57610e2a61207c565b610e326124e2565b6001600160a01b0316610e4681151561247a565b6000908152600f60205260409020805460ff19166001179055005b346105fd576020806003193601126105fd5760043560005260116020526040600020906040519081602084549182815201936000526020600020916000905b828210610ec357610c9285610eb78189038261219f565b60405191829182612092565b83546001600160a01b031686529485019460019384019390910190610ea0565b346105fd576020806003193601126105fd57610efd61207c565b903360005260058152610f196004604060002001541515612420565b60018060a01b038216918260005260058252610f3e6004604060002001541515612420565b33831461104f5733600052600d8252604060002083600052825260ff6040600020541661100057610f7b9033600052600c8352604060002061239f565b81600052600c8152610f9133604060002061239f565b33600052600d81526040600020826000528152604060002060ff1990600182825416179055600d8252604060002033600052825260016040600020918254161790557f1b2b13b519507cc21f94ff37d8c20336899f6143c4309028b86bd4710373f367604051914283523392a3005b60405162461bcd60e51b815260048101839052602160248201527f416c756d6e6952656769737472793a20416c726561647920636f6e6e656374656044820152601960fa1b6064820152608490fd5b60405162461bcd60e51b815260048101839052602c60248201527f416c756d6e6952656769737472793a2043616e6e6f7420636f6e6e656374207760448201526b34ba34103cb7bab939b2b63360a11b6064820152608490fd5b346105fd5760003660031901126105fd576020601254604051908152f35b346105fd5760003660031901126105fd576000546040516001600160a01b039091168152602090f35b346105fd576020806003193601126105fd5760043580151580611178575b611117906120d7565b60005260086020526040600020906040519081602084549182815201936000526020600020916000905b82821061115857610c9285610eb78189038261219f565b83546001600160a01b031686529485019460019384019390910190611141565b50600254811061110e565b346105fd5760003660031901126105fd576020601554604051908152f35b346105fd5760003660031901126105fd576111ba6124e2565b600080546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b346105fd5760203660031901126105fd5761121361207c565b61121b6124e2565b6001600160a01b031661122f81151561247a565b6000908152600f60205260409020805460ff19169055005b346105fd5760003660031901126105fd576020601354604051908152f35b346105fd5760203660031901126105fd576001600160a01b0361128661207c565b16600052600560205260206004604060002001541515604051908152f35b346105fd576020806003193601126105fd576001600160a01b03806112c761207c565b16600052600c6020526040600020916040518092602085549283815201946000526020600020926000915b83831061130957610c9286610eb7818a038261219f565b84548116875295810195600194850194909201916112f2565b346105fd576020806003193601126105fd5760043533600052600582526113526004604060002001541515612420565b8015158061140b575b611364906120d7565b8060005260098252604060002033600052825261138960ff6040600020541615612265565b806000526009825260406000203360005282526040600020600160ff1982541617905580600052600882526113c233604060002061239f565b806000526007825260056040600020016113dc81546123da565b90557f992fab36eae044cb10bbca598664ac6112f28a1b0a180a89a47e9b3cc5e2d384604051924284523393a3005b50600254811061135b565b346105fd5760403660031901126105fd5761142f61207c565b6001600160a01b0360243581811692908390036105fd5716600052600d602052604060002090600052602052602060ff604060002054166040519015158152f35b346105fd576020806003193601126105fd576001600160401b036004358181116105fd576114a2903690600401611fe6565b33600052600584526114bd6004604060002001541515612420565b80156115ce573360005260058452600360406000200192811161045e576114ee816114e8855461212f565b85612302565b600092601f821160011461154a57610b1482807f33f698d68dca869073a792459ab7f3686cfccd00a2e8b131ee9357c8f1f5dfbc9660009161153f575b508160011b916000199060031b1c19161790565b90508501358861152b565b601f1982169381600052856000209060005b878782106115b8575050837f33f698d68dca869073a792459ab7f3686cfccd00a2e8b131ee9357c8f1f5dfbc961061159e575b5050600182811b019055610b17565b840135600019600385901b60f8161c19169055858061158f565b600183948293948901358155019301910161155c565b60405162461bcd60e51b815260048101859052601f60248201527f416c756d6e6952656769737472793a20537461747573207265717569726564006044820152606490fd5b346105fd576020806003193601126105fd576004356001600160401b0381116105fd576116466020913690600401611fe6565b919082604051938492833781016010815203019020906040519081602084549182815201936000526020600020916000905b82821061168f57610c9285610eb78189038261219f565b83546001600160a01b031686529485019460019384019390910190611678565b346105fd5760203660031901126105fd576001600160a01b036116d061207c565b1660005260056020526117746040600020610c92604051916116f183612169565b6116fa816121c0565b8352611708600182016121c0565b92602081019384526117956002830154926040830193845261172c600382016121c0565b906060840191825261178261174f600560048401549360808801948552016121c0565b948560a082015251975195519251915195604051998a9960c08b5260c08b0190611fa6565b9089820360208b0152611fa6565b9160408801528682036060880152611fa6565b91608085015283820360a0850152611fa6565b346105fd5760203660031901126105fd57600435801515806118ae575b1561185757600052600a60205260a060406000206080604051916117e883612184565b600180851b0392838254169384825260018301541680602083015260028301549182604082015260ff6004600386015495866060850152015416151594859101528361184d575b60405194855260208501526040840152606083015215156080820152f35b428311935061182f565b60405162461bcd60e51b815260206004820152602960248201527f416c756d6e6952656769737472793a204d656e746f727368697020646f6573206044820152681b9bdd08195e1a5cdd60ba1b6064820152608490fd5b5060035481106117c5565b346105fd576118c736612013565b859493929596919615611e4c578215611e08578515611db2573360005260056020526118fb60046040600020015415612265565b6040519661190888612169565b6119133687856122bc565b88526119203685876122bc565b6020890152866040890152604051918260408101106001600160401b0360408501111761045e578260406119779401604052600681526561637469766560d01b602082015260608a01524260808a015236916122bc565b60a0870152336000526005602052604060002086518051906001600160401b03821161045e576119ab826114e8855461212f565b602090601f8311600114611d46576119db929160009183611cc95750508160011b916000199060031b1c19161790565b81555b60208701518051906001600160401b03821161045e57611a0e82611a05600186015461212f565b60018601612302565b602090601f8311600114611cd457611a3e929160009183611cc95750508160011b916000199060031b1c19161790565b60018201555b6040870151600282015560608701518051906001600160401b03821161045e57611a75826102f4600386015461212f565b602090601f8311600114611c54578260059360a09593611aab93600092611bb65750508160011b916000199060031b1c19161790565b60038201555b60808901516004820155019601519586516001600160401b03811161045e57611ade81610abc845461212f565b6020601f8211600114611bc15791611b3a82611ba297969593611b94957f8edb17ae1cdaf2807de42e8dee8a7cda9ec04ac26d983205518690bdefa4bacb9b9c600092611bb65750508160011b916000199060031b1c19161790565b90555b611b5d60405184868237848101906010825260208133930301902061239f565b876000526011602052611b7433604060002061239f565b611b7f6012546123da565b601255604051956080875260808701916123ff565b9184830360208601526123ff565b9260408201524260608201528033930390a2005b015190508c80610243565b601f198216988360005260206000209960005b818110611c3c5750927f8edb17ae1cdaf2807de42e8dee8a7cda9ec04ac26d983205518690bdefa4bacb999a611b94959360019383611ba29b9a999710611c23575b505050811b019055611b3d565b015160001960f88460031b161c191690558b8080611c16565b838301518c556001909b019a60209384019301611bd4565b906003840160005260206000209160005b601f1985168110611cb157509260a0949260019260059583601f19811610611c98575b505050811b016003820155611ab1565b015160001960f88460031b161c191690558b8080611c88565b91926020600181928685015181550194019201611c65565b015190508a80610243565b9190600184016000526020600020906000935b601f1984168510611d2b576001945083601f19811610611d12575b505050811b016001820155611a44565b015160001960f88460031b161c19169055898080611d02565b81810151835560209485019460019093019290910190611ce7565b9190836000526020600020906000935b601f1984168510611d97576001945083601f19811610611d7e575b505050811b0181556119de565b015160001960f88460031b161c19169055898080611d71565b81810151835560209485019460019093019290910190611d56565b60405162461bcd60e51b815260206004820152602860248201527f416c756d6e6952656769737472793a2047726164756174696f6e2079656172206044820152671c995c5d5a5c995960c21b6064820152608490fd5b606460405162461bcd60e51b815260206004820152602060248201527f416c756d6e6952656769737472793a2050726f6772616d2072657175697265646044820152fd5b60405162461bcd60e51b815260206004820152601d60248201527f416c756d6e6952656769737472793a204e616d652072657175697265640000006044820152606490fd5b346105fd5760203660031901126105fd5760043580151580611f80575b611eb7906120d7565b6000526007602052611f50604060002060405190611ed482612169565b611edd816121c0565b8252611eeb600182016121c0565b9160208101928352611f71600283015460408301908152611f0e600385016121c0565b806060850152611f5e600560018060a01b03600488015416968760808801520154948560a082015251965192519260405198899860c08a5260c08a0190611fa6565b9088820360208a0152611fa6565b9160408701528582036060870152611fa6565b91608084015260a08301520390f35b506002548110611eae565b346105fd5760003660031901126105fd576020906004548152f35b919082519283825260005b848110611fd2575050826000602080949584010152601f8019910116010190565b602081830181015184830182015201611fb1565b9181601f840112156105fd578235916001600160401b0383116105fd57602083818601950101116105fd57565b60806003198201126105fd576001600160401b03916004358381116105fd578261203f91600401611fe6565b939093926024358281116105fd578161205a91600401611fe6565b93909392604435926064359182116105fd5761207891600401611fe6565b9091565b600435906001600160a01b03821682036105fd57565b602090602060408183019282815285518094520193019160005b8281106120ba575050505090565b83516001600160a01b0316855293810193928101926001016120ac565b156120de57565b60405162461bcd60e51b8152602060048201526024808201527f416c756d6e6952656769737472793a204576656e7420646f6573206e6f7420656044820152631e1a5cdd60e21b6064820152608490fd5b90600182811c9216801561215f575b602083101461214957565b634e487b7160e01b600052602260045260246000fd5b91607f169161213e565b60c081019081106001600160401b0382111761045e57604052565b60a081019081106001600160401b0382111761045e57604052565b90601f801991011681019081106001600160401b0382111761045e57604052565b906040519182600082546121d38161212f565b908184526020946001916001811690816000146122435750600114612204575b5050506122029250038361219f565b565b600090815285812095935091905b81831061222b57505061220293508201013880806121f3565b85548884018501529485019487945091830191612212565b9250505061220294925060ff191682840152151560051b8201013880806121f3565b1561226c57565b60405162461bcd60e51b815260206004820152602260248201527f416c756d6e6952656769737472793a20416c7265616479207265676973746572604482015261195960f21b6064820152608490fd5b9291926001600160401b03821161045e57604051916122e5601f8201601f19166020018461219f565b8294818452818301116105fd578281602093846000960137010152565b90601f811161231057505050565b6000916000526020600020906020601f850160051c8301941061234e575b601f0160051c01915b82811061234357505050565b818155600101612337565b909250829061232e565b6020919283604051948593843782019081520301902090565b80548210156123895760005260206000200190600090565b634e487b7160e01b600052603260045260246000fd5b8054600160401b81101561045e576123bc91600182018155612371565b60018060a09493941b038084549260031b9316831b921b1916179055565b60001981146123e95760010190565b634e487b7160e01b600052601160045260246000fd5b908060209392818452848401376000828201840152601f01601f1916010190565b1561242757565b60405162461bcd60e51b815260206004820152602560248201527f416c756d6e6952656769737472793a204e6f74207265676973746572656420616044820152646c756d6e6960d81b6064820152608490fd5b1561248157565b60405162461bcd60e51b815260206004820152602660248201527f416c756d6e6952656769737472793a20496e76616c6964206d656e746f72206160448201526564647265737360d01b6064820152608490fd5b919082018092116123e957565b6000546001600160a01b031633036124f657565b60405163118cdaa760e01b8152336004820152602490fdfea164736f6c6343000818000a",
+  "devdoc": {
+    "details": "Alumni management and networking system",
+    "errors": {
+      "OwnableInvalidOwner(address)": [
+        {
+          "details": "The owner is not a valid owner account. (eg. `address(0)`)"
+        }
+      ],
+      "OwnableUnauthorizedAccount(address)": [
+        {
+          "details": "The caller account is not authorized to perform an operation."
+        }
+      ]
+    },
+    "kind": "dev",
+    "methods": {
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "title": "AlumniRegistry",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "areConnected(address,address)": {
+        "notice": "Check if connected"
+      },
+      "authorizeMentor(address)": {
+        "notice": "Authorize mentor"
+      },
+      "connectWithAlumni(address)": {
+        "notice": "Connect with another alumni"
+      },
+      "createEvent(string,string,uint256,string)": {
+        "notice": "Create alumni event"
+      },
+      "createMentorship(address,uint256)": {
+        "notice": "Create mentorship"
+      },
+      "getAlumniByGraduationYear(uint256)": {
+        "notice": "Get alumni by graduation year"
+      },
+      "getAlumniByProgram(string)": {
+        "notice": "Get alumni by program"
+      },
+      "getAlumniProfile(address)": {
+        "notice": "Get alumni profile"
+      },
+      "getConnections(address)": {
+        "notice": "Get connections"
+      },
+      "getEventInfo(uint256)": {
+        "notice": "Get event info"
+      },
+      "getEventRegistrations(uint256)": {
+        "notice": "Get event registrations"
+      },
+      "getMentorshipInfo(uint256)": {
+        "notice": "Get mentorship info"
+      },
+      "getProfileField(address,string)": {
+        "notice": "Get profile field"
+      },
+      "getTotalAlumni()": {
+        "notice": "Get total alumni"
+      },
+      "getTotalDonationAmount()": {
+        "notice": "Get total donation amount"
+      },
+      "getTotalDonations()": {
+        "notice": "Get total donations"
+      },
+      "getTotalEvents()": {
+        "notice": "Get total events"
+      },
+      "getTotalMentorships()": {
+        "notice": "Get total mentorships"
+      },
+      "isRegisteredAlumni(address)": {
+        "notice": "Check if registered alumni"
+      },
+      "makeDonation(uint256,string)": {
+        "notice": "Make a donation"
+      },
+      "registerAlumni(string,string,uint256,string)": {
+        "notice": "Register as alumni"
+      },
+      "registerForEvent(uint256)": {
+        "notice": "Register for event"
+      },
+      "revokeMentor(address)": {
+        "notice": "Revoke mentor authorization"
+      },
+      "updateProfile(string,string)": {
+        "notice": "Update alumni profile"
+      },
+      "updateStatus(string)": {
+        "notice": "Update alumni status"
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 8,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 227,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "alumniCounter",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 229,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "eventCounter",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 231,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "mentorshipCounter",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 233,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "totalDonationAmount",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 238,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "alumniProfiles",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_mapping(t_address,t_struct(AlumniProfile)201_storage)"
+      },
+      {
+        "astId": 244,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "customProfileFields",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_mapping(t_address,t_mapping(t_string_memory_ptr,t_string_storage))"
+      },
+      {
+        "astId": 249,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "events",
+        "offset": 0,
+        "slot": "7",
+        "type": "t_mapping(t_uint256,t_struct(Event)214_storage)"
+      },
+      {
+        "astId": 254,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "eventRegistrations",
+        "offset": 0,
+        "slot": "8",
+        "type": "t_mapping(t_uint256,t_array(t_address)dyn_storage)"
+      },
+      {
+        "astId": 260,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "eventParticipants",
+        "offset": 0,
+        "slot": "9",
+        "type": "t_mapping(t_uint256,t_mapping(t_address,t_bool))"
+      },
+      {
+        "astId": 265,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "mentorships",
+        "offset": 0,
+        "slot": "10",
+        "type": "t_mapping(t_uint256,t_struct(Mentorship)225_storage)"
+      },
+      {
+        "astId": 270,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "mentorships_",
+        "offset": 0,
+        "slot": "11",
+        "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)"
+      },
+      {
+        "astId": 275,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "connections",
+        "offset": 0,
+        "slot": "12",
+        "type": "t_mapping(t_address,t_array(t_address)dyn_storage)"
+      },
+      {
+        "astId": 281,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "isConnected",
+        "offset": 0,
+        "slot": "13",
+        "type": "t_mapping(t_address,t_mapping(t_address,t_bool))"
+      },
+      {
+        "astId": 285,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "totalDonatedBy",
+        "offset": 0,
+        "slot": "14",
+        "type": "t_mapping(t_address,t_uint256)"
+      },
+      {
+        "astId": 289,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "authorizedMentors",
+        "offset": 0,
+        "slot": "15",
+        "type": "t_mapping(t_address,t_bool)"
+      },
+      {
+        "astId": 294,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "alumniByProgram",
+        "offset": 0,
+        "slot": "16",
+        "type": "t_mapping(t_string_memory_ptr,t_array(t_address)dyn_storage)"
+      },
+      {
+        "astId": 299,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "alumniByYear",
+        "offset": 0,
+        "slot": "17",
+        "type": "t_mapping(t_uint256,t_array(t_address)dyn_storage)"
+      },
+      {
+        "astId": 301,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "totalAlumni",
+        "offset": 0,
+        "slot": "18",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 303,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "totalEvents",
+        "offset": 0,
+        "slot": "19",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 305,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "totalMentorships",
+        "offset": 0,
+        "slot": "20",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 307,
+        "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+        "label": "totalDonations",
+        "offset": 0,
+        "slot": "21",
+        "type": "t_uint256"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_address)dyn_storage": {
+        "base": "t_address",
+        "encoding": "dynamic_array",
+        "label": "address[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_uint256)dyn_storage": {
+        "base": "t_uint256",
+        "encoding": "dynamic_array",
+        "label": "uint256[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_address,t_array(t_address)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => address[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_address)dyn_storage"
+      },
+      "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => uint256[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_uint256)dyn_storage"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_address,t_mapping(t_address,t_bool))": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => mapping(address => bool))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_address,t_bool)"
+      },
+      "t_mapping(t_address,t_mapping(t_string_memory_ptr,t_string_storage))": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => mapping(string => string))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_string_memory_ptr,t_string_storage)"
+      },
+      "t_mapping(t_address,t_struct(AlumniProfile)201_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => struct AlumniRegistry.AlumniProfile)",
+        "numberOfBytes": "32",
+        "value": "t_struct(AlumniProfile)201_storage"
+      },
+      "t_mapping(t_address,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_mapping(t_string_memory_ptr,t_array(t_address)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_string_memory_ptr",
+        "label": "mapping(string => address[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_address)dyn_storage"
+      },
+      "t_mapping(t_string_memory_ptr,t_string_storage)": {
+        "encoding": "mapping",
+        "key": "t_string_memory_ptr",
+        "label": "mapping(string => string)",
+        "numberOfBytes": "32",
+        "value": "t_string_storage"
+      },
+      "t_mapping(t_uint256,t_array(t_address)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => address[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_address)dyn_storage"
+      },
+      "t_mapping(t_uint256,t_mapping(t_address,t_bool))": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => mapping(address => bool))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_address,t_bool)"
+      },
+      "t_mapping(t_uint256,t_struct(Event)214_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct AlumniRegistry.Event)",
+        "numberOfBytes": "32",
+        "value": "t_struct(Event)214_storage"
+      },
+      "t_mapping(t_uint256,t_struct(Mentorship)225_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct AlumniRegistry.Mentorship)",
+        "numberOfBytes": "32",
+        "value": "t_struct(Mentorship)225_storage"
+      },
+      "t_string_memory_ptr": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_string_storage": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_struct(AlumniProfile)201_storage": {
+        "encoding": "inplace",
+        "label": "struct AlumniRegistry.AlumniProfile",
+        "members": [
+          {
+            "astId": 190,
+            "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+            "label": "name",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 192,
+            "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+            "label": "program",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 194,
+            "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+            "label": "graduationYear",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 196,
+            "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+            "label": "status",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 198,
+            "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+            "label": "registeredAt",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 200,
+            "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+            "label": "profileURI",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_string_storage"
+          }
+        ],
+        "numberOfBytes": "192"
+      },
+      "t_struct(Event)214_storage": {
+        "encoding": "inplace",
+        "label": "struct AlumniRegistry.Event",
+        "members": [
+          {
+            "astId": 203,
+            "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+            "label": "name",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 205,
+            "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+            "label": "description",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 207,
+            "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+            "label": "eventDate",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 209,
+            "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+            "label": "location",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 211,
+            "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+            "label": "organizer",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_address"
+          },
+          {
+            "astId": 213,
+            "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+            "label": "registrationCount",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "192"
+      },
+      "t_struct(Mentorship)225_storage": {
+        "encoding": "inplace",
+        "label": "struct AlumniRegistry.Mentorship",
+        "members": [
+          {
+            "astId": 216,
+            "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+            "label": "mentor",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address"
+          },
+          {
+            "astId": 218,
+            "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+            "label": "mentee",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address"
+          },
+          {
+            "astId": 220,
+            "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+            "label": "startDate",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 222,
+            "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+            "label": "endDate",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 224,
+            "contract": "contracts/modules/011-alumni/AlumniRegistry.sol:AlumniRegistry",
+            "label": "isActive",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_bool"
+          }
+        ],
+        "numberOfBytes": "160"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

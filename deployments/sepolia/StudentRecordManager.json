@@ -1,0 +1,1283 @@
+{
+  "address": "0x319EE1f8094c9fa5E39cB0643A90aDAC18f37bE2",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "student",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "subject",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "grade",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "credits",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "GradeAdded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "student",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "transcript",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "RecordCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "student",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "newTranscript",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "RecordUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "student",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "verifier",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "RecordVerified",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "student",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "semesterIndex",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "gpa",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "SemesterCompleted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "student",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "ipfsHash",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "TranscriptIssued",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "subject",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "grade",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "credits",
+          "type": "uint256"
+        }
+      ],
+      "name": "addGrade",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "verifier",
+          "type": "address"
+        }
+      ],
+      "name": "authorizeVerifier",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "semesterIndex",
+          "type": "uint256"
+        }
+      ],
+      "name": "completeSemester",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "studentId",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "transcript",
+          "type": "string"
+        }
+      ],
+      "name": "createRecord",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getCumulativeGPA",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getRecord",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "recordId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "student",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "studentId",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "enrollmentDate",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "totalCredits",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "cumulativeGpa",
+              "type": "uint256"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "semesterIndex",
+                  "type": "uint256"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "string",
+                      "name": "subject",
+                      "type": "string"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "grade",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "credits",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "timestamp",
+                      "type": "uint256"
+                    }
+                  ],
+                  "internalType": "struct IStudentRecordManager.Grade[]",
+                  "name": "grades",
+                  "type": "tuple[]"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "gpa",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "totalCredits",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestamp",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "isCompleted",
+                  "type": "bool"
+                }
+              ],
+              "internalType": "struct IStudentRecordManager.Semester[]",
+              "name": "semesters",
+              "type": "tuple[]"
+            },
+            {
+              "internalType": "bool",
+              "name": "isVerified",
+              "type": "bool"
+            },
+            {
+              "internalType": "address",
+              "name": "verifier",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "verificationDate",
+              "type": "uint256"
+            },
+            {
+              "internalType": "string",
+              "name": "transcriptIPFS",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct IStudentRecordManager.StudentRecord",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getSemesterCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "semesterIndex",
+          "type": "uint256"
+        }
+      ],
+      "name": "getSemesterGPA",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "semesterIndex",
+          "type": "uint256"
+        }
+      ],
+      "name": "getSemesterGrades",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "subject",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "grade",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "credits",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "timestamp",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct IStudentRecordManager.Grade[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "student",
+          "type": "address"
+        }
+      ],
+      "name": "getStudentRecords",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getTotalCredits",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalRecords",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getTranscriptIPFS",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "verifier",
+          "type": "address"
+        }
+      ],
+      "name": "isAuthorizedVerifier",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        }
+      ],
+      "name": "isRecordVerified",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "student",
+          "type": "address"
+        }
+      ],
+      "name": "isStudentVerified",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "ipfsHash",
+          "type": "string"
+        }
+      ],
+      "name": "issueTranscript",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "verifier",
+          "type": "address"
+        }
+      ],
+      "name": "revokeVerifier",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "transcript",
+          "type": "string"
+        }
+      ],
+      "name": "updateRecord",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        }
+      ],
+      "name": "verifyRecord",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x46e223d83e1b73c3bd6c859d59d55e45828486bef2ef0b73f2dfe275d409b2f9",
+  "receipt": {
+    "to": null,
+    "from": "0x7EFf82613404AE7Bce622EA1C927214E30F2285e",
+    "contractAddress": "0x319EE1f8094c9fa5E39cB0643A90aDAC18f37bE2",
+    "transactionIndex": 137,
+    "gasUsed": "2012048",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000800000000100000000000200040000000000000000000000000000000000000000000000000080000000000000000000000000000000400001000000000000000000000000000000000000020000000000000000000800000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x0cd314254322cacbb97da1a287e1f4848f8e8c12fdad4a8ca00b4dd11135e942",
+    "transactionHash": "0x46e223d83e1b73c3bd6c859d59d55e45828486bef2ef0b73f2dfe275d409b2f9",
+    "logs": [
+      {
+        "transactionIndex": 137,
+        "blockNumber": 10337725,
+        "transactionHash": "0x46e223d83e1b73c3bd6c859d59d55e45828486bef2ef0b73f2dfe275d409b2f9",
+        "address": "0x319EE1f8094c9fa5E39cB0643A90aDAC18f37bE2",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x0000000000000000000000007eff82613404ae7bce622ea1c927214e30f2285e"
+        ],
+        "data": "0x",
+        "logIndex": 346,
+        "blockHash": "0x0cd314254322cacbb97da1a287e1f4848f8e8c12fdad4a8ca00b4dd11135e942"
+      }
+    ],
+    "blockNumber": 10337725,
+    "cumulativeGasUsed": "22935516",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "643c790a20a39c49b48b321e24bb2a64",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"student\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"recordId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"subject\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"grade\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"credits\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"GradeAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"student\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"recordId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"transcript\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"RecordCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"student\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"recordId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"newTranscript\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"RecordUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"student\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"recordId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"verifier\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"RecordVerified\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"student\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"recordId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"semesterIndex\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"gpa\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"SemesterCompleted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"student\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"recordId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"ipfsHash\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"TranscriptIssued\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"recordId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"subject\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"grade\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"credits\",\"type\":\"uint256\"}],\"name\":\"addGrade\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"verifier\",\"type\":\"address\"}],\"name\":\"authorizeVerifier\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"recordId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"semesterIndex\",\"type\":\"uint256\"}],\"name\":\"completeSemester\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"studentId\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"transcript\",\"type\":\"string\"}],\"name\":\"createRecord\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"recordId\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"recordId\",\"type\":\"uint256\"}],\"name\":\"getCumulativeGPA\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"recordId\",\"type\":\"uint256\"}],\"name\":\"getRecord\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"recordId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"student\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"studentId\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"enrollmentDate\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalCredits\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"cumulativeGpa\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"uint256\",\"name\":\"semesterIndex\",\"type\":\"uint256\"},{\"components\":[{\"internalType\":\"string\",\"name\":\"subject\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"grade\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"credits\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"internalType\":\"struct IStudentRecordManager.Grade[]\",\"name\":\"grades\",\"type\":\"tuple[]\"},{\"internalType\":\"uint256\",\"name\":\"gpa\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalCredits\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"isCompleted\",\"type\":\"bool\"}],\"internalType\":\"struct IStudentRecordManager.Semester[]\",\"name\":\"semesters\",\"type\":\"tuple[]\"},{\"internalType\":\"bool\",\"name\":\"isVerified\",\"type\":\"bool\"},{\"internalType\":\"address\",\"name\":\"verifier\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"verificationDate\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"transcriptIPFS\",\"type\":\"string\"}],\"internalType\":\"struct IStudentRecordManager.StudentRecord\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"recordId\",\"type\":\"uint256\"}],\"name\":\"getSemesterCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"recordId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"semesterIndex\",\"type\":\"uint256\"}],\"name\":\"getSemesterGPA\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"recordId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"semesterIndex\",\"type\":\"uint256\"}],\"name\":\"getSemesterGrades\",\"outputs\":[{\"components\":[{\"internalType\":\"string\",\"name\":\"subject\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"grade\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"credits\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"internalType\":\"struct IStudentRecordManager.Grade[]\",\"name\":\"\",\"type\":\"tuple[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"student\",\"type\":\"address\"}],\"name\":\"getStudentRecords\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"recordId\",\"type\":\"uint256\"}],\"name\":\"getTotalCredits\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalRecords\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"recordId\",\"type\":\"uint256\"}],\"name\":\"getTranscriptIPFS\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"verifier\",\"type\":\"address\"}],\"name\":\"isAuthorizedVerifier\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"recordId\",\"type\":\"uint256\"}],\"name\":\"isRecordVerified\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"student\",\"type\":\"address\"}],\"name\":\"isStudentVerified\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"recordId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"ipfsHash\",\"type\":\"string\"}],\"name\":\"issueTranscript\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"verifier\",\"type\":\"address\"}],\"name\":\"revokeVerifier\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"recordId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"transcript\",\"type\":\"string\"}],\"name\":\"updateRecord\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"recordId\",\"type\":\"uint256\"}],\"name\":\"verifyRecord\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Manages student academic records on blockchain Handles grades, GPA calculation, record verification, and transcript management\",\"errors\":{\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}]},\"kind\":\"dev\",\"methods\":{\"addGrade(uint256,string,uint256,uint256)\":{\"details\":\"Add a grade to current semester\"},\"authorizeVerifier(address)\":{\"details\":\"Authorize a verifier (institution)\"},\"completeSemester(uint256,uint256)\":{\"details\":\"Complete semester and calculate GPA\"},\"createRecord(string,string,string)\":{\"details\":\"Create a new student record\"},\"getCumulativeGPA(uint256)\":{\"details\":\"Get cumulative GPA\"},\"getRecord(uint256)\":{\"details\":\"Get student record\"},\"getSemesterCount(uint256)\":{\"details\":\"Get semester count\"},\"getSemesterGPA(uint256,uint256)\":{\"details\":\"Get semester GPA\"},\"getSemesterGrades(uint256,uint256)\":{\"details\":\"Get grades in a semester\"},\"getStudentRecords(address)\":{\"details\":\"Get all records for a student\"},\"getTotalCredits(uint256)\":{\"details\":\"Get total credits\"},\"getTotalRecords()\":{\"details\":\"Get total records\"},\"getTranscriptIPFS(uint256)\":{\"details\":\"Get transcript IPFS hash\"},\"isAuthorizedVerifier(address)\":{\"details\":\"Check if address is authorized verifier\"},\"isRecordVerified(uint256)\":{\"details\":\"Check if record is verified\"},\"isStudentVerified(address)\":{\"details\":\"Check if student is verified\"},\"issueTranscript(uint256,string)\":{\"details\":\"Issue transcript\"},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"revokeVerifier(address)\":{\"details\":\"Revoke verifier authorization\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"},\"updateRecord(uint256,string,string)\":{\"details\":\"Update record information\"},\"verifyRecord(uint256)\":{\"details\":\"Verify student record\"}},\"title\":\"StudentRecordManager\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/modules/006-records-management/StudentRecordManager.sol\":\"StudentRecordManager\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"none\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {Context} from \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * The initial owner is set to the address provided by the deployer. This can\\n * later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    /**\\n     * @dev The caller account is not authorized to perform an operation.\\n     */\\n    error OwnableUnauthorizedAccount(address account);\\n\\n    /**\\n     * @dev The owner is not a valid owner account. (eg. `address(0)`)\\n     */\\n    error OwnableInvalidOwner(address owner);\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the address provided by the deployer as the initial owner.\\n     */\\n    constructor(address initialOwner) {\\n        if (initialOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(initialOwner);\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        if (owner() != _msgSender()) {\\n            revert OwnableUnauthorizedAccount(_msgSender());\\n        }\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby disabling any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        if (newOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    function _contextSuffixLength() internal view virtual returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\"},\"contracts/modules/006-records-management/StudentRecordManager.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.24;\\r\\n\\r\\nimport {Ownable} from \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\r\\nimport {IStudentRecordManager} from \\\"./interfaces/IStudentRecordManager.sol\\\";\\r\\n\\r\\n/**\\r\\n * @title StudentRecordManager\\r\\n * @dev Manages student academic records on blockchain\\r\\n * Handles grades, GPA calculation, record verification, and transcript management\\r\\n */\\r\\ncontract StudentRecordManager is IStudentRecordManager, Ownable {\\r\\n    \\r\\n    // ============ State Variables ============\\r\\n    uint256 private recordIdCounter = 1;\\r\\n    \\r\\n    mapping(uint256 => StudentRecord) private records;\\r\\n    mapping(address => uint256[]) private studentRecords;\\r\\n    mapping(uint256 => mapping(uint256 => Semester)) private semesters;\\r\\n    mapping(uint256 => uint256) private semesterCounts;\\r\\n    \\r\\n    // Authorized verifiers (institutions)\\r\\n    mapping(address => bool) private authorizedVerifiers;\\r\\n\\r\\n    // ============ Modifiers ============\\r\\n    modifier onlyVerifier() {\\r\\n        require(authorizedVerifiers[msg.sender] || msg.sender == owner(), \\\"Not authorized verifier\\\");\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    modifier recordExists(uint256 recordId) {\\r\\n        require(records[recordId].student != address(0), \\\"Record not found\\\");\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    // ============ Constructor ============\\r\\n    constructor() Ownable(msg.sender) {\\r\\n        // Owner is automatically authorized as a verifier\\r\\n        authorizedVerifiers[msg.sender] = true;\\r\\n    }\\r\\n\\r\\n    // ============ Record Management ============\\r\\n    /**\\r\\n     * @dev Create a new student record\\r\\n     */\\r\\n    function createRecord(\\r\\n        string calldata name,\\r\\n        string calldata studentId,\\r\\n        string calldata transcript\\r\\n    ) external returns (uint256 recordId) {\\r\\n        require(bytes(name).length > 0, \\\"Invalid name\\\");\\r\\n        require(bytes(studentId).length > 0, \\\"Invalid student ID\\\");\\r\\n\\r\\n        recordId = recordIdCounter++;\\r\\n        \\r\\n        StudentRecord storage record = records[recordId];\\r\\n        record.recordId = recordId;\\r\\n        record.student = msg.sender;\\r\\n        record.name = name;\\r\\n        record.studentId = studentId;\\r\\n        record.enrollmentDate = block.timestamp;\\r\\n        record.totalCredits = 0;\\r\\n        record.cumulativeGpa = 0;\\r\\n        record.isVerified = false;\\r\\n        record.transcriptIPFS = transcript;\\r\\n\\r\\n        studentRecords[msg.sender].push(recordId);\\r\\n        semesterCounts[recordId] = 0;\\r\\n\\r\\n        emit RecordCreated(msg.sender, recordId, transcript, block.timestamp);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Add a grade to current semester\\r\\n     */\\r\\n    function addGrade(\\r\\n        uint256 recordId,\\r\\n        string calldata subject,\\r\\n        uint256 grade,\\r\\n        uint256 credits\\r\\n    ) external recordExists(recordId) {\\r\\n        require(records[recordId].student == msg.sender, \\\"Unauthorized\\\");\\r\\n        require(bytes(subject).length > 0, \\\"Invalid subject\\\");\\r\\n        require(grade <= 100, \\\"Invalid grade\\\");\\r\\n        require(credits > 0, \\\"Invalid credits\\\");\\r\\n\\r\\n        uint256 currentSemester = semesterCounts[recordId];\\r\\n        \\r\\n        // Initialize semester if not exists\\r\\n        if (semesters[recordId][currentSemester].semesterIndex == 0) {\\r\\n            semesters[recordId][currentSemester].semesterIndex = currentSemester;\\r\\n        }\\r\\n\\r\\n        Semester storage sem = semesters[recordId][currentSemester];\\r\\n        sem.grades.push(Grade({\\r\\n            subject: subject,\\r\\n            grade: grade,\\r\\n            credits: credits,\\r\\n            timestamp: block.timestamp\\r\\n        }));\\r\\n\\r\\n        emit GradeAdded(msg.sender, recordId, subject, grade, credits, block.timestamp);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Complete semester and calculate GPA\\r\\n     */\\r\\n    function completeSemester(uint256 recordId, uint256 semesterIndex) external recordExists(recordId) {\\r\\n        require(records[recordId].student == msg.sender, \\\"Unauthorized\\\");\\r\\n        require(semesterIndex < semesterCounts[recordId] + 1, \\\"Invalid semester\\\");\\r\\n\\r\\n        Semester storage sem = semesters[recordId][semesterIndex];\\r\\n        require(!sem.isCompleted, \\\"Semester already completed\\\");\\r\\n        require(sem.grades.length > 0, \\\"No grades in semester\\\");\\r\\n\\r\\n        // Calculate GPA (weighted by credits)\\r\\n        uint256 totalGradePoints = 0;\\r\\n        uint256 totalCredits = 0;\\r\\n\\r\\n        for (uint256 i = 0; i < sem.grades.length; i++) {\\r\\n            uint256 gradePoints = _gradeToPoints(sem.grades[i].grade) * sem.grades[i].credits;\\r\\n            totalGradePoints += gradePoints;\\r\\n            totalCredits += sem.grades[i].credits;\\r\\n        }\\r\\n\\r\\n        uint256 gpa = totalCredits > 0 ? (totalGradePoints * 100) / totalCredits : 0;\\r\\n        \\r\\n        sem.gpa = gpa;\\r\\n        sem.totalCredits = totalCredits;\\r\\n        sem.isCompleted = true;\\r\\n        sem.timestamp = block.timestamp;\\r\\n\\r\\n        // Update student total credits and cumulative GPA\\r\\n        StudentRecord storage record = records[recordId];\\r\\n        uint256 totalCreditsEarned = record.totalCredits + totalCredits;\\r\\n        \\r\\n        // Weighted cumulative GPA\\r\\n        if (totalCreditsEarned > 0) {\\r\\n            uint256 newCumulativePoints = (record.cumulativeGpa * record.totalCredits) + (gpa * totalCredits);\\r\\n            record.cumulativeGpa = newCumulativePoints / totalCreditsEarned;\\r\\n        }\\r\\n        \\r\\n        record.totalCredits = totalCreditsEarned;\\r\\n\\r\\n        // Move to next semester\\r\\n        semesterCounts[recordId]++;\\r\\n\\r\\n        emit SemesterCompleted(msg.sender, recordId, semesterIndex, gpa, block.timestamp);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Verify student record\\r\\n     */\\r\\n    function verifyRecord(uint256 recordId) external onlyVerifier recordExists(recordId) {\\r\\n        StudentRecord storage record = records[recordId];\\r\\n        require(!record.isVerified, \\\"Already verified\\\");\\r\\n\\r\\n        record.isVerified = true;\\r\\n        record.verifier = msg.sender;\\r\\n        record.verificationDate = block.timestamp;\\r\\n\\r\\n        emit RecordVerified(record.student, recordId, msg.sender, block.timestamp);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Issue transcript\\r\\n     */\\r\\n    function issueTranscript(uint256 recordId, string calldata ipfsHash) external recordExists(recordId) {\\r\\n        require(records[recordId].student == msg.sender || msg.sender == owner(), \\\"Unauthorized\\\");\\r\\n        require(bytes(ipfsHash).length > 0, \\\"Invalid IPFS hash\\\");\\r\\n        require(records[recordId].isVerified, \\\"Record must be verified first\\\");\\r\\n\\r\\n        records[recordId].transcriptIPFS = ipfsHash;\\r\\n\\r\\n        emit TranscriptIssued(records[recordId].student, recordId, ipfsHash, block.timestamp);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Update record information\\r\\n     */\\r\\n    function updateRecord(\\r\\n        uint256 recordId,\\r\\n        string calldata name,\\r\\n        string calldata transcript\\r\\n    ) external recordExists(recordId) {\\r\\n        require(records[recordId].student == msg.sender, \\\"Unauthorized\\\");\\r\\n        require(bytes(name).length > 0, \\\"Invalid name\\\");\\r\\n\\r\\n        StudentRecord storage record = records[recordId];\\r\\n        record.name = name;\\r\\n        record.transcriptIPFS = transcript;\\r\\n\\r\\n        emit RecordUpdated(msg.sender, recordId, transcript, block.timestamp);\\r\\n    }\\r\\n\\r\\n    // ============ Admin Functions ============\\r\\n    /**\\r\\n     * @dev Authorize a verifier (institution)\\r\\n     */\\r\\n    function authorizeVerifier(address verifier) external onlyOwner {\\r\\n        require(verifier != address(0), \\\"Invalid address\\\");\\r\\n        authorizedVerifiers[verifier] = true;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Revoke verifier authorization\\r\\n     */\\r\\n    function revokeVerifier(address verifier) external onlyOwner {\\r\\n        authorizedVerifiers[verifier] = false;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Check if address is authorized verifier\\r\\n     */\\r\\n    function isAuthorizedVerifier(address verifier) external view returns (bool) {\\r\\n        return authorizedVerifiers[verifier];\\r\\n    }\\r\\n\\r\\n    // ============ Query Functions ============\\r\\n    /**\\r\\n     * @dev Get student record\\r\\n     */\\r\\n    function getRecord(uint256 recordId) external view recordExists(recordId) returns (StudentRecord memory) {\\r\\n        return records[recordId];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Get all records for a student\\r\\n     */\\r\\n    function getStudentRecords(address student) external view returns (uint256[] memory) {\\r\\n        return studentRecords[student];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Get grades in a semester\\r\\n     */\\r\\n    function getSemesterGrades(uint256 recordId, uint256 semesterIndex) \\r\\n        external \\r\\n        view \\r\\n        recordExists(recordId) \\r\\n        returns (Grade[] memory) \\r\\n    {\\r\\n        return semesters[recordId][semesterIndex].grades;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Get semester GPA\\r\\n     */\\r\\n    function getSemesterGPA(uint256 recordId, uint256 semesterIndex) \\r\\n        external \\r\\n        view \\r\\n        recordExists(recordId) \\r\\n        returns (uint256) \\r\\n    {\\r\\n        return semesters[recordId][semesterIndex].gpa;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Get cumulative GPA\\r\\n     */\\r\\n    function getCumulativeGPA(uint256 recordId) \\r\\n        external \\r\\n        view \\r\\n        recordExists(recordId) \\r\\n        returns (uint256) \\r\\n    {\\r\\n        return records[recordId].cumulativeGpa;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Check if record is verified\\r\\n     */\\r\\n    function isRecordVerified(uint256 recordId) \\r\\n        external \\r\\n        view \\r\\n        recordExists(recordId) \\r\\n        returns (bool) \\r\\n    {\\r\\n        return records[recordId].isVerified;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Get total credits\\r\\n     */\\r\\n    function getTotalCredits(uint256 recordId) \\r\\n        external \\r\\n        view \\r\\n        recordExists(recordId) \\r\\n        returns (uint256) \\r\\n    {\\r\\n        return records[recordId].totalCredits;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Get semester count\\r\\n     */\\r\\n    function getSemesterCount(uint256 recordId) \\r\\n        external \\r\\n        view \\r\\n        recordExists(recordId) \\r\\n        returns (uint256) \\r\\n    {\\r\\n        return semesterCounts[recordId];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Get transcript IPFS hash\\r\\n     */\\r\\n    function getTranscriptIPFS(uint256 recordId) \\r\\n        external \\r\\n        view \\r\\n        recordExists(recordId) \\r\\n        returns (string memory) \\r\\n    {\\r\\n        return records[recordId].transcriptIPFS;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Get total records\\r\\n     */\\r\\n    function getTotalRecords() external view returns (uint256) {\\r\\n        return recordIdCounter - 1;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @dev Check if student is verified\\r\\n     */\\r\\n    function isStudentVerified(address student) external view returns (bool) {\\r\\n        uint256[] memory ids = studentRecords[student];\\r\\n        for (uint256 i = 0; i < ids.length; i++) {\\r\\n            if (records[ids[i]].isVerified) {\\r\\n                return true;\\r\\n            }\\r\\n        }\\r\\n        return false;\\r\\n    }\\r\\n\\r\\n    // ============ Internal Functions ============\\r\\n    /**\\r\\n     * @dev Convert grade (0-100) to GPA points (0-4.0 as 0-400 in basis points)\\r\\n     */\\r\\n    function _gradeToPoints(uint256 grade) internal pure returns (uint256) {\\r\\n        if (grade >= 93) return 400;      // A (3.75-4.0)\\r\\n        if (grade >= 90) return 375;      // A- (3.7-3.74)\\r\\n        if (grade >= 87) return 350;      // B+ (3.3-3.69)\\r\\n        if (grade >= 83) return 325;      // B (3.0-3.29)\\r\\n        if (grade >= 80) return 300;      // B- (2.7-2.99)\\r\\n        if (grade >= 77) return 275;      // C+ (2.3-2.69)\\r\\n        if (grade >= 73) return 250;      // C (2.0-2.29)\\r\\n        if (grade >= 70) return 225;      // C- (1.7-1.99)\\r\\n        if (grade >= 67) return 200;      // D+ (1.3-1.69)\\r\\n        if (grade >= 63) return 175;      // D (1.0-1.29)\\r\\n        if (grade >= 60) return 150;      // D- (0.7-0.99)\\r\\n        return 0;                         // F\\r\\n    }\\r\\n}\\r\\n\",\"keccak256\":\"0x7e97f00cfad6d18f8700a29d9b826cf391cdabeae4805a53b324a164986dc086\",\"license\":\"MIT\"},\"contracts/modules/006-records-management/interfaces/IStudentRecordManager.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.24;\\r\\n\\r\\n/**\\r\\n * @title IStudentRecordManager\\r\\n * @dev Interface for managing student academic records on blockchain\\r\\n */\\r\\ninterface IStudentRecordManager {\\r\\n    // ============ Events ============\\r\\n    event RecordCreated(\\r\\n        address indexed student,\\r\\n        uint256 recordId,\\r\\n        string transcript,\\r\\n        uint256 timestamp\\r\\n    );\\r\\n\\r\\n    event RecordUpdated(\\r\\n        address indexed student,\\r\\n        uint256 recordId,\\r\\n        string newTranscript,\\r\\n        uint256 timestamp\\r\\n    );\\r\\n\\r\\n    event RecordVerified(\\r\\n        address indexed student,\\r\\n        uint256 recordId,\\r\\n        address verifier,\\r\\n        uint256 timestamp\\r\\n    );\\r\\n\\r\\n    event GradeAdded(\\r\\n        address indexed student,\\r\\n        uint256 recordId,\\r\\n        string subject,\\r\\n        uint256 grade,\\r\\n        uint256 credits,\\r\\n        uint256 timestamp\\r\\n    );\\r\\n\\r\\n    event SemesterCompleted(\\r\\n        address indexed student,\\r\\n        uint256 recordId,\\r\\n        uint256 semesterIndex,\\r\\n        uint256 gpa,\\r\\n        uint256 timestamp\\r\\n    );\\r\\n\\r\\n    event TranscriptIssued(\\r\\n        address indexed student,\\r\\n        uint256 recordId,\\r\\n        string ipfsHash,\\r\\n        uint256 timestamp\\r\\n    );\\r\\n\\r\\n    // ============ Structs ============\\r\\n    struct Grade {\\r\\n        string subject;\\r\\n        uint256 grade; // 0-100\\r\\n        uint256 credits;\\r\\n        uint256 timestamp;\\r\\n    }\\r\\n\\r\\n    struct Semester {\\r\\n        uint256 semesterIndex;\\r\\n        Grade[] grades;\\r\\n        uint256 gpa; // Stored as basis points (e.g., 3500 = 3.50)\\r\\n        uint256 totalCredits;\\r\\n        uint256 timestamp;\\r\\n        bool isCompleted;\\r\\n    }\\r\\n\\r\\n    struct StudentRecord {\\r\\n        uint256 recordId;\\r\\n        address student;\\r\\n        string name;\\r\\n        string studentId;\\r\\n        uint256 enrollmentDate;\\r\\n        uint256 totalCredits;\\r\\n        uint256 cumulativeGpa; // Basis points\\r\\n        Semester[] semesters;\\r\\n        bool isVerified;\\r\\n        address verifier;\\r\\n        uint256 verificationDate;\\r\\n        string transcriptIPFS;\\r\\n    }\\r\\n\\r\\n    // ============ Mutation Functions ============\\r\\n    /**\\r\\n     * @dev Create a new student record\\r\\n     * @param name Student name\\r\\n     * @param studentId Student ID\\r\\n     * @param transcript Initial transcript hash or identifier\\r\\n     * @return recordId The ID of the created record\\r\\n     */\\r\\n    function createRecord(\\r\\n        string calldata name,\\r\\n        string calldata studentId,\\r\\n        string calldata transcript\\r\\n    ) external returns (uint256 recordId);\\r\\n\\r\\n    /**\\r\\n     * @dev Add a grade to a student's current semester\\r\\n     * @param recordId Student record ID\\r\\n     * @param subject Subject name\\r\\n     * @param grade Grade value (0-100)\\r\\n     * @param credits Credit hours\\r\\n     */\\r\\n    function addGrade(\\r\\n        uint256 recordId,\\r\\n        string calldata subject,\\r\\n        uint256 grade,\\r\\n        uint256 credits\\r\\n    ) external;\\r\\n\\r\\n    /**\\r\\n     * @dev Complete a semester and calculate GPA\\r\\n     * @param recordId Student record ID\\r\\n     * @param semesterIndex Semester index\\r\\n     */\\r\\n    function completeSemester(uint256 recordId, uint256 semesterIndex) external;\\r\\n\\r\\n    /**\\r\\n     * @dev Verify student record\\r\\n     * @param recordId Student record ID\\r\\n     */\\r\\n    function verifyRecord(uint256 recordId) external;\\r\\n\\r\\n    /**\\r\\n     * @dev Issue transcript document\\r\\n     * @param recordId Student record ID\\r\\n     * @param ipfsHash IPFS hash of transcript PDF\\r\\n     */\\r\\n    function issueTranscript(\\r\\n        uint256 recordId,\\r\\n        string calldata ipfsHash\\r\\n    ) external;\\r\\n\\r\\n    /**\\r\\n     * @dev Update student record information\\r\\n     * @param recordId Student record ID\\r\\n     * @param name New student name\\r\\n     * @param transcript New transcript identifier\\r\\n     */\\r\\n    function updateRecord(\\r\\n        uint256 recordId,\\r\\n        string calldata name,\\r\\n        string calldata transcript\\r\\n    ) external;\\r\\n\\r\\n    // ============ Query Functions ============\\r\\n    /**\\r\\n     * @dev Get student record by ID\\r\\n     * @param recordId Student record ID\\r\\n     * @return StudentRecord structure\\r\\n     */\\r\\n    function getRecord(uint256 recordId) external view returns (StudentRecord memory);\\r\\n\\r\\n    /**\\r\\n     * @dev Get all records for a student\\r\\n     * @param student Student address\\r\\n     * @return Array of record IDs\\r\\n     */\\r\\n    function getStudentRecords(address student) external view returns (uint256[] memory);\\r\\n\\r\\n    /**\\r\\n     * @dev Get grade details for a semester\\r\\n     * @param recordId Student record ID\\r\\n     * @param semesterIndex Semester index\\r\\n     * @return Array of grades in semester\\r\\n     */\\r\\n    function getSemesterGrades(uint256 recordId, uint256 semesterIndex) external view returns (Grade[] memory);\\r\\n\\r\\n    /**\\r\\n     * @dev Get GPA for a semester\\r\\n     * @param recordId Student record ID\\r\\n     * @param semesterIndex Semester index\\r\\n     * @return GPA value in basis points\\r\\n     */\\r\\n    function getSemesterGPA(uint256 recordId, uint256 semesterIndex) external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @dev Get cumulative GPA\\r\\n     * @param recordId Student record ID\\r\\n     * @return Cumulative GPA in basis points\\r\\n     */\\r\\n    function getCumulativeGPA(uint256 recordId) external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @dev Check if record is verified\\r\\n     * @param recordId Student record ID\\r\\n     * @return true if record is verified\\r\\n     */\\r\\n    function isRecordVerified(uint256 recordId) external view returns (bool);\\r\\n\\r\\n    /**\\r\\n     * @dev Get total credits earned\\r\\n     * @param recordId Student record ID\\r\\n     * @return Total credits\\r\\n     */\\r\\n    function getTotalCredits(uint256 recordId) external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @dev Get number of semesters completed\\r\\n     * @param recordId Student record ID\\r\\n     * @return Number of completed semesters\\r\\n     */\\r\\n    function getSemesterCount(uint256 recordId) external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @dev Get transcript IPFS hash\\r\\n     * @param recordId Student record ID\\r\\n     * @return IPFS hash of transcript\\r\\n     */\\r\\n    function getTranscriptIPFS(uint256 recordId) external view returns (string memory);\\r\\n\\r\\n    /**\\r\\n     * @dev Get total records created\\r\\n     * @return Total number of student records\\r\\n     */\\r\\n    function getTotalRecords() external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @dev Verify student by checking if they have verified record\\r\\n     * @param student Student address\\r\\n     * @return true if student has verified record\\r\\n     */\\r\\n    function isStudentVerified(address student) external view returns (bool);\\r\\n}\\r\\n\",\"keccak256\":\"0xf805dd42a3abd567d15aa4532e955346d3e4bd23fb80e1b80601336e153f827e\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x6080806040523461009557331561007f5760008054336001600160a01b0319821681178355604080519390929091906001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08380a360018055338152600660205220600160ff1982541617905561222b908161009b8239f35b631e4fbdf760e01b815260006004820152602490fd5b600080fdfe6080604052600436101561001257600080fd5b60003560e01c80630318be1814611c0d57806303e9e609146118325780630aeacb5e146118075780631bb04f2c1461172057806320ad8cab1461169a5780633812c6a81461140c5780633878622e146113d35780633af4d9501461126357806350841ab7146111ab5780635e77b26c146111565780636cacbf3014611113578063700fda1314610e36578063715018a614610ddd5780637c3c002414610d8b5780638da5cb5b14610d62578063ad13e778146109ac578063b60d892014610957578063bc03e1bf146108fd578063bd02a235146108b7578063cbac129414610638578063f2fde38b146105a8578063f6dbd6701461054e5763facff5d21461011957600080fd5b346105495760603660031901126105495767ffffffffffffffff6004358181116105495761014b903690600401611cc8565b9091602491823582811161054957610167903690600401611cc8565b9360443584811161054957610180903690600401611cc8565b94909361018e811515611f4b565b8615610510576001938454976101a389612135565b86558860005260209960028b526040600020938a8555878501336bffffffffffffffffffffffff60a01b82541617905560028501918682116104fb576101f3826101ed8554611d35565b85611f86565b6000908d601f84116001146104955750610226929160009183610408575b50508160011b916000199060031b1c19161790565b90555b600383019184821161048057610243826101ed8554611d35565b600090601f831160011461041357918061027892600a9695946000926104085750508160011b916000199060031b1c19161790565b90555b42600482015560006005820155600060068201556008810160ff19815416905501908511610383576102b7856102b18354611d35565b83611f86565b600085601f81116001146103a357806102e692600091610398575b508160011b916000199060031b1c19161790565b90555b3360005260038652604060002090815492600160401b84101561038357830180835583101561036f57509184610364927fece5a1588913b19a08854e210b6b3a62ca765f811922f686851572817e44237194600052876000200155846000526005865260006040812055604051918291339542918885611ffd565b0390a2604051908152f35b634e487b7160e01b60009081526032600452fd5b50634e487b7160e01b60009081526041600452fd5b9050860135386102d2565b50601f198616908260005286896000209260005b8b888383106103f157505050106103d7575b50508285811b0190556102e9565b850135600019600388901b60f8161c1916905538806103c9565b858b0135875590950194938401938a9350016103b7565b013590503880610211565b918b8892959493601f1983168560005282600020926000905b8282106104675750509683600a981061044d575b505050811b01905561027b565b0135600019600384901b60f8161c19169055388080610440565b898401358555988901988c96909401939081019061042c565b85634e487b7160e01b60005260416004526000fd5b908a9392601f1984168660005283600020936000905b8282106104e257505084116104c8575b505050811b019055610229565b0135600019600384901b60f8161c191690553880806104bb565b8385013586558e979095019492830192908101906104ab565b87634e487b7160e01b60005260416004526000fd5b60405162461bcd60e51b81526020600482015260128185015271125b9d985b1a59081cdd1d59195b9d08125160721b6044820152606490fd5b600080fd5b346105495761055c36611cb2565b9080600052600260205261058160018060a01b03600160406000200154161515611cf6565b60005260046020526040600020906000526020526020600260406000200154604051908152f35b34610549576020366003190112610549576004356001600160a01b0381811691829003610549576105d7612144565b811561061f57600054826bffffffffffffffffffffffff60a01b821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b604051631e4fbdf760e01b815260006004820152602490fd5b346105495760403660031901126105495760043567ffffffffffffffff6024358181116105495761066d903690600401611cc8565b91836000526020906002825260018060a01b0391600191610698848460406000200154161515611cf6565b866000526002825283836040600020015416331480156108aa575b6106bc90611f10565b851561087157866000526002825260ff600860406000200154161561082c578660005260028252600a60406000200190861161081657610700866102b18354611d35565b6000601f87116001146107895786959492610779949261075a887f202c75c29c59c4f441414fc080e5b61807c52f886aacbf05d50f0b62c9646a8c9a60029560009161077e57508160011b916000199060031b1c19161790565b90555b8860005252604060002001541694604051938493429285611ffd565b0390a2005b90508901358d6102d2565b601f1987169082600052836000209160005b81811061080157509260029289989795927f202c75c29c59c4f441414fc080e5b61807c52f886aacbf05d50f0b62c9646a8c9a6107799896106107e7575b50508388811b01905561075d565b88013560001960038b901b60f8161c191690558a806107d9565b8883013584559286019291850191850161079b565b634e487b7160e01b600052604160045260246000fd5b60405162461bcd60e51b815260048101839052601d60248201527f5265636f7264206d7573742062652076657269666965642066697273740000006044820152606490fd5b60405162461bcd60e51b8152600481018390526011602482015270092dcecc2d8d2c84092a08ca640d0c2e6d607b1b6044820152606490fd5b50600054841633146106b3565b34610549576020366003190112610549576004356001600160a01b03811690819003610549576108e5612144565b6000908152600660205260409020805460ff19169055005b3461054957602036600319011261054957600435600081815260026020526040902060010154610937906001600160a01b03161515611cf6565b6000526002602052602060ff600860406000200154166040519015158152f35b3461054957602036600319011261054957600435600081815260026020526040902060010154610991906001600160a01b03161515611cf6565b60005260026020526020600660406000200154604051908152f35b3461054957608036600319011261054957602467ffffffffffffffff6004358235828111610549576109e2903690600401611cc8565b92906044359360643592846000526020906002825260018060a01b0397610a31600199610a19818c60406000200154161515611cf6565b88600052600285528a60406000200154163314611f10565b8315610d2d5760648811610cfa578515610cc557866000526005835260406000205460048452604060002081600052845260406000205415610ca6575b87600052600484526040600020906000528352886040600020019860405192610a9684611d8c565b808611610c9157601f1990604051610ab58784601f8b01160182611da8565b87815236888a01116105495787898883013760008789830101528552858501918b835260408601948a8652606087019d8e429052805490600160401b821015610c915790610b079187820181556120d0565b979097610c7c5751908151938411610c685750610b2e83610b288954611d35565b89611f86565b8791601f8411600114610bd9575093600393610b907f340bc783c705b3fe93b9abf55679c5aa03bb07bd6731d65ae99c4eeab7a04e2f9e9f9480610bb59d9c9b999560a09b99600092610bce5750508160011b916000199060031b1c19161790565b86555b51908501555160028401555191015560405196875286015260a0850191611fdc565b93604083015260608201524260808201528033930390a2005b015190503880610211565b60008881528981209392918516905b818110610c535750957f340bc783c705b3fe93b9abf55679c5aa03bb07bd6731d65ae99c4eeab7a04e2f9e9f94610bb59c9b9a98948294600398948360a09d9b10610c3b575b505050811b018655610b93565b0151600019838a1b60f8161c19169055388080610c2e565b82840151855593870193928a01928a01610be8565b634e487b7160e01b60009081526041600452fd5b50634e487b7160e01b60005260006004526000fd5b82634e487b7160e01b60005260416004526000fd5b8760005260048452604060002081600052845280604060002055610a6e565b82600f6064926040519262461bcd60e51b845260048401528201526e496e76616c6964206372656469747360881b6044820152fd5b82600d6064926040519262461bcd60e51b845260048401528201526c496e76616c696420677261646560981b6044820152fd5b82600f6064926040519262461bcd60e51b845260048401528201526e125b9d985b1a59081cdd589a9958dd608a1b6044820152fd5b34610549576000366003190112610549576000546040516001600160a01b039091168152602090f35b3461054957602036600319011261054957600435600081815260026020526040902060010154610dc5906001600160a01b03161515611cf6565b60005260056020526020604060002054604051908152f35b3461054957600036600319011261054957610df6612144565b600080546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b3461054957610e4436611cb2565b81600052600290602082815260018060a01b03610e88600191610e71818460406000200154161515611cf6565b866000528584528260406000200154163314611f10565b8460005260058252604060002054818101809111610fe2578310156110db5784600052600482526040600020836000528252604060002093600585019485549560ff871661109657838201938454801561105957600095869182915b81831061100157505086159050610ff857606481029080820460641490151715610fe25785610f1291612115565b975b888585015585600385015560ff19161790556004429101558560005282526040600020906005820190815490610f4a81836120c3565b809481610fac575b505050505583600052600581526040600020610f6e8154612135565b905560405193845283015260408201524260608201527fce36494f6ca750f2251a8d1fef2ecdf534013b8eb33712926385fa789f48a1a660803392a2005b610fd792610fcc610fc56006610fd29401968754612102565b918b612102565b906120c3565b612115565b905586808381610f52565b634e487b7160e01b600052601160045260246000fd5b50600097610f14565b9091979261105061103b8692610fcc8c8c61103261102b88611023858c6120d0565b500154612170565b92896120d0565b50015490612102565b94896110478c866120d0565b500154906120c3565b98019190610ee4565b60405162461bcd60e51b815260048101889052601560248201527427379033b930b232b99034b71039b2b6b2b9ba32b960591b6044820152606490fd5b60405162461bcd60e51b815260048101869052601a60248201527f53656d657374657220616c726561647920636f6d706c657465640000000000006044820152606490fd5b60405162461bcd60e51b815260048101839052601060248201526f24b73b30b634b21039b2b6b2b9ba32b960811b6044820152606490fd5b34610549576020366003190112610549576004356001600160a01b03811690819003610549576000526006602052602060ff604060002054166040519015158152f35b3461054957602036600319011261054957600435600081815260026020526040902060010154611190906001600160a01b03161515611cf6565b60005260026020526020600560406000200154604051908152f35b3461054957602080600319360112610549576004356001600160a01b038116908190036105495760005260038152604060002060405190818382549182815201908192600052846000209060005b8682821061124f57868661120f82880383611da8565b604051928392818401908285525180915260408401929160005b82811061123857505050500390f35b835185528695509381019392810192600101611229565b8354855290930192600192830192016111f9565b346105495760208060031936011261054957600435336000526006825260ff6040600020541680156113bf575b1561137a5760008181526002835260409020600101546001600160a01b03906112bc9082161515611cf6565b8160005260028352604060002060088101805460ff8116611342577f148ddc1fdc95d75a41ce61afaae1980500b2623f951509e03218c125095729a5949260609492600180936101008260a81b033360081b16906affffffffffffffffffffff60a81b1617179055426009820155015416936040519182523390820152426040820152a2005b60405162461bcd60e51b815260048101879052601060248201526f105b1c9958591e481d995c9a599a595960821b6044820152606490fd5b60405162461bcd60e51b815260048101839052601760248201527f4e6f7420617574686f72697a65642076657269666965720000000000000000006044820152606490fd5b506000546001600160a01b03163314611290565b34610549576020366003190112610549576004356001600160a01b038116810361054957611402602091612020565b6040519015158152f35b346105495760603660031901126105495760043567ffffffffffffffff60243581811161054957611441903690600401611cc8565b9290916044358181116105495761145c903690600401611cc8565b919093836000526020956002875260018060a01b03916114a460019361148c818660406000200154161515611cf6565b8760005260028a528460406000200154163314611f10565b6114af821515611f4b565b85600052600288526040600020916002830191858211610816576114d7826101ed8554611d35565b600090601f831160011461162e57918061150c92600a9695946000926116235750508160011b916000199060031b1c19161790565b90555b019183116108165761152b836115258454611d35565b84611f86565b600095601f841160011461159f57505061157e82807f18ee164716806b212c04cca59c027e999e15924b8f49e53f414f2f1dc6e36f0f969760009161159457508160011b916000199060031b1c19161790565b90555b6107796040519283923396429285611ffd565b9050870135886102d2565b601f198416968360005281600020916000905b89821061160c575050847f18ee164716806b212c04cca59c027e999e15924b8f49e53f414f2f1dc6e36f0f9798106115f2575b505082811b019055611581565b870135600019600386901b60f8161c1916905586806115e5565b808584958294958c013581550194019201906115b2565b013590508c80610211565b918591949392601f19821690846000528c600020918d6000905b8282106116835750509683600a9810611669575b505050811b01905561150f565b0135600019600384901b60f8161c191690558b808061165c565b838a01358555988901988a9690940193018e611648565b34610549576020366003190112610549576004356001600160a01b03811690819003610549576116c8612144565b80156116e9576000908152600660205260409020805460ff19166001179055005b60405162461bcd60e51b815260206004820152600f60248201526e496e76616c6964206164647265737360881b6044820152606490fd5b346105495761172e36611cb2565b90806000526020916002835260019161175860018060a01b03600160406000200154161515611cf6565b60005260048352604060002090600052825261177a6001604060002001611e87565b604051928392818401828552835180915260408501928060408360051b8801019501936000905b8382106117ae5787870388f35b918496819592949698508190603f198b82030185528951906117d96080835190808452830190611c72565b91838101518483015260408101516040830152606080910151910152980192019201879695939194926117a1565b34610549576000366003190112610549576001546000198101908111610fe257602090604051908152f35b3461054957602036600319011261054957606061016060405161185481611d6f565b6000815260006020820152826040820152828082015260006080820152600060a0820152600060c08201528260e0820152600061010082015260006101208201526000610140820152015260043560005260026020526118c560018060a01b03600160406000200154161515611cf6565b60043560005260026020526040600020604051906118e282611d6f565b8054825260018101546001600160a01b0316602083015261190560028201611dca565b604083015261191660038201611dca565b606083015260048101546080830152600581015460a0830152600681015460c08301526007810180549061194982611e6f565b916119576040519384611da8565b808352602083019160005260206000206000925b828410611b935760e0870185905260088087015460ff811615156101008a0152901c6001600160a01b03166101208801526009860154610140880152866119b4600a8801611dca565b6101608201526040518091602082528051602083015260018060a01b036020820151166040830152611a106119fa604083015161018060608601526101a0850190611c72565b6060830151848203601f19016080860152611c72565b90608081015160a084015260a081015160c084015260c081015160e084015260e081015191601f1984820301610100850152825180825260208201916020808360051b8301019501926000915b838310611ab2578780611aae896101608a610100810151151561012086015260018060a01b0361012082015116610140860152610140810151828601520151601f1984830301610180850152611c72565b0390f35b91939650919394601f1982820301835286519060c08101918051825260208101519260c06020840152835180915260e08301602060e08360051b86010195019160005b818110611b43575050505060019260209260a0808460408796015160408501526060810151606085015260808101516080850152015115159101529801930193019092879695949293611a5d565b9091929560208060019260df19898203018752895190606080611b6f8451608085526080850190611c72565b85850151848701526040808601519085015293015191015298019401929101611af5565b604051908160c081011067ffffffffffffffff60c0840111176108165760206006918360c06001950160405285548152611bce858701611e87565b8382015260028601546040820152600386015460608201526004860154608082015260ff600587015416151560a082015281520192019301929061196b565b3461054957602036600319011261054957600435600081815260026020526040902060010154611c47906001600160a01b03161515611cf6565b6000526002602052611aae611c62600a604060002001611dca565b6040519182916020835260208301905b919082519283825260005b848110611c9e575050826000602080949584010152601f8019910116010190565b602081830181015184830182015201611c7d565b6040906003190112610549576004359060243590565b9181601f840112156105495782359167ffffffffffffffff8311610549576020838186019501011161054957565b15611cfd57565b60405162461bcd60e51b815260206004820152601060248201526f149958dbdc99081b9bdd08199bdd5b9960821b6044820152606490fd5b90600182811c92168015611d65575b6020831014611d4f57565b634e487b7160e01b600052602260045260246000fd5b91607f1691611d44565b610180810190811067ffffffffffffffff82111761081657604052565b6080810190811067ffffffffffffffff82111761081657604052565b90601f8019910116810190811067ffffffffffffffff82111761081657604052565b90604051918260008254611ddd81611d35565b90818452602094600191600181169081600014611e4d5750600114611e0e575b505050611e0c92500383611da8565b565b600090815285812095935091905b818310611e35575050611e0c9350820101388080611dfd565b85548884018501529485019487945091830191611e1c565b92505050611e0c94925060ff191682840152151560051b820101388080611dfd565b67ffffffffffffffff81116108165760051b60200190565b908154611e9381611e6f565b92604093611ea46040519182611da8565b82815280946020809201926000526020600020906000935b858510611ecb57505050505050565b6004846001928451611edc81611d8c565b611ee587611dca565b8152848701548382015260028701548682015260038701546060820152815201930194019391611ebc565b15611f1757565b60405162461bcd60e51b815260206004820152600c60248201526b155b985d5d1a1bdc9a5e995960a21b6044820152606490fd5b15611f5257565b60405162461bcd60e51b815260206004820152600c60248201526b496e76616c6964206e616d6560a01b6044820152606490fd5b90601f8111611f9457505050565b6000916000526020600020906020601f850160051c83019410611fd2575b601f0160051c01915b828110611fc757505050565b818155600101611fbb565b9092508290611fb2565b908060209392818452848401376000828201840152601f01601f1916010190565b9493929160409261201b928752606060208801526060870191611fdc565b930152565b6001600160a01b03166000908152600360209081526040808320815181548082529185528385209094929391859081840190855b858282106120ad5750505061206b92500385611da8565b815b84518110156120a557818160051b8601015183526002825260ff600885852001541661209b5760010161206d565b5050505050600190565b505091505090565b855484526001958601958a955093019201612054565b91908201809211610fe257565b80548210156120ec5760005260206000209060021b0190600090565b634e487b7160e01b600052603260045260246000fd5b81810292918115918404141715610fe257565b811561211f570490565b634e487b7160e01b600052601260045260246000fd5b6000198114610fe25760010190565b6000546001600160a01b0316330361215857565b60405163118cdaa760e01b8152336004820152602490fd5b605d81101561221757605a8110156122105760578110156122095760538110156122025760508110156121fb57604d8110156121f45760498110156121ee5760468110156121e85760438110156121e257603f8110156121dc57603c11156121d757600090565b609690565b5060af90565b5060c890565b5060e190565b5060fa90565b5061011390565b5061012c90565b5061014590565b5061015e90565b5061017790565b506101909056fea164736f6c6343000818000a",
+  "deployedBytecode": "0x6080604052600436101561001257600080fd5b60003560e01c80630318be1814611c0d57806303e9e609146118325780630aeacb5e146118075780631bb04f2c1461172057806320ad8cab1461169a5780633812c6a81461140c5780633878622e146113d35780633af4d9501461126357806350841ab7146111ab5780635e77b26c146111565780636cacbf3014611113578063700fda1314610e36578063715018a614610ddd5780637c3c002414610d8b5780638da5cb5b14610d62578063ad13e778146109ac578063b60d892014610957578063bc03e1bf146108fd578063bd02a235146108b7578063cbac129414610638578063f2fde38b146105a8578063f6dbd6701461054e5763facff5d21461011957600080fd5b346105495760603660031901126105495767ffffffffffffffff6004358181116105495761014b903690600401611cc8565b9091602491823582811161054957610167903690600401611cc8565b9360443584811161054957610180903690600401611cc8565b94909361018e811515611f4b565b8615610510576001938454976101a389612135565b86558860005260209960028b526040600020938a8555878501336bffffffffffffffffffffffff60a01b82541617905560028501918682116104fb576101f3826101ed8554611d35565b85611f86565b6000908d601f84116001146104955750610226929160009183610408575b50508160011b916000199060031b1c19161790565b90555b600383019184821161048057610243826101ed8554611d35565b600090601f831160011461041357918061027892600a9695946000926104085750508160011b916000199060031b1c19161790565b90555b42600482015560006005820155600060068201556008810160ff19815416905501908511610383576102b7856102b18354611d35565b83611f86565b600085601f81116001146103a357806102e692600091610398575b508160011b916000199060031b1c19161790565b90555b3360005260038652604060002090815492600160401b84101561038357830180835583101561036f57509184610364927fece5a1588913b19a08854e210b6b3a62ca765f811922f686851572817e44237194600052876000200155846000526005865260006040812055604051918291339542918885611ffd565b0390a2604051908152f35b634e487b7160e01b60009081526032600452fd5b50634e487b7160e01b60009081526041600452fd5b9050860135386102d2565b50601f198616908260005286896000209260005b8b888383106103f157505050106103d7575b50508285811b0190556102e9565b850135600019600388901b60f8161c1916905538806103c9565b858b0135875590950194938401938a9350016103b7565b013590503880610211565b918b8892959493601f1983168560005282600020926000905b8282106104675750509683600a981061044d575b505050811b01905561027b565b0135600019600384901b60f8161c19169055388080610440565b898401358555988901988c96909401939081019061042c565b85634e487b7160e01b60005260416004526000fd5b908a9392601f1984168660005283600020936000905b8282106104e257505084116104c8575b505050811b019055610229565b0135600019600384901b60f8161c191690553880806104bb565b8385013586558e979095019492830192908101906104ab565b87634e487b7160e01b60005260416004526000fd5b60405162461bcd60e51b81526020600482015260128185015271125b9d985b1a59081cdd1d59195b9d08125160721b6044820152606490fd5b600080fd5b346105495761055c36611cb2565b9080600052600260205261058160018060a01b03600160406000200154161515611cf6565b60005260046020526040600020906000526020526020600260406000200154604051908152f35b34610549576020366003190112610549576004356001600160a01b0381811691829003610549576105d7612144565b811561061f57600054826bffffffffffffffffffffffff60a01b821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b604051631e4fbdf760e01b815260006004820152602490fd5b346105495760403660031901126105495760043567ffffffffffffffff6024358181116105495761066d903690600401611cc8565b91836000526020906002825260018060a01b0391600191610698848460406000200154161515611cf6565b866000526002825283836040600020015416331480156108aa575b6106bc90611f10565b851561087157866000526002825260ff600860406000200154161561082c578660005260028252600a60406000200190861161081657610700866102b18354611d35565b6000601f87116001146107895786959492610779949261075a887f202c75c29c59c4f441414fc080e5b61807c52f886aacbf05d50f0b62c9646a8c9a60029560009161077e57508160011b916000199060031b1c19161790565b90555b8860005252604060002001541694604051938493429285611ffd565b0390a2005b90508901358d6102d2565b601f1987169082600052836000209160005b81811061080157509260029289989795927f202c75c29c59c4f441414fc080e5b61807c52f886aacbf05d50f0b62c9646a8c9a6107799896106107e7575b50508388811b01905561075d565b88013560001960038b901b60f8161c191690558a806107d9565b8883013584559286019291850191850161079b565b634e487b7160e01b600052604160045260246000fd5b60405162461bcd60e51b815260048101839052601d60248201527f5265636f7264206d7573742062652076657269666965642066697273740000006044820152606490fd5b60405162461bcd60e51b8152600481018390526011602482015270092dcecc2d8d2c84092a08ca640d0c2e6d607b1b6044820152606490fd5b50600054841633146106b3565b34610549576020366003190112610549576004356001600160a01b03811690819003610549576108e5612144565b6000908152600660205260409020805460ff19169055005b3461054957602036600319011261054957600435600081815260026020526040902060010154610937906001600160a01b03161515611cf6565b6000526002602052602060ff600860406000200154166040519015158152f35b3461054957602036600319011261054957600435600081815260026020526040902060010154610991906001600160a01b03161515611cf6565b60005260026020526020600660406000200154604051908152f35b3461054957608036600319011261054957602467ffffffffffffffff6004358235828111610549576109e2903690600401611cc8565b92906044359360643592846000526020906002825260018060a01b0397610a31600199610a19818c60406000200154161515611cf6565b88600052600285528a60406000200154163314611f10565b8315610d2d5760648811610cfa578515610cc557866000526005835260406000205460048452604060002081600052845260406000205415610ca6575b87600052600484526040600020906000528352886040600020019860405192610a9684611d8c565b808611610c9157601f1990604051610ab58784601f8b01160182611da8565b87815236888a01116105495787898883013760008789830101528552858501918b835260408601948a8652606087019d8e429052805490600160401b821015610c915790610b079187820181556120d0565b979097610c7c5751908151938411610c685750610b2e83610b288954611d35565b89611f86565b8791601f8411600114610bd9575093600393610b907f340bc783c705b3fe93b9abf55679c5aa03bb07bd6731d65ae99c4eeab7a04e2f9e9f9480610bb59d9c9b999560a09b99600092610bce5750508160011b916000199060031b1c19161790565b86555b51908501555160028401555191015560405196875286015260a0850191611fdc565b93604083015260608201524260808201528033930390a2005b015190503880610211565b60008881528981209392918516905b818110610c535750957f340bc783c705b3fe93b9abf55679c5aa03bb07bd6731d65ae99c4eeab7a04e2f9e9f94610bb59c9b9a98948294600398948360a09d9b10610c3b575b505050811b018655610b93565b0151600019838a1b60f8161c19169055388080610c2e565b82840151855593870193928a01928a01610be8565b634e487b7160e01b60009081526041600452fd5b50634e487b7160e01b60005260006004526000fd5b82634e487b7160e01b60005260416004526000fd5b8760005260048452604060002081600052845280604060002055610a6e565b82600f6064926040519262461bcd60e51b845260048401528201526e496e76616c6964206372656469747360881b6044820152fd5b82600d6064926040519262461bcd60e51b845260048401528201526c496e76616c696420677261646560981b6044820152fd5b82600f6064926040519262461bcd60e51b845260048401528201526e125b9d985b1a59081cdd589a9958dd608a1b6044820152fd5b34610549576000366003190112610549576000546040516001600160a01b039091168152602090f35b3461054957602036600319011261054957600435600081815260026020526040902060010154610dc5906001600160a01b03161515611cf6565b60005260056020526020604060002054604051908152f35b3461054957600036600319011261054957610df6612144565b600080546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b3461054957610e4436611cb2565b81600052600290602082815260018060a01b03610e88600191610e71818460406000200154161515611cf6565b866000528584528260406000200154163314611f10565b8460005260058252604060002054818101809111610fe2578310156110db5784600052600482526040600020836000528252604060002093600585019485549560ff871661109657838201938454801561105957600095869182915b81831061100157505086159050610ff857606481029080820460641490151715610fe25785610f1291612115565b975b888585015585600385015560ff19161790556004429101558560005282526040600020906005820190815490610f4a81836120c3565b809481610fac575b505050505583600052600581526040600020610f6e8154612135565b905560405193845283015260408201524260608201527fce36494f6ca750f2251a8d1fef2ecdf534013b8eb33712926385fa789f48a1a660803392a2005b610fd792610fcc610fc56006610fd29401968754612102565b918b612102565b906120c3565b612115565b905586808381610f52565b634e487b7160e01b600052601160045260246000fd5b50600097610f14565b9091979261105061103b8692610fcc8c8c61103261102b88611023858c6120d0565b500154612170565b92896120d0565b50015490612102565b94896110478c866120d0565b500154906120c3565b98019190610ee4565b60405162461bcd60e51b815260048101889052601560248201527427379033b930b232b99034b71039b2b6b2b9ba32b960591b6044820152606490fd5b60405162461bcd60e51b815260048101869052601a60248201527f53656d657374657220616c726561647920636f6d706c657465640000000000006044820152606490fd5b60405162461bcd60e51b815260048101839052601060248201526f24b73b30b634b21039b2b6b2b9ba32b960811b6044820152606490fd5b34610549576020366003190112610549576004356001600160a01b03811690819003610549576000526006602052602060ff604060002054166040519015158152f35b3461054957602036600319011261054957600435600081815260026020526040902060010154611190906001600160a01b03161515611cf6565b60005260026020526020600560406000200154604051908152f35b3461054957602080600319360112610549576004356001600160a01b038116908190036105495760005260038152604060002060405190818382549182815201908192600052846000209060005b8682821061124f57868661120f82880383611da8565b604051928392818401908285525180915260408401929160005b82811061123857505050500390f35b835185528695509381019392810192600101611229565b8354855290930192600192830192016111f9565b346105495760208060031936011261054957600435336000526006825260ff6040600020541680156113bf575b1561137a5760008181526002835260409020600101546001600160a01b03906112bc9082161515611cf6565b8160005260028352604060002060088101805460ff8116611342577f148ddc1fdc95d75a41ce61afaae1980500b2623f951509e03218c125095729a5949260609492600180936101008260a81b033360081b16906affffffffffffffffffffff60a81b1617179055426009820155015416936040519182523390820152426040820152a2005b60405162461bcd60e51b815260048101879052601060248201526f105b1c9958591e481d995c9a599a595960821b6044820152606490fd5b60405162461bcd60e51b815260048101839052601760248201527f4e6f7420617574686f72697a65642076657269666965720000000000000000006044820152606490fd5b506000546001600160a01b03163314611290565b34610549576020366003190112610549576004356001600160a01b038116810361054957611402602091612020565b6040519015158152f35b346105495760603660031901126105495760043567ffffffffffffffff60243581811161054957611441903690600401611cc8565b9290916044358181116105495761145c903690600401611cc8565b919093836000526020956002875260018060a01b03916114a460019361148c818660406000200154161515611cf6565b8760005260028a528460406000200154163314611f10565b6114af821515611f4b565b85600052600288526040600020916002830191858211610816576114d7826101ed8554611d35565b600090601f831160011461162e57918061150c92600a9695946000926116235750508160011b916000199060031b1c19161790565b90555b019183116108165761152b836115258454611d35565b84611f86565b600095601f841160011461159f57505061157e82807f18ee164716806b212c04cca59c027e999e15924b8f49e53f414f2f1dc6e36f0f969760009161159457508160011b916000199060031b1c19161790565b90555b6107796040519283923396429285611ffd565b9050870135886102d2565b601f198416968360005281600020916000905b89821061160c575050847f18ee164716806b212c04cca59c027e999e15924b8f49e53f414f2f1dc6e36f0f9798106115f2575b505082811b019055611581565b870135600019600386901b60f8161c1916905586806115e5565b808584958294958c013581550194019201906115b2565b013590508c80610211565b918591949392601f19821690846000528c600020918d6000905b8282106116835750509683600a9810611669575b505050811b01905561150f565b0135600019600384901b60f8161c191690558b808061165c565b838a01358555988901988a9690940193018e611648565b34610549576020366003190112610549576004356001600160a01b03811690819003610549576116c8612144565b80156116e9576000908152600660205260409020805460ff19166001179055005b60405162461bcd60e51b815260206004820152600f60248201526e496e76616c6964206164647265737360881b6044820152606490fd5b346105495761172e36611cb2565b90806000526020916002835260019161175860018060a01b03600160406000200154161515611cf6565b60005260048352604060002090600052825261177a6001604060002001611e87565b604051928392818401828552835180915260408501928060408360051b8801019501936000905b8382106117ae5787870388f35b918496819592949698508190603f198b82030185528951906117d96080835190808452830190611c72565b91838101518483015260408101516040830152606080910151910152980192019201879695939194926117a1565b34610549576000366003190112610549576001546000198101908111610fe257602090604051908152f35b3461054957602036600319011261054957606061016060405161185481611d6f565b6000815260006020820152826040820152828082015260006080820152600060a0820152600060c08201528260e0820152600061010082015260006101208201526000610140820152015260043560005260026020526118c560018060a01b03600160406000200154161515611cf6565b60043560005260026020526040600020604051906118e282611d6f565b8054825260018101546001600160a01b0316602083015261190560028201611dca565b604083015261191660038201611dca565b606083015260048101546080830152600581015460a0830152600681015460c08301526007810180549061194982611e6f565b916119576040519384611da8565b808352602083019160005260206000206000925b828410611b935760e0870185905260088087015460ff811615156101008a0152901c6001600160a01b03166101208801526009860154610140880152866119b4600a8801611dca565b6101608201526040518091602082528051602083015260018060a01b036020820151166040830152611a106119fa604083015161018060608601526101a0850190611c72565b6060830151848203601f19016080860152611c72565b90608081015160a084015260a081015160c084015260c081015160e084015260e081015191601f1984820301610100850152825180825260208201916020808360051b8301019501926000915b838310611ab2578780611aae896101608a610100810151151561012086015260018060a01b0361012082015116610140860152610140810151828601520151601f1984830301610180850152611c72565b0390f35b91939650919394601f1982820301835286519060c08101918051825260208101519260c06020840152835180915260e08301602060e08360051b86010195019160005b818110611b43575050505060019260209260a0808460408796015160408501526060810151606085015260808101516080850152015115159101529801930193019092879695949293611a5d565b9091929560208060019260df19898203018752895190606080611b6f8451608085526080850190611c72565b85850151848701526040808601519085015293015191015298019401929101611af5565b604051908160c081011067ffffffffffffffff60c0840111176108165760206006918360c06001950160405285548152611bce858701611e87565b8382015260028601546040820152600386015460608201526004860154608082015260ff600587015416151560a082015281520192019301929061196b565b3461054957602036600319011261054957600435600081815260026020526040902060010154611c47906001600160a01b03161515611cf6565b6000526002602052611aae611c62600a604060002001611dca565b6040519182916020835260208301905b919082519283825260005b848110611c9e575050826000602080949584010152601f8019910116010190565b602081830181015184830182015201611c7d565b6040906003190112610549576004359060243590565b9181601f840112156105495782359167ffffffffffffffff8311610549576020838186019501011161054957565b15611cfd57565b60405162461bcd60e51b815260206004820152601060248201526f149958dbdc99081b9bdd08199bdd5b9960821b6044820152606490fd5b90600182811c92168015611d65575b6020831014611d4f57565b634e487b7160e01b600052602260045260246000fd5b91607f1691611d44565b610180810190811067ffffffffffffffff82111761081657604052565b6080810190811067ffffffffffffffff82111761081657604052565b90601f8019910116810190811067ffffffffffffffff82111761081657604052565b90604051918260008254611ddd81611d35565b90818452602094600191600181169081600014611e4d5750600114611e0e575b505050611e0c92500383611da8565b565b600090815285812095935091905b818310611e35575050611e0c9350820101388080611dfd565b85548884018501529485019487945091830191611e1c565b92505050611e0c94925060ff191682840152151560051b820101388080611dfd565b67ffffffffffffffff81116108165760051b60200190565b908154611e9381611e6f565b92604093611ea46040519182611da8565b82815280946020809201926000526020600020906000935b858510611ecb57505050505050565b6004846001928451611edc81611d8c565b611ee587611dca565b8152848701548382015260028701548682015260038701546060820152815201930194019391611ebc565b15611f1757565b60405162461bcd60e51b815260206004820152600c60248201526b155b985d5d1a1bdc9a5e995960a21b6044820152606490fd5b15611f5257565b60405162461bcd60e51b815260206004820152600c60248201526b496e76616c6964206e616d6560a01b6044820152606490fd5b90601f8111611f9457505050565b6000916000526020600020906020601f850160051c83019410611fd2575b601f0160051c01915b828110611fc757505050565b818155600101611fbb565b9092508290611fb2565b908060209392818452848401376000828201840152601f01601f1916010190565b9493929160409261201b928752606060208801526060870191611fdc565b930152565b6001600160a01b03166000908152600360209081526040808320815181548082529185528385209094929391859081840190855b858282106120ad5750505061206b92500385611da8565b815b84518110156120a557818160051b8601015183526002825260ff600885852001541661209b5760010161206d565b5050505050600190565b505091505090565b855484526001958601958a955093019201612054565b91908201809211610fe257565b80548210156120ec5760005260206000209060021b0190600090565b634e487b7160e01b600052603260045260246000fd5b81810292918115918404141715610fe257565b811561211f570490565b634e487b7160e01b600052601260045260246000fd5b6000198114610fe25760010190565b6000546001600160a01b0316330361215857565b60405163118cdaa760e01b8152336004820152602490fd5b605d81101561221757605a8110156122105760578110156122095760538110156122025760508110156121fb57604d8110156121f45760498110156121ee5760468110156121e85760438110156121e257603f8110156121dc57603c11156121d757600090565b609690565b5060af90565b5060c890565b5060e190565b5060fa90565b5061011390565b5061012c90565b5061014590565b5061015e90565b5061017790565b506101909056fea164736f6c6343000818000a",
+  "devdoc": {
+    "details": "Manages student academic records on blockchain Handles grades, GPA calculation, record verification, and transcript management",
+    "errors": {
+      "OwnableInvalidOwner(address)": [
+        {
+          "details": "The owner is not a valid owner account. (eg. `address(0)`)"
+        }
+      ],
+      "OwnableUnauthorizedAccount(address)": [
+        {
+          "details": "The caller account is not authorized to perform an operation."
+        }
+      ]
+    },
+    "kind": "dev",
+    "methods": {
+      "addGrade(uint256,string,uint256,uint256)": {
+        "details": "Add a grade to current semester"
+      },
+      "authorizeVerifier(address)": {
+        "details": "Authorize a verifier (institution)"
+      },
+      "completeSemester(uint256,uint256)": {
+        "details": "Complete semester and calculate GPA"
+      },
+      "createRecord(string,string,string)": {
+        "details": "Create a new student record"
+      },
+      "getCumulativeGPA(uint256)": {
+        "details": "Get cumulative GPA"
+      },
+      "getRecord(uint256)": {
+        "details": "Get student record"
+      },
+      "getSemesterCount(uint256)": {
+        "details": "Get semester count"
+      },
+      "getSemesterGPA(uint256,uint256)": {
+        "details": "Get semester GPA"
+      },
+      "getSemesterGrades(uint256,uint256)": {
+        "details": "Get grades in a semester"
+      },
+      "getStudentRecords(address)": {
+        "details": "Get all records for a student"
+      },
+      "getTotalCredits(uint256)": {
+        "details": "Get total credits"
+      },
+      "getTotalRecords()": {
+        "details": "Get total records"
+      },
+      "getTranscriptIPFS(uint256)": {
+        "details": "Get transcript IPFS hash"
+      },
+      "isAuthorizedVerifier(address)": {
+        "details": "Check if address is authorized verifier"
+      },
+      "isRecordVerified(uint256)": {
+        "details": "Check if record is verified"
+      },
+      "isStudentVerified(address)": {
+        "details": "Check if student is verified"
+      },
+      "issueTranscript(uint256,string)": {
+        "details": "Issue transcript"
+      },
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+      },
+      "revokeVerifier(address)": {
+        "details": "Revoke verifier authorization"
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      },
+      "updateRecord(uint256,string,string)": {
+        "details": "Update record information"
+      },
+      "verifyRecord(uint256)": {
+        "details": "Verify student record"
+      }
+    },
+    "title": "StudentRecordManager",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 8,
+        "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 191,
+        "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+        "label": "recordIdCounter",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 196,
+        "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+        "label": "records",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_uint256,t_struct(StudentRecord)1365_storage)"
+      },
+      {
+        "astId": 201,
+        "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+        "label": "studentRecords",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)"
+      },
+      {
+        "astId": 208,
+        "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+        "label": "semesters",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Semester)1338_storage))"
+      },
+      {
+        "astId": 212,
+        "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+        "label": "semesterCounts",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_mapping(t_uint256,t_uint256)"
+      },
+      {
+        "astId": 216,
+        "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+        "label": "authorizedVerifiers",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_mapping(t_address,t_bool)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_struct(Grade)1323_storage)dyn_storage": {
+        "base": "t_struct(Grade)1323_storage",
+        "encoding": "dynamic_array",
+        "label": "struct IStudentRecordManager.Grade[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_struct(Semester)1338_storage)dyn_storage": {
+        "base": "t_struct(Semester)1338_storage",
+        "encoding": "dynamic_array",
+        "label": "struct IStudentRecordManager.Semester[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_uint256)dyn_storage": {
+        "base": "t_uint256",
+        "encoding": "dynamic_array",
+        "label": "uint256[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => uint256[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_uint256)dyn_storage"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_uint256,t_mapping(t_uint256,t_struct(Semester)1338_storage))": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => mapping(uint256 => struct IStudentRecordManager.Semester))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_uint256,t_struct(Semester)1338_storage)"
+      },
+      "t_mapping(t_uint256,t_struct(Semester)1338_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct IStudentRecordManager.Semester)",
+        "numberOfBytes": "32",
+        "value": "t_struct(Semester)1338_storage"
+      },
+      "t_mapping(t_uint256,t_struct(StudentRecord)1365_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct IStudentRecordManager.StudentRecord)",
+        "numberOfBytes": "32",
+        "value": "t_struct(StudentRecord)1365_storage"
+      },
+      "t_mapping(t_uint256,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_string_storage": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_struct(Grade)1323_storage": {
+        "encoding": "inplace",
+        "label": "struct IStudentRecordManager.Grade",
+        "members": [
+          {
+            "astId": 1316,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "subject",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 1318,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "grade",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1320,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "credits",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1322,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "timestamp",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "128"
+      },
+      "t_struct(Semester)1338_storage": {
+        "encoding": "inplace",
+        "label": "struct IStudentRecordManager.Semester",
+        "members": [
+          {
+            "astId": 1325,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "semesterIndex",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1329,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "grades",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_struct(Grade)1323_storage)dyn_storage"
+          },
+          {
+            "astId": 1331,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "gpa",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1333,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "totalCredits",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1335,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "timestamp",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1337,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "isCompleted",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_bool"
+          }
+        ],
+        "numberOfBytes": "192"
+      },
+      "t_struct(StudentRecord)1365_storage": {
+        "encoding": "inplace",
+        "label": "struct IStudentRecordManager.StudentRecord",
+        "members": [
+          {
+            "astId": 1340,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "recordId",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1342,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "student",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address"
+          },
+          {
+            "astId": 1344,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "name",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 1346,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "studentId",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 1348,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "enrollmentDate",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1350,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "totalCredits",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1352,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "cumulativeGpa",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1356,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "semesters",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_array(t_struct(Semester)1338_storage)dyn_storage"
+          },
+          {
+            "astId": 1358,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "isVerified",
+            "offset": 0,
+            "slot": "8",
+            "type": "t_bool"
+          },
+          {
+            "astId": 1360,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "verifier",
+            "offset": 1,
+            "slot": "8",
+            "type": "t_address"
+          },
+          {
+            "astId": 1362,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "verificationDate",
+            "offset": 0,
+            "slot": "9",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 1364,
+            "contract": "contracts/modules/006-records-management/StudentRecordManager.sol:StudentRecordManager",
+            "label": "transcriptIPFS",
+            "offset": 0,
+            "slot": "10",
+            "type": "t_string_storage"
+          }
+        ],
+        "numberOfBytes": "352"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

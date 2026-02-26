@@ -1,0 +1,1375 @@
+{
+  "address": "0xf41DC2c98852144ec0D7EcEF74D4256BaDdF4460",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "internshipId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "intern",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "certificateURI",
+          "type": "string"
+        }
+      ],
+      "name": "CertificateIssued",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "internshipId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "intern",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "applicationId",
+          "type": "uint256"
+        }
+      ],
+      "name": "InternApplicationSubmitted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "internshipId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "intern",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "completedAt",
+          "type": "uint256"
+        }
+      ],
+      "name": "InternshipCompleted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "internshipId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "company",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "startDate",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "endDate",
+          "type": "uint256"
+        }
+      ],
+      "name": "InternshipCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "applicationId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "intern",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "offerExpiry",
+          "type": "uint256"
+        }
+      ],
+      "name": "InternshipOfferExtended",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "internshipId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "intern",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "startedAt",
+          "type": "uint256"
+        }
+      ],
+      "name": "InternshipStarted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "internshipId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "intern",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "mentor",
+          "type": "address"
+        }
+      ],
+      "name": "MentorAssigned",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "internshipId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "intern",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "milestoneName",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "completedAt",
+          "type": "uint256"
+        }
+      ],
+      "name": "MilestoneCompleted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "internshipId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "intern",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "score",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "evaluatedAt",
+          "type": "uint256"
+        }
+      ],
+      "name": "PerformanceEvaluated",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "applicationId",
+          "type": "uint256"
+        }
+      ],
+      "name": "acceptOffer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "internshipId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "requirement",
+          "type": "string"
+        }
+      ],
+      "name": "addRequirement",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "internshipId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "motivationLetter",
+          "type": "string"
+        }
+      ],
+      "name": "applyForInternship",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "applicationId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "mentor",
+          "type": "address"
+        }
+      ],
+      "name": "assignMentor",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "applicationId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "certificateURI",
+          "type": "string"
+        }
+      ],
+      "name": "completeInternship",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "startDate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "endDate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "mentorRequired",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minGPA",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxPositions",
+          "type": "uint256"
+        }
+      ],
+      "name": "createInternship",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "applicationId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "score",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "feedback",
+          "type": "string"
+        }
+      ],
+      "name": "evaluatePerformance",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "applicationId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "stipend",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "offerValidDays",
+          "type": "uint256"
+        }
+      ],
+      "name": "extendOffer",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "applicationId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getApplicationStatus",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "intern",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "internshipId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "status",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "submittedAt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "offerExpiry",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "company",
+          "type": "address"
+        }
+      ],
+      "name": "getCompanyInternships",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "intern",
+          "type": "address"
+        }
+      ],
+      "name": "getInternApplications",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "applicationId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getInternMilestones",
+      "outputs": [
+        {
+          "internalType": "string[]",
+          "name": "milestones",
+          "type": "string[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "completedDates",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "applicationId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getInternProgress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "mentor",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "performanceScore",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "milestonesCount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "evaluationFeedback",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "certificateURI",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "internshipId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getInternshipApplications",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "internshipId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getInternshipDetails",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "company",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "startDate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "endDate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "mentorRequired",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minGPA",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxPositions",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "filledPositions",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "status",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "internshipId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getInternshipRequirements",
+      "outputs": [
+        {
+          "internalType": "string[]",
+          "name": "",
+          "type": "string[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalInternApplications",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalInternships",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "applicationId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "milestoneName",
+          "type": "string"
+        }
+      ],
+      "name": "recordMilestone",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "applicationId",
+          "type": "uint256"
+        }
+      ],
+      "name": "startInternship",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xe25dae8df4da8114e81829bab2784e60ac626f9f671a6c6d7f3562f3509d0534",
+  "receipt": {
+    "to": null,
+    "from": "0x7EFf82613404AE7Bce622EA1C927214E30F2285e",
+    "contractAddress": "0xf41DC2c98852144ec0D7EcEF74D4256BaDdF4460",
+    "transactionIndex": 80,
+    "gasUsed": "2131074",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000800000000100000000000000040000000000000000000000000000000000000000000000000080000080000000000000000000004000000001000000000000000000000000000000000000020000000000000000000800000000000000000000000000000000400000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x99cb387c2715ffe57e2605f3840f90c534ea3b5beeadffd23bd467feddfad6aa",
+    "transactionHash": "0xe25dae8df4da8114e81829bab2784e60ac626f9f671a6c6d7f3562f3509d0534",
+    "logs": [
+      {
+        "transactionIndex": 80,
+        "blockNumber": 10337740,
+        "transactionHash": "0xe25dae8df4da8114e81829bab2784e60ac626f9f671a6c6d7f3562f3509d0534",
+        "address": "0xf41DC2c98852144ec0D7EcEF74D4256BaDdF4460",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x0000000000000000000000007eff82613404ae7bce622ea1c927214e30f2285e"
+        ],
+        "data": "0x",
+        "logIndex": 112,
+        "blockHash": "0x99cb387c2715ffe57e2605f3840f90c534ea3b5beeadffd23bd467feddfad6aa"
+      }
+    ],
+    "blockNumber": 10337740,
+    "cumulativeGasUsed": "9693744",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "5f00d4c9402f980f96140ab3f200c928",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"internshipId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"intern\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"certificateURI\",\"type\":\"string\"}],\"name\":\"CertificateIssued\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"internshipId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"intern\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"applicationId\",\"type\":\"uint256\"}],\"name\":\"InternApplicationSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"internshipId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"intern\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"completedAt\",\"type\":\"uint256\"}],\"name\":\"InternshipCompleted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"internshipId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"company\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"startDate\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"endDate\",\"type\":\"uint256\"}],\"name\":\"InternshipCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"applicationId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"intern\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"offerExpiry\",\"type\":\"uint256\"}],\"name\":\"InternshipOfferExtended\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"internshipId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"intern\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"startedAt\",\"type\":\"uint256\"}],\"name\":\"InternshipStarted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"internshipId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"intern\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"mentor\",\"type\":\"address\"}],\"name\":\"MentorAssigned\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"internshipId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"intern\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"milestoneName\",\"type\":\"string\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"completedAt\",\"type\":\"uint256\"}],\"name\":\"MilestoneCompleted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"internshipId\",\"type\":\"uint256\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"intern\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"score\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"evaluatedAt\",\"type\":\"uint256\"}],\"name\":\"PerformanceEvaluated\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"applicationId\",\"type\":\"uint256\"}],\"name\":\"acceptOffer\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"internshipId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"requirement\",\"type\":\"string\"}],\"name\":\"addRequirement\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"internshipId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"motivationLetter\",\"type\":\"string\"}],\"name\":\"applyForInternship\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"applicationId\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"mentor\",\"type\":\"address\"}],\"name\":\"assignMentor\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"applicationId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"certificateURI\",\"type\":\"string\"}],\"name\":\"completeInternship\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"description\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"startDate\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"endDate\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"mentorRequired\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"minGPA\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxPositions\",\"type\":\"uint256\"}],\"name\":\"createInternship\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"applicationId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"score\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"feedback\",\"type\":\"string\"}],\"name\":\"evaluatePerformance\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"applicationId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"stipend\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"offerValidDays\",\"type\":\"uint256\"}],\"name\":\"extendOffer\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"applicationId\",\"type\":\"uint256\"}],\"name\":\"getApplicationStatus\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"intern\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"internshipId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"status\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"submittedAt\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"offerExpiry\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"company\",\"type\":\"address\"}],\"name\":\"getCompanyInternships\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"intern\",\"type\":\"address\"}],\"name\":\"getInternApplications\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"applicationId\",\"type\":\"uint256\"}],\"name\":\"getInternMilestones\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"milestones\",\"type\":\"string[]\"},{\"internalType\":\"uint256[]\",\"name\":\"completedDates\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"applicationId\",\"type\":\"uint256\"}],\"name\":\"getInternProgress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"mentor\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"performanceScore\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"milestonesCount\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"evaluationFeedback\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"certificateURI\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"internshipId\",\"type\":\"uint256\"}],\"name\":\"getInternshipApplications\",\"outputs\":[{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"internshipId\",\"type\":\"uint256\"}],\"name\":\"getInternshipDetails\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"title\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"description\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"company\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"startDate\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"endDate\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"mentorRequired\",\"type\":\"bool\"},{\"internalType\":\"uint256\",\"name\":\"minGPA\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"maxPositions\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"filledPositions\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"status\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"internshipId\",\"type\":\"uint256\"}],\"name\":\"getInternshipRequirements\",\"outputs\":[{\"internalType\":\"string[]\",\"name\":\"\",\"type\":\"string[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalInternApplications\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalInternships\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"applicationId\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"milestoneName\",\"type\":\"string\"}],\"name\":\"recordMilestone\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"applicationId\",\"type\":\"uint256\"}],\"name\":\"startInternship\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Manages internship programs and tracking\",\"errors\":{\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}]},\"kind\":\"dev\",\"methods\":{\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"}},\"title\":\"InternshipManager\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"acceptOffer(uint256)\":{\"notice\":\"Accept offer\"},\"addRequirement(uint256,string)\":{\"notice\":\"Add requirement\"},\"applyForInternship(uint256,string)\":{\"notice\":\"Apply for internship\"},\"assignMentor(uint256,address)\":{\"notice\":\"Assign mentor\"},\"completeInternship(uint256,string)\":{\"notice\":\"Complete internship\"},\"createInternship(string,string,uint256,uint256,bool,uint256,uint256)\":{\"notice\":\"Create internship\"},\"evaluatePerformance(uint256,uint256,string)\":{\"notice\":\"Evaluate performance\"},\"extendOffer(uint256,uint256,uint256)\":{\"notice\":\"Extend offer\"},\"getApplicationStatus(uint256)\":{\"notice\":\"Get application status\"},\"getCompanyInternships(address)\":{\"notice\":\"Get company internships\"},\"getInternApplications(address)\":{\"notice\":\"Get intern applications\"},\"getInternMilestones(uint256)\":{\"notice\":\"Get intern milestones\"},\"getInternProgress(uint256)\":{\"notice\":\"Get intern progress\"},\"getInternshipApplications(uint256)\":{\"notice\":\"Get internship applications\"},\"getInternshipDetails(uint256)\":{\"notice\":\"Get internship details\"},\"getInternshipRequirements(uint256)\":{\"notice\":\"Get internship requirements\"},\"getTotalInternApplications()\":{\"notice\":\"Get total applications\"},\"getTotalInternships()\":{\"notice\":\"Get total internships\"},\"recordMilestone(uint256,string)\":{\"notice\":\"Record milestone\"},\"startInternship(uint256)\":{\"notice\":\"Start internship\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/modules/014-internship/InternshipManager.sol\":\"InternshipManager\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"none\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {Context} from \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * The initial owner is set to the address provided by the deployer. This can\\n * later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    /**\\n     * @dev The caller account is not authorized to perform an operation.\\n     */\\n    error OwnableUnauthorizedAccount(address account);\\n\\n    /**\\n     * @dev The owner is not a valid owner account. (eg. `address(0)`)\\n     */\\n    error OwnableInvalidOwner(address owner);\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the address provided by the deployer as the initial owner.\\n     */\\n    constructor(address initialOwner) {\\n        if (initialOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(initialOwner);\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        if (owner() != _msgSender()) {\\n            revert OwnableUnauthorizedAccount(_msgSender());\\n        }\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby disabling any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        if (newOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    function _contextSuffixLength() internal view virtual returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\"},\"contracts/modules/014-internship/IInternshipManager.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.24;\\r\\n\\r\\n/**\\r\\n * @title IInternshipManager\\r\\n * @dev Interface for internship program management\\r\\n */\\r\\ninterface IInternshipManager {\\r\\n    // ============ Events ============\\r\\n    event InternshipCreated(\\r\\n        uint256 indexed internshipId,\\r\\n        string title,\\r\\n        address indexed company,\\r\\n        uint256 startDate,\\r\\n        uint256 endDate\\r\\n    );\\r\\n\\r\\n    event InternApplicationSubmitted(\\r\\n        uint256 indexed internshipId,\\r\\n        address indexed intern,\\r\\n        uint256 applicationId\\r\\n    );\\r\\n\\r\\n    event InternshipOfferExtended(\\r\\n        uint256 indexed applicationId,\\r\\n        address indexed intern,\\r\\n        uint256 offerExpiry\\r\\n    );\\r\\n\\r\\n    event InternshipStarted(\\r\\n        uint256 indexed internshipId,\\r\\n        address indexed intern,\\r\\n        uint256 startedAt\\r\\n    );\\r\\n\\r\\n    event InternshipCompleted(\\r\\n        uint256 indexed internshipId,\\r\\n        address indexed intern,\\r\\n        uint256 completedAt\\r\\n    );\\r\\n\\r\\n    event MentorAssigned(\\r\\n        uint256 indexed internshipId,\\r\\n        address indexed intern,\\r\\n        address indexed mentor\\r\\n    );\\r\\n\\r\\n    event PerformanceEvaluated(\\r\\n        uint256 indexed internshipId,\\r\\n        address indexed intern,\\r\\n        uint256 score,\\r\\n        uint256 evaluatedAt\\r\\n    );\\r\\n\\r\\n    event MilestoneCompleted(\\r\\n        uint256 indexed internshipId,\\r\\n        address indexed intern,\\r\\n        string milestoneName,\\r\\n        uint256 completedAt\\r\\n    );\\r\\n\\r\\n    event CertificateIssued(\\r\\n        uint256 indexed internshipId,\\r\\n        address indexed intern,\\r\\n        string certificateURI\\r\\n    );\\r\\n\\r\\n    // ============ Mutations ============\\r\\n    /**\\r\\n     * @notice Create internship program\\r\\n     * @param title Internship title\\r\\n     * @param description Program description\\r\\n     * @param startDate Program start date\\r\\n     * @param endDate Program end date\\r\\n     * @param mentorRequired Whether mentor is required\\r\\n     * @param minGPA Minimum GPA requirement\\r\\n     * @param description Detailed program description\\r\\n     * @return internshipId ID of internship program\\r\\n     */\\r\\n    function createInternship(\\r\\n        string calldata title,\\r\\n        string calldata description,\\r\\n        uint256 startDate,\\r\\n        uint256 endDate,\\r\\n        bool mentorRequired,\\r\\n        uint256 minGPA,\\r\\n        uint256 maxPositions\\r\\n    ) external returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @notice Apply for internship\\r\\n     * @param internshipId Internship ID\\r\\n     * @param motivationLetter Motivation letter\\r\\n     */\\r\\n    function applyForInternship(\\r\\n        uint256 internshipId,\\r\\n        string calldata motivationLetter\\r\\n    ) external returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @notice Extend internship offer\\r\\n     * @param applicationId Application ID\\r\\n     * @param stipend Monthly stipend (if any)\\r\\n     * @param offerValidDays Days for offer validity\\r\\n     */\\r\\n    function extendOffer(\\r\\n        uint256 applicationId,\\r\\n        uint256 stipend,\\r\\n        uint256 offerValidDays\\r\\n    ) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Accept internship offer\\r\\n     * @param applicationId Application ID\\r\\n     */\\r\\n    function acceptOffer(uint256 applicationId) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Start internship\\r\\n     * @param applicationId Application ID\\r\\n     */\\r\\n    function startInternship(uint256 applicationId) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Complete internship\\r\\n     * @param applicationId Application ID\\r\\n     * @param certificateURI IPFS URI for completion certificate\\r\\n     */\\r\\n    function completeInternship(\\r\\n        uint256 applicationId,\\r\\n        string calldata certificateURI\\r\\n    ) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Assign mentor\\r\\n     * @param applicationId Application ID\\r\\n     * @param mentor Mentor address\\r\\n     */\\r\\n    function assignMentor(uint256 applicationId, address mentor) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Submit performance evaluation\\r\\n     * @param applicationId Application ID\\r\\n     * @param score Performance score (1-100)\\r\\n     * @param feedback Evaluation feedback\\r\\n     */\\r\\n    function evaluatePerformance(\\r\\n        uint256 applicationId,\\r\\n        uint256 score,\\r\\n        string calldata feedback\\r\\n    ) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Record milestone completion\\r\\n     * @param applicationId Application ID\\r\\n     * @param milestoneName Milestone name\\r\\n     */\\r\\n    function recordMilestone(\\r\\n        uint256 applicationId,\\r\\n        string calldata milestoneName\\r\\n    ) external;\\r\\n\\r\\n    /**\\r\\n     * @notice Add internship requirement\\r\\n     * @param internshipId Internship ID\\r\\n     * @param requirement Requirement description\\r\\n     */\\r\\n    function addRequirement(\\r\\n        uint256 internshipId,\\r\\n        string calldata requirement\\r\\n    ) external;\\r\\n\\r\\n    // ============ Queries ============\\r\\n    /**\\r\\n     * @notice Get internship details\\r\\n     * @param internshipId Internship ID\\r\\n     */\\r\\n    function getInternshipDetails(uint256 internshipId)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            string memory title,\\r\\n            string memory description,\\r\\n            address company,\\r\\n            uint256 startDate,\\r\\n            uint256 endDate,\\r\\n            bool mentorRequired,\\r\\n            uint256 minGPA,\\r\\n            uint256 maxPositions,\\r\\n            uint256 filledPositions,\\r\\n            string memory status\\r\\n        );\\r\\n\\r\\n    /**\\r\\n     * @notice Get application status\\r\\n     * @param applicationId Application ID\\r\\n     */\\r\\n    function getApplicationStatus(uint256 applicationId)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            address intern,\\r\\n            uint256 internshipId,\\r\\n            string memory status,\\r\\n            uint256 submittedAt,\\r\\n            uint256 offerExpiry\\r\\n        );\\r\\n\\r\\n    /**\\r\\n     * @notice Get intern progress\\r\\n     * @param applicationId Application ID\\r\\n     */\\r\\n    function getInternProgress(uint256 applicationId)\\r\\n        external\\r\\n        view\\r\\n        returns (\\r\\n            address mentor,\\r\\n            uint256 performanceScore,\\r\\n            uint256 companionedMilestonesCount,\\r\\n            string memory evaluationFeedback,\\r\\n            string memory certificateURI\\r\\n        );\\r\\n\\r\\n    /**\\r\\n     * @notice Get internship applications\\r\\n     * @param internshipId Internship ID\\r\\n     */\\r\\n    function getInternshipApplications(uint256 internshipId)\\r\\n        external\\r\\n        view\\r\\n        returns (uint256[] memory);\\r\\n\\r\\n    /**\\r\\n     * @notice Get intern applications\\r\\n     * @param intern Intern address\\r\\n     */\\r\\n    function getInternApplications(address intern)\\r\\n        external\\r\\n        view\\r\\n        returns (uint256[] memory);\\r\\n\\r\\n    /**\\r\\n     * @notice Get company internships\\r\\n     * @param company Company address\\r\\n     */\\r\\n    function getCompanyInternships(address company)\\r\\n        external\\r\\n        view\\r\\n        returns (uint256[] memory);\\r\\n\\r\\n    /**\\r\\n     * @notice Get total internships\\r\\n     */\\r\\n    function getTotalInternships() external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @notice Get total applications\\r\\n     */\\r\\n    function getTotalInternApplications() external view returns (uint256);\\r\\n\\r\\n    /**\\r\\n     * @notice Get internship requirements\\r\\n     * @param internshipId Internship ID\\r\\n     */\\r\\n    function getInternshipRequirements(uint256 internshipId)\\r\\n        external\\r\\n        view\\r\\n        returns (string[] memory);\\r\\n\\r\\n    /**\\r\\n     * @notice Get intern milestones\\r\\n     * @param applicationId Application ID\\r\\n     */\\r\\n    function getInternMilestones(uint256 applicationId)\\r\\n        external\\r\\n        view\\r\\n        returns (string[] memory milestones, uint256[] memory completedDates);\\r\\n}\\r\\n\",\"keccak256\":\"0xc9a89b1055d77577ca05e83190993035399e1feefa91f7e82cbabfcf2e260c7a\",\"license\":\"MIT\"},\"contracts/modules/014-internship/InternshipManager.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.24;\\r\\n\\r\\nimport {Ownable} from \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\r\\nimport {IInternshipManager} from \\\"./IInternshipManager.sol\\\";\\r\\n\\r\\n/**\\r\\n * @title InternshipManager\\r\\n * @dev Manages internship programs and tracking\\r\\n */\\r\\ncontract InternshipManager is Ownable, IInternshipManager {\\r\\n    // ============ Data Structures ============\\r\\n    struct Internship {\\r\\n        string title;\\r\\n        string description;\\r\\n        address company;\\r\\n        uint256 startDate;\\r\\n        uint256 endDate;\\r\\n        bool mentorRequired;\\r\\n        uint256 minGPA;\\r\\n        uint256 maxPositions;\\r\\n        uint256 filledPositions;\\r\\n        string status;\\r\\n        uint256 createdAt;\\r\\n    }\\r\\n\\r\\n    struct InternApplication {\\r\\n        address intern;\\r\\n        uint256 internshipId;\\r\\n        string motivationLetter;\\r\\n        string status;\\r\\n        uint256 submittedAt;\\r\\n        uint256 offerExpiry;\\r\\n        uint256 stipend;\\r\\n    }\\r\\n\\r\\n    struct InternProgress {\\r\\n        address mentor;\\r\\n        uint256 performanceScore;\\r\\n        uint256 milestonesCompleted;\\r\\n        string evaluationFeedback;\\r\\n        string certificateURI;\\r\\n        uint256 completedAt;\\r\\n    }\\r\\n\\r\\n    // ============ State Variables ============\\r\\n    uint256 private internshipCounter;\\r\\n    uint256 private applicationCounter;\\r\\n\\r\\n    mapping(uint256 => Internship) private internships;\\r\\n    mapping(uint256 => InternApplication) private applications;\\r\\n    mapping(uint256 => InternProgress) private progress;\\r\\n    mapping(uint256 => uint256[]) private internshipApplications;\\r\\n    mapping(address => uint256[]) private internApplications;\\r\\n    mapping(address => uint256[]) private companyInternships;\\r\\n    mapping(uint256 => string[]) private internshipRequirements;\\r\\n    mapping(uint256 => mapping(uint256 => string)) private internMilestones;\\r\\n    mapping(uint256 => mapping(uint256 => uint256)) private milestoneDates;\\r\\n    mapping(uint256 => uint256) private milestoneCounts;\\r\\n\\r\\n    // ============ Modifiers ============\\r\\n    modifier internshipExists(uint256 internshipId) {\\r\\n        require(internshipId > 0 && internshipId < internshipCounter, \\r\\n            \\\"InternshipManager: Internship does not exist\\\"\\r\\n        );\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    modifier applicationExists(uint256 applicationId) {\\r\\n        require(applicationId > 0 && applicationId < applicationCounter,\\r\\n            \\\"InternshipManager: Application does not exist\\\"\\r\\n        );\\r\\n        _;\\r\\n    }\\r\\n\\r\\n    // ============ Constructor ============\\r\\n    constructor() Ownable(msg.sender) {\\r\\n        internshipCounter = 1;\\r\\n        applicationCounter = 1;\\r\\n    }\\r\\n\\r\\n    // ============ Core Functions ============\\r\\n    /**\\r\\n     * @notice Create internship\\r\\n     */\\r\\n    function createInternship(\\r\\n        string calldata title,\\r\\n        string calldata description,\\r\\n        uint256 startDate,\\r\\n        uint256 endDate,\\r\\n        bool mentorRequired,\\r\\n        uint256 minGPA,\\r\\n        uint256 maxPositions\\r\\n    ) external returns (uint256) {\\r\\n        require(bytes(title).length > 0, \\\"InternshipManager: Title required\\\");\\r\\n        require(startDate < endDate, \\\"InternshipManager: Invalid dates\\\");\\r\\n        require(maxPositions > 0, \\\"InternshipManager: Max positions must be > 0\\\");\\r\\n\\r\\n        uint256 internshipId = internshipCounter++;\\r\\n\\r\\n        internships[internshipId] = Internship({\\r\\n            title: title,\\r\\n            description: description,\\r\\n            company: msg.sender,\\r\\n            startDate: startDate,\\r\\n            endDate: endDate,\\r\\n            mentorRequired: mentorRequired,\\r\\n            minGPA: minGPA,\\r\\n            maxPositions: maxPositions,\\r\\n            filledPositions: 0,\\r\\n            status: \\\"open\\\",\\r\\n            createdAt: block.timestamp\\r\\n        });\\r\\n\\r\\n        companyInternships[msg.sender].push(internshipId);\\r\\n\\r\\n        emit InternshipCreated(internshipId, title, msg.sender, startDate, endDate);\\r\\n\\r\\n        return internshipId;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Apply for internship\\r\\n     */\\r\\n    function applyForInternship(\\r\\n        uint256 internshipId,\\r\\n        string calldata motivationLetter\\r\\n    ) external internshipExists(internshipId) returns (uint256) {\\r\\n        require(bytes(motivationLetter).length > 0, \\\"InternshipManager: Letter required\\\");\\r\\n        require(\\r\\n            keccak256(bytes(internships[internshipId].status)) == keccak256(bytes(\\\"open\\\")),\\r\\n            \\\"InternshipManager: Internship not open\\\"\\r\\n        );\\r\\n\\r\\n        uint256 applicationId = applicationCounter++;\\r\\n\\r\\n        applications[applicationId] = InternApplication({\\r\\n            intern: msg.sender,\\r\\n            internshipId: internshipId,\\r\\n            motivationLetter: motivationLetter,\\r\\n            status: \\\"submitted\\\",\\r\\n            submittedAt: block.timestamp,\\r\\n            offerExpiry: 0,\\r\\n            stipend: 0\\r\\n        });\\r\\n\\r\\n        internshipApplications[internshipId].push(applicationId);\\r\\n        internApplications[msg.sender].push(applicationId);\\r\\n\\r\\n        emit InternApplicationSubmitted(internshipId, msg.sender, applicationId);\\r\\n\\r\\n        return applicationId;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Extend offer\\r\\n     */\\r\\n    function extendOffer(\\r\\n        uint256 applicationId,\\r\\n        uint256 stipend,\\r\\n        uint256 offerValidDays\\r\\n    ) external applicationExists(applicationId) {\\r\\n        InternApplication storage app = applications[applicationId];\\r\\n        require(\\r\\n            msg.sender == internships[app.internshipId].company || msg.sender == owner(),\\r\\n            \\\"InternshipManager: Only company can extend offer\\\"\\r\\n        );\\r\\n\\r\\n        app.status = \\\"offered\\\";\\r\\n        app.stipend = stipend;\\r\\n        app.offerExpiry = block.timestamp + (offerValidDays * 1 days);\\r\\n\\r\\n        emit InternshipOfferExtended(applicationId, app.intern, app.offerExpiry);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Accept offer\\r\\n     */\\r\\n    function acceptOffer(uint256 applicationId)\\r\\n        external\\r\\n        applicationExists(applicationId)\\r\\n    {\\r\\n        InternApplication storage app = applications[applicationId];\\r\\n        require(app.intern == msg.sender, \\\"InternshipManager: Only applicant can accept\\\");\\r\\n        require(\\r\\n            keccak256(bytes(app.status)) == keccak256(bytes(\\\"offered\\\")),\\r\\n            \\\"InternshipManager: No active offer\\\"\\r\\n        );\\r\\n        require(block.timestamp < app.offerExpiry, \\\"InternshipManager: Offer expired\\\");\\r\\n\\r\\n        app.status = \\\"accepted\\\";\\r\\n        internships[app.internshipId].filledPositions++;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Start internship\\r\\n     */\\r\\n    function startInternship(uint256 applicationId)\\r\\n        external\\r\\n        applicationExists(applicationId)\\r\\n    {\\r\\n        InternApplication storage app = applications[applicationId];\\r\\n        require(\\r\\n            msg.sender == internships[app.internshipId].company || msg.sender == owner(),\\r\\n            \\\"InternshipManager: Only company can start\\\"\\r\\n        );\\r\\n\\r\\n        app.status = \\\"active\\\";\\r\\n\\r\\n        emit InternshipStarted(app.internshipId, app.intern, block.timestamp);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Complete internship\\r\\n     */\\r\\n    function completeInternship(\\r\\n        uint256 applicationId,\\r\\n        string calldata certificateURI\\r\\n    ) external applicationExists(applicationId) {\\r\\n        InternApplication storage app = applications[applicationId];\\r\\n        require(\\r\\n            msg.sender == internships[app.internshipId].company || msg.sender == owner(),\\r\\n            \\\"InternshipManager: Only company can complete\\\"\\r\\n        );\\r\\n\\r\\n        app.status = \\\"completed\\\";\\r\\n        progress[applicationId].certificateURI = certificateURI;\\r\\n        progress[applicationId].completedAt = block.timestamp;\\r\\n\\r\\n        emit InternshipCompleted(app.internshipId, app.intern, block.timestamp);\\r\\n        emit CertificateIssued(app.internshipId, app.intern, certificateURI);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Assign mentor\\r\\n     */\\r\\n    function assignMentor(uint256 applicationId, address mentor)\\r\\n        external\\r\\n        applicationExists(applicationId)\\r\\n    {\\r\\n        InternApplication storage app = applications[applicationId];\\r\\n        require(\\r\\n            msg.sender == internships[app.internshipId].company || msg.sender == owner(),\\r\\n            \\\"InternshipManager: Only company can assign\\\"\\r\\n        );\\r\\n\\r\\n        progress[applicationId].mentor = mentor;\\r\\n\\r\\n        emit MentorAssigned(app.internshipId, app.intern, mentor);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Evaluate performance\\r\\n     */\\r\\n    function evaluatePerformance(\\r\\n        uint256 applicationId,\\r\\n        uint256 score,\\r\\n        string calldata feedback\\r\\n    ) external applicationExists(applicationId) {\\r\\n        require(score >= 0 && score <= 100, \\\"InternshipManager: Score 0-100\\\");\\r\\n\\r\\n        InternApplication storage app = applications[applicationId];\\r\\n        require(\\r\\n            msg.sender == internships[app.internshipId].company || msg.sender == owner(),\\r\\n            \\\"InternshipManager: Only company can evaluate\\\"\\r\\n        );\\r\\n\\r\\n        progress[applicationId].performanceScore = score;\\r\\n        progress[applicationId].evaluationFeedback = feedback;\\r\\n\\r\\n        emit PerformanceEvaluated(app.internshipId, app.intern, score, block.timestamp);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Record milestone\\r\\n     */\\r\\n    function recordMilestone(\\r\\n        uint256 applicationId,\\r\\n        string calldata milestoneName\\r\\n    ) external applicationExists(applicationId) {\\r\\n        InternApplication storage app = applications[applicationId];\\r\\n        require(\\r\\n            msg.sender == internships[app.internshipId].company || msg.sender == owner(),\\r\\n            \\\"InternshipManager: Only company can record\\\"\\r\\n        );\\r\\n\\r\\n        uint256 count = milestoneCounts[applicationId];\\r\\n        internMilestones[applicationId][count] = milestoneName;\\r\\n        milestoneDates[applicationId][count] = block.timestamp;\\r\\n        milestoneCounts[applicationId]++;\\r\\n        progress[applicationId].milestonesCompleted++;\\r\\n\\r\\n        emit MilestoneCompleted(app.internshipId, app.intern, milestoneName, block.timestamp);\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Add requirement\\r\\n     */\\r\\n    function addRequirement(\\r\\n        uint256 internshipId,\\r\\n        string calldata requirement\\r\\n    ) external internshipExists(internshipId) {\\r\\n        require(\\r\\n            msg.sender == internships[internshipId].company || msg.sender == owner(),\\r\\n            \\\"InternshipManager: Only company can add\\\"\\r\\n        );\\r\\n\\r\\n        internshipRequirements[internshipId].push(requirement);\\r\\n    }\\r\\n\\r\\n    // ============ Query Functions ============\\r\\n    /**\\r\\n     * @notice Get internship details\\r\\n     */\\r\\n    function getInternshipDetails(uint256 internshipId)\\r\\n        external\\r\\n        view\\r\\n        internshipExists(internshipId)\\r\\n        returns (\\r\\n            string memory title,\\r\\n            string memory description,\\r\\n            address company,\\r\\n            uint256 startDate,\\r\\n            uint256 endDate,\\r\\n            bool mentorRequired,\\r\\n            uint256 minGPA,\\r\\n            uint256 maxPositions,\\r\\n            uint256 filledPositions,\\r\\n            string memory status\\r\\n        )\\r\\n    {\\r\\n        Internship memory internship = internships[internshipId];\\r\\n        return (\\r\\n            internship.title,\\r\\n            internship.description,\\r\\n            internship.company,\\r\\n            internship.startDate,\\r\\n            internship.endDate,\\r\\n            internship.mentorRequired,\\r\\n            internship.minGPA,\\r\\n            internship.maxPositions,\\r\\n            internship.filledPositions,\\r\\n            internship.status\\r\\n        );\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get application status\\r\\n     */\\r\\n    function getApplicationStatus(uint256 applicationId)\\r\\n        external\\r\\n        view\\r\\n        applicationExists(applicationId)\\r\\n        returns (\\r\\n            address intern,\\r\\n            uint256 internshipId,\\r\\n            string memory status,\\r\\n            uint256 submittedAt,\\r\\n            uint256 offerExpiry\\r\\n        )\\r\\n    {\\r\\n        InternApplication memory app = applications[applicationId];\\r\\n        return (\\r\\n            app.intern,\\r\\n            app.internshipId,\\r\\n            app.status,\\r\\n            app.submittedAt,\\r\\n            app.offerExpiry\\r\\n        );\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get intern progress\\r\\n     */\\r\\n    function getInternProgress(uint256 applicationId)\\r\\n        external\\r\\n        view\\r\\n        applicationExists(applicationId)\\r\\n        returns (\\r\\n            address mentor,\\r\\n            uint256 performanceScore,\\r\\n            uint256 milestonesCount,\\r\\n            string memory evaluationFeedback,\\r\\n            string memory certificateURI\\r\\n        )\\r\\n    {\\r\\n        InternProgress memory prog = progress[applicationId];\\r\\n        return (\\r\\n            prog.mentor,\\r\\n            prog.performanceScore,\\r\\n            prog.milestonesCompleted,\\r\\n            prog.evaluationFeedback,\\r\\n            prog.certificateURI\\r\\n        );\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get internship applications\\r\\n     */\\r\\n    function getInternshipApplications(uint256 internshipId)\\r\\n        external\\r\\n        view\\r\\n        internshipExists(internshipId)\\r\\n        returns (uint256[] memory)\\r\\n    {\\r\\n        return internshipApplications[internshipId];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get intern applications\\r\\n     */\\r\\n    function getInternApplications(address intern)\\r\\n        external\\r\\n        view\\r\\n        returns (uint256[] memory)\\r\\n    {\\r\\n        return internApplications[intern];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get company internships\\r\\n     */\\r\\n    function getCompanyInternships(address company)\\r\\n        external\\r\\n        view\\r\\n        returns (uint256[] memory)\\r\\n    {\\r\\n        return companyInternships[company];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get total internships\\r\\n     */\\r\\n    function getTotalInternships() external view returns (uint256) {\\r\\n        return internshipCounter - 1;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get total applications\\r\\n     */\\r\\n    function getTotalInternApplications() external view returns (uint256) {\\r\\n        return applicationCounter - 1;\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get internship requirements\\r\\n     */\\r\\n    function getInternshipRequirements(uint256 internshipId)\\r\\n        external\\r\\n        view\\r\\n        internshipExists(internshipId)\\r\\n        returns (string[] memory)\\r\\n    {\\r\\n        return internshipRequirements[internshipId];\\r\\n    }\\r\\n\\r\\n    /**\\r\\n     * @notice Get intern milestones\\r\\n     */\\r\\n    function getInternMilestones(uint256 applicationId)\\r\\n        external\\r\\n        view\\r\\n        applicationExists(applicationId)\\r\\n        returns (string[] memory milestones, uint256[] memory completedDates)\\r\\n    {\\r\\n        uint256 count = milestoneCounts[applicationId];\\r\\n        string[] memory ms = new string[](count);\\r\\n        uint256[] memory dates = new uint256[](count);\\r\\n\\r\\n        for (uint256 i = 0; i < count; i++) {\\r\\n            ms[i] = internMilestones[applicationId][i];\\r\\n            dates[i] = milestoneDates[applicationId][i];\\r\\n        }\\r\\n\\r\\n        return (ms, dates);\\r\\n    }\\r\\n}\\r\\n\",\"keccak256\":\"0x7f4119784aa26393617f3a037d895c9992e81c2343cab4db66fe6ffb5aa04b4b\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x6080806040523461008357331561006d5760008054336001600160a01b03198216811783556040519290916001600160a01b0316907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09080a360018055600160025561245190816100898239f35b631e4fbdf760e01b815260006004820152602490fd5b600080fdfe6080604052600436101561001257600080fd5b60003560e01c80630d0ea5ab14611cba5780631ee05f1514611b695780632489f899146119df57806331150d5f146118cf5780633aab3950146118495780633e79b8e51461174c5780634cbd2a3f1461162f57806353ef1302146116045780635cbb3a01146112265780636472cbfd146111af5780636729c26414611184578063715018a61461112b57806374fbb78314610f935780638da5cb5b14610f6a5780639328496514610e5a5780639daf22fe14610dcf578063afdc6d4d14610d23578063c3d5387614610bc3578063c815729d146109d7578063d32cca47146108d9578063e197dfab14610757578063ea2a8681146101a75763f2fde38b1461011957600080fd5b346101a25760203660031901126101a257610132611f68565b61013a6123f8565b6001600160a01b0390811690811561018957600054826001600160601b0360a01b821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b604051631e4fbdf760e01b815260006004820152602490fd5b600080fd5b346101a25760e03660031901126101a2576004356001600160401b0381116101a2576101d7903690600401611e37565b906024356001600160401b0381116101a2576101f7903690600401611e37565b92909160843580151581036101a25782156107085760643560443510156106c45760c4351561066a57610254600154946102308661236e565b60015560405196610240886121a6565b61024b36878761237d565b8852369161237d565b602086015233604086015260443560608601526064356080860152151560a085015260a43560c085015260c43560e0850152600061010085015261029661234e565b6101208501524261014085015282600052600360205260406000209084518051906001600160401b03821161056b576102d9826102d38654611fe0565b8661205b565b602090601f83116001146105fe5761030a929160009183610581575b50508160011b916000199060031b1c19161790565b82555b60208501518051906001600160401b03821161056b5761033d826103346001870154611fe0565b6001870161205b565b602090601f831160011461058c5761036d9291600091836105815750508160011b916000199060031b1c19161790565b60018301555b6002820160018060a01b036040870151166001600160601b0360a01b82541617905560608501516003830155608085015160048301556005820160a0860151151560ff8019835416911617905560c0850151600683015560e085015160078301556101008501516008830155610120850151918251956001600160401b03871161056b5786869461041660209961040d6009870154611fe0565b6009870161205b565b8890601f83116001146104ce577fc2f4a52fcf789686aebc9cb314be52ae7cdae8cb011b5c6b9b4a343be9144be89593610472846104a59795600a95610140956000926104c35750508160011b916000199060031b1c19161790565b60098501555b015191015533600052600887526104938460406000206123c3565b6040519460608652606086019161216a565b926044358682015260643560408201528033940390a3604051908152f35b015190508e806102f5565b9060098501600052896000209160005b601f1985168110610551575093600184600a94610140947fc2f4a52fcf789686aebc9cb314be52ae7cdae8cb011b5c6b9b4a343be9144be89a986104a59a98601f19811610610538575b505050811b016009850155610478565b015160001960f88460031b161c191690558d8080610528565b8183015184558a9850600190930192918b01918b016104de565b634e487b7160e01b600052604160045260246000fd5b0151905088806102f5565b9190600185016000526020600020906000935b601f19841685106105e3576001945083601f198116106105ca575b505050811b016001830155610373565b015160001960f88460031b161c191690558780806105ba565b8181015183556020948501946001909301929091019061059f565b9190846000526020600020906000935b601f198416851061064f576001945083601f19811610610636575b505050811b01825561030d565b015160001960f88460031b161c19169055878080610629565b8181015183556020948501946001909301929091019061060e565b60405162461bcd60e51b815260206004820152602c60248201527f496e7465726e736869704d616e616765723a204d617820706f736974696f6e7360448201526b0206d757374206265203e20360a41b6064820152608490fd5b606460405162461bcd60e51b815260206004820152602060248201527f496e7465726e736869704d616e616765723a20496e76616c69642064617465736044820152fd5b60405162461bcd60e51b815260206004820152602160248201527f496e7465726e736869704d616e616765723a205469746c6520726571756972656044820152601960fa1b6064820152608490fd5b346101a25761076536611e64565b821515806108ce575b61077790611f7e565b82600052602091600483526040600020916001830180546000526003855260018060a01b03908160026040600020015416331480156108c1575b1561087b57867fd5e59f1e9f554140113945a3052591858bc372d01835365c512f07d880b75d32959697600052600c8852604060002054600a89526040600020816000528952610806858760406000206120a0565b81600052600b895260406000209060005288524260406000205580600052600c88526040600020610837815461236e565b9055600052600587526002604060002001610852815461236e565b9055549454169461087060405193849360408552604085019161216a565b9042908301520390a3005b60405162461bcd60e51b815260048101879052602a602482015260008051602061242583398151915260448201526918d85b881c9958dbdc9960b21b6064820152608490fd5b50816000541633146107b1565b50600254831061076e565b346101a25760203660031901126101a257600435801515806109cc575b6108ff90611f7e565b60005260046020526040600020604051906109198261218b565b60018060a01b03918282541681526001820154916020820192835260405161094f81610948816002860161223f565b03826121dd565b60408301526109bd604051946109738661096c816003870161223f565b03876121dd565b85606085015260048301549384608082015260066005850154948560a0840152015460c082015251169351946040519586958652602086015260a0604086015260a0850190611e97565b91606084015260808301520390f35b5060025481106108f6565b346101a2576020806003193601126101a25760043580151580610bb8575b6109fe90611f7e565b6000526004815260406000209060018060a01b038254163303610b5f57600382017f1456263e753a18246f9a0df3165a859d61a88aa9fad4b43d95a035db3d5f6cb9604051610a5181610948818661223f565b838151910120661bd999995c995960ca1b84604051610a6f816121c2565b60078152015203610b0f576005830154421015610acc5760039281610a9f610a9960019454611fe0565b82612031565b6010671858d8d95c1d195960c21b0190550154600052526008604060002001610ac8815461236e565b9055005b6064826040519062461bcd60e51b825280600483015260248201527f496e7465726e736869704d616e616765723a204f6666657220657870697265646044820152fd5b60405162461bcd60e51b815260048101839052602260248201527f496e7465726e736869704d616e616765723a204e6f20616374697665206f666660448201526132b960f11b6064820152608490fd5b6084906040519062461bcd60e51b82526004820152602c60248201527f496e7465726e736869704d616e616765723a204f6e6c79206170706c6963616e60448201526b1d0818d85b881858d8d95c1d60a21b6064820152fd5b5060025481106109f5565b346101a25760603660031901126101a25760443560043580151580610d18575b610bec90611f7e565b8060005260046020526040600020916001830154600052600360205260018060a01b0390816002604060002001541633148015610d0b575b15610cbf5760038401610c3a610a998254611fe0565b600e661bd999995c995960ca1b0190556024356006850155620151808181029180159083049091141715610ca957420192834211610ca9577f74f159cc9ab2fc117a9af78fe6a9978370264addf0634dae7aa4310382fa8e5d91818560056020940155541693604051908152a3005b634e487b7160e01b600052601160045260246000fd5b60405162461bcd60e51b8152602060048201526030602482015260008051602061242583398151915260448201526f31b0b71032bc3a32b7321037b33332b960811b6064820152608490fd5b5081600054163314610c24565b506002548110610be3565b346101a2576020806003193601126101a25760043580151580610dc4575b610d4a906122d5565b600052600981526040600020908154610d62816121fe565b92610d7060405194856121dd565b8184526000908152828120838086015b848410610d9e5760405182815280610d9a8185018a611ed7565b0390f35b6001918291604051610db481610948818961223f565b8152019201920191908490610d80565b506001548110610d41565b346101a2576020806003193601126101a2576001600160a01b03610df1611f68565b1660005260078152604060002090604051808383829554938481520190600052836000209260005b85828210610e4457505050610e30925003836121dd565b610d9a604051928284938452830190611f34565b8554845260019586019588955093019201610e19565b346101a25760203660031901126101a25760043580151580610f5f575b610e8090611f7e565b60005260046020526040600020600181018054600052600360205260018060a01b0390816002604060002001541633148015610f52575b15610f0d5760038301610ecd610a998254611fe0565b600c6561637469766560d01b01905554915416907fdbf6a59acc6f00ff689eebe9ccb236ff9b166f63efc4c11364e614eecd20cd6b6020604051428152a3005b60405162461bcd60e51b8152602060048201526029602482015260008051602061242583398151915260448201526818d85b881cdd185c9d60ba1b6064820152608490fd5b5081600054163314610eb7565b506002548110610e77565b346101a25760003660031901126101a2576000546040516001600160a01b039091168152602090f35b346101a25760203660031901126101a25760043580151580611120575b610fb9906122d5565b6000526003602052604060002060405190610fd3826121a6565b60405180610fe1818461223f565b03610fec90826121dd565b82526040519081611000816001840161223f565b0361100b90836121dd565b60208301918252600160a01b60019003918383600284015416916040820192835260038401549260608301938452600485015460808401908152600586015460ff1660a085019015158152600687015460c0860190815260078801549160e08701928352600889015493610100958689019586526040519a8b8060098301906110939161223f565b0361109e908d6121dd565b8b610120809b0152600a01549b6101409d8e9d8e8201525198519151169951915192511515935194519551976040519d8e9d8e528d016110dd91611e97565b8c810360208e01526110ee91611e97565b9860408c015260608b015260808a015260a089015260c088015260e087015285015283820390840152610d9a91611e97565b506001548110610fb0565b346101a25760003660031901126101a2576111446123f8565b600080546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b346101a25760003660031901126101a2576002546000198101908111610ca957602090604051908152f35b346101a2576020806003193601126101a2576001600160a01b036111d1611f68565b1660005260088152604060002090604051808383829554938481520190600052836000209260005b8582821061121057505050610e30925003836121dd565b85548452600195860195889550930192016111f9565b346101a25761123436611e64565b9091801515806115f9575b611248906122d5565b81156115a95780600052600360205261094861127160096040600020016040519283809261223f565b6020815191012061128061234e565b602081519101200361155557600254916112998361236e565b6002556112be604051946112ac8661218b565b3386526020860192848452369161237d565b93604081019485526040516112d2816121c2565b60098152681cdd589b5a5d1d195960ba1b602082015260608201908152426080830152600060a0830152600060c083015284600052600460205260406000209260018060a01b038351166001600160601b0360a01b8554161784555160018401556002830195519586516001600160401b039788821161056b576113608261135a8554611fe0565b8561205b565b602090601f83116001146114ed5761139092916000918361146f5750508160011b916000199060031b1c19161790565b90555b5194855190811161056b576020956113bb826113b26003870154611fe0565b6003870161205b565b8690601f831160011461147a578260c093600695936113f09360009261146f5750508160011b916000199060031b1c19161790565b60038501555b6080810151600485015560a08101516005850155015191015580600052600683526114258260406000206123c3565b336000526007835261143b8260406000206123c3565b604051908282527fabe49ba4b13075e97bd3c4cc1b0bcda6a92f3a33d8d2964a9353124989793412843393a3604051908152f35b015190508a806102f5565b9060038501600052876000209160005b601f19851681106114d65750926006949260019260c09583601f198116106114bd575b505050811b0160038501556113f6565b015160001960f88460031b161c191690558980806114ad565b91928960018192868501518155019401920161148a565b90601f198316918460005260206000209260005b81811061153d5750908460019594939210611524575b505050811b019055611393565b015160001960f88460031b161c19169055898080611517565b92936020600181928786015181550195019301611501565b60405162461bcd60e51b815260206004820152602660248201527f496e7465726e736869704d616e616765723a20496e7465726e73686970206e6f6044820152653a1037b832b760d11b6064820152608490fd5b60405162461bcd60e51b815260206004820152602260248201527f496e7465726e736869704d616e616765723a204c657474657220726571756972604482015261195960f21b6064820152608490fd5b50600154811061123f565b346101a25760003660031901126101a2576001546000198101908111610ca957602090604051908152f35b346101a25760403660031901126101a2576001600160a01b0360243581811691600435918390036101a25781151580611741575b61166c90611f7e565b816000526004602052604060002091600183019081546000526003602052826002604060002001541633148015611734575b156116ee5760005260056020526040600020846001600160601b0360a01b82541617905554915416907f62cf8008d4720fdb355a93e28fc7a95f9763601c5b1ccb27e2004e65015bdc98600080a4005b60405162461bcd60e51b815260206004820152602a602482015260008051602061242583398151915260448201526931b0b71030b9b9b4b3b760b11b6064820152608490fd5b508260005416331461169e565b506002548210611663565b346101a25761175a36611e64565b90918015158061183e575b61176e906122d5565b600081815260036020526040902060020154336001600160a01b0391821614908115611830575b50156117ed57600052600960205260406000208054600160401b81101561056b576117c591600182018155612336565b9290926117d7576117d5926120a0565b005b634e487b7160e01b600052600060045260246000fd5b60405162461bcd60e51b8152602060048201526027602482015260008051602061242583398151915260448201526618d85b8818591960ca1b6064820152608490fd5b905060005416331484611795565b506001548110611765565b346101a2576020806003193601126101a257600435801515806118c4575b611870906122d5565b60005260068152604060002090604051808383829554938481520190600052836000209260005b858282106118ae57505050610e30925003836121dd565b8554845260019586019588955093019201611897565b506001548110611867565b346101a25760203660031901126101a257600435801515806119d4575b6118f590611f7e565b6000526005602052604060002060405160c081018181106001600160401b0382111761056b57604052610d9a60018060a01b03928381541683526119c660018201549360208101948552600283015495604082019687526040519161196883611961816003890161223f565b03846121dd565b6060810192835260056040519561198d87611986816004850161223f565b03886121dd565b866080840152015460a082015251169451955190519060405196879687526020870152604086015260a0606086015260a0850190611e97565b908382036080850152611e97565b5060025481106118ec565b346101a25760603660031901126101a2576024356004356044356001600160401b0381116101a257611a15903690600401611e37565b9082151580611b5e575b611a2890611f7e565b60648411611b1957826000526004602052604060002092600184018054600052600360205260018060a01b0391826002604060002001541633148015611b0c575b15611ac4577f8efc4f38bfa3e9067d7dafa0c42a80a818d98a556235c232fb3c1a87009d7d9a94604094611ab19260005260056020526003866000208a6001820155016120a0565b54935416938151908152426020820152a3005b60405162461bcd60e51b815260206004820152602c602482015260008051602061242583398151915260448201526b63616e206576616c7561746560a01b6064820152608490fd5b5082600054163314611a69565b60405162461bcd60e51b815260206004820152601e60248201527f496e7465726e736869704d616e616765723a2053636f726520302d31303000006044820152606490fd5b506002548310611a1f565b346101a2576020806003193601126101a25760043580151580611caf575b611b9090611f7e565b80600052600c825260406000205490611ba8826121fe565b91611bb660405193846121dd565b808352601f199182611bc7836121fe565b018560005b828110611ca057505050611bdf826121fe565b92611bed60405194856121dd565b828452611bf9836121fe565b01368685013760005b828110611c3357611c2685610d9a8887604051948594604086526040860190611ed7565b9184830390850152611f34565b60019082600052600a87526040600020816000528752610948611c6060406000206040519283809261223f565b611c6a8288612215565b52611c758187612215565b5082600052600b87526040600020816000528752604060002054611c998287612215565b5201611c02565b60608782018301528101611bcc565b506002548110611b87565b346101a257611cc836611e64565b829192151580611e2c575b611cdc90611f7e565b816000526020600481526040600020926001840180546000526003835260018060a01b0391826002604060002001541633148015611e1f575b15611dd75791611dd2917fb7ff6cbe8f0282bf405f9ce3210be62c5620d39139a49186436e3f0fcc6a315a95949360038801611d54610a998254611fe0565b60126818dbdb5c1b195d195960ba1b0190558060005260058552611d80868a60046040600020016120a0565b6000526005845242600560406000200155549554169586867f93e402771ff4daa272542a608159d36c3e619b45194681475da6ff594764861b85604051428152a360405193838594855284019161216a565b0390a3005b60405162461bcd60e51b815260048101859052602c602482015260008051602061242583398151915260448201526b63616e20636f6d706c65746560a01b6064820152608490fd5b5082600054163314611d15565b506002548210611cd3565b9181601f840112156101a2578235916001600160401b0383116101a257602083818601950101116101a257565b9060406003198301126101a25760043591602435906001600160401b0382116101a257611e9391600401611e37565b9091565b919082519283825260005b848110611ec3575050826000602080949584010152601f8019910116010190565b602081830181015184830182015201611ea2565b90808251908181526020809101926020808460051b8301019501936000915b848310611f065750505050505090565b9091929394958480611f24600193601f198682030187528a51611e97565b9801930193019194939290611ef6565b90815180825260208080930193019160005b828110611f54575050505090565b835185529381019392810192600101611f46565b600435906001600160a01b03821682036101a257565b15611f8557565b60405162461bcd60e51b815260206004820152602d60248201527f496e7465726e736869704d616e616765723a204170706c69636174696f6e206460448201526c1bd95cc81b9bdd08195e1a5cdd609a1b6064820152608490fd5b90600182811c92168015612010575b6020831014611ffa57565b634e487b7160e01b600052602260045260246000fd5b91607f1691611fef565b818110612025575050565b6000815560010161201a565b90601f811161203e575050565b61205991600052601f6020600020910160051c81019061201a565b565b9190601f811161206a57505050565b612059926000526020600020906020601f840160051c83019310612096575b601f0160051c019061201a565b9091508190612089565b9092916001600160401b03811161056b576120c5816120bf8454611fe0565b8461205b565b6000601f82116001146121055781906120f69394956000926120fa5750508160011b916000199060031b1c19161790565b9055565b0135905038806102f5565b601f19821694838252602091602081209281905b88821061215257505083600195969710612138575b505050811b019055565b0135600019600384901b60f8161c1916905538808061212e565b80600184968294958701358155019501920190612119565b908060209392818452848401376000828201840152601f01601f1916010190565b60e081019081106001600160401b0382111761056b57604052565b61016081019081106001600160401b0382111761056b57604052565b604081019081106001600160401b0382111761056b57604052565b90601f801991011681019081106001600160401b0382111761056b57604052565b6001600160401b03811161056b5760051b60200190565b80518210156122295760209160051b010190565b634e487b7160e01b600052603260045260246000fd5b80546000939261224e82611fe0565b918282526020936001916001811690816000146122b65750600114612275575b5050505050565b90939495506000929192528360002092846000945b8386106122a25750505050010190388080808061226e565b80548587018301529401938590820161228a565b60ff19168685015250505090151560051b01019150388080808061226e565b156122dc57565b60405162461bcd60e51b815260206004820152602c60248201527f496e7465726e736869704d616e616765723a20496e7465726e7368697020646f60448201526b195cc81b9bdd08195e1a5cdd60a21b6064820152608490fd5b80548210156122295760005260206000200190600090565b6040519061235b826121c2565b600482526337b832b760e11b6020830152565b6000198114610ca95760010190565b9291926001600160401b03821161056b57604051916123a6601f8201601f1916602001846121dd565b8294818452818301116101a2578281602093846000960137010152565b8054600160401b81101561056b576123e091600182018155612336565b819291549060031b91821b91600019901b1916179055565b6000546001600160a01b0316330361240c57565b60405163118cdaa760e01b8152336004820152602490fdfe496e7465726e736869704d616e616765723a204f6e6c7920636f6d70616e7920a164736f6c6343000818000a",
+  "deployedBytecode": "0x6080604052600436101561001257600080fd5b60003560e01c80630d0ea5ab14611cba5780631ee05f1514611b695780632489f899146119df57806331150d5f146118cf5780633aab3950146118495780633e79b8e51461174c5780634cbd2a3f1461162f57806353ef1302146116045780635cbb3a01146112265780636472cbfd146111af5780636729c26414611184578063715018a61461112b57806374fbb78314610f935780638da5cb5b14610f6a5780639328496514610e5a5780639daf22fe14610dcf578063afdc6d4d14610d23578063c3d5387614610bc3578063c815729d146109d7578063d32cca47146108d9578063e197dfab14610757578063ea2a8681146101a75763f2fde38b1461011957600080fd5b346101a25760203660031901126101a257610132611f68565b61013a6123f8565b6001600160a01b0390811690811561018957600054826001600160601b0360a01b821617600055167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a3005b604051631e4fbdf760e01b815260006004820152602490fd5b600080fd5b346101a25760e03660031901126101a2576004356001600160401b0381116101a2576101d7903690600401611e37565b906024356001600160401b0381116101a2576101f7903690600401611e37565b92909160843580151581036101a25782156107085760643560443510156106c45760c4351561066a57610254600154946102308661236e565b60015560405196610240886121a6565b61024b36878761237d565b8852369161237d565b602086015233604086015260443560608601526064356080860152151560a085015260a43560c085015260c43560e0850152600061010085015261029661234e565b6101208501524261014085015282600052600360205260406000209084518051906001600160401b03821161056b576102d9826102d38654611fe0565b8661205b565b602090601f83116001146105fe5761030a929160009183610581575b50508160011b916000199060031b1c19161790565b82555b60208501518051906001600160401b03821161056b5761033d826103346001870154611fe0565b6001870161205b565b602090601f831160011461058c5761036d9291600091836105815750508160011b916000199060031b1c19161790565b60018301555b6002820160018060a01b036040870151166001600160601b0360a01b82541617905560608501516003830155608085015160048301556005820160a0860151151560ff8019835416911617905560c0850151600683015560e085015160078301556101008501516008830155610120850151918251956001600160401b03871161056b5786869461041660209961040d6009870154611fe0565b6009870161205b565b8890601f83116001146104ce577fc2f4a52fcf789686aebc9cb314be52ae7cdae8cb011b5c6b9b4a343be9144be89593610472846104a59795600a95610140956000926104c35750508160011b916000199060031b1c19161790565b60098501555b015191015533600052600887526104938460406000206123c3565b6040519460608652606086019161216a565b926044358682015260643560408201528033940390a3604051908152f35b015190508e806102f5565b9060098501600052896000209160005b601f1985168110610551575093600184600a94610140947fc2f4a52fcf789686aebc9cb314be52ae7cdae8cb011b5c6b9b4a343be9144be89a986104a59a98601f19811610610538575b505050811b016009850155610478565b015160001960f88460031b161c191690558d8080610528565b8183015184558a9850600190930192918b01918b016104de565b634e487b7160e01b600052604160045260246000fd5b0151905088806102f5565b9190600185016000526020600020906000935b601f19841685106105e3576001945083601f198116106105ca575b505050811b016001830155610373565b015160001960f88460031b161c191690558780806105ba565b8181015183556020948501946001909301929091019061059f565b9190846000526020600020906000935b601f198416851061064f576001945083601f19811610610636575b505050811b01825561030d565b015160001960f88460031b161c19169055878080610629565b8181015183556020948501946001909301929091019061060e565b60405162461bcd60e51b815260206004820152602c60248201527f496e7465726e736869704d616e616765723a204d617820706f736974696f6e7360448201526b0206d757374206265203e20360a41b6064820152608490fd5b606460405162461bcd60e51b815260206004820152602060248201527f496e7465726e736869704d616e616765723a20496e76616c69642064617465736044820152fd5b60405162461bcd60e51b815260206004820152602160248201527f496e7465726e736869704d616e616765723a205469746c6520726571756972656044820152601960fa1b6064820152608490fd5b346101a25761076536611e64565b821515806108ce575b61077790611f7e565b82600052602091600483526040600020916001830180546000526003855260018060a01b03908160026040600020015416331480156108c1575b1561087b57867fd5e59f1e9f554140113945a3052591858bc372d01835365c512f07d880b75d32959697600052600c8852604060002054600a89526040600020816000528952610806858760406000206120a0565b81600052600b895260406000209060005288524260406000205580600052600c88526040600020610837815461236e565b9055600052600587526002604060002001610852815461236e565b9055549454169461087060405193849360408552604085019161216a565b9042908301520390a3005b60405162461bcd60e51b815260048101879052602a602482015260008051602061242583398151915260448201526918d85b881c9958dbdc9960b21b6064820152608490fd5b50816000541633146107b1565b50600254831061076e565b346101a25760203660031901126101a257600435801515806109cc575b6108ff90611f7e565b60005260046020526040600020604051906109198261218b565b60018060a01b03918282541681526001820154916020820192835260405161094f81610948816002860161223f565b03826121dd565b60408301526109bd604051946109738661096c816003870161223f565b03876121dd565b85606085015260048301549384608082015260066005850154948560a0840152015460c082015251169351946040519586958652602086015260a0604086015260a0850190611e97565b91606084015260808301520390f35b5060025481106108f6565b346101a2576020806003193601126101a25760043580151580610bb8575b6109fe90611f7e565b6000526004815260406000209060018060a01b038254163303610b5f57600382017f1456263e753a18246f9a0df3165a859d61a88aa9fad4b43d95a035db3d5f6cb9604051610a5181610948818661223f565b838151910120661bd999995c995960ca1b84604051610a6f816121c2565b60078152015203610b0f576005830154421015610acc5760039281610a9f610a9960019454611fe0565b82612031565b6010671858d8d95c1d195960c21b0190550154600052526008604060002001610ac8815461236e565b9055005b6064826040519062461bcd60e51b825280600483015260248201527f496e7465726e736869704d616e616765723a204f6666657220657870697265646044820152fd5b60405162461bcd60e51b815260048101839052602260248201527f496e7465726e736869704d616e616765723a204e6f20616374697665206f666660448201526132b960f11b6064820152608490fd5b6084906040519062461bcd60e51b82526004820152602c60248201527f496e7465726e736869704d616e616765723a204f6e6c79206170706c6963616e60448201526b1d0818d85b881858d8d95c1d60a21b6064820152fd5b5060025481106109f5565b346101a25760603660031901126101a25760443560043580151580610d18575b610bec90611f7e565b8060005260046020526040600020916001830154600052600360205260018060a01b0390816002604060002001541633148015610d0b575b15610cbf5760038401610c3a610a998254611fe0565b600e661bd999995c995960ca1b0190556024356006850155620151808181029180159083049091141715610ca957420192834211610ca9577f74f159cc9ab2fc117a9af78fe6a9978370264addf0634dae7aa4310382fa8e5d91818560056020940155541693604051908152a3005b634e487b7160e01b600052601160045260246000fd5b60405162461bcd60e51b8152602060048201526030602482015260008051602061242583398151915260448201526f31b0b71032bc3a32b7321037b33332b960811b6064820152608490fd5b5081600054163314610c24565b506002548110610be3565b346101a2576020806003193601126101a25760043580151580610dc4575b610d4a906122d5565b600052600981526040600020908154610d62816121fe565b92610d7060405194856121dd565b8184526000908152828120838086015b848410610d9e5760405182815280610d9a8185018a611ed7565b0390f35b6001918291604051610db481610948818961223f565b8152019201920191908490610d80565b506001548110610d41565b346101a2576020806003193601126101a2576001600160a01b03610df1611f68565b1660005260078152604060002090604051808383829554938481520190600052836000209260005b85828210610e4457505050610e30925003836121dd565b610d9a604051928284938452830190611f34565b8554845260019586019588955093019201610e19565b346101a25760203660031901126101a25760043580151580610f5f575b610e8090611f7e565b60005260046020526040600020600181018054600052600360205260018060a01b0390816002604060002001541633148015610f52575b15610f0d5760038301610ecd610a998254611fe0565b600c6561637469766560d01b01905554915416907fdbf6a59acc6f00ff689eebe9ccb236ff9b166f63efc4c11364e614eecd20cd6b6020604051428152a3005b60405162461bcd60e51b8152602060048201526029602482015260008051602061242583398151915260448201526818d85b881cdd185c9d60ba1b6064820152608490fd5b5081600054163314610eb7565b506002548110610e77565b346101a25760003660031901126101a2576000546040516001600160a01b039091168152602090f35b346101a25760203660031901126101a25760043580151580611120575b610fb9906122d5565b6000526003602052604060002060405190610fd3826121a6565b60405180610fe1818461223f565b03610fec90826121dd565b82526040519081611000816001840161223f565b0361100b90836121dd565b60208301918252600160a01b60019003918383600284015416916040820192835260038401549260608301938452600485015460808401908152600586015460ff1660a085019015158152600687015460c0860190815260078801549160e08701928352600889015493610100958689019586526040519a8b8060098301906110939161223f565b0361109e908d6121dd565b8b610120809b0152600a01549b6101409d8e9d8e8201525198519151169951915192511515935194519551976040519d8e9d8e528d016110dd91611e97565b8c810360208e01526110ee91611e97565b9860408c015260608b015260808a015260a089015260c088015260e087015285015283820390840152610d9a91611e97565b506001548110610fb0565b346101a25760003660031901126101a2576111446123f8565b600080546001600160a01b0319811682556001600160a01b03167f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08280a3005b346101a25760003660031901126101a2576002546000198101908111610ca957602090604051908152f35b346101a2576020806003193601126101a2576001600160a01b036111d1611f68565b1660005260088152604060002090604051808383829554938481520190600052836000209260005b8582821061121057505050610e30925003836121dd565b85548452600195860195889550930192016111f9565b346101a25761123436611e64565b9091801515806115f9575b611248906122d5565b81156115a95780600052600360205261094861127160096040600020016040519283809261223f565b6020815191012061128061234e565b602081519101200361155557600254916112998361236e565b6002556112be604051946112ac8661218b565b3386526020860192848452369161237d565b93604081019485526040516112d2816121c2565b60098152681cdd589b5a5d1d195960ba1b602082015260608201908152426080830152600060a0830152600060c083015284600052600460205260406000209260018060a01b038351166001600160601b0360a01b8554161784555160018401556002830195519586516001600160401b039788821161056b576113608261135a8554611fe0565b8561205b565b602090601f83116001146114ed5761139092916000918361146f5750508160011b916000199060031b1c19161790565b90555b5194855190811161056b576020956113bb826113b26003870154611fe0565b6003870161205b565b8690601f831160011461147a578260c093600695936113f09360009261146f5750508160011b916000199060031b1c19161790565b60038501555b6080810151600485015560a08101516005850155015191015580600052600683526114258260406000206123c3565b336000526007835261143b8260406000206123c3565b604051908282527fabe49ba4b13075e97bd3c4cc1b0bcda6a92f3a33d8d2964a9353124989793412843393a3604051908152f35b015190508a806102f5565b9060038501600052876000209160005b601f19851681106114d65750926006949260019260c09583601f198116106114bd575b505050811b0160038501556113f6565b015160001960f88460031b161c191690558980806114ad565b91928960018192868501518155019401920161148a565b90601f198316918460005260206000209260005b81811061153d5750908460019594939210611524575b505050811b019055611393565b015160001960f88460031b161c19169055898080611517565b92936020600181928786015181550195019301611501565b60405162461bcd60e51b815260206004820152602660248201527f496e7465726e736869704d616e616765723a20496e7465726e73686970206e6f6044820152653a1037b832b760d11b6064820152608490fd5b60405162461bcd60e51b815260206004820152602260248201527f496e7465726e736869704d616e616765723a204c657474657220726571756972604482015261195960f21b6064820152608490fd5b50600154811061123f565b346101a25760003660031901126101a2576001546000198101908111610ca957602090604051908152f35b346101a25760403660031901126101a2576001600160a01b0360243581811691600435918390036101a25781151580611741575b61166c90611f7e565b816000526004602052604060002091600183019081546000526003602052826002604060002001541633148015611734575b156116ee5760005260056020526040600020846001600160601b0360a01b82541617905554915416907f62cf8008d4720fdb355a93e28fc7a95f9763601c5b1ccb27e2004e65015bdc98600080a4005b60405162461bcd60e51b815260206004820152602a602482015260008051602061242583398151915260448201526931b0b71030b9b9b4b3b760b11b6064820152608490fd5b508260005416331461169e565b506002548210611663565b346101a25761175a36611e64565b90918015158061183e575b61176e906122d5565b600081815260036020526040902060020154336001600160a01b0391821614908115611830575b50156117ed57600052600960205260406000208054600160401b81101561056b576117c591600182018155612336565b9290926117d7576117d5926120a0565b005b634e487b7160e01b600052600060045260246000fd5b60405162461bcd60e51b8152602060048201526027602482015260008051602061242583398151915260448201526618d85b8818591960ca1b6064820152608490fd5b905060005416331484611795565b506001548110611765565b346101a2576020806003193601126101a257600435801515806118c4575b611870906122d5565b60005260068152604060002090604051808383829554938481520190600052836000209260005b858282106118ae57505050610e30925003836121dd565b8554845260019586019588955093019201611897565b506001548110611867565b346101a25760203660031901126101a257600435801515806119d4575b6118f590611f7e565b6000526005602052604060002060405160c081018181106001600160401b0382111761056b57604052610d9a60018060a01b03928381541683526119c660018201549360208101948552600283015495604082019687526040519161196883611961816003890161223f565b03846121dd565b6060810192835260056040519561198d87611986816004850161223f565b03886121dd565b866080840152015460a082015251169451955190519060405196879687526020870152604086015260a0606086015260a0850190611e97565b908382036080850152611e97565b5060025481106118ec565b346101a25760603660031901126101a2576024356004356044356001600160401b0381116101a257611a15903690600401611e37565b9082151580611b5e575b611a2890611f7e565b60648411611b1957826000526004602052604060002092600184018054600052600360205260018060a01b0391826002604060002001541633148015611b0c575b15611ac4577f8efc4f38bfa3e9067d7dafa0c42a80a818d98a556235c232fb3c1a87009d7d9a94604094611ab19260005260056020526003866000208a6001820155016120a0565b54935416938151908152426020820152a3005b60405162461bcd60e51b815260206004820152602c602482015260008051602061242583398151915260448201526b63616e206576616c7561746560a01b6064820152608490fd5b5082600054163314611a69565b60405162461bcd60e51b815260206004820152601e60248201527f496e7465726e736869704d616e616765723a2053636f726520302d31303000006044820152606490fd5b506002548310611a1f565b346101a2576020806003193601126101a25760043580151580611caf575b611b9090611f7e565b80600052600c825260406000205490611ba8826121fe565b91611bb660405193846121dd565b808352601f199182611bc7836121fe565b018560005b828110611ca057505050611bdf826121fe565b92611bed60405194856121dd565b828452611bf9836121fe565b01368685013760005b828110611c3357611c2685610d9a8887604051948594604086526040860190611ed7565b9184830390850152611f34565b60019082600052600a87526040600020816000528752610948611c6060406000206040519283809261223f565b611c6a8288612215565b52611c758187612215565b5082600052600b87526040600020816000528752604060002054611c998287612215565b5201611c02565b60608782018301528101611bcc565b506002548110611b87565b346101a257611cc836611e64565b829192151580611e2c575b611cdc90611f7e565b816000526020600481526040600020926001840180546000526003835260018060a01b0391826002604060002001541633148015611e1f575b15611dd75791611dd2917fb7ff6cbe8f0282bf405f9ce3210be62c5620d39139a49186436e3f0fcc6a315a95949360038801611d54610a998254611fe0565b60126818dbdb5c1b195d195960ba1b0190558060005260058552611d80868a60046040600020016120a0565b6000526005845242600560406000200155549554169586867f93e402771ff4daa272542a608159d36c3e619b45194681475da6ff594764861b85604051428152a360405193838594855284019161216a565b0390a3005b60405162461bcd60e51b815260048101859052602c602482015260008051602061242583398151915260448201526b63616e20636f6d706c65746560a01b6064820152608490fd5b5082600054163314611d15565b506002548210611cd3565b9181601f840112156101a2578235916001600160401b0383116101a257602083818601950101116101a257565b9060406003198301126101a25760043591602435906001600160401b0382116101a257611e9391600401611e37565b9091565b919082519283825260005b848110611ec3575050826000602080949584010152601f8019910116010190565b602081830181015184830182015201611ea2565b90808251908181526020809101926020808460051b8301019501936000915b848310611f065750505050505090565b9091929394958480611f24600193601f198682030187528a51611e97565b9801930193019194939290611ef6565b90815180825260208080930193019160005b828110611f54575050505090565b835185529381019392810192600101611f46565b600435906001600160a01b03821682036101a257565b15611f8557565b60405162461bcd60e51b815260206004820152602d60248201527f496e7465726e736869704d616e616765723a204170706c69636174696f6e206460448201526c1bd95cc81b9bdd08195e1a5cdd609a1b6064820152608490fd5b90600182811c92168015612010575b6020831014611ffa57565b634e487b7160e01b600052602260045260246000fd5b91607f1691611fef565b818110612025575050565b6000815560010161201a565b90601f811161203e575050565b61205991600052601f6020600020910160051c81019061201a565b565b9190601f811161206a57505050565b612059926000526020600020906020601f840160051c83019310612096575b601f0160051c019061201a565b9091508190612089565b9092916001600160401b03811161056b576120c5816120bf8454611fe0565b8461205b565b6000601f82116001146121055781906120f69394956000926120fa5750508160011b916000199060031b1c19161790565b9055565b0135905038806102f5565b601f19821694838252602091602081209281905b88821061215257505083600195969710612138575b505050811b019055565b0135600019600384901b60f8161c1916905538808061212e565b80600184968294958701358155019501920190612119565b908060209392818452848401376000828201840152601f01601f1916010190565b60e081019081106001600160401b0382111761056b57604052565b61016081019081106001600160401b0382111761056b57604052565b604081019081106001600160401b0382111761056b57604052565b90601f801991011681019081106001600160401b0382111761056b57604052565b6001600160401b03811161056b5760051b60200190565b80518210156122295760209160051b010190565b634e487b7160e01b600052603260045260246000fd5b80546000939261224e82611fe0565b918282526020936001916001811690816000146122b65750600114612275575b5050505050565b90939495506000929192528360002092846000945b8386106122a25750505050010190388080808061226e565b80548587018301529401938590820161228a565b60ff19168685015250505090151560051b01019150388080808061226e565b156122dc57565b60405162461bcd60e51b815260206004820152602c60248201527f496e7465726e736869704d616e616765723a20496e7465726e7368697020646f60448201526b195cc81b9bdd08195e1a5cdd60a21b6064820152608490fd5b80548210156122295760005260206000200190600090565b6040519061235b826121c2565b600482526337b832b760e11b6020830152565b6000198114610ca95760010190565b9291926001600160401b03821161056b57604051916123a6601f8201601f1916602001846121dd565b8294818452818301116101a2578281602093846000960137010152565b8054600160401b81101561056b576123e091600182018155612336565b819291549060031b91821b91600019901b1916179055565b6000546001600160a01b0316330361240c57565b60405163118cdaa760e01b8152336004820152602490fdfe496e7465726e736869704d616e616765723a204f6e6c7920636f6d70616e7920a164736f6c6343000818000a",
+  "devdoc": {
+    "details": "Manages internship programs and tracking",
+    "errors": {
+      "OwnableInvalidOwner(address)": [
+        {
+          "details": "The owner is not a valid owner account. (eg. `address(0)`)"
+        }
+      ],
+      "OwnableUnauthorizedAccount(address)": [
+        {
+          "details": "The caller account is not authorized to perform an operation."
+        }
+      ]
+    },
+    "kind": "dev",
+    "methods": {
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      }
+    },
+    "title": "InternshipManager",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "acceptOffer(uint256)": {
+        "notice": "Accept offer"
+      },
+      "addRequirement(uint256,string)": {
+        "notice": "Add requirement"
+      },
+      "applyForInternship(uint256,string)": {
+        "notice": "Apply for internship"
+      },
+      "assignMentor(uint256,address)": {
+        "notice": "Assign mentor"
+      },
+      "completeInternship(uint256,string)": {
+        "notice": "Complete internship"
+      },
+      "createInternship(string,string,uint256,uint256,bool,uint256,uint256)": {
+        "notice": "Create internship"
+      },
+      "evaluatePerformance(uint256,uint256,string)": {
+        "notice": "Evaluate performance"
+      },
+      "extendOffer(uint256,uint256,uint256)": {
+        "notice": "Extend offer"
+      },
+      "getApplicationStatus(uint256)": {
+        "notice": "Get application status"
+      },
+      "getCompanyInternships(address)": {
+        "notice": "Get company internships"
+      },
+      "getInternApplications(address)": {
+        "notice": "Get intern applications"
+      },
+      "getInternMilestones(uint256)": {
+        "notice": "Get intern milestones"
+      },
+      "getInternProgress(uint256)": {
+        "notice": "Get intern progress"
+      },
+      "getInternshipApplications(uint256)": {
+        "notice": "Get internship applications"
+      },
+      "getInternshipDetails(uint256)": {
+        "notice": "Get internship details"
+      },
+      "getInternshipRequirements(uint256)": {
+        "notice": "Get internship requirements"
+      },
+      "getTotalInternApplications()": {
+        "notice": "Get total applications"
+      },
+      "getTotalInternships()": {
+        "notice": "Get total internships"
+      },
+      "recordMilestone(uint256,string)": {
+        "notice": "Record milestone"
+      },
+      "startInternship(uint256)": {
+        "notice": "Start internship"
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 8,
+        "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 2072,
+        "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+        "label": "internshipCounter",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 2074,
+        "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+        "label": "applicationCounter",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 2079,
+        "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+        "label": "internships",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_uint256,t_struct(Internship)2042_storage)"
+      },
+      {
+        "astId": 2084,
+        "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+        "label": "applications",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_mapping(t_uint256,t_struct(InternApplication)2057_storage)"
+      },
+      {
+        "astId": 2089,
+        "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+        "label": "progress",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_mapping(t_uint256,t_struct(InternProgress)2070_storage)"
+      },
+      {
+        "astId": 2094,
+        "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+        "label": "internshipApplications",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_mapping(t_uint256,t_array(t_uint256)dyn_storage)"
+      },
+      {
+        "astId": 2099,
+        "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+        "label": "internApplications",
+        "offset": 0,
+        "slot": "7",
+        "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)"
+      },
+      {
+        "astId": 2104,
+        "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+        "label": "companyInternships",
+        "offset": 0,
+        "slot": "8",
+        "type": "t_mapping(t_address,t_array(t_uint256)dyn_storage)"
+      },
+      {
+        "astId": 2109,
+        "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+        "label": "internshipRequirements",
+        "offset": 0,
+        "slot": "9",
+        "type": "t_mapping(t_uint256,t_array(t_string_storage)dyn_storage)"
+      },
+      {
+        "astId": 2115,
+        "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+        "label": "internMilestones",
+        "offset": 0,
+        "slot": "10",
+        "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_string_storage))"
+      },
+      {
+        "astId": 2121,
+        "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+        "label": "milestoneDates",
+        "offset": 0,
+        "slot": "11",
+        "type": "t_mapping(t_uint256,t_mapping(t_uint256,t_uint256))"
+      },
+      {
+        "astId": 2125,
+        "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+        "label": "milestoneCounts",
+        "offset": 0,
+        "slot": "12",
+        "type": "t_mapping(t_uint256,t_uint256)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_string_storage)dyn_storage": {
+        "base": "t_string_storage",
+        "encoding": "dynamic_array",
+        "label": "string[]",
+        "numberOfBytes": "32"
+      },
+      "t_array(t_uint256)dyn_storage": {
+        "base": "t_uint256",
+        "encoding": "dynamic_array",
+        "label": "uint256[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_address,t_array(t_uint256)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => uint256[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_uint256)dyn_storage"
+      },
+      "t_mapping(t_uint256,t_array(t_string_storage)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => string[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_string_storage)dyn_storage"
+      },
+      "t_mapping(t_uint256,t_array(t_uint256)dyn_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => uint256[])",
+        "numberOfBytes": "32",
+        "value": "t_array(t_uint256)dyn_storage"
+      },
+      "t_mapping(t_uint256,t_mapping(t_uint256,t_string_storage))": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => mapping(uint256 => string))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_uint256,t_string_storage)"
+      },
+      "t_mapping(t_uint256,t_mapping(t_uint256,t_uint256))": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => mapping(uint256 => uint256))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_uint256,t_uint256)"
+      },
+      "t_mapping(t_uint256,t_string_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => string)",
+        "numberOfBytes": "32",
+        "value": "t_string_storage"
+      },
+      "t_mapping(t_uint256,t_struct(InternApplication)2057_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct InternshipManager.InternApplication)",
+        "numberOfBytes": "32",
+        "value": "t_struct(InternApplication)2057_storage"
+      },
+      "t_mapping(t_uint256,t_struct(InternProgress)2070_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct InternshipManager.InternProgress)",
+        "numberOfBytes": "32",
+        "value": "t_struct(InternProgress)2070_storage"
+      },
+      "t_mapping(t_uint256,t_struct(Internship)2042_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct InternshipManager.Internship)",
+        "numberOfBytes": "32",
+        "value": "t_struct(Internship)2042_storage"
+      },
+      "t_mapping(t_uint256,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_string_storage": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_struct(InternApplication)2057_storage": {
+        "encoding": "inplace",
+        "label": "struct InternshipManager.InternApplication",
+        "members": [
+          {
+            "astId": 2044,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "intern",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address"
+          },
+          {
+            "astId": 2046,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "internshipId",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2048,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "motivationLetter",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 2050,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "status",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 2052,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "submittedAt",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2054,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "offerExpiry",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2056,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "stipend",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "224"
+      },
+      "t_struct(InternProgress)2070_storage": {
+        "encoding": "inplace",
+        "label": "struct InternshipManager.InternProgress",
+        "members": [
+          {
+            "astId": 2059,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "mentor",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address"
+          },
+          {
+            "astId": 2061,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "performanceScore",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2063,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "milestonesCompleted",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2065,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "evaluationFeedback",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 2067,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "certificateURI",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 2069,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "completedAt",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "192"
+      },
+      "t_struct(Internship)2042_storage": {
+        "encoding": "inplace",
+        "label": "struct InternshipManager.Internship",
+        "members": [
+          {
+            "astId": 2021,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "title",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 2023,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "description",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 2025,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "company",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_address"
+          },
+          {
+            "astId": 2027,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "startDate",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2029,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "endDate",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2031,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "mentorRequired",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_bool"
+          },
+          {
+            "astId": 2033,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "minGPA",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2035,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "maxPositions",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2037,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "filledPositions",
+            "offset": 0,
+            "slot": "8",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 2039,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "status",
+            "offset": 0,
+            "slot": "9",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 2041,
+            "contract": "contracts/modules/014-internship/InternshipManager.sol:InternshipManager",
+            "label": "createdAt",
+            "offset": 0,
+            "slot": "10",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "352"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}
