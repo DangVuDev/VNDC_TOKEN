@@ -1,0 +1,2521 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Off-chain backend for the VNDC token platform.\n\n## Authentication\nThe API uses **wallet-based authentication** (Sign-In With Ethereum / EIP-191).\nAll protected endpoints require an `Authorization: Bearer \u003caccess_token\u003e` header.\n\n### Login flow\n1. `GET /v1/auth/challenge?wallet=0x…`  — obtain a nonce-embedded message\n2. Sign the message with your wallet (personal_sign / EIP-191)\n3. `POST /v1/auth/login` — submit the signature; receive a JWT pair\n4. *(if 2FA is enabled)* `POST /v1/auth/2fa/complete` — verify TOTP code\n5. Pass the `access_token` as `Authorization: Bearer \u003ctoken\u003e` on every request\n6. `POST /v1/auth/refresh` — rotate tokens before access token expires (15 min)\n\n## Amount encoding\nAll token amounts are expressed in **wei** as **decimal strings** — never floats.\nExample: `\"1000000000000000000\"` = 1 VNDC (18 decimals).",
+        "title": "VNDC Backend API",
+        "contact": {
+            "name": "VNDC Platform Team",
+            "email": "dev@vndc.io"
+        },
+        "license": {
+            "name": "Proprietary",
+            "url": "https://vndc.io/terms"
+        },
+        "version": "1.0.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/v1",
+    "paths": {
+        "/auth/2fa/complete": {
+            "post": {
+                "description": "Verifies the TOTP code (6 digits) or a backup code (8 chars) and issues the full JWT pair.\nRequires the `temp_token` returned by POST /auth/login when `requires_2fa` is true.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Complete two-factor authentication",
+                "parameters": [
+                    {
+                        "description": "Temp token + TOTP or backup code",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.Complete2FARequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Full JWT pair issued",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Missing fields",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Expired session or wrong code",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/2fa/disable": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Disables TOTP on the account after verifying the current code or a backup code.\nThis also clears the TOTP secret and all remaining backup codes.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Deactivate two-factor authentication",
+                "parameters": [
+                    {
+                        "description": "6-digit TOTP code or 8-char backup code",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.Disable2FARequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "2FA disabled successfully",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "2FA is not enabled",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid code",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/2fa/enable": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Confirms the TOTP secret by verifying a live authenticator code, then enables 2FA on the account.\nMust be called after POST /auth/2fa/setup.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Activate two-factor authentication",
+                "parameters": [
+                    {
+                        "description": "Current 6-digit TOTP code",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.Enable2FARequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "2FA enabled successfully",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "setup not called / missing code",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid TOTP code",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/2fa/setup": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a TOTP secret and 8 one-time backup codes for the authenticated user.\n**2FA is NOT active until the user calls POST /auth/2fa/enable** with a valid code.\n\nThe `otp_auth_uri` field should be encoded as a QR code for the user to scan\nwith an authenticator app (Google Authenticator, Authy, etc.).\n\n⚠️ Backup codes are shown **once** — the user must store them securely.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Generate a new TOTP secret",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.Setup2FAResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid Bearer token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "2FA is already enabled",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/challenge": {
+            "get": {
+                "description": "Generates a random nonce and returns a pre-formatted EIP-191 message\nthe wallet must sign. The nonce expires in 5 minutes.\n**Step 1** of the login flow — call before POST /auth/login.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Request a SIWE sign-in challenge",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+                        "description": "Checksummed Ethereum wallet address",
+                        "name": "wallet",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ChallengeResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "wallet query param is missing",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "description": "Verifies the EIP-191 personal_sign signature against the challenge nonce.\nReturns a full JWT pair **or** a temp_token when 2FA is enabled.\n\n| Case | Response |\n|------|----------|\n| 2FA disabled | `LoginResponse` with `access_token` + `refresh_token` |\n| 2FA enabled  | `Login2FAResponse` with `requires_2fa: true` + `temp_token` → call `/auth/2fa/complete` |",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Sign in with Ethereum wallet (SIWE)",
+                "parameters": [
+                    {
+                        "description": "Wallet address + EIP-191 signature",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "2FA required — use temp_token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.Login2FAResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Missing or invalid fields",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Signature mismatch / expired nonce / locked account",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Blacklists the current access token in Redis and revokes the active session.\nThe token is rejected on subsequent requests even before its natural expiry.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Log out current session",
+                "responses": {
+                    "204": {
+                        "description": "Session revoked — no content"
+                    },
+                    "401": {
+                        "description": "Missing or invalid Bearer token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout-all": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Blacklists the current access token and revokes **all** active sessions for this user.\nUse this when a device is lost or a security breach is suspected.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Log out all sessions",
+                "responses": {
+                    "204": {
+                        "description": "All sessions revoked — no content"
+                    },
+                    "401": {
+                        "description": "Missing or invalid Bearer token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/refresh": {
+            "post": {
+                "description": "Exchanges a valid refresh token for a new access + refresh token pair.\nThe old refresh token is **immediately invalidated** (rotation). Refresh tokens are valid for 7 days.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Rotate the JWT token pair",
+                "parameters": [
+                    {
+                        "description": "Opaque refresh token",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.RefreshRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "New JWT pair",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Missing body",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid / expired / already-rotated refresh token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/sessions": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns all unexpired, un-revoked sessions for the authenticated user.\nEach entry includes device fingerprint, IP, and geolocation so users can\nidentify and revoke sessions they do not recognise.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "List active sessions",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.SessionListResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid Bearer token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/sessions/{id}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Terminates the session identified by `:id`. Users can only revoke their own sessions.\nUse this to remotely sign out a specific device.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Revoke a specific session",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "9f8e7d6c-5b4a-3210-fedc-ba9876543210",
+                        "description": "Session ID (UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Session revoked — no content"
+                    },
+                    "401": {
+                        "description": "Missing or invalid Bearer token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Session belongs to another user",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Session not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tokens/balance/{wallet}": {
+            "get": {
+                "description": "Returns the on-chain confirmed balance, pending (unprocessed transfers) amount,\nand spendable (available) balance for a given Ethereum wallet address.\n\nThis endpoint is **public** — no authentication required.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tokens"
+                ],
+                "summary": "Get wallet token balance",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
+                        "description": "Checksummed Ethereum wallet address",
+                        "name": "wallet",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.BalanceResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid wallet address format",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Wallet not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tokens/transactions": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns a paginated list of token transfers where the authenticated user is\neither the sender or the recipient. Sorted by creation time, newest first.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tokens"
+                ],
+                "summary": "List my transactions",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "Page number (default: 1)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "example": 20,
+                        "description": "Items per page (default: 20)",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "PENDING",
+                            "COMPLETED",
+                            "FAILED",
+                            "CANCELLED"
+                        ],
+                        "type": "string",
+                        "description": "Filter by status",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.TransactionListResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid Bearer token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tokens/transactions/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns the full details for a single transfer. Users may only view transactions\nwhere they are the sender or recipient. Admins may view any transaction.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tokens"
+                ],
+                "summary": "Get a transaction by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "65f1a2b3c4d5e6f7a8b9c0d2",
+                        "description": "Transaction ID (MongoDB ObjectID or UUID)",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.TransactionResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid Bearer token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Access denied — not sender or recipient",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Transaction not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tokens/transfer": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Processes an **EIP-712** (or EIP-191 personal_sign) off-chain token transfer.\nThe signature is verified server-side using the sender's wallet address.\n\n**Replay protection**: Each `(from_wallet, nonce)` pair must be globally unique.\nUse a monotonically increasing nonce or a random UUID converted to uint256.\n\n**Deadline**: Unix timestamp (seconds). Transactions submitted after `deadline` are rejected.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tokens"
+                ],
+                "summary": "Submit a signed token transfer",
+                "parameters": [
+                    {
+                        "description": "EIP-712 signed transfer payload",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.TransferRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Transfer queued / recorded",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.TransferResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Missing fields / past deadline",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid EIP-712 signature",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "402": {
+                        "description": "Insufficient balance",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Duplicate nonce",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns a paginated, searchable list of all users on the platform.\nFilter by `status`, `kyc_status`, or `role`. Search by wallet, email, or username.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "List users (admin)",
+                "parameters": [
+                    {
+                        "enum": [
+                            "ACTIVE",
+                            "SUSPENDED",
+                            "BANNED",
+                            "PENDING_VERIFICATION"
+                        ],
+                        "type": "string",
+                        "description": "Filter by account status",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "NONE",
+                            "PENDING",
+                            "VERIFIED",
+                            "REJECTED"
+                        ],
+                        "type": "string",
+                        "description": "Filter by KYC status",
+                        "name": "kyc_status",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "USER",
+                            "MODERATOR",
+                            "ADMIN"
+                        ],
+                        "type": "string",
+                        "description": "Filter by role",
+                        "name": "role",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Full-text search (wallet / email / username)",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "Page number (default: 1)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "example": 20,
+                        "description": "Items per page (max: 100)",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.UserListResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid Bearer token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Requires ADMIN role",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/me": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns the full profile of the authenticated user, including KYC status,\nroles, login statistics, and custom metadata.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get my profile",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.UserResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid Bearer token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found (should not happen in practice)",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Partially updates the authenticated user's profile. All fields are optional —\nonly provided (non-null) fields are applied. Metadata is **deep-merged** (not replaced).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update my profile",
+                "parameters": [
+                    {
+                        "description": "Fields to update (all optional)",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.UpdateProfileRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Updated profile",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.UserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Validation error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid Bearer token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Username already taken",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/me/audit-logs": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns a paginated list of security events for the authenticated user:\nlogins, logouts, token refreshes, 2FA changes, profile updates, and KYC submissions.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get my security audit trail",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "Page number (default: 1)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "example": 20,
+                        "description": "Items per page (default: 20, max: 100)",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.AuditLogListResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid Bearer token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/me/email": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates the account's email address and marks it **unverified** until the link is clicked.\nA verification email is dispatched to the new address (not yet implemented in this release).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Request an email address change",
+                "parameters": [
+                    {
+                        "description": "New email address",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.RequestEmailChangeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Request accepted",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid email format",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid Bearer token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Email already registered",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/me/kyc": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Submits a KYC document for identity verification. The `document_ref` is an encrypted\nstorage reference returned by the secure upload endpoint (not in this release).\nAfter submission, `kyc_status` changes to `PENDING` and an admin will review it.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Submit a KYC document",
+                "parameters": [
+                    {
+                        "description": "Document type + encrypted storage ref",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.SubmitKYCRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Document submitted for review",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid document type",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid Bearer token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns the full profile for any user on the platform, including sensitive fields\nsuch as KYC documents, suspension reason, and login statistics.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Get user by ID (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "65f1a2b3c4d5e6f7a8b9c0d1",
+                        "description": "MongoDB ObjectID or UUID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.UserResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid Bearer token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Requires ADMIN role",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/kyc/approve": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Marks the target user's KYC as `VERIFIED` at the specified level (1–3).\n| Level | Description |\n|-------|-------------|\n| 1     | Basic — email + phone confirmed |\n| 2     | Standard — government-issued ID |\n| 3     | Advanced — face-match + liveness check |",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Approve KYC verification (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Target user ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "KYC level to grant (1–3)",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ApproveKYCRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "KYC approved",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid level",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid Bearer token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Requires ADMIN role",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/roles": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Adds the specified RBAC role to the target user's role list.\nHas no effect if the user already holds that role.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Assign a role to a user (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Target user ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Role to assign: USER | MODERATOR | ADMIN",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.AssignRoleRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Role assigned",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid role value",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid Bearer token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Requires ADMIN role",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "User already has this role",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/roles/{role}": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Removes the specified RBAC role from the target user. The base `USER` role cannot be removed.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Remove a role from a user (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Target user ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "MODERATOR",
+                            "ADMIN"
+                        ],
+                        "type": "string",
+                        "description": "Role to remove",
+                        "name": "role",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Role removed",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot remove base USER role",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid Bearer token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Requires ADMIN role",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found or does not have this role",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/suspend": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Sets account status to `SUSPENDED` and immediately revokes all active sessions.\nThe user will be unable to log in until the account is unsuspended.\nCannot suspend your own account.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Suspend a user account (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Target user ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Mandatory suspension reason (10–500 chars)",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.SuspendUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Account suspended",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.MessageResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Cannot suspend own account / invalid reason",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid Bearer token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Requires ADMIN role",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}/unsuspend": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Restores account status to `ACTIVE`. The user can log in again immediately.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Unsuspend a user account (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Target user ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Account unsuspended",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.MessageResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Missing or invalid Bearer token",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Requires ADMIN role",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "User not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "github_com_vndc_backend_internal_models.ApproveKYCRequest": {
+            "type": "object",
+            "properties": {
+                "level": {
+                    "description": "Level is 1 (basic), 2 (standard), or 3 (advanced).",
+                    "type": "integer",
+                    "example": 2
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.AssignRoleRequest": {
+            "type": "object",
+            "properties": {
+                "role": {
+                    "description": "Role must be one of: USER, MODERATOR, ADMIN.",
+                    "type": "string",
+                    "example": "MODERATOR"
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.AuditLogEntry": {
+            "type": "object",
+            "properties": {
+                "actor_id": {
+                    "type": "string",
+                    "example": "65f1a2b3c4d5e6f7a8b9c0d1"
+                },
+                "actor_wallet": {
+                    "type": "string",
+                    "example": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2026-04-24T07:00:00Z"
+                },
+                "details": {
+                    "type": "object",
+                    "additionalProperties": {}
+                },
+                "event_type": {
+                    "type": "string",
+                    "example": "AUTH_LOGIN"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "65f1a2b3c4d5e6f7a8b9c0d1"
+                },
+                "ip_address": {
+                    "type": "string",
+                    "example": "203.0.113.42"
+                },
+                "occurred_at": {
+                    "type": "string",
+                    "example": "2026-04-24T07:00:00Z"
+                },
+                "target_id": {
+                    "type": "string",
+                    "example": ""
+                },
+                "user_agent": {
+                    "type": "string",
+                    "example": "Mozilla/5.0 ..."
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.AuditLogListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_vndc_backend_internal_models.AuditLogEntry"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.ResponseMeta"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.PaginationMeta"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.BalanceData": {
+            "type": "object",
+            "properties": {
+                "available": {
+                    "description": "Available is OnChain minus Pending — the amount the user can spend right now.",
+                    "type": "string",
+                    "example": "4000000000000000000000"
+                },
+                "on_chain": {
+                    "description": "OnChain is the confirmed on-chain balance in wei (as decimal string).",
+                    "type": "string",
+                    "example": "5000000000000000000000"
+                },
+                "pending": {
+                    "description": "Pending is the sum of outgoing wei reserved for queued transfers not yet settled.",
+                    "type": "string",
+                    "example": "1000000000000000000000"
+                },
+                "synced_at": {
+                    "description": "SyncedAt is when the on-chain balance was last fetched (RFC3339).",
+                    "type": "string",
+                    "example": "2026-04-24T07:00:00Z"
+                },
+                "wallet": {
+                    "type": "string",
+                    "example": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.BalanceResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.BalanceData"
+                },
+                "meta": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.ResponseMeta"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.ChallengeData": {
+            "type": "object",
+            "properties": {
+                "expires_at": {
+                    "type": "string",
+                    "example": "2026-04-24T07:05:00Z"
+                },
+                "message": {
+                    "description": "Message is the full EIP-191 formatted message the wallet must sign.",
+                    "type": "string",
+                    "example": "vndc.io wants you to sign in with your Ethereum account:\n0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045\n\nSign in to VNDC Platform\n\nNonce: a1b2c3d4e5f6..."
+                },
+                "nonce": {
+                    "description": "Nonce is the single-use random string embedded in the message.",
+                    "type": "string",
+                    "example": "a1b2c3d4e5f6a7b8c9d0e1f2"
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.ChallengeResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.ChallengeData"
+                },
+                "meta": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.ResponseMeta"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.Complete2FARequest": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "Code is a 6-digit TOTP code or an 8-character backup code.",
+                    "type": "string",
+                    "example": "123456"
+                },
+                "device_name": {
+                    "type": "string",
+                    "example": "iPhone 15 Pro"
+                },
+                "device_os": {
+                    "type": "string",
+                    "example": "iOS 17"
+                },
+                "temp_token": {
+                    "description": "TempToken is the value returned by POST /auth/login when requires_2fa is true.",
+                    "type": "string",
+                    "example": "9f8e7d6c5b4a3210fedcba9876543210"
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.Disable2FARequest": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "Code is a 6-digit TOTP code or an 8-character backup code.",
+                    "type": "string",
+                    "example": "123456"
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.Enable2FARequest": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "Code is the current 6-digit TOTP code to confirm the secret is correctly configured.",
+                    "type": "string",
+                    "example": "123456"
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.ErrorBody": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "example": "VALIDATION_ERROR"
+                },
+                "details": {},
+                "message": {
+                    "type": "string",
+                    "example": "wallet query param required"
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.ErrorBody"
+                },
+                "meta": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.ResponseMeta"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.KYCDocumentInfo": {
+            "type": "object",
+            "properties": {
+                "document_ref": {
+                    "type": "string",
+                    "example": "enc:s3::bucket/usr123/passport.enc"
+                },
+                "review_note": {
+                    "type": "string",
+                    "example": "Document blurry — please resubmit"
+                },
+                "reviewed_at": {
+                    "type": "string"
+                },
+                "submitted_at": {
+                    "type": "string",
+                    "example": "2026-04-24T07:00:00Z"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "PASSPORT"
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.Login2FAData": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "TOTP code required — call /auth/2fa/complete"
+                },
+                "requires_2fa": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "temp_token": {
+                    "description": "TempToken is a short-lived (5 min) opaque token passed to /auth/2fa/complete.",
+                    "type": "string",
+                    "example": "9f8e7d6c5b4a3210fedcba9876543210"
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.Login2FAResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.Login2FAData"
+                },
+                "meta": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.ResponseMeta"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.LoginRequest": {
+            "type": "object",
+            "properties": {
+                "device_name": {
+                    "type": "string",
+                    "example": "iPhone 15 Pro"
+                },
+                "device_os": {
+                    "type": "string",
+                    "example": "iOS 17"
+                },
+                "signature": {
+                    "description": "Signature is the 0x-prefixed EIP-191 personal_sign output.",
+                    "type": "string",
+                    "example": "0x4a5b6c...130hexchars...ab"
+                },
+                "wallet": {
+                    "description": "Wallet is the checksummed Ethereum wallet address.",
+                    "type": "string",
+                    "example": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.TokenPairData"
+                },
+                "meta": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.ResponseMeta"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.MessageResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "Operation completed successfully"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.PaginationMeta": {
+            "type": "object",
+            "properties": {
+                "has_next": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "has_prev": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "page": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "page_size": {
+                    "type": "integer",
+                    "example": 20
+                },
+                "pages": {
+                    "type": "integer",
+                    "example": 5
+                },
+                "total": {
+                    "type": "integer",
+                    "example": 100
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.RefreshRequest": {
+            "type": "object",
+            "properties": {
+                "refresh_token": {
+                    "description": "RefreshToken is the opaque token issued at login.",
+                    "type": "string",
+                    "example": "b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8..."
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.RequestEmailChangeRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "description": "Email is the new email address. A verification link will be sent to it.",
+                    "type": "string",
+                    "example": "alice_new@example.com"
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.ResponseMeta": {
+            "type": "object",
+            "properties": {
+                "request_id": {
+                    "type": "string",
+                    "example": "01HWXYZ1234567890ABCDEF"
+                },
+                "timestamp": {
+                    "type": "string",
+                    "example": "2026-04-24T07:00:00Z"
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.SessionInfo": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2026-04-24T07:00:00Z"
+                },
+                "device_name": {
+                    "type": "string",
+                    "example": "iPhone 15 Pro"
+                },
+                "device_os": {
+                    "type": "string",
+                    "example": "iOS 17"
+                },
+                "expires_at": {
+                    "type": "string",
+                    "example": "2026-05-01T07:00:00Z"
+                },
+                "geo_country": {
+                    "type": "string",
+                    "example": "VN"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "9f8e7d6c-5b4a-3210-fedc-ba9876543210"
+                },
+                "ip_address": {
+                    "type": "string",
+                    "example": "203.0.113.42"
+                },
+                "issued_at": {
+                    "type": "string",
+                    "example": "2026-04-24T07:00:00Z"
+                },
+                "last_used_at": {
+                    "type": "string"
+                },
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "[\"USER\"]"
+                    ]
+                },
+                "user_agent": {
+                    "type": "string",
+                    "example": "Mozilla/5.0 ..."
+                },
+                "user_id": {
+                    "type": "string",
+                    "example": "65f1a2b3c4d5e6f7a8b9c0d1"
+                },
+                "wallet_address": {
+                    "type": "string",
+                    "example": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.SessionListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_vndc_backend_internal_models.SessionInfo"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.ResponseMeta"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.Setup2FAData": {
+            "type": "object",
+            "properties": {
+                "backup_codes": {
+                    "description": "BackupCodes are one-time plaintext codes — shown ONCE. Store securely.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "[\"ABCD1234\"",
+                        "\"EFGH5678\"]"
+                    ]
+                },
+                "otp_auth_uri": {
+                    "description": "OTPAuthURI is the otpauth:// URI to encode as a QR code.",
+                    "type": "string",
+                    "example": "otpauth://totp/vndc.io:0xd8dA...?secret=JBSWY3DP\u0026issuer=vndc.io"
+                },
+                "secret": {
+                    "description": "Secret is the base-32 encoded TOTP secret to enter in an authenticator app.",
+                    "type": "string",
+                    "example": "JBSWY3DPEHPK3PXP"
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.Setup2FAResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.Setup2FAData"
+                },
+                "meta": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.ResponseMeta"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.SubmitKYCRequest": {
+            "type": "object",
+            "properties": {
+                "document_ref": {
+                    "description": "DocumentRef is the encrypted storage reference returned by the upload endpoint.",
+                    "type": "string",
+                    "example": "enc:s3::bucket/usr123/passport.enc"
+                },
+                "document_type": {
+                    "description": "DocumentType must be one of: PASSPORT, NATIONAL_ID, DRIVER_LICENSE.",
+                    "type": "string",
+                    "example": "PASSPORT"
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.SuspendUserRequest": {
+            "type": "object",
+            "properties": {
+                "reason": {
+                    "description": "Reason must describe why the account is being suspended (10–500 characters).",
+                    "type": "string",
+                    "example": "Multiple violations of community guidelines detected"
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.TokenPairData": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "description": "AccessToken is a short-lived JWT (15 min). Send in Authorization: Bearer \u003ctoken\u003e.",
+                    "type": "string",
+                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                },
+                "expires_at": {
+                    "type": "string",
+                    "example": "2026-04-24T07:15:00Z"
+                },
+                "refresh_token": {
+                    "description": "RefreshToken is an opaque token used to obtain a new access token. Treat as secret.",
+                    "type": "string",
+                    "example": "b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8..."
+                },
+                "token_type": {
+                    "type": "string",
+                    "example": "Bearer"
+                },
+                "user": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.UserInfo"
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.TransactionInfo": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "string",
+                    "example": "1000000000000000000"
+                },
+                "batch_id": {
+                    "type": "string",
+                    "example": "batch-001"
+                },
+                "block_number": {
+                    "type": "integer",
+                    "example": 19500000
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2026-04-24T07:00:00Z"
+                },
+                "deadline": {
+                    "type": "integer",
+                    "example": 1745481600
+                },
+                "from_wallet": {
+                    "type": "string",
+                    "example": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+                },
+                "nonce": {
+                    "type": "string",
+                    "example": "42"
+                },
+                "retry_count": {
+                    "type": "integer",
+                    "example": 0
+                },
+                "settled_at": {
+                    "type": "string"
+                },
+                "signature": {
+                    "type": "string",
+                    "example": "0xabc123..."
+                },
+                "status": {
+                    "type": "string",
+                    "example": "PENDING"
+                },
+                "to_wallet": {
+                    "type": "string",
+                    "example": "0xAbCdEf1234567890AbCdEf1234567890AbCdEf12"
+                },
+                "tx_hash": {
+                    "type": "string",
+                    "example": "0xdeadbeef..."
+                },
+                "type": {
+                    "type": "string",
+                    "example": "TOKEN_TRANSFER"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2026-04-24T07:05:00Z"
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.TransactionListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_vndc_backend_internal_models.TransactionInfo"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.ResponseMeta"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.PaginationMeta"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.TransactionResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.TransactionInfo"
+                },
+                "meta": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.ResponseMeta"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.TransferRequest": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "description": "Amount is the transfer value in wei expressed as a decimal string (no floats).",
+                    "type": "string",
+                    "example": "1000000000000000000"
+                },
+                "deadline": {
+                    "description": "Deadline is a Unix timestamp after which the signed transfer is invalid.",
+                    "type": "integer",
+                    "example": 1745481600
+                },
+                "from_wallet": {
+                    "description": "FromWallet is the sender's checksummed Ethereum address (must match JWT).",
+                    "type": "string",
+                    "example": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                },
+                "nonce": {
+                    "description": "Nonce is the EIP-712 nonce (decimal string). Must be unique per sender.",
+                    "type": "string",
+                    "example": "42"
+                },
+                "signature": {
+                    "description": "Signature is the 0x-prefixed 65-byte EIP-712 signature (132 hex chars + 0x prefix).",
+                    "type": "string",
+                    "example": "0x4a5b6c...130hexchars...ef01"
+                },
+                "to_wallet": {
+                    "description": "ToWallet is the recipient's checksummed Ethereum address.",
+                    "type": "string",
+                    "example": "0xAbCdEf1234567890AbCdEf1234567890AbCdEf12"
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.TransferResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.TransactionInfo"
+                },
+                "meta": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.ResponseMeta"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.UpdateProfileRequest": {
+            "type": "object",
+            "properties": {
+                "avatar_uri": {
+                    "type": "string",
+                    "example": "https://cdn.example.com/alice.png"
+                },
+                "bio": {
+                    "type": "string",
+                    "example": "Blockchain developer"
+                },
+                "country": {
+                    "type": "string",
+                    "example": "VN"
+                },
+                "date_of_birth": {
+                    "type": "string",
+                    "example": "1995-06-15T00:00:00Z"
+                },
+                "full_name": {
+                    "type": "string",
+                    "example": "Alice Nguyen"
+                },
+                "language": {
+                    "type": "string",
+                    "example": "vi"
+                },
+                "metadata": {
+                    "type": "object",
+                    "additionalProperties": {}
+                },
+                "timezone": {
+                    "type": "string",
+                    "example": "Asia/Ho_Chi_Minh"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "alice_dev"
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.UserInfo": {
+            "type": "object",
+            "properties": {
+                "avatar_uri": {
+                    "type": "string",
+                    "example": "https://cdn.example.com/avatars/alice.png"
+                },
+                "bio": {
+                    "type": "string",
+                    "example": "Blockchain enthusiast"
+                },
+                "country": {
+                    "type": "string",
+                    "example": "VN"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2026-01-01T00:00:00Z"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "alice@example.com"
+                },
+                "email_verified": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "full_name": {
+                    "type": "string",
+                    "example": "Alice Nguyen"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "65f1a2b3c4d5e6f7a8b9c0d1"
+                },
+                "kyc_documents": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_vndc_backend_internal_models.KYCDocumentInfo"
+                    }
+                },
+                "kyc_level": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "kyc_status": {
+                    "type": "string",
+                    "example": "VERIFIED"
+                },
+                "language": {
+                    "type": "string",
+                    "example": "vi"
+                },
+                "last_login_at": {
+                    "type": "string"
+                },
+                "login_count": {
+                    "type": "integer",
+                    "example": 42
+                },
+                "metadata": {
+                    "type": "object",
+                    "additionalProperties": {}
+                },
+                "referral_code": {
+                    "type": "string",
+                    "example": "ALICE2026"
+                },
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "[\"USER\"]"
+                    ]
+                },
+                "status": {
+                    "type": "string",
+                    "example": "ACTIVE"
+                },
+                "timezone": {
+                    "type": "string",
+                    "example": "Asia/Ho_Chi_Minh"
+                },
+                "two_factor_enabled": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2026-04-24T07:00:00Z"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "alice"
+                },
+                "wallet_address": {
+                    "type": "string",
+                    "example": "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045"
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.UserListResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_vndc_backend_internal_models.UserInfo"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.ResponseMeta"
+                },
+                "pagination": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.PaginationMeta"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "github_com_vndc_backend_internal_models.UserResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.UserInfo"
+                },
+                "meta": {
+                    "$ref": "#/definitions/github_com_vndc_backend_internal_models.ResponseMeta"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "JWT access token. Format: `Bearer \u003ctoken\u003e`",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    },
+    "tags": [
+        {
+            "description": "Wallet-based authentication (SIWE), session management, and 2FA (TOTP)",
+            "name": "Auth"
+        },
+        {
+            "description": "User profile management, KYC, and admin user operations",
+            "name": "Users"
+        },
+        {
+            "description": "ERC-20 token balance queries and EIP-712 signed meta-transfers",
+            "name": "Tokens"
+        }
+    ]
+}

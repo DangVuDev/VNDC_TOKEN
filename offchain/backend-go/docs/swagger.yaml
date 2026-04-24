@@ -1,0 +1,1806 @@
+basePath: /v1
+definitions:
+  github_com_vndc_backend_internal_models.ApproveKYCRequest:
+    properties:
+      level:
+        description: Level is 1 (basic), 2 (standard), or 3 (advanced).
+        example: 2
+        type: integer
+    type: object
+  github_com_vndc_backend_internal_models.AssignRoleRequest:
+    properties:
+      role:
+        description: 'Role must be one of: USER, MODERATOR, ADMIN.'
+        example: MODERATOR
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.AuditLogEntry:
+    properties:
+      actor_id:
+        example: 65f1a2b3c4d5e6f7a8b9c0d1
+        type: string
+      actor_wallet:
+        example: 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+        type: string
+      created_at:
+        example: "2026-04-24T07:00:00Z"
+        type: string
+      details:
+        additionalProperties: {}
+        type: object
+      event_type:
+        example: AUTH_LOGIN
+        type: string
+      id:
+        example: 65f1a2b3c4d5e6f7a8b9c0d1
+        type: string
+      ip_address:
+        example: 203.0.113.42
+        type: string
+      occurred_at:
+        example: "2026-04-24T07:00:00Z"
+        type: string
+      target_id:
+        example: ""
+        type: string
+      user_agent:
+        example: Mozilla/5.0 ...
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.AuditLogListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_vndc_backend_internal_models.AuditLogEntry'
+        type: array
+      meta:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.ResponseMeta'
+      pagination:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.PaginationMeta'
+      success:
+        example: true
+        type: boolean
+    type: object
+  github_com_vndc_backend_internal_models.BalanceData:
+    properties:
+      available:
+        description: Available is OnChain minus Pending — the amount the user can
+          spend right now.
+        example: "4000000000000000000000"
+        type: string
+      on_chain:
+        description: OnChain is the confirmed on-chain balance in wei (as decimal
+          string).
+        example: "5000000000000000000000"
+        type: string
+      pending:
+        description: Pending is the sum of outgoing wei reserved for queued transfers
+          not yet settled.
+        example: "1000000000000000000000"
+        type: string
+      synced_at:
+        description: SyncedAt is when the on-chain balance was last fetched (RFC3339).
+        example: "2026-04-24T07:00:00Z"
+        type: string
+      wallet:
+        example: 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.BalanceResponse:
+    properties:
+      data:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.BalanceData'
+      meta:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.ResponseMeta'
+      success:
+        example: true
+        type: boolean
+    type: object
+  github_com_vndc_backend_internal_models.ChallengeData:
+    properties:
+      expires_at:
+        example: "2026-04-24T07:05:00Z"
+        type: string
+      message:
+        description: Message is the full EIP-191 formatted message the wallet must
+          sign.
+        example: |-
+          vndc.io wants you to sign in with your Ethereum account:
+          0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+
+          Sign in to VNDC Platform
+
+          Nonce: a1b2c3d4e5f6...
+        type: string
+      nonce:
+        description: Nonce is the single-use random string embedded in the message.
+        example: a1b2c3d4e5f6a7b8c9d0e1f2
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.ChallengeResponse:
+    properties:
+      data:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.ChallengeData'
+      meta:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.ResponseMeta'
+      success:
+        example: true
+        type: boolean
+    type: object
+  github_com_vndc_backend_internal_models.Complete2FARequest:
+    properties:
+      code:
+        description: Code is a 6-digit TOTP code or an 8-character backup code.
+        example: "123456"
+        type: string
+      device_name:
+        example: iPhone 15 Pro
+        type: string
+      device_os:
+        example: iOS 17
+        type: string
+      temp_token:
+        description: TempToken is the value returned by POST /auth/login when requires_2fa
+          is true.
+        example: 9f8e7d6c5b4a3210fedcba9876543210
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.Disable2FARequest:
+    properties:
+      code:
+        description: Code is a 6-digit TOTP code or an 8-character backup code.
+        example: "123456"
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.Enable2FARequest:
+    properties:
+      code:
+        description: Code is the current 6-digit TOTP code to confirm the secret is
+          correctly configured.
+        example: "123456"
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.ErrorBody:
+    properties:
+      code:
+        example: VALIDATION_ERROR
+        type: string
+      details: {}
+      message:
+        example: wallet query param required
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.ErrorResponse:
+    properties:
+      error:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorBody'
+      meta:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.ResponseMeta'
+      success:
+        example: false
+        type: boolean
+    type: object
+  github_com_vndc_backend_internal_models.KYCDocumentInfo:
+    properties:
+      document_ref:
+        example: enc:s3::bucket/usr123/passport.enc
+        type: string
+      review_note:
+        example: Document blurry — please resubmit
+        type: string
+      reviewed_at:
+        type: string
+      submitted_at:
+        example: "2026-04-24T07:00:00Z"
+        type: string
+      type:
+        example: PASSPORT
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.Login2FAData:
+    properties:
+      message:
+        example: TOTP code required — call /auth/2fa/complete
+        type: string
+      requires_2fa:
+        example: true
+        type: boolean
+      temp_token:
+        description: TempToken is a short-lived (5 min) opaque token passed to /auth/2fa/complete.
+        example: 9f8e7d6c5b4a3210fedcba9876543210
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.Login2FAResponse:
+    properties:
+      data:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.Login2FAData'
+      meta:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.ResponseMeta'
+      success:
+        example: true
+        type: boolean
+    type: object
+  github_com_vndc_backend_internal_models.LoginRequest:
+    properties:
+      device_name:
+        example: iPhone 15 Pro
+        type: string
+      device_os:
+        example: iOS 17
+        type: string
+      signature:
+        description: Signature is the 0x-prefixed EIP-191 personal_sign output.
+        example: 0x4a5b6c...130hexchars...ab
+        type: string
+      wallet:
+        description: Wallet is the checksummed Ethereum wallet address.
+        example: 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.LoginResponse:
+    properties:
+      data:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.TokenPairData'
+      meta:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.ResponseMeta'
+      success:
+        example: true
+        type: boolean
+    type: object
+  github_com_vndc_backend_internal_models.MessageResponse:
+    properties:
+      message:
+        example: Operation completed successfully
+        type: string
+      success:
+        example: true
+        type: boolean
+    type: object
+  github_com_vndc_backend_internal_models.PaginationMeta:
+    properties:
+      has_next:
+        example: true
+        type: boolean
+      has_prev:
+        example: false
+        type: boolean
+      page:
+        example: 1
+        type: integer
+      page_size:
+        example: 20
+        type: integer
+      pages:
+        example: 5
+        type: integer
+      total:
+        example: 100
+        type: integer
+    type: object
+  github_com_vndc_backend_internal_models.RefreshRequest:
+    properties:
+      refresh_token:
+        description: RefreshToken is the opaque token issued at login.
+        example: b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8...
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.RequestEmailChangeRequest:
+    properties:
+      email:
+        description: Email is the new email address. A verification link will be sent
+          to it.
+        example: alice_new@example.com
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.ResponseMeta:
+    properties:
+      request_id:
+        example: 01HWXYZ1234567890ABCDEF
+        type: string
+      timestamp:
+        example: "2026-04-24T07:00:00Z"
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.SessionInfo:
+    properties:
+      created_at:
+        example: "2026-04-24T07:00:00Z"
+        type: string
+      device_name:
+        example: iPhone 15 Pro
+        type: string
+      device_os:
+        example: iOS 17
+        type: string
+      expires_at:
+        example: "2026-05-01T07:00:00Z"
+        type: string
+      geo_country:
+        example: VN
+        type: string
+      id:
+        example: 9f8e7d6c-5b4a-3210-fedc-ba9876543210
+        type: string
+      ip_address:
+        example: 203.0.113.42
+        type: string
+      issued_at:
+        example: "2026-04-24T07:00:00Z"
+        type: string
+      last_used_at:
+        type: string
+      roles:
+        example:
+        - '["USER"]'
+        items:
+          type: string
+        type: array
+      user_agent:
+        example: Mozilla/5.0 ...
+        type: string
+      user_id:
+        example: 65f1a2b3c4d5e6f7a8b9c0d1
+        type: string
+      wallet_address:
+        example: 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.SessionListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_vndc_backend_internal_models.SessionInfo'
+        type: array
+      meta:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.ResponseMeta'
+      success:
+        example: true
+        type: boolean
+    type: object
+  github_com_vndc_backend_internal_models.Setup2FAData:
+    properties:
+      backup_codes:
+        description: BackupCodes are one-time plaintext codes — shown ONCE. Store
+          securely.
+        example:
+        - '["ABCD1234"'
+        - '"EFGH5678"]'
+        items:
+          type: string
+        type: array
+      otp_auth_uri:
+        description: OTPAuthURI is the otpauth:// URI to encode as a QR code.
+        example: otpauth://totp/vndc.io:0xd8dA...?secret=JBSWY3DP&issuer=vndc.io
+        type: string
+      secret:
+        description: Secret is the base-32 encoded TOTP secret to enter in an authenticator
+          app.
+        example: JBSWY3DPEHPK3PXP
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.Setup2FAResponse:
+    properties:
+      data:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.Setup2FAData'
+      meta:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.ResponseMeta'
+      success:
+        example: true
+        type: boolean
+    type: object
+  github_com_vndc_backend_internal_models.SubmitKYCRequest:
+    properties:
+      document_ref:
+        description: DocumentRef is the encrypted storage reference returned by the
+          upload endpoint.
+        example: enc:s3::bucket/usr123/passport.enc
+        type: string
+      document_type:
+        description: 'DocumentType must be one of: PASSPORT, NATIONAL_ID, DRIVER_LICENSE.'
+        example: PASSPORT
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.SuspendUserRequest:
+    properties:
+      reason:
+        description: Reason must describe why the account is being suspended (10–500
+          characters).
+        example: Multiple violations of community guidelines detected
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.TokenPairData:
+    properties:
+      access_token:
+        description: 'AccessToken is a short-lived JWT (15 min). Send in Authorization:
+          Bearer <token>.'
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type: string
+      expires_at:
+        example: "2026-04-24T07:15:00Z"
+        type: string
+      refresh_token:
+        description: RefreshToken is an opaque token used to obtain a new access token.
+          Treat as secret.
+        example: b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8...
+        type: string
+      token_type:
+        example: Bearer
+        type: string
+      user:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.UserInfo'
+    type: object
+  github_com_vndc_backend_internal_models.TransactionInfo:
+    properties:
+      amount:
+        example: "1000000000000000000"
+        type: string
+      batch_id:
+        example: batch-001
+        type: string
+      block_number:
+        example: 19500000
+        type: integer
+      created_at:
+        example: "2026-04-24T07:00:00Z"
+        type: string
+      deadline:
+        example: 1745481600
+        type: integer
+      from_wallet:
+        example: 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+        type: string
+      id:
+        example: f47ac10b-58cc-4372-a567-0e02b2c3d479
+        type: string
+      nonce:
+        example: "42"
+        type: string
+      retry_count:
+        example: 0
+        type: integer
+      settled_at:
+        type: string
+      signature:
+        example: 0xabc123...
+        type: string
+      status:
+        example: PENDING
+        type: string
+      to_wallet:
+        example: 0xAbCdEf1234567890AbCdEf1234567890AbCdEf12
+        type: string
+      tx_hash:
+        example: 0xdeadbeef...
+        type: string
+      type:
+        example: TOKEN_TRANSFER
+        type: string
+      updated_at:
+        example: "2026-04-24T07:05:00Z"
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.TransactionListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_vndc_backend_internal_models.TransactionInfo'
+        type: array
+      meta:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.ResponseMeta'
+      pagination:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.PaginationMeta'
+      success:
+        example: true
+        type: boolean
+    type: object
+  github_com_vndc_backend_internal_models.TransactionResponse:
+    properties:
+      data:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.TransactionInfo'
+      meta:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.ResponseMeta'
+      success:
+        example: true
+        type: boolean
+    type: object
+  github_com_vndc_backend_internal_models.TransferRequest:
+    properties:
+      amount:
+        description: Amount is the transfer value in wei expressed as a decimal string
+          (no floats).
+        example: "1000000000000000000"
+        type: string
+      deadline:
+        description: Deadline is a Unix timestamp after which the signed transfer
+          is invalid.
+        example: 1745481600
+        type: integer
+      from_wallet:
+        description: FromWallet is the sender's checksummed Ethereum address (must
+          match JWT).
+        example: 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+        type: string
+      nonce:
+        description: Nonce is the EIP-712 nonce (decimal string). Must be unique per
+          sender.
+        example: "42"
+        type: string
+      signature:
+        description: Signature is the 0x-prefixed 65-byte EIP-712 signature (132 hex
+          chars + 0x prefix).
+        example: 0x4a5b6c...130hexchars...ef01
+        type: string
+      to_wallet:
+        description: ToWallet is the recipient's checksummed Ethereum address.
+        example: 0xAbCdEf1234567890AbCdEf1234567890AbCdEf12
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.TransferResponse:
+    properties:
+      data:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.TransactionInfo'
+      meta:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.ResponseMeta'
+      success:
+        example: true
+        type: boolean
+    type: object
+  github_com_vndc_backend_internal_models.UpdateProfileRequest:
+    properties:
+      avatar_uri:
+        example: https://cdn.example.com/alice.png
+        type: string
+      bio:
+        example: Blockchain developer
+        type: string
+      country:
+        example: VN
+        type: string
+      date_of_birth:
+        example: "1995-06-15T00:00:00Z"
+        type: string
+      full_name:
+        example: Alice Nguyen
+        type: string
+      language:
+        example: vi
+        type: string
+      metadata:
+        additionalProperties: {}
+        type: object
+      timezone:
+        example: Asia/Ho_Chi_Minh
+        type: string
+      username:
+        example: alice_dev
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.UserInfo:
+    properties:
+      avatar_uri:
+        example: https://cdn.example.com/avatars/alice.png
+        type: string
+      bio:
+        example: Blockchain enthusiast
+        type: string
+      country:
+        example: VN
+        type: string
+      created_at:
+        example: "2026-01-01T00:00:00Z"
+        type: string
+      email:
+        example: alice@example.com
+        type: string
+      email_verified:
+        example: true
+        type: boolean
+      full_name:
+        example: Alice Nguyen
+        type: string
+      id:
+        example: 65f1a2b3c4d5e6f7a8b9c0d1
+        type: string
+      kyc_documents:
+        items:
+          $ref: '#/definitions/github_com_vndc_backend_internal_models.KYCDocumentInfo'
+        type: array
+      kyc_level:
+        example: 2
+        type: integer
+      kyc_status:
+        example: VERIFIED
+        type: string
+      language:
+        example: vi
+        type: string
+      last_login_at:
+        type: string
+      login_count:
+        example: 42
+        type: integer
+      metadata:
+        additionalProperties: {}
+        type: object
+      referral_code:
+        example: ALICE2026
+        type: string
+      roles:
+        example:
+        - '["USER"]'
+        items:
+          type: string
+        type: array
+      status:
+        example: ACTIVE
+        type: string
+      timezone:
+        example: Asia/Ho_Chi_Minh
+        type: string
+      two_factor_enabled:
+        example: false
+        type: boolean
+      updated_at:
+        example: "2026-04-24T07:00:00Z"
+        type: string
+      username:
+        example: alice
+        type: string
+      wallet_address:
+        example: 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+        type: string
+    type: object
+  github_com_vndc_backend_internal_models.UserListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/github_com_vndc_backend_internal_models.UserInfo'
+        type: array
+      meta:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.ResponseMeta'
+      pagination:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.PaginationMeta'
+      success:
+        example: true
+        type: boolean
+    type: object
+  github_com_vndc_backend_internal_models.UserResponse:
+    properties:
+      data:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.UserInfo'
+      meta:
+        $ref: '#/definitions/github_com_vndc_backend_internal_models.ResponseMeta'
+      success:
+        example: true
+        type: boolean
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: dev@vndc.io
+    name: VNDC Platform Team
+  description: |-
+    Off-chain backend for the VNDC token platform.
+
+    ## Authentication
+    The API uses **wallet-based authentication** (Sign-In With Ethereum / EIP-191).
+    All protected endpoints require an `Authorization: Bearer <access_token>` header.
+
+    ### Login flow
+    1. `GET /v1/auth/challenge?wallet=0x…`  — obtain a nonce-embedded message
+    2. Sign the message with your wallet (personal_sign / EIP-191)
+    3. `POST /v1/auth/login` — submit the signature; receive a JWT pair
+    4. *(if 2FA is enabled)* `POST /v1/auth/2fa/complete` — verify TOTP code
+    5. Pass the `access_token` as `Authorization: Bearer <token>` on every request
+    6. `POST /v1/auth/refresh` — rotate tokens before access token expires (15 min)
+
+    ## Amount encoding
+    All token amounts are expressed in **wei** as **decimal strings** — never floats.
+    Example: `"1000000000000000000"` = 1 VNDC (18 decimals).
+  license:
+    name: Proprietary
+    url: https://vndc.io/terms
+  title: VNDC Backend API
+  version: 1.0.0
+paths:
+  /auth/2fa/complete:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Verifies the TOTP code (6 digits) or a backup code (8 chars) and issues the full JWT pair.
+        Requires the `temp_token` returned by POST /auth/login when `requires_2fa` is true.
+      parameters:
+      - description: Temp token + TOTP or backup code
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_vndc_backend_internal_models.Complete2FARequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Full JWT pair issued
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.LoginResponse'
+        "400":
+          description: Missing fields
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "401":
+          description: Expired session or wrong code
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      summary: Complete two-factor authentication
+      tags:
+      - Auth
+  /auth/2fa/disable:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Disables TOTP on the account after verifying the current code or a backup code.
+        This also clears the TOTP secret and all remaining backup codes.
+      parameters:
+      - description: 6-digit TOTP code or 8-char backup code
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_vndc_backend_internal_models.Disable2FARequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 2FA disabled successfully
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.MessageResponse'
+        "400":
+          description: 2FA is not enabled
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "401":
+          description: Invalid code
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Deactivate two-factor authentication
+      tags:
+      - Auth
+  /auth/2fa/enable:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Confirms the TOTP secret by verifying a live authenticator code, then enables 2FA on the account.
+        Must be called after POST /auth/2fa/setup.
+      parameters:
+      - description: Current 6-digit TOTP code
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_vndc_backend_internal_models.Enable2FARequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 2FA enabled successfully
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.MessageResponse'
+        "400":
+          description: setup not called / missing code
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "401":
+          description: Invalid TOTP code
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Activate two-factor authentication
+      tags:
+      - Auth
+  /auth/2fa/setup:
+    post:
+      description: |-
+        Creates a TOTP secret and 8 one-time backup codes for the authenticated user.
+        **2FA is NOT active until the user calls POST /auth/2fa/enable** with a valid code.
+
+        The `otp_auth_uri` field should be encoded as a QR code for the user to scan
+        with an authenticator app (Google Authenticator, Authy, etc.).
+
+        ⚠️ Backup codes are shown **once** — the user must store them securely.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.Setup2FAResponse'
+        "401":
+          description: Missing or invalid Bearer token
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "409":
+          description: 2FA is already enabled
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Generate a new TOTP secret
+      tags:
+      - Auth
+  /auth/challenge:
+    get:
+      description: |-
+        Generates a random nonce and returns a pre-formatted EIP-191 message
+        the wallet must sign. The nonce expires in 5 minutes.
+        **Step 1** of the login flow — call before POST /auth/login.
+      parameters:
+      - description: Checksummed Ethereum wallet address
+        example: 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+        in: query
+        name: wallet
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ChallengeResponse'
+        "400":
+          description: wallet query param is missing
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      summary: Request a SIWE sign-in challenge
+      tags:
+      - Auth
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Verifies the EIP-191 personal_sign signature against the challenge nonce.
+        Returns a full JWT pair **or** a temp_token when 2FA is enabled.
+
+        | Case | Response |
+        |------|----------|
+        | 2FA disabled | `LoginResponse` with `access_token` + `refresh_token` |
+        | 2FA enabled  | `Login2FAResponse` with `requires_2fa: true` + `temp_token` → call `/auth/2fa/complete` |
+      parameters:
+      - description: Wallet address + EIP-191 signature
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_vndc_backend_internal_models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 2FA required — use temp_token
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.Login2FAResponse'
+        "400":
+          description: Missing or invalid fields
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "401":
+          description: Signature mismatch / expired nonce / locked account
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      summary: Sign in with Ethereum wallet (SIWE)
+      tags:
+      - Auth
+  /auth/logout:
+    post:
+      description: |-
+        Blacklists the current access token in Redis and revokes the active session.
+        The token is rejected on subsequent requests even before its natural expiry.
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Session revoked — no content
+        "401":
+          description: Missing or invalid Bearer token
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Log out current session
+      tags:
+      - Auth
+  /auth/logout-all:
+    post:
+      description: |-
+        Blacklists the current access token and revokes **all** active sessions for this user.
+        Use this when a device is lost or a security breach is suspected.
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: All sessions revoked — no content
+        "401":
+          description: Missing or invalid Bearer token
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Log out all sessions
+      tags:
+      - Auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Exchanges a valid refresh token for a new access + refresh token pair.
+        The old refresh token is **immediately invalidated** (rotation). Refresh tokens are valid for 7 days.
+      parameters:
+      - description: Opaque refresh token
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_vndc_backend_internal_models.RefreshRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: New JWT pair
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.LoginResponse'
+        "400":
+          description: Missing body
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "401":
+          description: Invalid / expired / already-rotated refresh token
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      summary: Rotate the JWT token pair
+      tags:
+      - Auth
+  /auth/sessions:
+    get:
+      description: |-
+        Returns all unexpired, un-revoked sessions for the authenticated user.
+        Each entry includes device fingerprint, IP, and geolocation so users can
+        identify and revoke sessions they do not recognise.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.SessionListResponse'
+        "401":
+          description: Missing or invalid Bearer token
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List active sessions
+      tags:
+      - Auth
+  /auth/sessions/{id}:
+    delete:
+      description: |-
+        Terminates the session identified by `:id`. Users can only revoke their own sessions.
+        Use this to remotely sign out a specific device.
+      parameters:
+      - description: Session ID (UUID)
+        example: 9f8e7d6c-5b4a-3210-fedc-ba9876543210
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Session revoked — no content
+        "401":
+          description: Missing or invalid Bearer token
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "403":
+          description: Session belongs to another user
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "404":
+          description: Session not found
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Revoke a specific session
+      tags:
+      - Auth
+  /tokens/balance/{wallet}:
+    get:
+      description: |-
+        Returns the on-chain confirmed balance, pending (unprocessed transfers) amount,
+        and spendable (available) balance for a given Ethereum wallet address.
+
+        This endpoint is **public** — no authentication required.
+      parameters:
+      - description: Checksummed Ethereum wallet address
+        example: 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045
+        in: path
+        name: wallet
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.BalanceResponse'
+        "400":
+          description: Invalid wallet address format
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "404":
+          description: Wallet not found
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      summary: Get wallet token balance
+      tags:
+      - Tokens
+  /tokens/transactions:
+    get:
+      description: |-
+        Returns a paginated list of token transfers where the authenticated user is
+        either the sender or the recipient. Sorted by creation time, newest first.
+      parameters:
+      - description: 'Page number (default: 1)'
+        example: 1
+        in: query
+        name: page
+        type: integer
+      - description: 'Items per page (default: 20)'
+        example: 20
+        in: query
+        name: page_size
+        type: integer
+      - description: Filter by status
+        enum:
+        - PENDING
+        - COMPLETED
+        - FAILED
+        - CANCELLED
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.TransactionListResponse'
+        "401":
+          description: Missing or invalid Bearer token
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List my transactions
+      tags:
+      - Tokens
+  /tokens/transactions/{id}:
+    get:
+      description: |-
+        Returns the full details for a single transfer. Users may only view transactions
+        where they are the sender or recipient. Admins may view any transaction.
+      parameters:
+      - description: Transaction ID (MongoDB ObjectID or UUID)
+        example: 65f1a2b3c4d5e6f7a8b9c0d2
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.TransactionResponse'
+        "401":
+          description: Missing or invalid Bearer token
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "403":
+          description: Access denied — not sender or recipient
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "404":
+          description: Transaction not found
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get a transaction by ID
+      tags:
+      - Tokens
+  /tokens/transfer:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Processes an **EIP-712** (or EIP-191 personal_sign) off-chain token transfer.
+        The signature is verified server-side using the sender's wallet address.
+
+        **Replay protection**: Each `(from_wallet, nonce)` pair must be globally unique.
+        Use a monotonically increasing nonce or a random UUID converted to uint256.
+
+        **Deadline**: Unix timestamp (seconds). Transactions submitted after `deadline` are rejected.
+      parameters:
+      - description: EIP-712 signed transfer payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_vndc_backend_internal_models.TransferRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Transfer queued / recorded
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.TransferResponse'
+        "400":
+          description: Missing fields / past deadline
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "401":
+          description: Invalid EIP-712 signature
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "402":
+          description: Insufficient balance
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "409":
+          description: Duplicate nonce
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Submit a signed token transfer
+      tags:
+      - Tokens
+  /users:
+    get:
+      description: |-
+        Returns a paginated, searchable list of all users on the platform.
+        Filter by `status`, `kyc_status`, or `role`. Search by wallet, email, or username.
+      parameters:
+      - description: Filter by account status
+        enum:
+        - ACTIVE
+        - SUSPENDED
+        - BANNED
+        - PENDING_VERIFICATION
+        in: query
+        name: status
+        type: string
+      - description: Filter by KYC status
+        enum:
+        - NONE
+        - PENDING
+        - VERIFIED
+        - REJECTED
+        in: query
+        name: kyc_status
+        type: string
+      - description: Filter by role
+        enum:
+        - USER
+        - MODERATOR
+        - ADMIN
+        in: query
+        name: role
+        type: string
+      - description: Full-text search (wallet / email / username)
+        in: query
+        name: search
+        type: string
+      - description: 'Page number (default: 1)'
+        example: 1
+        in: query
+        name: page
+        type: integer
+      - description: 'Items per page (max: 100)'
+        example: 20
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.UserListResponse'
+        "401":
+          description: Missing or invalid Bearer token
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "403":
+          description: Requires ADMIN role
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: List users (admin)
+      tags:
+      - Users
+  /users/{id}:
+    get:
+      description: |-
+        Returns the full profile for any user on the platform, including sensitive fields
+        such as KYC documents, suspension reason, and login statistics.
+      parameters:
+      - description: MongoDB ObjectID or UUID
+        example: 65f1a2b3c4d5e6f7a8b9c0d1
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.UserResponse'
+        "401":
+          description: Missing or invalid Bearer token
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "403":
+          description: Requires ADMIN role
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get user by ID (admin)
+      tags:
+      - Users
+  /users/{id}/kyc/approve:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Marks the target user's KYC as `VERIFIED` at the specified level (1–3).
+        | Level | Description |
+        |-------|-------------|
+        | 1     | Basic — email + phone confirmed |
+        | 2     | Standard — government-issued ID |
+        | 3     | Advanced — face-match + liveness check |
+      parameters:
+      - description: Target user ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: KYC level to grant (1–3)
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_vndc_backend_internal_models.ApproveKYCRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: KYC approved
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.MessageResponse'
+        "400":
+          description: Invalid level
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "401":
+          description: Missing or invalid Bearer token
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "403":
+          description: Requires ADMIN role
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Approve KYC verification (admin)
+      tags:
+      - Users
+  /users/{id}/roles:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Adds the specified RBAC role to the target user's role list.
+        Has no effect if the user already holds that role.
+      parameters:
+      - description: Target user ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: 'Role to assign: USER | MODERATOR | ADMIN'
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_vndc_backend_internal_models.AssignRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Role assigned
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.MessageResponse'
+        "400":
+          description: Invalid role value
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "401":
+          description: Missing or invalid Bearer token
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "403":
+          description: Requires ADMIN role
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "409":
+          description: User already has this role
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Assign a role to a user (admin)
+      tags:
+      - Users
+  /users/{id}/roles/{role}:
+    delete:
+      description: Removes the specified RBAC role from the target user. The base
+        `USER` role cannot be removed.
+      parameters:
+      - description: Target user ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Role to remove
+        enum:
+        - MODERATOR
+        - ADMIN
+        in: path
+        name: role
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Role removed
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.MessageResponse'
+        "400":
+          description: Cannot remove base USER role
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "401":
+          description: Missing or invalid Bearer token
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "403":
+          description: Requires ADMIN role
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "404":
+          description: User not found or does not have this role
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Remove a role from a user (admin)
+      tags:
+      - Users
+  /users/{id}/suspend:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Sets account status to `SUSPENDED` and immediately revokes all active sessions.
+        The user will be unable to log in until the account is unsuspended.
+        Cannot suspend your own account.
+      parameters:
+      - description: Target user ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Mandatory suspension reason (10–500 chars)
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_vndc_backend_internal_models.SuspendUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Account suspended
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.MessageResponse'
+        "400":
+          description: Cannot suspend own account / invalid reason
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "401":
+          description: Missing or invalid Bearer token
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "403":
+          description: Requires ADMIN role
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Suspend a user account (admin)
+      tags:
+      - Users
+  /users/{id}/unsuspend:
+    post:
+      description: Restores account status to `ACTIVE`. The user can log in again
+        immediately.
+      parameters:
+      - description: Target user ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Account unsuspended
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.MessageResponse'
+        "401":
+          description: Missing or invalid Bearer token
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "403":
+          description: Requires ADMIN role
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Unsuspend a user account (admin)
+      tags:
+      - Users
+  /users/me:
+    get:
+      description: |-
+        Returns the full profile of the authenticated user, including KYC status,
+        roles, login statistics, and custom metadata.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.UserResponse'
+        "401":
+          description: Missing or invalid Bearer token
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "404":
+          description: User not found (should not happen in practice)
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get my profile
+      tags:
+      - Users
+    patch:
+      consumes:
+      - application/json
+      description: |-
+        Partially updates the authenticated user's profile. All fields are optional —
+        only provided (non-null) fields are applied. Metadata is **deep-merged** (not replaced).
+      parameters:
+      - description: Fields to update (all optional)
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_vndc_backend_internal_models.UpdateProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated profile
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.UserResponse'
+        "400":
+          description: Validation error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "401":
+          description: Missing or invalid Bearer token
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "409":
+          description: Username already taken
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update my profile
+      tags:
+      - Users
+  /users/me/audit-logs:
+    get:
+      description: |-
+        Returns a paginated list of security events for the authenticated user:
+        logins, logouts, token refreshes, 2FA changes, profile updates, and KYC submissions.
+      parameters:
+      - description: 'Page number (default: 1)'
+        example: 1
+        in: query
+        name: page
+        type: integer
+      - description: 'Items per page (default: 20, max: 100)'
+        example: 20
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.AuditLogListResponse'
+        "401":
+          description: Missing or invalid Bearer token
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get my security audit trail
+      tags:
+      - Users
+  /users/me/email:
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Updates the account's email address and marks it **unverified** until the link is clicked.
+        A verification email is dispatched to the new address (not yet implemented in this release).
+      parameters:
+      - description: New email address
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_vndc_backend_internal_models.RequestEmailChangeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Request accepted
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.MessageResponse'
+        "400":
+          description: Invalid email format
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "401":
+          description: Missing or invalid Bearer token
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "409":
+          description: Email already registered
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Request an email address change
+      tags:
+      - Users
+  /users/me/kyc:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Submits a KYC document for identity verification. The `document_ref` is an encrypted
+        storage reference returned by the secure upload endpoint (not in this release).
+        After submission, `kyc_status` changes to `PENDING` and an admin will review it.
+      parameters:
+      - description: Document type + encrypted storage ref
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_vndc_backend_internal_models.SubmitKYCRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Document submitted for review
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.MessageResponse'
+        "400":
+          description: Invalid document type
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "401":
+          description: Missing or invalid Bearer token
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/github_com_vndc_backend_internal_models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Submit a KYC document
+      tags:
+      - Users
+securityDefinitions:
+  BearerAuth:
+    description: 'JWT access token. Format: `Bearer <token>`'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
+tags:
+- description: Wallet-based authentication (SIWE), session management, and 2FA (TOTP)
+  name: Auth
+- description: User profile management, KYC, and admin user operations
+  name: Users
+- description: ERC-20 token balance queries and EIP-712 signed meta-transfers
+  name: Tokens

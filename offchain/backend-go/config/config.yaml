@@ -1,0 +1,75 @@
+app:
+  name: vndc-backend
+  version: "1.0.0"
+  environment: development
+  debug: true
+
+http:
+  host: "0.0.0.0"
+  port: 8080
+  read_timeout: "15s"
+  write_timeout: "30s"
+  idle_timeout: "60s"
+  max_body_size: 1048576  # 1MB
+
+database:
+  uri: "mongodb://localhost:27017"
+  name: "vndc_db"
+  max_pool_size: 100
+  min_pool_size: 5
+  connect_timeout: "10s"
+  timeout: "30s"
+  max_conn_idle_time: "60s"
+
+cache:
+  addr: "localhost:6379"
+  password: ""
+  db: 0
+  pool_size: 100
+  min_idle_conns: 5
+  dial_timeout: "5s"
+  read_timeout: "3s"
+  write_timeout: "3s"
+  max_retries: 3
+  default_ttl: "10m"
+  key_prefix: "vndc:"
+
+blockchain:
+  rpc_url: "http://localhost:8545"
+  ws_url: "ws://localhost:8545"
+  chain_id: 31337  # Hardhat local
+  network_name: "localhost"
+  token_contract_address: "0x0000000000000000000000000000000000000000"
+  nft_contract_address: "0x0000000000000000000000000000000000000000"
+  relayer_address: "0x0000000000000000000000000000000000000000"
+  relayer_private_key: ""  # Inject via APP_BLOCKCHAIN_RELAYER_PRIVATE_KEY env
+  max_gas_price_gwei: 100
+  confirmation_blocks: 2   # Low for dev; use 12 for mainnet
+  confirmation_interval: "2s"
+  batch_size: 10
+  batch_timeout: "5m"
+
+auth:
+  jwt_secret: "change-me-in-production"  # Inject via APP_AUTH_JWT_SECRET
+  jwt_expiry: "24h"
+  refresh_expiry: "168h"
+  issuer: "vndc-backend"
+
+log:
+  level: "debug"
+  format: "console"
+  development: true
+
+worker:
+  batch_size: 10
+  batch_timeout: "5m"
+  sync_interval: "10m"
+  max_workers: 4
+  queue_buffer_size: 1000
+  retry_max: 3
+  retry_delay: "5s"
+
+metrics:
+  enabled: true
+  path: "/metrics"
+  port: 9090

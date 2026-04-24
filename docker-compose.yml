@@ -1,0 +1,123 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongo:
+    image: mongo:latest
+    container_name: vndc-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin_password
+      MONGO_INITDB_DATABASE: vndc_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+      - ./offchain/backend-mongodb/migrations/001_init_collections.js:/docker-entrypoint-initdb.d/001_init.js
+    networks:
+      - vndc-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:latest
+    container_name: vndc-redis
+    command: redis-server --requirepass redis_password
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - vndc-network
+    healthcheck:
+      test: redis-cli --raw incr ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Hardhat Local Blockchain (Optional)
+  hardhat:
+    image: node:18-alpine
+    container_name: vndc-hardhat
+    working_dir: /app
+    command: npx hardhat node --network hardhat
+    volumes:
+      - .:/app
+    ports:
+      - "8545:8545"
+    networks:
+      - vndc-network
+    depends_on:
+      - mongo
+      - redis
+
+  # Golang Backend
+  backend:
+    build:
+      context: ./offchain/backend-go
+      dockerfile: Dockerfile
+    container_name: vndc-backend
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      PORT: 8080
+      MONGODB_URI: mongodb://admin:admin_password@mongo:27017/vndc_db
+      REDIS_URL: redis://:redis_password@redis:6379/0
+      ETH_RPC_URL: http://hardhat:8545
+      CHAIN_ID: "31337"
+      ENV: development
+      LOG_LEVEL: info
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./offchain/backend-go:/app
+    networks:
+      - vndc-network
+    healthcheck:
+      test: curl -f http://localhost:8080/health || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Mongo Express (Web UI for MongoDB) - Optional
+  mongo-express:
+    image: mongo-express:latest
+    container_name: vndc-mongo-express
+    depends_on:
+      - mongo
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: admin_password
+      ME_CONFIG_MONGODB_URL: mongodb://admin:admin_password@mongo:27017/
+    ports:
+      - "8081:8081"
+    networks:
+      - vndc-network
+
+  # Redis Commander (Web UI for Redis) - Optional
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: vndc-redis-commander
+    depends_on:
+      - redis
+    environment:
+      REDIS_HOSTS: local:redis:6379:0:redis_password
+    ports:
+      - "8082:8081"
+    networks:
+      - vndc-network
+
+volumes:
+  mongo_data:
+  redis_data:
+
+networks:
+  vndc-network:
+    driver: bridge
