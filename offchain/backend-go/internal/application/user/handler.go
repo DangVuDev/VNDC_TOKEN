@@ -38,6 +38,15 @@ func (h *Handler) RegisterRoutes(r *gin.RouterGroup, jwtSecret string, blacklist
 			me.GET("", h.GetMe)
 			me.PATCH("", h.UpdateProfile)
 			me.PUT("/email", h.RequestEmailChange)
+			me.POST("/email/verify", h.VerifyEmail)
+			me.POST("/phone/request", h.RequestPhoneVerification)
+			me.POST("/phone/verify", h.VerifyPhone)
+			me.GET("/preferences", h.GetPreferences)
+			me.PUT("/preferences", h.UpdatePreferences)
+			me.GET("/referral", h.GetReferralInfo)
+			me.GET("/referral/list", h.ListReferrals)
+			me.POST("/2fa/backup-codes", h.GenerateBackupCodes)
+			me.POST("/deactivate", h.DeactivateAccount)
 			me.GET("/audit-logs", h.GetAuditLogs)
 			me.POST("/kyc", h.SubmitKYC)
 		}
@@ -194,6 +203,241 @@ func (h *Handler) SubmitKYC(c *gin.Context) {
 		return
 	}
 	apihttp.OK(c, &gin.H{"success": true, "message": "KYC document submitted; awaiting review"})
+}
+
+// ─── EMAIL & PHONE VERIFICATION ─────────────────────────────────────────
+
+// VerifyEmail godoc
+//
+//	@Summary      Verify email address
+//	@Description  Verifies email ownership using a token sent to the email address.
+//	@Tags         Users
+//	@Accept       json
+//	@Produce      json
+//	@Security     BearerAuth
+//	@Param        body  body      models.VerifyEmailRequest  true  "Verification token"
+//	@Success      200   {object}  models.MessageResponse          "Email verified successfully"
+//	@Failure      400   {object}  models.ErrorResponse           "Invalid or expired token"
+//	@Failure      401   {object}  models.ErrorResponse           "Missing or invalid Bearer token"
+//	@Failure      404   {object}  models.ErrorResponse           "User not found"
+//	@Router       /users/me/email/verify [post]
+func (h *Handler) VerifyEmail(c *gin.Context) {
+	req, ok := apihttp.Bind[VerifyEmailRequest](c)
+	if !ok {
+		return
+	}
+	userID := middleware.UserID(c)
+	if err := h.svc.VerifyEmail(c.Request.Context(), userID, req.Token); err != nil {
+		apihttp.Fail(c, err)
+		return
+	}
+	apihttp.OK(c, &gin.H{"success": true, "message": "Email verified successfully"})
+}
+
+// RequestPhoneVerification godoc
+//
+//	@Summary      Request phone verification OTP
+//	@Description  Sends an OTP code to the specified phone number for verification.
+//	@Tags         Users
+//	@Accept       json
+//	@Produce      json
+//	@Security     BearerAuth
+//	@Param        body  body      models.RequestPhoneVerificationRequest  true  "Phone number in E.164 format"
+//	@Success      200   {object}  models.MessageResponse                        "OTP sent to phone"
+//	@Failure      400   {object}  models.ErrorResponse                         "Invalid phone format"
+//	@Failure      401   {object}  models.ErrorResponse                         "Missing or invalid Bearer token"
+//	@Router       /users/me/phone/request [post]
+func (h *Handler) RequestPhoneVerification(c *gin.Context) {
+	req, ok := apihttp.Bind[RequestPhoneVerificationRequest](c)
+	if !ok {
+		return
+	}
+	userID := middleware.UserID(c)
+	if err := h.svc.RequestPhoneVerification(c.Request.Context(), userID, req.Phone); err != nil {
+		apihttp.Fail(c, err)
+		return
+	}
+	apihttp.OK(c, &gin.H{"success": true, "message": "OTP sent to phone number"})
+}
+
+// VerifyPhone godoc
+//
+//	@Summary      Verify phone number
+//	@Description  Verifies phone ownership using the 6-digit OTP code sent to the phone.
+//	@Tags         Users
+//	@Accept       json
+//	@Produce      json
+//	@Security     BearerAuth
+//	@Param        body  body      models.VerifyPhoneRequest  true  "6-digit OTP code"
+//	@Success      200   {object}  models.MessageResponse          "Phone verified successfully"
+//	@Failure      400   {object}  models.ErrorResponse           "Invalid or expired OTP"
+//	@Failure      401   {object}  models.ErrorResponse           "Missing or invalid Bearer token"
+//	@Router       /users/me/phone/verify [post]
+func (h *Handler) VerifyPhone(c *gin.Context) {
+	req, ok := apihttp.Bind[VerifyPhoneRequest](c)
+	if !ok {
+		return
+	}
+	userID := middleware.UserID(c)
+	if err := h.svc.VerifyPhone(c.Request.Context(), userID, req.Code); err != nil {
+		apihttp.Fail(c, err)
+		return
+	}
+	apihttp.OK(c, &gin.H{"success": true, "message": "Phone verified successfully"})
+}
+
+// ─── USER PREFERENCES ───────────────────────────────────────────────────
+
+// GetPreferences godoc
+//
+//	@Summary      Get user preferences
+//	@Description  Returns the user's notification and privacy preferences.
+//	@Tags         Users
+//	@Produce      json
+//	@Security     BearerAuth
+//	@Success      200  {object}  models.UserPreferencesResponse
+//	@Failure      401  {object}  models.ErrorResponse  "Missing or invalid Bearer token"
+//	@Failure      404  {object}  models.ErrorResponse  "User not found"
+//	@Router       /users/me/preferences [get]
+func (h *Handler) GetPreferences(c *gin.Context) {
+	userID := middleware.UserID(c)
+	prefs, err := h.svc.GetPreferences(c.Request.Context(), userID)
+	if err != nil {
+		apihttp.Fail(c, err)
+		return
+	}
+	apihttp.OK(c, prefs)
+}
+
+// UpdatePreferences godoc
+//
+//	@Summary      Update user preferences
+//	@Description  Updates notification and privacy preferences. Only provided fields are updated.
+//	@Tags         Users
+//	@Accept       json
+//	@Produce      json
+//	@Security     BearerAuth
+//	@Param        body  body      models.UserPreferencesRequest  true  "Preferences to update"
+//	@Success      200   {object}  models.UserPreferencesResponse
+//	@Failure      400   {object}  models.ErrorResponse           "Invalid preferences"
+//	@Failure      401   {object}  models.ErrorResponse           "Missing or invalid Bearer token"
+//	@Router       /users/me/preferences [put]
+func (h *Handler) UpdatePreferences(c *gin.Context) {
+	req, ok := apihttp.Bind[UserPreferencesRequest](c)
+	if !ok {
+		return
+	}
+	userID := middleware.UserID(c)
+	prefs, err := h.svc.UpdatePreferences(c.Request.Context(), userID, req)
+	if err != nil {
+		apihttp.Fail(c, err)
+		return
+	}
+	apihttp.OK(c, prefs)
+}
+
+// ─── REFERRAL SYSTEM ────────────────────────────────────────────────────
+
+// GetReferralInfo godoc
+//
+//	@Summary      Get referral information
+//	@Description  Returns the user's referral code, count, and accumulated rewards.
+//	@Tags         Users
+//	@Produce      json
+//	@Security     BearerAuth
+//	@Success      200  {object}  models.ReferralInfoResponse
+//	@Failure      401  {object}  models.ErrorResponse  "Missing or invalid Bearer token"
+//	@Failure      404  {object}  models.ErrorResponse  "User not found"
+//	@Router       /users/me/referral [get]
+func (h *Handler) GetReferralInfo(c *gin.Context) {
+	userID := middleware.UserID(c)
+	info, err := h.svc.GetReferralInfo(c.Request.Context(), userID)
+	if err != nil {
+		apihttp.Fail(c, err)
+		return
+	}
+	apihttp.OK(c, info)
+}
+
+// ListReferrals godoc
+//
+//	@Summary      List referred users
+//	@Description  Returns a paginated list of users referred by the authenticated user.
+//	@Tags         Users
+//	@Produce      json
+//	@Security     BearerAuth
+//	@Param        page      query     int  false  "Page number"     example(1)
+//	@Param        page_size query     int  false  "Items per page"  example(20)
+//	@Success      200       {object}  models.ReferralListResponse
+//	@Failure      401       {object}  models.ErrorResponse  "Missing or invalid Bearer token"
+//	@Router       /users/me/referral/list [get]
+func (h *Handler) ListReferrals(c *gin.Context) {
+	req, ok := apihttp.Bind[pagination.Request](c)
+	if !ok {
+		return
+	}
+	userID := middleware.UserID(c)
+	referrals, total, err := h.svc.ListReferrals(c.Request.Context(), userID, req.Page, req.PageSize)
+	if err != nil {
+		apihttp.Fail(c, err)
+		return
+	}
+	apihttp.Paged(c, referrals, total, req.Page, req.PageSize)
+}
+
+// ─── 2FA BACKUP CODES ───────────────────────────────────────────────────
+
+// GenerateBackupCodes godoc
+//
+//	@Summary      Generate new 2FA backup codes
+//	@Description  Generates a new set of 10 backup codes for 2FA recovery.
+//	@Description  User must save these securely; they cannot be retrieved again.
+//	@Tags         Users
+//	@Accept       json
+//	@Produce      json
+//	@Security     BearerAuth
+//	@Success      200  {object}  models.BackupCodesResponse
+//	@Failure      400  {object}  models.ErrorResponse  "2FA not enabled"
+//	@Failure      401  {object}  models.ErrorResponse  "Missing or invalid Bearer token"
+//	@Failure      500  {object}  models.ErrorResponse  "Internal server error"
+//	@Router       /users/me/2fa/backup-codes [post]
+func (h *Handler) GenerateBackupCodes(c *gin.Context) {
+	userID := middleware.UserID(c)
+	codes, err := h.svc.GenerateBackupCodes(c.Request.Context(), userID)
+	if err != nil {
+		apihttp.Fail(c, err)
+		return
+	}
+	apihttp.OK(c, codes)
+}
+
+// ─── ACCOUNT DEACTIVATION ───────────────────────────────────────────────
+
+// DeactivateAccount godoc
+//
+//	@Summary      Deactivate account
+//	@Description  Soft-deletes the account. All data is retained but the account is marked as deactivated.
+//	@Description  User can request reactivation by signing in with their wallet again.
+//	@Tags         Users
+//	@Accept       json
+//	@Produce      json
+//	@Security     BearerAuth
+//	@Param        body  body      models.DeactivateAccountRequest  false  "Optional deactivation reason"
+//	@Success      200   {object}  models.MessageResponse                  "Account deactivated"
+//	@Failure      401   {object}  models.ErrorResponse                    "Missing or invalid Bearer token"
+//	@Failure      500   {object}  models.ErrorResponse                    "Internal server error"
+//	@Router       /users/me/deactivate [post]
+func (h *Handler) DeactivateAccount(c *gin.Context) {
+	req, ok := apihttp.Bind[DeactivateAccountRequest](c)
+	if !ok {
+		return
+	}
+	userID := middleware.UserID(c)
+	if err := h.svc.DeactivateAccount(c.Request.Context(), userID, req.Reason, c.ClientIP()); err != nil {
+		apihttp.Fail(c, err)
+		return
+	}
+	apihttp.OK(c, &gin.H{"success": true, "message": "Account deactivated successfully"})
 }
 
 // requireID extracts a required path parameter or returns an error response.

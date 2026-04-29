@@ -1,0 +1,51 @@
+{
+  "name": "@vndc/contracts",
+  "version": "1.0.0",
+  "description": "VNDC Token and Smart Contracts - Phase 3: Token Features",
+  "main": "index.js",
+  "scripts": {
+    "status": "node check-status.js",
+    "start": "node start.js",
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "test:coverage": "hardhat coverage",
+    "deploy:localhost": "hardhat run scripts/deploy.ts --network localhost",
+    "deploy:sepolia": "hardhat run scripts/deploy.ts --network sepolia",
+    "verify": "hardhat verify",
+    "node": "hardhat node",
+    "clean": "hardhat clean",
+    "typechain": "typechain --target ethers-v6 --out-dir typechain-types './artifacts/contracts/**/*.json'"
+  },
+  "keywords": [
+    "vndc",
+    "token",
+    "erc20",
+    "ethereum",
+    "hardhat",
+    "solidity"
+  ],
+  "author": "VNDC Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "@nomicfoundation/hardhat-verify": "^1.1.1",
+    "@typechain/ethers-v6": "^0.4.0",
+    "@types/chai": "^4.3.9",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.10.6",
+    "chai": "^4.3.10",
+    "dotenv": "^16.3.1",
+    "ethers": "^6.10.0",
+    "hardhat": "^2.19.4",
+    "hardhat-contract-sizer": "^2.10.0",
+    "hardhat-gas-reporter": "^1.0.9",
+    "solidity-coverage": "^0.8.5",
+    "ts-node": "^10.9.2",
+    "typechain": "^8.3.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.0",
+    "@openzeppelin/contracts-upgradeable": "^5.0.0"
+  }
+}

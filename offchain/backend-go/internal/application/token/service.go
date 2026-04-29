@@ -70,6 +70,15 @@ func (s *Service) GetBalance(ctx context.Context, wallet string) (*BalanceRespon
 	}
 
 	// Cache miss — fetch from chain.
+	if s.token == nil {
+		// No on-chain client configured; return zero balance from DB pending only.
+		return snapshotToBalance(wallet, &ports.BalanceSnapshot{
+			OnChain:   "0",
+			Pending:   s.pendingAmount(ctx, wallet),
+			Available: "0",
+			SyncedAt:  time.Now(),
+		}), nil
+	}
 	onChain, err := s.token.BalanceOf(ctx, wallet)
 	if err != nil {
 		return nil, apperr.Wrap(apperr.ErrCodeBlockchain, "BalanceOf failed", err)

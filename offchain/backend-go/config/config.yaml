@@ -35,10 +35,10 @@ cache:
   key_prefix: "vndc:"
 
 blockchain:
-  rpc_url: "http://localhost:8545"
-  ws_url: "ws://localhost:8545"
-  chain_id: 31337  # Hardhat local
-  network_name: "localhost"
+  rpc_url: "https://ethereum-sepolia-rpc.publicnode.com"
+  ws_url: "wss://ethereum-sepolia-rpc.publicnode.com"
+  chain_id: 11155111  # Sepolia testnet
+  network_name: "sepolia"
   token_contract_address: "0x0000000000000000000000000000000000000000"
   nft_contract_address: "0x0000000000000000000000000000000000000000"
   relayer_address: "0x0000000000000000000000000000000000000000"
