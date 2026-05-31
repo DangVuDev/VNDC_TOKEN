@@ -18,6 +18,9 @@ type UpdateProfileRequest struct {
 	Language    *string    `json:"language,omitempty"     validate:"omitempty,bcp47_language_tag"`
 	Timezone    *string    `json:"timezone,omitempty"     validate:"omitempty,timezone"`
 	DateOfBirth *time.Time `json:"date_of_birth,omitempty"`
+	// Class identifies the student group / cohort (e.g. "CNTT-K2024").
+	// Used for per-class activity visibility filtering.
+	Class *string `json:"class,omitempty" validate:"omitempty,max=64"`
 	// Metadata is a free-form key-value store for client-specific extensions.
 	// Values are merged (not replaced) into the existing metadata map.
 	Metadata map[string]any `json:"metadata,omitempty"`
@@ -28,10 +31,32 @@ type EmailChangeRequest struct {
 	Email string `json:"email" validate:"required,email"`
 }
 
-// SubmitKYCRequest carries a KYC document submission.
-type SubmitKYCRequest struct {
-	DocumentType string `json:"document_type" validate:"required,oneof=PASSPORT NATIONAL_ID DRIVER_LICENSE"`
-	DocumentRef  string `json:"document_ref"  validate:"required"` // encrypted storage reference
+// SubmitKYCLevel1Request triggers auto-approval of KYC Level 1.
+// The user must already have a unique username set, a verified email,
+// and a verified phone number. No admin approval is required.
+// This request body is intentionally empty — all data is taken from the user record.
+type SubmitKYCLevel1Request struct{}
+
+// SubmitKYCLevel2Request carries document URLs for admin-reviewed Level 2 KYC.
+// Images are first uploaded via POST /users/me/kyc/upload (which returns demo URLs).
+type SubmitKYCLevel2Request struct {
+	StudentCardURL string `json:"student_card_url" validate:"required,url"`
+	SelfieURL      string `json:"selfie_url"       validate:"required,url"`
+}
+
+// KYCUploadDemoRequest carries a filename to simulate an image upload.
+type KYCUploadDemoRequest struct {
+	FileName string `json:"file_name" validate:"required,min=1,max=255"`
+}
+
+// KYCLevel1StatusResponse describes why Level 1 requirements are or are not met.
+type KYCLevel1StatusResponse struct {
+	Ready           bool   `json:"ready"`
+	HasUsername     bool   `json:"has_username"`
+	EmailVerified   bool   `json:"email_verified"`
+	PhoneVerified   bool   `json:"phone_verified"`
+	CurrentKYCLevel int    `json:"current_kyc_level"`
+	Message         string `json:"message,omitempty"`
 }
 
 // ─────────────────────────────────────────────
@@ -58,9 +83,15 @@ type AssignRoleRequest struct {
 	Role string `json:"role" validate:"required,oneof=USER MODERATOR ADMIN"`
 }
 
-// ApproveKYCRequest carries the verified KYC level to assign.
+// ApproveKYCRequest carries the verified KYC level to assign (for direct admin approval).
 type ApproveKYCRequest struct {
 	Level int `json:"level" validate:"required,min=1,max=3"`
+}
+
+// ReviewKYCSubmissionRequest carries the review outcome for a Level 2 KYC submission.
+type ReviewKYCSubmissionRequest struct {
+	Approve bool   `json:"approve" validate:"required"`
+	Note    string `json:"note"    validate:"omitempty,max=500"`
 }
 
 // ─────────────────────────────────────────────
@@ -154,4 +185,19 @@ type BackupCodesResponse struct {
 	BackupCodes []string  `json:"backup_codes"` // 10 codes, user must save them
 	GeneratedAt time.Time `json:"generated_at"`
 	Message     string    `json:"message"` // "Save these codes securely"
+}
+
+// ─────────────────────────────────────────────
+//  Public Lookup
+// ─────────────────────────────────────────────
+
+// PublicUserInfo is the minimal public profile returned by the lookup endpoint.
+// It exposes only non-sensitive information safe to share between authenticated users.
+type PublicUserInfo struct {
+	WalletAddress string `json:"wallet_address"`
+	Username      string `json:"username,omitempty"`
+	FullName      string `json:"full_name,omitempty"`
+	AvatarURI     string `json:"avatar_uri,omitempty"`
+	KYCLevel      int    `json:"kyc_level"`
+	KYCVerified   bool   `json:"kyc_verified"`
 }

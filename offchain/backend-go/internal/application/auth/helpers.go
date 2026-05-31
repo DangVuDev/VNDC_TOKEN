@@ -5,14 +5,13 @@ package auth
 import (
 	"crypto/rand"
 	"encoding/hex"
-	"fmt"
 	"strings"
 
 	"github.com/vndc/backend/pkg/totp"
 )
 
-// generateNonce returns 16 cryptographically random bytes as a lowercase hex string.
-// Used for SIWE challenge nonces and pending-2FA tokens.
+// generateNonce returns 16 cryptographically random bytes encoded as lowercase hex.
+// The auth module reuses this helper for short-lived SIWE nonces and temporary 2FA continuation tokens.
 func generateNonce() (string, error) {
 	b := make([]byte, 16)
 	if _, err := rand.Read(b); err != nil {
@@ -21,8 +20,8 @@ func generateNonce() (string, error) {
 	return hex.EncodeToString(b), nil
 }
 
-// generateRefreshToken returns 32 cryptographically random bytes as hex.
-// This is the raw opaque refresh token sent to the client; it is never stored plaintext.
+// generateRefreshToken returns a longer opaque token suitable for refresh-token issuance.
+// The raw token is delivered to the client, while persistence layers store only its hashed representation.
 func generateRefreshToken() (string, error) {
 	b := make([]byte, 32)
 	if _, err := rand.Read(b); err != nil {
@@ -31,24 +30,14 @@ func generateRefreshToken() (string, error) {
 	return hex.EncodeToString(b), nil
 }
 
-// hashToken computes a stable SHA-256 hex digest for safe token storage.
-// Reuses pkg/totp's SHA-256 helper — no additional dependency.
+// hashToken computes the deterministic digest used when storing refresh or backup-like tokens safely.
+// Hashing keeps secret bearer material out of persistent storage while still supporting equality checks.
 func hashToken(raw string) string {
 	return totp.HashBackupCode(raw)
 }
 
-// hexToBytes decodes a 0x-prefixed or plain hex string into bytes.
-func hexToBytes(s string) ([]byte, error) {
-	s = strings.TrimPrefix(s, "0x")
-	b, err := hex.DecodeString(s)
-	if err != nil {
-		return nil, fmt.Errorf("hex decode: %w", err)
-	}
-	return b, nil
-}
-
-// normalizeAddress lowercases and validates an Ethereum address.
-// Returns "" if the address is malformed (wrong length or missing 0x prefix).
+// normalizeAddress trims, lowercases, and lightly validates an Ethereum address for auth-flow comparisons.
+// Returning an empty string on malformed input gives callers a simple invalid-address sentinel.
 func normalizeAddress(addr string) string {
 	addr = strings.ToLower(strings.TrimSpace(addr))
 	if len(addr) != 42 || !strings.HasPrefix(addr, "0x") {

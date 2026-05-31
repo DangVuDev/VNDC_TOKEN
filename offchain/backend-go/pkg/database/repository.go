@@ -96,6 +96,9 @@ func WithLte(field string, value interface{}) QueryOption {
 func WithIn(field string, values interface{}) QueryOption {
 	return func(q *Query) { q.Filters = append(q.Filters, Filter{field, OpIn, values}) }
 }
+func WithNin(field string, values interface{}) QueryOption {
+	return func(q *Query) { q.Filters = append(q.Filters, Filter{field, OpNin, values}) }
+}
 func WithLike(field, pattern string) QueryOption {
 	return func(q *Query) { q.Filters = append(q.Filters, Filter{field, OpLike, pattern}) }
 }

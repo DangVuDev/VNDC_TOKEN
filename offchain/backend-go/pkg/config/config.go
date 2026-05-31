@@ -79,14 +79,22 @@ type CacheConfig struct {
 
 // BlockchainConfig holds Ethereum/EVM settings.
 type BlockchainConfig struct {
-	RPCURL               string        `mapstructure:"rpc_url"`
-	WSURL                string        `mapstructure:"ws_url"`
-	ChainID              int64         `mapstructure:"chain_id"`
-	NetworkName          string        `mapstructure:"network_name"`
-	TokenContractAddress string        `mapstructure:"token_contract_address"`
-	NFTContractAddress   string        `mapstructure:"nft_contract_address"`
-	RelayerAddress       string        `mapstructure:"relayer_address"`
-	RelayerPrivateKey    string        `mapstructure:"relayer_private_key"`
+	RPCURL                    string `mapstructure:"rpc_url"`
+	WSURL                     string `mapstructure:"ws_url"`
+	ChainID                   int64  `mapstructure:"chain_id"`
+	NetworkName               string `mapstructure:"network_name"`
+	TokenContractAddress      string `mapstructure:"token_contract_address"`
+	NFTContractAddress        string `mapstructure:"nft_contract_address"`
+	MarketplaceManagerAddress string `mapstructure:"marketplace_manager_address"`
+	RelayerAddress            string `mapstructure:"relayer_address"`
+	RelayerPrivateKey         string `mapstructure:"relayer_private_key"`
+	FundingManagerAddress     string `mapstructure:"funding_manager_address"`
+	DAOManagerAddress         string `mapstructure:"dao_manager_address"`
+	TaskManagerAddress        string `mapstructure:"task_manager_address"`
+	TaskManagerSignerPrivKey  string `mapstructure:"task_manager_signer_priv_key"`
+	// QREncryptionKey is the secret used to derive the AES-256 key for event ticket QR codes.
+	// Must be kept private. Falls back to JWTSecret if empty.
+	QREncryptionKey      string        `mapstructure:"qr_encryption_key"`
 	MaxGasPrice          int64         `mapstructure:"max_gas_price_gwei"`
 	ConfirmationBlocks   uint64        `mapstructure:"confirmation_blocks"`
 	ConfirmationInterval time.Duration `mapstructure:"confirmation_interval"`
@@ -101,6 +109,7 @@ type AuthConfig struct {
 	RefreshExpiry time.Duration `mapstructure:"refresh_expiry"`
 	Issuer        string        `mapstructure:"issuer"`
 	AdminToken    string        `mapstructure:"admin_token"`
+	SIWEDomain    string        `mapstructure:"siwe_domain"`
 }
 
 // LogConfig holds logger settings.
@@ -119,6 +128,14 @@ type WorkerConfig struct {
 	QueueBufferSize int           `mapstructure:"queue_buffer_size"`
 	RetryMax        int           `mapstructure:"retry_max"`
 	RetryDelay      time.Duration `mapstructure:"retry_delay"`
+
+	// TokenTransferWorker — Change Stream-based auto-batch trigger.
+	// PendingThreshold: fire an immediate batch when PENDING tx count reaches this.
+	// TriggerInterval: also fire on this cadence (doubles as poll interval for standalone MongoDB).
+	// ChangeStreamRetryDelay: wait before reopening a failed change stream connection.
+	PendingThreshold       int           `mapstructure:"pending_threshold"`
+	TriggerInterval        time.Duration `mapstructure:"trigger_interval"`
+	ChangeStreamRetryDelay time.Duration `mapstructure:"change_stream_retry_delay"`
 }
 
 // MetricsConfig holds Prometheus settings.

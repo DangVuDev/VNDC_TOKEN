@@ -12,6 +12,8 @@ import (
 	httpreq "github.com/vndc/backend/pkg/http/request"
 )
 
+// Setup2FA handles generation of a new TOTP secret and backup-code set for the authenticated user.
+// 2FA is not enabled yet at this stage; the handler only exposes the bootstrap material returned by the service.
 // Setup2FA godoc
 //
 //	@Summary      Generate a new TOTP secret
@@ -40,6 +42,8 @@ func (h *Handler) Setup2FA(c *gin.Context) {
 	apihttp.OK(c, resp)
 }
 
+// Enable2FA handles activation of 2FA after the user proves possession of the newly configured authenticator.
+// The authenticated user ID is injected server-side so clients cannot attempt to enable 2FA for another account.
 // Enable2FA godoc
 //
 //	@Summary      Activate two-factor authentication
@@ -70,6 +74,8 @@ func (h *Handler) Enable2FA(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "message": "2FA enabled successfully"})
 }
 
+// Disable2FA handles deactivation of 2FA after verifying a live TOTP code or backup code.
+// It is the transport counterpart to the service logic that clears the secret and recovery-code state.
 // Disable2FA godoc
 //
 //	@Summary      Deactivate two-factor authentication

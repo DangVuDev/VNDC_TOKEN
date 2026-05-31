@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -293,6 +294,9 @@ func (r *Repository[T]) HardDelete(ctx context.Context, id string) error {
 func (r *Repository[T]) WithTransaction(ctx context.Context, fn func(ctx context.Context) error) error {
 	session, err := r.client.StartSession()
 	if err != nil {
+		if isMongoTransactionUnsupported(err) {
+			return fn(ctx)
+		}
 		return apperr.Wrap(apperr.ErrCodeDatabase, "StartSession failed", err)
 	}
 	defer session.EndSession(ctx)
@@ -300,7 +304,20 @@ func (r *Repository[T]) WithTransaction(ctx context.Context, fn func(ctx context
 	_, err = session.WithTransaction(ctx, func(sessCtx mongo.SessionContext) (interface{}, error) {
 		return nil, fn(sessCtx)
 	})
+	if err != nil && isMongoTransactionUnsupported(err) {
+		return fn(ctx)
+	}
 	return err
+}
+
+func isMongoTransactionUnsupported(err error) bool {
+	if err == nil {
+		return false
+	}
+	msg := strings.ToLower(err.Error())
+	return strings.Contains(msg, "transaction numbers are only allowed on a replica set member or mongos") ||
+		strings.Contains(msg, "replica set") ||
+		strings.Contains(msg, "does not support sessions")
 }
 
 // ─────────────────────────────────────────────

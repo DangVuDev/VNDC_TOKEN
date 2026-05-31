@@ -10,6 +10,8 @@ import (
 	"github.com/vndc/backend/pkg/http/middleware"
 )
 
+// ListUsers handles the admin endpoint for browsing platform users.
+// It binds list filters and forwards them unchanged to the user service for policy-consistent lookup behavior.
 // ListUsers godoc
 //
 //	@Summary      List users (admin)
@@ -30,7 +32,7 @@ import (
 //	@Failure      500         {object}  models.ErrorResponse  "Internal server error"
 //	@Router       /users [get]
 func (h *Handler) ListUsers(c *gin.Context) {
-	req, ok := apihttp.Bind[ListUsersRequest](c)
+	req, ok := apihttp.BindQuery[ListUsersRequest](c)
 	if !ok {
 		return
 	}
@@ -42,6 +44,8 @@ func (h *Handler) ListUsers(c *gin.Context) {
 	apihttp.Paged(c, users, total, req.Page, req.PageSize)
 }
 
+// GetUser handles the admin detail endpoint for one specific user account.
+// The handler only validates the required path parameter before delegating to the service.
 // GetUser godoc
 //
 //	@Summary      Get user by ID (admin)
@@ -70,6 +74,8 @@ func (h *Handler) GetUser(c *gin.Context) {
 	apihttp.OK(c, user)
 }
 
+// SuspendUser handles the admin moderation action that suspends a target account.
+// It forwards acting-admin metadata so the suspension is attributable in audit trails.
 // SuspendUser godoc
 //
 //	@Summary      Suspend a user account (admin)
@@ -107,6 +113,8 @@ func (h *Handler) SuspendUser(c *gin.Context) {
 	apihttp.OK(c, &gin.H{"success": true, "message": "User suspended"})
 }
 
+// UnsuspendUser handles the admin moderation action that restores a suspended account.
+// Identity for the acting administrator is taken from auth middleware rather than the request body.
 // UnsuspendUser godoc
 //
 //	@Summary      Unsuspend a user account (admin)
@@ -135,6 +143,8 @@ func (h *Handler) UnsuspendUser(c *gin.Context) {
 	apihttp.OK(c, &gin.H{"success": true, "message": "User unsuspended"})
 }
 
+// AssignRole handles administrative RBAC role assignment for a target user.
+// The handler binds the requested role and leaves normalization plus duplication checks to the service layer.
 // AssignRole godoc
 //
 //	@Summary      Assign a role to a user (admin)
@@ -172,6 +182,8 @@ func (h *Handler) AssignRole(c *gin.Context) {
 	apihttp.OK(c, &gin.H{"success": true, "message": "Role assigned"})
 }
 
+// RemoveRole handles administrative removal of one RBAC role from a target account.
+// Path parameters are used for both user ID and role name to keep the action URL explicit.
 // RemoveRole godoc
 //
 //	@Summary      Remove a role from a user (admin)
@@ -206,6 +218,8 @@ func (h *Handler) RemoveRole(c *gin.Context) {
 	apihttp.OK(c, &gin.H{"success": true, "message": "Role removed"})
 }
 
+// ApproveKYC handles the admin shortcut endpoint that directly grants a KYC level to a user.
+// It is separate from submission review so operators can resolve exceptional moderation cases explicitly.
 // ApproveKYC godoc
 //
 //	@Summary      Approve KYC verification (admin)

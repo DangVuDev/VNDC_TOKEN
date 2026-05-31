@@ -54,9 +54,13 @@ const (
 type TransactionType string
 
 const (
-	TxTypeTokenTransfer TransactionType = "TOKEN_TRANSFER"
-	TxTypeNFTMint       TransactionType = "NFT_MINT"
-	TxTypeNFTTransfer   TransactionType = "NFT_TRANSFER"
+	TxTypeTokenTransfer    TransactionType = "TOKEN_TRANSFER"
+	TxTypeNFTMint          TransactionType = "NFT_MINT"
+	TxTypeNFTTransfer      TransactionType = "NFT_TRANSFER"
+	TxTypeTaskClaim        TransactionType = "TASK_CLAIM"
+	TxTypeFundContribution TransactionType = "FUND_CONTRIBUTION"
+	TxTypeMarketplaceBuy   TransactionType = "MARKETPLACE_BUY"
+	TxTypeServiceTicketBuy TransactionType = "SERVICE_TICKET_BUY"
 )
 
 // Transaction represents an off-chain queued meta-transaction.
@@ -76,6 +80,11 @@ type Transaction struct {
 	Nonce      string `bson:"nonce"       json:"nonce"`
 	Deadline   int64  `bson:"deadline"    json:"deadline"`  // Unix timestamp
 	Signature  string `bson:"signature"   json:"signature"` // hex-encoded 65 bytes
+
+	// Optional context for cross-module processing (e.g. funding contribution)
+	ContextType string `bson:"context_type,omitempty" json:"context_type,omitempty"`
+	ContextID   string `bson:"context_id,omitempty"   json:"context_id,omitempty"`
+	ContextRef  string `bson:"context_ref,omitempty"  json:"context_ref,omitempty"`
 
 	// NFT-specific
 	TokenID      string `bson:"token_id,omitempty"      json:"token_id,omitempty"`
@@ -250,10 +259,12 @@ type User struct {
 	SuspendReason       string     `bson:"suspend_reason,omitempty" json:"suspend_reason,omitempty"`
 
 	// ── Extensibility ─────────────────────────────────────────────────────
-	ReferralCode string         `bson:"referral_code,omitempty" json:"referral_code,omitempty"`
-	ReferredBy   string         `bson:"referred_by,omitempty"   json:"referred_by,omitempty"` // wallet address
-	Tags         []string       `bson:"tags,omitempty"          json:"tags,omitempty"`
-	Metadata     map[string]any `bson:"metadata,omitempty"      json:"metadata,omitempty"` // open key-value store
+	ReferralCode   string         `bson:"referral_code,omitempty" json:"referral_code,omitempty"`
+	ReferredBy     string         `bson:"referred_by,omitempty"   json:"referred_by,omitempty"` // wallet address
+	ActivityPoints int64          `bson:"activity_points"         json:"activity_points"`
+	Class          string         `bson:"class,omitempty"         json:"class,omitempty"` // student class / group (e.g. "CNTT-K2024")
+	Tags           []string       `bson:"tags,omitempty"          json:"tags,omitempty"`
+	Metadata       map[string]any `bson:"metadata,omitempty"      json:"metadata,omitempty"` // open key-value store
 }
 
 // IsActive reports whether the account can perform operations.
@@ -317,14 +328,41 @@ const (
 	NFTTypeAchievement NFTType = "ACHIEVEMENT"
 )
 
+// NFTTier represents the rarity/reward tier of a badge NFT.
+// Used in DAO vote-power calculation (Bronze→50%, Silver→100%, Gold→200% boost).
+type NFTTier string
+
+const (
+	NFTTierNone   NFTTier = ""
+	NFTTierBronze NFTTier = "BRONZE"
+	NFTTierSilver NFTTier = "SILVER"
+	NFTTierGold   NFTTier = "GOLD"
+)
+
+// VotePowerBoostBps returns the additional basis-points multiplier for the tier.
+// vote_power = token_balance × (1 + boost_bps/10000)
+func (t NFTTier) VotePowerBoostBps() int64 {
+	switch t {
+	case NFTTierBronze:
+		return 5000 // 50 %
+	case NFTTierSilver:
+		return 10000 // 100 %
+	case NFTTierGold:
+		return 20000 // 200 %
+	default:
+		return 0
+	}
+}
+
 // NFT represents an off-chain NFT record mirroring on-chain ERC1155 data.
 type NFT struct {
 	BaseEntity `bson:",inline"`
 
 	TokenID     string         `bson:"token_id"    json:"token_id"` // uint256 as string
 	Type        NFTType        `bson:"type"        json:"type"`
-	Owner       string         `bson:"owner"       json:"owner"`   // checksummed address
-	Creator     string         `bson:"creator"     json:"creator"` // checksummed address
+	Tier        NFTTier        `bson:"tier,omitempty" json:"tier,omitempty"` // BRONZE/SILVER/GOLD for badge NFTs
+	Owner       string         `bson:"owner"       json:"owner"`             // checksummed address
+	Creator     string         `bson:"creator"     json:"creator"`           // checksummed address
 	Name        string         `bson:"name"        json:"name"`
 	Description string         `bson:"description" json:"description"`
 	ImageURI    string         `bson:"image_uri"   json:"image_uri"`

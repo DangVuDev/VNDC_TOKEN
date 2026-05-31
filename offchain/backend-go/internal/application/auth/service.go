@@ -40,7 +40,8 @@ import (
 //  Service
 // ─────────────────────────────────────────────
 
-// Service orchestrates all authentication operations.
+// Service orchestrates authentication, session issuance, token rotation, 2FA flows, and audit side effects.
+// It is the main boundary where auth-specific application rules coordinate repository and cache dependencies.
 type Service struct {
 	userRepo    ports.UserRepository
 	sessionRepo ports.SessionRepository
@@ -52,6 +53,7 @@ type Service struct {
 }
 
 // NewService constructs the auth Service with all dependencies injected.
+// The constructor also normalizes configuration defaults so auth flows behave consistently across environments.
 func NewService(
 	userRepo ports.UserRepository,
 	sessionRepo ports.SessionRepository,
@@ -79,6 +81,7 @@ func NewService(
 
 // GetChallenge generates a random nonce, persists it with a short TTL,
 // and returns the pre-formatted EIP-191 message that the wallet must sign.
+// This is the entry point of the SIWE login flow and establishes replay protection before any signature verification occurs.
 func (s *Service) GetChallenge(ctx context.Context, wallet string) (*ChallengeResponse, error) {
 	wallet = normalizeAddress(wallet)
 	if wallet == "" {
@@ -110,25 +113,29 @@ func (s *Service) GetChallenge(ctx context.Context, wallet string) (*ChallengeRe
 
 // Login verifies the SIWE signature and either issues a JWT pair or
 // returns a pending 2FA token for subsequent TOTP verification.
+// In addition to signature validation, it enforces account guards, resets brute-force state, and records audit side effects.
 func (s *Service) Login(ctx context.Context, req *LoginRequest) (*LoginResult, error) {
 	log := logger.FromContext(ctx).With(logger.String("op", "Login"), logger.String("wallet", req.Wallet))
 	wallet := normalizeAddress(req.Wallet)
 
 	// 1. Retrieve challenge nonce (proves the client initiated this flow).
-	nonce, err := s.authCache.GetChallenge(ctx, wallet)
+	// We no longer use the nonce for reconstruction; it's only for replay protection.
+	_, err := s.authCache.GetChallenge(ctx, wallet)
 	if err != nil {
 		s.recordAttempt(ctx, wallet, req.IPAddress, req.UserAgent, false, "no_challenge")
 		return nil, apperr.New(apperr.ErrCodeUnauthorized, "Challenge not found or expired — call /auth/challenge first")
 	}
 
 	// 2. Verify EIP-191 personal_sign signature.
-	sigBytes, err := hexToBytes(req.Signature)
+	// CRITICAL: Use the message provided by the client (signed with), NOT a reconstructed one.
+	// Reconstructing with time.Now() would create a different message hash.
+	sigBytes, err := blockchain.HexToBytes(req.Signature)
 	if err != nil {
 		s.recordAttempt(ctx, wallet, req.IPAddress, req.UserAgent, false, "bad_signature_hex")
 		return nil, apperr.New(apperr.ErrCodeInvalidSignature, "Malformed signature")
 	}
-	msg := blockchain.SIWEMessage(s.cfg.SIWEDomain, wallet, nonce, time.Now().UTC().Format(time.RFC3339))
-	ethAddr, err := blockchain.RecoverPersonalSigner(msg, sigBytes)
+	// Use the message provided in the request (client signed this exact message)
+	ethAddr, err := blockchain.RecoverPersonalSigner(req.Message, sigBytes)
 	if err != nil {
 		s.recordAttempt(ctx, wallet, req.IPAddress, req.UserAgent, false, "recover_failed")
 		return nil, apperr.New(apperr.ErrCodeInvalidSignature, "Signature recovery failed")
@@ -186,7 +193,8 @@ func (s *Service) Login(ctx context.Context, req *LoginRequest) (*LoginResult, e
 //  Complete2FA — finalize login after TOTP check
 // ─────────────────────────────────────────────
 
-// Complete2FA verifies the TOTP (or backup) code and issues the full JWT pair.
+// Complete2FA verifies the TOTP or backup code associated with a pending 2FA login session and then issues the full JWT pair.
+// It is the final gate between a successful SIWE signature and a fully authenticated session.
 func (s *Service) Complete2FA(ctx context.Context, req *Complete2FARequest) (*TokenPair, error) {
 	log := logger.FromContext(ctx).With(logger.String("op", "Complete2FA"))
 
@@ -231,7 +239,8 @@ func (s *Service) Complete2FA(ctx context.Context, req *Complete2FARequest) (*To
 //  Refresh — rotate refresh token
 // ─────────────────────────────────────────────
 
-// Refresh validates the refresh token, revokes it, and issues a new pair (rotation).
+// Refresh validates the refresh token, revokes it, and issues a new pair as part of rotation.
+// This keeps refresh tokens single-use and limits replay risk if one token is leaked.
 func (s *Service) Refresh(ctx context.Context, req *RefreshRequest) (*TokenPair, error) {
 	log := logger.FromContext(ctx).With(logger.String("op", "Refresh"))
 
@@ -265,7 +274,8 @@ func (s *Service) Refresh(ctx context.Context, req *RefreshRequest) (*TokenPair,
 //  Logout
 // ─────────────────────────────────────────────
 
-// Logout blacklists the current access token and revokes the session(s).
+// Logout blacklists the current access token and revokes the relevant session or sessions.
+// The method supports both single-session logout and account-wide logout-all scenarios.
 func (s *Service) Logout(ctx context.Context, req *LogoutRequest, remainingTTL time.Duration) error {
 	if req.JWTID != "" {
 		_ = s.authCache.BlacklistToken(ctx, req.JWTID, remainingTTL)
@@ -284,7 +294,7 @@ func (s *Service) Logout(ctx context.Context, req *LogoutRequest, remainingTTL t
 // ─────────────────────────────────────────────
 
 // Setup2FA generates a new TOTP secret and backup codes.
-// Does NOT enable 2FA yet — the client must call Enable2FA to confirm the secret.
+// It prepares enrollment data but does not enable 2FA until the user proves possession of the generated secret.
 func (s *Service) Setup2FA(ctx context.Context, userID string) (*Setup2FAResponse, error) {
 	user, err := s.userRepo.FindByID(ctx, userID)
 	if err != nil {
@@ -314,7 +324,8 @@ func (s *Service) Setup2FA(ctx context.Context, userID string) (*Setup2FARespons
 	return &Setup2FAResponse{Secret: secret, OTPAuthURI: uri, BackupCodes: plain}, nil
 }
 
-// Enable2FA activates TOTP on the account after the user confirms with a live code.
+// Enable2FA activates TOTP on the account after the user confirms the secret with a live code.
+// This prevents half-configured secrets from being marked active before the user has a working authenticator setup.
 func (s *Service) Enable2FA(ctx context.Context, req *Enable2FARequest) error {
 	user, err := s.userRepo.FindByID(ctx, req.UserID)
 	if err != nil {
@@ -339,7 +350,8 @@ func (s *Service) Enable2FA(ctx context.Context, req *Enable2FARequest) error {
 	return nil
 }
 
-// Disable2FA turns off TOTP. Requires a valid current code or backup code.
+// Disable2FA turns off TOTP and clears the stored 2FA secret and backup codes.
+// A valid current TOTP code or backup code is required so disabling 2FA remains an authenticated action.
 func (s *Service) Disable2FA(ctx context.Context, req *Disable2FARequest) error {
 	user, err := s.userRepo.FindByID(ctx, req.UserID)
 	if err != nil {
@@ -374,16 +386,19 @@ func (s *Service) Disable2FA(ctx context.Context, req *Disable2FARequest) error 
 // ─────────────────────────────────────────────
 
 // IsBlacklisted reports whether the given JWT ID has been revoked.
+// Middleware and token validation layers use this to reject access tokens that were explicitly logged out early.
 func (s *Service) IsBlacklisted(ctx context.Context, jwtID string) (bool, error) {
 	return s.authCache.IsTokenBlacklisted(ctx, jwtID)
 }
 
 // GetActiveSessions returns all unexpired, un-revoked sessions for a user.
+// This powers user session-management screens and administrative session review tooling.
 func (s *Service) GetActiveSessions(ctx context.Context, userID string) ([]*domain.Session, error) {
 	return s.sessionRepo.FindActiveByUserID(ctx, userID)
 }
 
-// RevokeSession terminates a specific session by ID (users can manage their own sessions).
+// RevokeSession terminates a specific session by ID after verifying the caller owns that session.
+// This method backs self-service device/session management in account security settings.
 func (s *Service) RevokeSession(ctx context.Context, userID, sessionID, ip, ua string) error {
 	session, err := s.sessionRepo.FindByID(ctx, sessionID)
 	if err != nil {
@@ -403,6 +418,8 @@ func (s *Service) RevokeSession(ctx context.Context, userID, sessionID, ip, ua s
 //  Internal — session creation
 // ─────────────────────────────────────────────
 
+// createSession mints a new access/refresh token pair and persists the refresh-side session record.
+// It is reused by both direct login and post-2FA completion so session issuance logic stays centralized.
 func (s *Service) createSession(ctx context.Context, user *domain.User, req *LoginRequest) (*TokenPair, error) {
 	now := time.Now().UTC()
 	accessExpiry := now.Add(s.cfg.AccessTTL)
@@ -447,6 +464,8 @@ func (s *Service) createSession(ctx context.Context, user *domain.User, req *Log
 	}, nil
 }
 
+// mintAccessToken builds and signs the short-lived JWT access token bound to one user session.
+// The token embeds session and role context so downstream middleware can authorize requests without extra reads.
 func (s *Service) mintAccessToken(user *domain.User, sessionID, jwtID string, expiry time.Time) (string, error) {
 	now := time.Now()
 	claims := gojwt.MapClaims{
@@ -464,6 +483,8 @@ func (s *Service) mintAccessToken(user *domain.User, sessionID, jwtID string, ex
 	return token.SignedString([]byte(s.cfg.JWTSecret))
 }
 
+// getOrCreateUser resolves the wallet owner from persistence or auto-provisions a baseline user on first login.
+// Auto-provisioning keeps wallet-first onboarding friction low while still producing a durable user identity record.
 func (s *Service) getOrCreateUser(ctx context.Context, wallet string) (*domain.User, error) {
 	user, err := s.userRepo.FindByWallet(ctx, wallet)
 	if err == nil {
@@ -473,23 +494,52 @@ func (s *Service) getOrCreateUser(ctx context.Context, wallet string) (*domain.U
 		return nil, apperr.Wrap(apperr.ErrCodeDatabase, "FindByWallet failed", err)
 	}
 
+	nonce, nonceErr := generateNonce()
+	if nonceErr != nil {
+		return nil, apperr.Wrap(apperr.ErrCodeInternal, "Generate user nonce failed", nonceErr)
+	}
+
 	newUser := &domain.User{
-		WalletAddress: wallet,
-		Status:        domain.UserStatusActive,
-		Roles:         []domain.UserRole{domain.RoleUser},
-		KYCStatus:     domain.KYCStatusNone,
-		KYCLevel:      domain.KYCLevelNone,
+		WalletAddress:       wallet,
+		Nonce:               nonce,
+		Status:              domain.UserStatusActive,
+		Roles:               []domain.UserRole{domain.RoleUser},
+		KYCStatus:           domain.KYCStatusNone,
+		KYCLevel:            domain.KYCLevelNone,
+		TwoFactorEnabled:    false,
+		FailedLoginAttempts: 0,
 	}
-	if err := s.userRepo.Create(ctx, newUser); err != nil {
-		return nil, apperr.Wrap(apperr.ErrCodeDatabase, "Create user failed", err)
+
+	if createErr := s.userRepo.Create(ctx, newUser); createErr != nil {
+		if apperr.Is(createErr, apperr.ErrCodeConflict) {
+			created, findErr := s.userRepo.FindByWallet(ctx, wallet)
+			if findErr == nil {
+				return created, nil
+			}
+			return nil, apperr.Wrap(apperr.ErrCodeDatabase, "FindByWallet after conflict failed", findErr)
+		}
+		return nil, apperr.Wrap(apperr.ErrCodeDatabase, "Create user failed", createErr)
 	}
-	return s.userRepo.FindByWallet(ctx, wallet)
+
+	created, findErr := s.userRepo.FindByWallet(ctx, wallet)
+	if findErr != nil {
+		return nil, apperr.Wrap(apperr.ErrCodeDatabase, "FindByWallet after create failed", findErr)
+	}
+
+	s.log.Info("user auto-provisioned on first login",
+		logger.String("user_id", created.ID),
+		logger.String("wallet", created.WalletAddress),
+	)
+
+	return created, nil
 }
 
 // ─────────────────────────────────────────────
 //  Internal — audit & brute-force tracking
 // ─────────────────────────────────────────────
 
+// recordAttempt persists a login attempt and, on failure, updates brute-force tracking for the wallet.
+// When the configured threshold is crossed, it also locks the account for the configured duration.
 func (s *Service) recordAttempt(ctx context.Context, wallet, ip, ua string, success bool, reason string) {
 	attempt := &domain.LoginAttempt{
 		WalletAddress: wallet,
@@ -514,6 +564,8 @@ func (s *Service) recordAttempt(ctx context.Context, wallet, ip, ua string, succ
 	}
 }
 
+// writeAudit records an auth-related security event without interrupting the main request flow on failure.
+// Audit persistence is best-effort here because authentication outcomes should not hinge on logging side effects.
 func (s *Service) writeAudit(ctx context.Context, event domain.AuditEventType,
 	actorID, actorWallet, targetID, ip, ua, sessionID string, details map[string]any) {
 	entry := &domain.AuditLog{

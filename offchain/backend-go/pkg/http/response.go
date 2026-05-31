@@ -10,6 +10,7 @@ import (
 	"github.com/go-playground/validator/v10"
 
 	apperr "github.com/vndc/backend/pkg/errors"
+	"github.com/vndc/backend/pkg/timeutil"
 )
 
 // ─────────────────────────────────────────────
@@ -62,7 +63,7 @@ type Pagination struct {
 func meta(c *gin.Context) Meta {
 	return Meta{
 		RequestID: c.GetString("request_id"),
-		Timestamp: time.Now().UTC().Format(time.RFC3339),
+		Timestamp: timeutil.FormatRFC3339UTC7(time.Now()),
 	}
 }
 
@@ -135,7 +136,30 @@ func Fail(c *gin.Context, err error) {
 //  Request binding with validation
 // ─────────────────────────────────────────────
 
-var validate = validator.New()
+// ─────────────────────────────────────────────
+//  Request binding with validation
+// ─────────────────────────────────────────────
+
+var validate = func() *validator.Validate {
+	v := validator.New()
+	// eth_addr: validate Ethereum address format (0x + 40 hex chars, case-insensitive)
+	_ = v.RegisterValidation("eth_addr", func(fl validator.FieldLevel) bool {
+		addr := fl.Field().String()
+		if len(addr) != 42 {
+			return false
+		}
+		if addr[:2] != "0x" && addr[:2] != "0X" {
+			return false
+		}
+		for _, c := range addr[2:] {
+			if !((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) {
+				return false
+			}
+		}
+		return true
+	})
+	return v
+}()
 
 // Bind binds and validates a JSON request body into T.
 // On error, writes an appropriate error response and returns false.

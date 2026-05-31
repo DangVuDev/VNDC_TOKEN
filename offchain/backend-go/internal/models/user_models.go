@@ -15,10 +15,10 @@ type UserResponse struct {
 }
 
 // ─────────────────────────────────────────────
-//  /users/me  — PATCH
+//  /users/me  — PUT
 // ─────────────────────────────────────────────
 
-// UpdateProfileRequest is the body for PATCH /users/me.
+// UpdateProfileRequest is the body for PUT /users/me.
 // All fields are optional — only provided fields are applied.
 type UpdateProfileRequest struct {
 	Username    *string        `json:"username,omitempty"     example:"alice_dev"`

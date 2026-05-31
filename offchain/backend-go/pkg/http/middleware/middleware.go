@@ -4,14 +4,20 @@
 // - Auth: JWT verification + wallet address injection into context
 // - CORS: cross-origin resource sharing headers
 // - RateLimit: token-bucket per-IP rate limiting
+// - SecurityHeaders: OWASP-recommended security response headers
+// - StrictRateLimit: tighter per-IP limiter for auth endpoints
 package middleware
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"runtime/debug"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -19,6 +25,7 @@ import (
 	"github.com/google/uuid"
 	"golang.org/x/time/rate"
 
+	"github.com/vndc/backend/internal/ports"
 	apperr "github.com/vndc/backend/pkg/errors"
 	"github.com/vndc/backend/pkg/logger"
 )
@@ -184,11 +191,120 @@ func RequireRole(roles ...string) gin.HandlerFunc {
 	}
 }
 
+// RequireKYCForLogin ensures the login wallet already belongs to a KYC-verified account.
+// It reads the request body, checks the wallet field, and restores the body for downstream handlers.
+func RequireKYCForLogin(userRepo ports.UserRepository) gin.HandlerFunc {
+	type walletOnlyRequest struct {
+		Wallet string `json:"wallet"`
+	}
+
+	return func(c *gin.Context) {
+		if userRepo == nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+				"success": false,
+				"error":   gin.H{"code": string(apperr.ErrCodeInternal), "message": "User repository is not available"},
+			})
+			return
+		}
+
+		body, err := c.GetRawData()
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"error":   gin.H{"code": string(apperr.ErrCodeBadRequest), "message": "Invalid request body"},
+			})
+			return
+		}
+		c.Request.Body = io.NopCloser(bytes.NewBuffer(body))
+
+		var req walletOnlyRequest
+		if len(bytes.TrimSpace(body)) == 0 {
+			c.Next()
+			return
+		}
+		if err := json.Unmarshal(body, &req); err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"success": false,
+				"error":   gin.H{"code": string(apperr.ErrCodeBadRequest), "message": "Invalid request body"},
+			})
+			return
+		}
+
+		wallet := strings.TrimSpace(req.Wallet)
+		if wallet == "" {
+			c.Next()
+			return
+		}
+
+		user, lookupErr := userRepo.FindByWallet(c.Request.Context(), wallet)
+		if lookupErr != nil || user == nil || !user.IsKYCVerified() {
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+				"success": false,
+				"error":   gin.H{"code": string(apperr.ErrCodeForbidden), "message": "Tài khoản chưa KYC. Vui lòng hoàn thành KYC trước khi đăng ký."},
+			})
+			return
+		}
+
+		c.Next()
+	}
+}
+
 // WalletAddress extracts the authenticated wallet address from Gin context.
 func WalletAddress(c *gin.Context) string { return c.GetString("wallet_address") }
 func UserID(c *gin.Context) string        { return c.GetString("user_id") }
 func SessionID(c *gin.Context) string     { return c.GetString("session_id") }
 func JWTID(c *gin.Context) string         { return c.GetString("jwt_id") }
+
+// RequireKYCLevel returns a middleware that enforces a minimum KYC level on the authenticated user.
+// Admins (ADMIN / SUPER_ADMIN role) bypass the check automatically.
+// Must be used after Auth/AuthWithBlacklist.
+func RequireKYCLevel(minLevel int, userRepo ports.UserRepository) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Admins bypass KYC requirements.
+		userRoles, _ := c.Get("roles")
+		if rs, ok := userRoles.([]string); ok {
+			for _, r := range rs {
+				if r == "ADMIN" || r == "SUPER_ADMIN" {
+					c.Next()
+					return
+				}
+			}
+		}
+
+		userID := c.GetString("user_id")
+		if userID == "" {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+				"success": false,
+				"error":   gin.H{"code": "UNAUTHORIZED", "message": "Authentication required"},
+			})
+			return
+		}
+
+		user, err := userRepo.FindByID(c.Request.Context(), userID)
+		if err != nil || user == nil {
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+				"success": false,
+				"error":   gin.H{"code": "KYC_REQUIRED", "message": "Tài khoản không hợp lệ"},
+			})
+			return
+		}
+
+		if int(user.KYCLevel) < minLevel {
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+				"success": false,
+				"error": gin.H{
+					"code":     "KYC_REQUIRED",
+					"message":  "Bạn cần hoàn thành KYC để sử dụng tính năng này",
+					"required": minLevel,
+					"current":  int(user.KYCLevel),
+				},
+			})
+			return
+		}
+
+		c.Next()
+	}
+}
 
 // Roles extracts the roles slice from Gin context.
 func Roles(c *gin.Context) []string {
@@ -220,21 +336,57 @@ func DefaultCORSConfig() CORSConfig {
 }
 
 // CORS returns a Gin middleware for CORS header injection.
+// When AllowOrigins contains exactly "*" the wildcard is forwarded as-is.
+// Otherwise the request's Origin is validated against the explicit allow-list.
 func CORS(cfg CORSConfig) gin.HandlerFunc {
-	origins := strings.Join(cfg.AllowOrigins, ", ")
+	wildcard := len(cfg.AllowOrigins) == 1 && cfg.AllowOrigins[0] == "*"
+
+	allowSet := make(map[string]struct{}, len(cfg.AllowOrigins))
+	for _, o := range cfg.AllowOrigins {
+		allowSet[o] = struct{}{}
+	}
+
 	headers := strings.Join(cfg.AllowHeaders, ", ")
 	maxAge := fmt.Sprintf("%.0f", cfg.MaxAge.Seconds())
 
 	return func(c *gin.Context) {
-		c.Header("Access-Control-Allow-Origin", origins)
-		c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
-		c.Header("Access-Control-Allow-Headers", headers)
-		c.Header("Access-Control-Max-Age", maxAge)
+		origin := c.GetHeader("Origin")
 
+		// Determine if origin is allowed
+		var originAllowed bool
+		if wildcard {
+			originAllowed = true
+			// When using wildcard, cannot set credentials=true
+			c.Header("Access-Control-Allow-Origin", "*")
+		} else if origin != "" {
+			if _, ok := allowSet[origin]; ok {
+				originAllowed = true
+				c.Header("Access-Control-Allow-Origin", origin)
+			}
+		}
+
+		// Set CORS headers only if origin is allowed
+		if originAllowed {
+			c.Header("Vary", "Origin")
+			c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+			c.Header("Access-Control-Allow-Headers", headers)
+			// Only set credentials to true if NOT using wildcard
+			if !wildcard {
+				c.Header("Access-Control-Allow-Credentials", "true")
+			}
+			c.Header("Access-Control-Max-Age", maxAge)
+		}
+
+		// Handle preflight OPTIONS request
 		if c.Request.Method == http.MethodOptions {
-			c.AbortWithStatus(http.StatusNoContent)
+			if originAllowed {
+				c.AbortWithStatus(http.StatusNoContent)
+			} else {
+				c.AbortWithStatus(http.StatusForbidden)
+			}
 			return
 		}
+
 		c.Next()
 	}
 }
@@ -246,15 +398,10 @@ func CORS(cfg CORSConfig) gin.HandlerFunc {
 // RateLimit returns a per-IP token bucket rate limiter.
 // rps = requests per second, burst = burst capacity.
 func RateLimit(rps float64, burst int) gin.HandlerFunc {
-	limiters := &ipLimiters{
-		limiters: make(map[string]*rate.Limiter),
-		rps:      rps,
-		burst:    burst,
-	}
+	limiters := newIPLimiters(rps, burst)
 	return func(c *gin.Context) {
 		ip := c.ClientIP()
-		limiter := limiters.get(ip)
-		if !limiter.Allow() {
+		if !limiters.get(ip).Allow() {
 			c.AbortWithStatusJSON(http.StatusTooManyRequests, gin.H{
 				"success": false,
 				"error":   gin.H{"code": string(apperr.ErrCodeRateLimit), "message": "Rate limit exceeded"},
@@ -265,17 +412,73 @@ func RateLimit(rps float64, burst int) gin.HandlerFunc {
 	}
 }
 
+// StrictRateLimit applies tighter per-IP throttling, intended for sensitive
+// endpoints such as /auth/login, /auth/challenge, and /transactions/transfer.
+// Default: 30 req/min per IP (rps=0.5, burst=10) — generous enough for dev/testing.
+func StrictRateLimit() gin.HandlerFunc {
+	return RateLimit(30.0/60.0, 10) // 30 req/min burst-10
+}
+
+// ─────────────────────────────────────────────
+//  Security Headers Middleware
+// ─────────────────────────────────────────────
+
+// SecurityHeaders adds OWASP-recommended HTTP security headers to every response.
+// Reference: https://owasp.org/www-project-secure-headers/
+func SecurityHeaders() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Prevent clickjacking
+		c.Header("X-Frame-Options", "DENY")
+		// Prevent MIME type sniffing
+		c.Header("X-Content-Type-Options", "nosniff")
+		// Enforce HTTPS (1 year, include sub-domains)
+		c.Header("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+		// Referrer policy
+		c.Header("Referrer-Policy", "strict-origin-when-cross-origin")
+		// Permissions policy — disable dangerous browser features
+		c.Header("Permissions-Policy", "geolocation=(), microphone=(), camera=()")
+		// Content Security Policy — allow API JSON responses only
+		// c.Header("Content-Security-Policy", "default-src 'none'")
+		// Remove server fingerprint
+		c.Header("X-Powered-By", "")
+		c.Header("Server", "")
+		c.Next()
+	}
+}
+
+// ─────────────────────────────────────────────
+//  IP Limiter Store (thread-safe)
+// ─────────────────────────────────────────────
+
 type ipLimiters struct {
+	mu       sync.RWMutex
 	limiters map[string]*rate.Limiter
 	rps      float64
 	burst    int
 }
 
+func newIPLimiters(rps float64, burst int) *ipLimiters {
+	return &ipLimiters{
+		limiters: make(map[string]*rate.Limiter),
+		rps:      rps,
+		burst:    burst,
+	}
+}
+
 func (l *ipLimiters) get(ip string) *rate.Limiter {
-	if lim, ok := l.limiters[ip]; ok {
+	l.mu.RLock()
+	lim, ok := l.limiters[ip]
+	l.mu.RUnlock()
+	if ok {
 		return lim
 	}
-	lim := rate.NewLimiter(rate.Limit(l.rps), l.burst)
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	// Double-check after acquiring write lock.
+	if lim, ok = l.limiters[ip]; ok {
+		return lim
+	}
+	lim = rate.NewLimiter(rate.Limit(l.rps), l.burst)
 	l.limiters[ip] = lim
 	return lim
 }

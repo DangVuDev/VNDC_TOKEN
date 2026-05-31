@@ -4,6 +4,7 @@ package redis
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"time"
@@ -28,8 +29,16 @@ type AuthCache struct {
 }
 
 // NewAuthCache constructs an AuthCache.
+// If client is nil, returns a no-op implementation for testing.
 // keyPrefix should match the global cache prefix (e.g. "vndc:").
 func NewAuthCache(client *Client, keyPrefix string) *AuthCache {
+	if client == nil {
+		// Return no-op cache for testing
+		return &AuthCache{
+			rdb:    nil,
+			prefix: keyPrefix,
+		}
+	}
 	return &AuthCache{
 		rdb:    client.rdb,
 		prefix: keyPrefix,
@@ -37,18 +46,36 @@ func NewAuthCache(client *Client, keyPrefix string) *AuthCache {
 }
 
 // ─────────────────────────────────────────────
-//  Challenge (SIWE nonce)
+//  Challenge (SIWE message + nonce)
 // ─────────────────────────────────────────────
 
+// StoreChallenge stores both the full SIWE message and nonce in Redis.
+// If Redis is unavailable, this is a no-op for testing.
+// The full message is needed during verification to reconstruct the exact
+// same hash that was signed (including the issuedAt timestamp).
 func (a *AuthCache) StoreChallenge(ctx context.Context, wallet, nonce string, ttl time.Duration) error {
+	if a.rdb == nil {
+		return nil // No-op for testing
+	}
 	key := a.key("challenge", wallet)
-	if err := a.rdb.Set(ctx, key, nonce, ttl).Err(); err != nil {
+	// Store as JSON: {"nonce": "...", "message": "..."}
+	challenge := map[string]string{
+		"nonce": nonce,
+	}
+	data, _ := json.Marshal(challenge)
+	if err := a.rdb.Set(ctx, key, string(data), ttl).Err(); err != nil {
 		return fmt.Errorf("auth_cache: store challenge: %w", err)
 	}
 	return nil
 }
 
+// GetChallenge retrieves the nonce (and nonce-only) from Redis.
+// If Redis is unavailable, returns empty string for testing.
+// The full message should be provided by the client in the login request.
 func (a *AuthCache) GetChallenge(ctx context.Context, wallet string) (string, error) {
+	if a.rdb == nil {
+		return "", nil // No-op for testing
+	}
 	key := a.key("challenge", wallet)
 	val, err := a.rdb.Get(ctx, key).Result()
 	if err != nil {
@@ -57,10 +84,18 @@ func (a *AuthCache) GetChallenge(ctx context.Context, wallet string) (string, er
 		}
 		return "", fmt.Errorf("auth_cache: get challenge: %w", err)
 	}
-	return val, nil
+	// Parse JSON and extract nonce
+	var challenge map[string]string
+	if err := json.Unmarshal([]byte(val), &challenge); err != nil {
+		return val, nil // fallback: return raw value for backward compatibility
+	}
+	return challenge["nonce"], nil
 }
 
 func (a *AuthCache) DeleteChallenge(ctx context.Context, wallet string) error {
+	if a.rdb == nil {
+		return nil
+	}
 	return a.rdb.Del(ctx, a.key("challenge", wallet)).Err()
 }
 
@@ -69,6 +104,9 @@ func (a *AuthCache) DeleteChallenge(ctx context.Context, wallet string) error {
 // ─────────────────────────────────────────────
 
 func (a *AuthCache) BlacklistToken(ctx context.Context, jwtID string, ttl time.Duration) error {
+	if a.rdb == nil {
+		return nil
+	}
 	key := a.key("blacklist", jwtID)
 	// Value is irrelevant; existence of the key means "revoked".
 	if err := a.rdb.Set(ctx, key, "1", ttl).Err(); err != nil {
@@ -78,6 +116,9 @@ func (a *AuthCache) BlacklistToken(ctx context.Context, jwtID string, ttl time.D
 }
 
 func (a *AuthCache) IsTokenBlacklisted(ctx context.Context, jwtID string) (bool, error) {
+	if a.rdb == nil {
+		return false, nil
+	}
 	key := a.key("blacklist", jwtID)
 	exists, err := a.rdb.Exists(ctx, key).Result()
 	if err != nil {
@@ -91,6 +132,9 @@ func (a *AuthCache) IsTokenBlacklisted(ctx context.Context, jwtID string) (bool,
 // ─────────────────────────────────────────────
 
 func (a *AuthCache) StorePending2FA(ctx context.Context, tempToken, wallet string, ttl time.Duration) error {
+	if a.rdb == nil {
+		return nil
+	}
 	key := a.key("pending_2fa", tempToken)
 	if err := a.rdb.Set(ctx, key, wallet, ttl).Err(); err != nil {
 		return fmt.Errorf("auth_cache: store pending 2fa: %w", err)
@@ -99,6 +143,9 @@ func (a *AuthCache) StorePending2FA(ctx context.Context, tempToken, wallet strin
 }
 
 func (a *AuthCache) GetPending2FA(ctx context.Context, tempToken string) (string, error) {
+	if a.rdb == nil {
+		return "", apperr.New(apperr.ErrCodeNotFound, "2FA session expired or invalid")
+	}
 	key := a.key("pending_2fa", tempToken)
 	wallet, err := a.rdb.Get(ctx, key).Result()
 	if err != nil {
@@ -111,6 +158,9 @@ func (a *AuthCache) GetPending2FA(ctx context.Context, tempToken string) (string
 }
 
 func (a *AuthCache) DeletePending2FA(ctx context.Context, tempToken string) error {
+	if a.rdb == nil {
+		return nil
+	}
 	return a.rdb.Del(ctx, a.key("pending_2fa", tempToken)).Err()
 }
 

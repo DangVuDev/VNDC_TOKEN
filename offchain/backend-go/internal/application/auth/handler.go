@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 
 	_ "github.com/vndc/backend/internal/models" // swagger model registration
 	apperr "github.com/vndc/backend/pkg/errors"
@@ -21,24 +22,27 @@ import (
 	"github.com/vndc/backend/pkg/logger"
 )
 
-// Handler exposes all authentication HTTP endpoints.
+// Handler exposes authentication HTTP endpoints spanning SIWE login, token rotation, logout, session control, and 2FA lifecycle.
+// It forms the transport boundary of the auth module by binding requests, reading identity from middleware, and shaping responses.
 type Handler struct {
 	svc *Service
 	log logger.Logger
 }
 
-// NewHandler constructs an auth Handler.
+// NewHandler constructs the auth HTTP handler with a logger scoped to authentication transport events.
 func NewHandler(svc *Service, log logger.Logger) *Handler {
 	return &Handler{svc: svc, log: log.Named("auth_handler")}
 }
 
-// RegisterRoutes mounts all auth routes on the given router group.
+// RegisterRoutes mounts public auth endpoints, rate-limits sensitive unauthenticated flows, and protects session-bound actions.
+// Grouping is used to make access policy visible at the route-registration layer instead of scattering it per handler.
 func (h *Handler) RegisterRoutes(r *gin.RouterGroup, jwtSecret string, blacklistChecker middleware.BlacklistChecker) {
 	auth := r.Group("/auth")
 	{
-		auth.GET("/challenge", h.GetChallenge)
-		auth.POST("/login", h.Login)
-		auth.POST("/2fa/complete", h.Complete2FA)
+		// Strict rate limiting on sensitive unauthenticated endpoints (5 req/min per IP).
+		auth.GET("/challenge", middleware.StrictRateLimit(), h.GetChallenge)
+		auth.POST("/login", middleware.StrictRateLimit(), h.Login)
+		auth.POST("/2fa/complete", middleware.StrictRateLimit(), h.Complete2FA)
 		auth.POST("/refresh", h.Refresh)
 
 		protected := auth.Group("")
@@ -55,6 +59,8 @@ func (h *Handler) RegisterRoutes(r *gin.RouterGroup, jwtSecret string, blacklist
 	}
 }
 
+// GetChallenge handles issuance of the SIWE challenge that starts the wallet-authentication flow.
+// The handler performs the minimal required query validation before delegating nonce generation to the service.
 // GetChallenge godoc
 //
 //	@Summary      Request a SIWE sign-in challenge
@@ -71,17 +77,24 @@ func (h *Handler) RegisterRoutes(r *gin.RouterGroup, jwtSecret string, blacklist
 func (h *Handler) GetChallenge(c *gin.Context) {
 	wallet := c.Query("wallet")
 	if wallet == "" {
+		h.log.Warn("challenge_missing_wallet", zap.String("msg", "wallet query param missing"))
 		apihttp.Fail(c, apperr.New(apperr.ErrCodeBadRequest, "wallet query param required"))
 		return
 	}
+	h.log.Debug("challenge_requested", zap.String("wallet", wallet))
+
 	resp, err := h.svc.GetChallenge(c.Request.Context(), wallet)
 	if err != nil {
+		h.log.Error("challenge_error", zap.String("wallet", wallet), zap.Error(err))
 		apihttp.Fail(c, err)
 		return
 	}
+	h.log.Debug("challenge_issued", zap.String("wallet", wallet), zap.String("nonce", resp.Nonce))
 	apihttp.OK(c, resp)
 }
 
+// Login handles signature-based wallet authentication and the first step of the 2FA-aware login flow.
+// Depending on the service result, it either returns final tokens immediately or a temporary token for 2FA completion.
 // Login godoc
 //
 //	@Summary      Sign in with Ethereum wallet (SIWE)
@@ -105,17 +118,22 @@ func (h *Handler) GetChallenge(c *gin.Context) {
 func (h *Handler) Login(c *gin.Context) {
 	req, ok := apihttp.Bind[LoginRequest](c)
 	if !ok {
+		h.log.Warn("login_invalid_request", zap.String("msg", "Invalid login request body"))
 		return
 	}
 	httpreq.Inject(c, &req.Meta)
 
+	h.log.Debug("login_attempt", zap.String("wallet", req.Wallet), zap.Int("sig_len", len(req.Signature)), zap.Int("msg_len", len(req.Message)))
+
 	result, err := h.svc.Login(c.Request.Context(), req)
 	if err != nil {
+		h.log.Warn("login_failed", zap.String("wallet", req.Wallet), zap.Error(err))
 		apihttp.Fail(c, err)
 		return
 	}
 
 	if result.Requires2FA {
+		h.log.Info("login_2fa_required", zap.String("wallet", req.Wallet))
 		apihttp.OK(c, &gin.H{
 			"requires_2fa": true,
 			"temp_token":   result.TempToken,
@@ -123,9 +141,12 @@ func (h *Handler) Login(c *gin.Context) {
 		})
 		return
 	}
+	h.log.Info("login_success", zap.String("wallet", req.Wallet))
 	apihttp.OK(c, result.TokenPair)
 }
 
+// Complete2FA handles the second step of the login flow when the account requires TOTP or backup-code confirmation.
+// Transport metadata is injected so the resulting session and audit events carry client context.
 // Complete2FA godoc
 //
 //	@Summary      Complete two-factor authentication
@@ -155,6 +176,8 @@ func (h *Handler) Complete2FA(c *gin.Context) {
 	apihttp.OK(c, pair)
 }
 
+// Refresh handles refresh-token rotation and returns a newly minted token pair.
+// The request body contains the opaque refresh token while client metadata is injected from the HTTP request.
 // Refresh godoc
 //
 //	@Summary      Rotate the JWT token pair
@@ -184,6 +207,8 @@ func (h *Handler) Refresh(c *gin.Context) {
 	apihttp.OK(c, pair)
 }
 
+// Logout handles revocation of only the current authenticated session.
+// It delegates to the shared logout helper so single-session and all-session revocation stay behaviorally aligned.
 // Logout godoc
 //
 //	@Summary      Log out current session
@@ -200,6 +225,8 @@ func (h *Handler) Logout(c *gin.Context) {
 	h.doLogout(c, false)
 }
 
+// LogoutAll handles revocation of all active sessions belonging to the authenticated user.
+// It reuses the same helper path as Logout but sets the all-sessions intent flag.
 // LogoutAll godoc
 //
 //	@Summary      Log out all sessions
@@ -216,6 +243,8 @@ func (h *Handler) LogoutAll(c *gin.Context) {
 	h.doLogout(c, true)
 }
 
+// doLogout is the shared helper behind current-session and all-session logout endpoints.
+// It assembles logout context from middleware claims and applies a fixed blacklist TTL for the current access token.
 func (h *Handler) doLogout(c *gin.Context, all bool) {
 	req := &LogoutRequest{
 		JWTID:     middleware.JWTID(c),

@@ -219,9 +219,9 @@ contract VNDCStaking is ReentrancyGuard, AccessControl {
     /**
      * @dev Get staking information for a user
      * @param user The user address
-     * @return stake The user's stake information
+     * @return stakeInfo The user's stake information
      */
-    function getStake(address user) external view returns (Stake memory stake) {
+    function getStake(address user) external view returns (Stake memory stakeInfo) {
         return stakes[user];
     }
 

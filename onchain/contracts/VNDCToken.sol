@@ -1,252 +1,179 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.24;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/contracts/utils/cryptography/EIP712.sol"; // Sử dụng chuẩn của OZ
 
-/**
- * @title VNDCToken
- * @dev VNDC Token - ERC20 Token with advanced features including snapshots,
- * role-based access control, and pausable functionality.
- *
- * Features:
- * - Standard ERC20 token transfer functionality
- * - Burnable tokens (holders can burn their own tokens)
- * - Snapshot capability for historical balance tracking
- * - Role-based access control (MINTER, PAUSER, SNAPSHOT_ROLE)
- * - Pausable for emergency situations
- * - Owner controls and renounceOwnership
- */
 contract VNDCToken is
     ERC20,
     ERC20Burnable,
     AccessControl,
-    Pausable
+    Pausable,
+    EIP712 
 {
+    using ECDSA for bytes32;
+
     // ─────────────────────────────────────────────
     //  Constants
     // ─────────────────────────────────────────────
 
-    /// @dev Role for minting new tokens
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
-
-    /// @dev Role for pausing/unpausing the contract
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
-    /// @dev Role for creating snapshots
-    bytes32 public constant SNAPSHOT_ROLE = keccak256("SNAPSHOT_ROLE");
-
-    /// @dev Maximum supply cap: 1 billion tokens with 18 decimals
     uint256 public constant MAX_SUPPLY = 1_000_000_000 * 10 ** 18;
+
+    // EIP-712 typehash
+    bytes32 private constant TRANSFER_TYPEHASH =
+        keccak256("Transfer(address from,address to,uint256 amount,uint256 nonce,uint256 deadline)");
 
     // ─────────────────────────────────────────────
     //  State Variables
     // ─────────────────────────────────────────────
 
-    /// @dev Current snapshot ID
-    uint256 private _currentSnapshotId;
+    mapping(address => uint256) public nonces;
+    mapping(address => VestingInfo) public vestingInfo;
 
-    /// @dev Mapping of snapshot ID to account balances at that snapshot
-    mapping(uint256 => mapping(address => uint256)) private _snapshotBalances;
-
-    /// @dev Mapping of snapshot ID to total supply at that snapshot
-    mapping(uint256 => uint256) private _snapshotTotalSupply;
-
-    /// @dev Mapping of address to their lock time
-    mapping(address => uint256) public lockTime;
-
-    /// @dev Mapping of address to their locked amount
-    mapping(address => uint256) public lockedAmount;
+    struct VestingInfo {
+        uint256 amount;
+        uint256 releaseTime;
+    }
 
     // ─────────────────────────────────────────────
     //  Events
     // ─────────────────────────────────────────────
 
-    /// @dev Emitted when tokens are locked for an address
-    event TokensLocked(address indexed holder, uint256 amount, uint256 releaseTime);
-
-    /// @dev Emitted when locked tokens are released
+    event BalanceSnapshot(address indexed account, uint256 balance, uint256 timestamp);
+    event TokensVested(address indexed holder, uint256 amount, uint256 releaseTime);
     event TokensReleased(address indexed holder, uint256 amount);
-
-    /// @dev Emitted when a snapshot is created
-    event SnapshotCreated(uint256 indexed snapshotId);
+    event TransferSignature(address indexed from, address indexed to, uint256 amount, uint256 nonce);
 
     // ─────────────────────────────────────────────
     //  Constructor
     // ─────────────────────────────────────────────
 
-    /**
-     * @dev Constructor to initialize the VNDC Token
-     * @param initialSupply The initial supply of tokens to mint to the owner
-     */
-    constructor(uint256 initialSupply) ERC20("VNDC Token", "VNDC") {
-        require(initialSupply > 0, "Initial supply must be greater than 0");
-        require(initialSupply <= MAX_SUPPLY, "Initial supply exceeds max supply");
+    constructor(uint256 initialSupply) 
+        ERC20("VNDC Token", "VNDC")
+        EIP712("VNDC Token", "1") // Khởi tạo Domain Name và Version
+    {
+        require(initialSupply <= MAX_SUPPLY, "Exceeds max supply");
 
-        // Grant roles to owner
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
         _grantRole(PAUSER_ROLE, msg.sender);
-        _grantRole(SNAPSHOT_ROLE, msg.sender);
 
-        // Mint initial supply to owner
-        _mint(msg.sender, initialSupply);
+        if (initialSupply > 0) {
+            _mint(msg.sender, initialSupply);
+        }
     }
 
     // ─────────────────────────────────────────────
-    //  Token Functions
+    //  EIP-712 Meta-Transaction
     // ─────────────────────────────────────────────
 
-    /**
-     * @dev Mint new tokens
-     * @param to The address to mint tokens to
-     * @param amount The amount of tokens to mint
-     */
+    function transferWithSignature(
+        address from,
+        address to,
+        uint256 amount,
+        uint256 nonce,
+        uint256 deadline,
+        bytes calldata signature
+    ) external returns (bool) {
+        // Kiểm tra thời gian
+        require(block.timestamp <= deadline, "Signature expired");
+        require(nonce == nonces[from], "Invalid nonce");
+
+        // Hash dữ liệu theo chuẩn EIP-712
+        bytes32 structHash = keccak256(abi.encode(TRANSFER_TYPEHASH, from, to, amount, nonce, deadline));
+        bytes32 digest = _hashTypedDataV4(structHash);
+        
+        address signer = digest.recover(signature);
+        
+        require(signer == from, "Invalid signature");
+        require(signer != address(0), "Zero address signer");
+
+        // Tăng nonce (unchecked để tiết kiệm gas vì không thể tràn số thực tế)
+        unchecked {
+            nonces[from]++;
+        }
+
+        _transfer(from, to, amount);
+
+        emit TransferSignature(from, to, amount, nonce);
+        return true;
+    }
+
+    // ─────────────────────────────────────────────
+    //  Token Management
+    // ─────────────────────────────────────────────
+
     function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
         require(totalSupply() + amount <= MAX_SUPPLY, "Exceeds max supply");
         _mint(to, amount);
     }
 
-    /**
-     * @dev Pause all token transfers
-     */
-    function pause() public onlyRole(PAUSER_ROLE) {
-        _pause();
-    }
+    function pause() public onlyRole(PAUSER_ROLE) { _pause(); }
+    function unpause() public onlyRole(PAUSER_ROLE) { _unpause(); }
 
-    /**
-     * @dev Unpause token transfers
-     */
-    function unpause() public onlyRole(PAUSER_ROLE) {
-        _unpause();
-    }
+    // ─────────────────────────────────────────────
+    //  Vesting Logic
+    // ─────────────────────────────────────────────
 
-    /**
-     * @dev Create a snapshot of current token balances
-     * @return The snapshot ID
-     */
-    function snapshot() public onlyRole(SNAPSHOT_ROLE) returns (uint256) {
-        _currentSnapshotId += 1;
-        
-        // Store snapshot data for all accounts (implementation simplified)
-        _snapshotTotalSupply[_currentSnapshotId] = totalSupply();
-        
-        emit SnapshotCreated(_currentSnapshotId);
-        return _currentSnapshotId;
-    }
-
-    /**
-     * @dev Get the current snapshot ID
-     * @return The current snapshot ID
-     */
-    function getCurrentSnapshotId() public view returns (uint256) {
-        return _currentSnapshotId;
-    }
-
-    /**
-     * @dev Get balance of an address at a specific snapshot
-     * @param account The account to query
-     * @param snapshotId The snapshot ID
-     * @return The balance at the specified snapshot
-     */
-    function balanceOfAt(address account, uint256 snapshotId)
-        public
-        view
-        returns (uint256)
+    function vestTokens(address holder, uint256 amount, uint256 releaseTime) 
+        external 
+        onlyRole(DEFAULT_ADMIN_ROLE) 
     {
-        require(snapshotId > 0 && snapshotId <= _currentSnapshotId, "Invalid snapshot ID");
-        // Return current balance as approximation (full historical tracking would be complex)
-        return _snapshotBalances[snapshotId][account];
+        require(holder != address(0), "Invalid address");
+        require(releaseTime > block.timestamp, "Release must be in future");
+        // Tránh ghi đè vesting cũ đang có hiệu lực
+        require(vestingInfo[holder].amount == 0, "Vesting already exists");
+        require(balanceOf(holder) >= amount, "Insufficient balance");
+
+        vestingInfo[holder] = VestingInfo({
+            amount: amount,
+            releaseTime: releaseTime
+        });
+
+        emit TokensVested(holder, amount, releaseTime);
+    }
+
+    function releaseVested(address holder) external {
+        VestingInfo memory vesting = vestingInfo[holder];
+        require(vesting.amount > 0, "No vested tokens");
+        require(block.timestamp >= vesting.releaseTime, "Tokens still locked");
+
+        delete vestingInfo[holder];
+        emit TokensReleased(holder, vesting.amount);
     }
 
     // ─────────────────────────────────────────────
-    //  Token Locking Functions
+    //  Overrides
     // ─────────────────────────────────────────────
 
-    /**
-     * @dev Lock tokens for an address until a specific time
-     * @param holder The address to lock tokens for
-     * @param amount The amount of tokens to lock
-     * @param releaseTime The Unix timestamp when tokens are released
-     */
-    function lockTokens(
-        address holder,
-        uint256 amount,
-        uint256 releaseTime
-    ) public onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(holder != address(0), "Invalid holder address");
-        require(amount > 0, "Lock amount must be greater than 0");
-        require(releaseTime > block.timestamp, "Release time must be in the future");
-        require(balanceOf(holder) >= amount, "Insufficient balance to lock");
-
-        lockTime[holder] = releaseTime;
-        lockedAmount[holder] = amount;
-
-        emit TokensLocked(holder, amount, releaseTime);
-    }
-
-    /**
-     * @dev Release locked tokens after the lock period expires
-     * @param holder The address whose tokens to release
-     */
-    function releaseLocked(address holder) public {
-        require(lockedAmount[holder] > 0, "No locked tokens");
-        require(block.timestamp >= lockTime[holder], "Tokens still locked");
-
-        uint256 amount = lockedAmount[holder];
-        lockedAmount[holder] = 0;
-        lockTime[holder] = 0;
-
-        emit TokensReleased(holder, amount);
-    }
-
-    /**
-     * @dev Get locked token information for an address
-     * @param holder The address to query
-     * @return amount The amount of locked tokens
-     * @return releaseTime The Unix timestamp when tokens are released
-     */
-    function getLockedTokens(address holder)
-        public
-        view
-        returns (uint256 amount, uint256 releaseTime)
+    function _update(address from, address to, uint256 amount) 
+        internal 
+        override 
+        whenNotPaused 
     {
-        return (lockedAmount[holder], lockTime[holder]);
-    }
-
-    // ─────────────────────────────────────────────
-    //  Internal Functions
-    // ─────────────────────────────────────────────
-
-    /**
-     * @dev Override _update to include pause and lock checks
-     */
-    function _update(
-        address from,
-        address to,
-        uint256 amount
-    ) internal override whenNotPaused {
-        // Check if sender has locked tokens that haven't expired
-        if (from != address(0) && lockedAmount[from] > 0 && block.timestamp < lockTime[from]) {
-            uint256 availableBalance = balanceOf(from) - lockedAmount[from];
-            require(availableBalance >= amount, "Cannot transfer locked tokens");
-        }
-
-        // Update snapshot balances if snapshot exists
-        if (_currentSnapshotId > 0) {
-            _snapshotBalances[_currentSnapshotId][from] = balanceOf(from);
-            _snapshotBalances[_currentSnapshotId][to] = balanceOf(to);
+        // Kiểm tra khóa vesting khi chuyển tiền đi
+        if (from != address(0)) {
+            VestingInfo memory vesting = vestingInfo[from];
+            if (vesting.amount > 0 && block.timestamp < vesting.releaseTime) {
+                // Đảm bảo số dư sau khi chuyển không thấp hơn số tiền bị khóa
+                require(balanceOf(from) - amount >= vesting.amount, "Vested tokens locked");
+            }
         }
 
         super._update(from, to, amount);
+
+        // Emit sau khi update để lấy balance mới chính xác nhất
+        if (from != address(0)) emit BalanceSnapshot(from, balanceOf(from), block.timestamp);
+        if (to != address(0)) emit BalanceSnapshot(to, balanceOf(to), block.timestamp);
     }
 
-    /**
-     * @dev Override supportsInterface for AccessControl
-     */
     function supportsInterface(bytes4 interfaceId)
         public
         view

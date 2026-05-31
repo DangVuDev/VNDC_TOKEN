@@ -7,6 +7,7 @@ import (
 	"crypto/ecdsa"
 	"fmt"
 	"math/big"
+	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/math"
@@ -126,6 +127,7 @@ func Digest(domain Domain, data Hasher) []byte {
 	raw = append(raw, 0x19, 0x01)
 	raw = append(raw, sep[:]...)
 	raw = append(raw, structHash[:]...)
+
 	return crypto.Keccak256(raw)
 }
 
@@ -183,7 +185,9 @@ func SignDigest(digest []byte, privKey *ecdsa.PrivateKey) ([]byte, error) {
 }
 
 // HexToPrivateKey converts a hex-encoded private key string to *ecdsa.PrivateKey.
+// Accepts keys with or without "0x" prefix.
 func HexToPrivateKey(hexKey string) (*ecdsa.PrivateKey, error) {
+	hexKey = strings.TrimPrefix(hexKey, "0x")
 	key, err := crypto.HexToECDSA(hexKey)
 	if err != nil {
 		return nil, apperr.Wrap(apperr.ErrCodeBlockchain, "invalid private key", err)

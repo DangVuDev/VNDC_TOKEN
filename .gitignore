@@ -1,0 +1,52 @@
+# Repository-wide ignore rules for local development and build artifacts.
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Environment files and secrets
+.env
+.env.*
+**/.env
+**/.env.*
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node / frontend dependencies and builds
+**/node_modules/
+**/dist/
+**/build/
+**/coverage/
+**/.vite/
+**/*.tsbuildinfo
+
+# Hardhat / on-chain generated output
+onchain/artifacts/
+onchain/cache/
+onchain/typechain-types/
+onchain/gas-report.txt
+onchain/coverage/
+
+# Go binaries and build outputs
+offchain/backend-go/bin/
+offchain/backend-go/**/*.exe
+offchain/backend-go/**/*.exe~
+offchain/backend-go/**/*.test
+offchain/backend-go/**/*.out
+
+# Local database dumps and transient state
+*.rdb
+dump.rdb
+onchain/dump.rdb

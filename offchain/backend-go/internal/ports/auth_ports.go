@@ -55,6 +55,17 @@ type AuditLogRepository interface {
 	FindByTarget(ctx context.Context, targetID string, opts ...database.QueryOption) ([]*domain.AuditLog, int64, error)
 }
 
+// KYCSubmissionRepository manages Level 2 KYC submissions awaiting admin review.
+type KYCSubmissionRepository interface {
+	database.Repository[domain.KYCSubmission]
+
+	// FindByUserID returns all submissions for a specific user.
+	FindByUserID(ctx context.Context, userID string) ([]*domain.KYCSubmission, error)
+
+	// FindByStatus returns all submissions in a given status (e.g. PENDING).
+	FindByStatus(ctx context.Context, status domain.KYCSubmissionStatus, opts ...database.QueryOption) ([]*domain.KYCSubmission, int64, error)
+}
+
 // ─────────────────────────────────────────────
 //  Cache ports — auth subsystem
 // ─────────────────────────────────────────────

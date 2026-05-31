@@ -16,6 +16,8 @@ const config: HardhatUserConfig = {
         enabled: true,
         runs: 200,
       },
+      viaIR: true,
+      evmVersion: "cancun", // Required by OpenZeppelin 5.x (mcopy opcode)
     },
   },
 
@@ -23,6 +25,7 @@ const config: HardhatUserConfig = {
     hardhat: {
       chainId: 31337,
       allowUnlimitedContractSize: false,
+      hardfork: "cancun",
     },
 
     localhost: {

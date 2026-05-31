@@ -273,16 +273,23 @@ type BalanceCache struct {
 }
 
 // NewBalanceCache creates a domain-specific cache for VNDC balances.
+// If client is nil, returns a no-op cache for testing.
 func NewBalanceCache(client *Client, ttl time.Duration) *BalanceCache {
 	return &BalanceCache{client: client, ttl: ttl}
 }
 
 func (b *BalanceCache) key(wallet string) string {
+	if b.client == nil {
+		return "balance:" + strings.ToLower(wallet)
+	}
 	return b.client.prefixKey("balance:" + strings.ToLower(wallet))
 }
 
 // Get fetches the balance entry for a wallet.
 func (b *BalanceCache) Get(ctx context.Context, wallet string) (*BalanceEntry, error) {
+	if b.client == nil || b.client.rdb == nil {
+		return nil, cache.ErrCacheMiss // No cache available for testing
+	}
 	data, err := b.client.rdb.Get(ctx, b.key(wallet)).Bytes()
 	if err != nil {
 		if errors.Is(err, goredis.Nil) {
@@ -299,6 +306,9 @@ func (b *BalanceCache) Get(ctx context.Context, wallet string) (*BalanceEntry, e
 
 // Set updates the balance entry.
 func (b *BalanceCache) Set(ctx context.Context, wallet string, entry *BalanceEntry) error {
+	if b.client == nil || b.client.rdb == nil {
+		return nil // No-op for testing
+	}
 	data, err := json.Marshal(entry)
 	if err != nil {
 		return apperr.Wrap(apperr.ErrCodeCache, "BalanceCache.Set marshal", err)
@@ -338,7 +348,11 @@ return 1
 
 // CheckAndReserve atomically reserves 'amountWei' from available balance.
 // Returns true if reserved, false if insufficient.
+// For testing without Redis, always returns false (insufficient balance).
 func (b *BalanceCache) CheckAndReserve(ctx context.Context, wallet, amountWei string) (bool, error) {
+	if b.client == nil || b.client.rdb == nil {
+		return false, cache.ErrCacheMiss // Simulate no balance available for testing
+	}
 	result, err := checkAndReserveScript.Run(
 		ctx, b.client.rdb,
 		[]string{b.key(wallet)},
@@ -380,7 +394,11 @@ return 1
 `)
 
 // Rollback reverses a previously reserved amount (e.g., on batch failure).
+// For testing without Redis, this is a no-op.
 func (b *BalanceCache) Rollback(ctx context.Context, wallet, amountWei string) error {
+	if b.client == nil || b.client.rdb == nil {
+		return nil // No-op for testing
+	}
 	_, err := rollbackScript.Run(
 		ctx, b.client.rdb,
 		[]string{b.key(wallet)},
@@ -389,4 +407,12 @@ func (b *BalanceCache) Rollback(ctx context.Context, wallet, amountWei string) e
 		int(b.ttl.Seconds()),
 	).Int()
 	return err
+}
+
+// Delete removes the balance cache key entirely, forcing a fresh blockchain fetch on the next Get.
+func (b *BalanceCache) Delete(ctx context.Context, wallet string) error {
+	if b.client == nil || b.client.rdb == nil {
+		return nil
+	}
+	return b.client.rdb.Del(ctx, b.key(wallet)).Err()
 }

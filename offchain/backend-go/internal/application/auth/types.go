@@ -68,6 +68,7 @@ type ChallengeResponse struct {
 type LoginRequest struct {
 	Wallet       string `json:"wallet"     validate:"required,eth_addr"`
 	Signature    string `json:"signature"  validate:"required"` // 0x-prefixed hex
+	Message      string `json:"message"    validate:"required"` // The SIWE message that was signed
 	DeviceName   string `json:"device_name,omitempty"`
 	DeviceOS     string `json:"device_os,omitempty"`
 	request.Meta        // IPAddress + UserAgent — populated by handler, never from JSON

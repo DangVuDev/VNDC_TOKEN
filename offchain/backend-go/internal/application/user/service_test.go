@@ -44,6 +44,14 @@ func (m *MockUserRepository) FindByEmail(ctx context.Context, email string) (*do
 	return args.Get(0).(*domain.User), args.Error(1)
 }
 
+func (m *MockUserRepository) FindByUsername(ctx context.Context, username string) (*domain.User, error) {
+	args := m.Called(ctx, username)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(*domain.User), args.Error(1)
+}
+
 func (m *MockUserRepository) UpdateNonce(ctx context.Context, wallet, newNonce string) error {
 	args := m.Called(ctx, wallet, newNonce)
 	return args.Error(0)
@@ -133,6 +141,19 @@ func (m *MockUserRepository) Exists(ctx context.Context, userID string) (bool, e
 func (m *MockUserRepository) WithTransaction(ctx context.Context, fn func(ctx context.Context) error) error {
 	args := m.Called(ctx, fn)
 	return args.Error(0)
+}
+
+func (m *MockUserRepository) IncrementActivityPoints(ctx context.Context, wallet string, delta int64) error {
+	args := m.Called(ctx, wallet, delta)
+	return args.Error(0)
+}
+
+func (m *MockUserRepository) FindRanked(ctx context.Context, page, limit int64) ([]*domain.User, int64, error) {
+	args := m.Called(ctx, page, limit)
+	if args.Get(0) == nil {
+		return nil, 0, args.Error(2)
+	}
+	return args.Get(0).([]*domain.User), args.Get(1).(int64), args.Error(2)
 }
 
 // MockAuditLogRepository is a mock implementation of AuditLogRepository.

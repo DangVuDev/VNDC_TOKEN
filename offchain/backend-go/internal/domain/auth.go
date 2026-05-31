@@ -87,6 +87,7 @@ const (
 	AuditRoleRemoved                AuditEventType = "ROLE_REMOVED"
 	AuditUserSuspended              AuditEventType = "USER_SUSPENDED"
 	AuditUserUnsuspended            AuditEventType = "USER_UNSUSPENDED"
+	AuditKYCLevel1Completed         AuditEventType = "KYC_LEVEL1_COMPLETED"
 	AuditKYCSubmitted               AuditEventType = "KYC_SUBMITTED"
 	AuditKYCApproved                AuditEventType = "KYC_APPROVED"
 	AuditKYCRejected                AuditEventType = "KYC_REJECTED"
@@ -113,4 +114,37 @@ type AuditLog struct {
 	// Structured payload — event-specific details for forensic analysis.
 	Details    map[string]any `bson:"details,omitempty" json:"details,omitempty"`
 	OccurredAt time.Time      `bson:"occurred_at"       json:"occurred_at"`
+}
+
+// ─────────────────────────────────────────────
+//  KYCSubmission — Level 2 identity verification request
+// ─────────────────────────────────────────────
+
+// KYCSubmissionStatus represents the review lifecycle of a Level 2 KYC submission.
+type KYCSubmissionStatus string
+
+const (
+	KYCSubmissionPending  KYCSubmissionStatus = "PENDING"
+	KYCSubmissionApproved KYCSubmissionStatus = "APPROVED"
+	KYCSubmissionRejected KYCSubmissionStatus = "REJECTED"
+)
+
+// KYCSubmission represents a user's Level 2 KYC document upload awaiting admin review.
+// Student card image and selfie are referenced by URL (stored externally / demo).
+type KYCSubmission struct {
+	BaseEntity `bson:",inline"`
+
+	UserID        string `bson:"user_id"         json:"user_id"`
+	WalletAddress string `bson:"wallet_address"  json:"wallet_address"`
+	Level         int    `bson:"level"           json:"level"` // always 2 for now
+
+	// Document references (URLs returned by the upload demo endpoint).
+	StudentCardURL string `bson:"student_card_url" json:"student_card_url"`
+	SelfieURL      string `bson:"selfie_url"       json:"selfie_url"`
+
+	// Review outcome.
+	Status     KYCSubmissionStatus `bson:"status"                json:"status"`
+	ReviewedBy string              `bson:"reviewed_by,omitempty" json:"reviewed_by,omitempty"` // admin userID
+	ReviewNote string              `bson:"review_note,omitempty" json:"review_note,omitempty"`
+	ReviewedAt *time.Time          `bson:"reviewed_at,omitempty" json:"reviewed_at,omitempty"`
 }

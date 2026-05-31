@@ -11,6 +11,8 @@ import (
 	"github.com/vndc/backend/pkg/http/middleware"
 )
 
+// ListSessions handles retrieval of all active sessions associated with the authenticated user.
+// Session ownership is derived from middleware context and never accepted from client-supplied identifiers.
 // ListSessions godoc
 //
 //	@Summary      List active sessions
@@ -34,6 +36,8 @@ func (h *Handler) ListSessions(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"success": true, "data": sessions})
 }
 
+// RevokeSession handles remote sign-out of one specific session belonging to the authenticated user.
+// It combines the path session ID with client metadata for audit-quality revocation records.
 // RevokeSession godoc
 //
 //	@Summary      Revoke a specific session
