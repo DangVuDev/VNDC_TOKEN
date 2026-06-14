@@ -13,10 +13,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="flex flex-col gap-1">
         {label && (
-          <label
-            htmlFor={inputId}
-            className="text-sm font-medium text-blue-900"
-          >
+          <label htmlFor={inputId} className="text-sm font-medium text-[var(--ink)]">
             {label}
           </label>
         )}
@@ -25,19 +22,19 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           id={inputId}
           {...props}
           className={[
-            'block w-full rounded-lg border px-3 py-2 text-sm text-blue-900',
-            'placeholder:text-blue-300 bg-white',
-            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+            'block w-full rounded-lg border bg-white px-3 py-2 text-sm text-[var(--ink)]',
+            'placeholder:text-slate-400',
+            'focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[var(--accent)]',
             'transition-colors duration-150',
             error
               ? 'border-red-300 focus:ring-red-500'
-              : 'border-blue-200 hover:border-blue-400',
-            props.disabled ? 'bg-gray-50 text-gray-400 cursor-not-allowed' : '',
+              : 'border-[var(--border)] hover:border-blue-300',
+            props.disabled ? 'cursor-not-allowed bg-slate-50 text-slate-400' : '',
             className,
           ].join(' ')}
         />
         {error && <p className="text-xs text-red-600">{error}</p>}
-        {hint && !error && <p className="text-xs text-blue-400">{hint}</p>}
+        {hint && !error && <p className="text-xs text-[var(--ink-subtle)]">{hint}</p>}
       </div>
     )
   }

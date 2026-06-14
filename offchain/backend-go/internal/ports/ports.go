@@ -129,8 +129,8 @@ type TokenContractPort interface {
 	// MetaTransfer submits a single EIP-712 signed transferWithSignature call.
 	MetaTransfer(ctx context.Context, call MetaTransferCall) (txHash string, err error)
 
-	// BatchTransfer submits multiple EIP-712 signed transfers sequentially.
-	BatchTransfer(ctx context.Context, transfers []TransferCall) (txHash string, err error)
+	// BatchTransfer submits multiple EIP-712 signed transfers in one on-chain transaction.
+	BatchTransfer(ctx context.Context, batchID string, transfers []TransferCall) (*BatchTransferResult, error)
 
 	// ── Write — admin/relayer operations (relayer key signs on-chain tx) ────
 
@@ -259,6 +259,7 @@ type MarketplaceContractPort interface {
 
 // TransferCall is one unit of a batch token transfer.
 type TransferCall struct {
+	TxID      string
 	From      string
 	To        string
 	Amount    string // wei
@@ -269,6 +270,24 @@ type TransferCall struct {
 
 // MetaTransferCall is a standalone meta-transaction.
 type MetaTransferCall = TransferCall
+
+// BatchTransferResult contains the mined batch transaction and per-item outcomes emitted by the token contract.
+type BatchTransferResult struct {
+	BatchID     string
+	TxHash      string
+	BlockNumber uint64
+	GasUsed     uint64
+	Items       []BatchTransferItemResult
+}
+
+// BatchTransferItemResult maps one on-chain batch item back to one off-chain transaction.
+type BatchTransferItemResult struct {
+	TxID      string
+	Index     int
+	Success   bool
+	ErrorCode string
+	Reason    string
+}
 
 // MintCall is one unit of a batch NFT mint.
 type MintCall struct {

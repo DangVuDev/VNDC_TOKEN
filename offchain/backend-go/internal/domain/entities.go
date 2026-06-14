@@ -48,6 +48,8 @@ const (
 	TxStatusSuccess    TransactionStatus = "SUCCESS"
 	TxStatusFailed     TransactionStatus = "FAILED"
 	TxStatusRolledBack TransactionStatus = "ROLLED_BACK"
+	TxStatusCancelled  TransactionStatus = "CANCELLED"
+	TxStatusExpired    TransactionStatus = "EXPIRED"
 )
 
 // TransactionType distinguishes token transfers from NFT operations.
@@ -111,7 +113,11 @@ func (t *Transaction) IsPending() bool {
 
 // IsTerminal returns true if the transaction has reached a final state.
 func (t *Transaction) IsTerminal() bool {
-	return t.Status == TxStatusSuccess || t.Status == TxStatusFailed || t.Status == TxStatusRolledBack
+	return t.Status == TxStatusSuccess ||
+		t.Status == TxStatusFailed ||
+		t.Status == TxStatusRolledBack ||
+		t.Status == TxStatusCancelled ||
+		t.Status == TxStatusExpired
 }
 
 // ─────────────────────────────────────────────

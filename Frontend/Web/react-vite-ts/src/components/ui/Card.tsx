@@ -17,7 +17,7 @@ export function Card({ children, padding = 'md', className = '', ...props }: Car
     <div
       {...props}
       className={[
-        'bg-white rounded-2xl shadow-sm border border-blue-100',
+        'rounded-2xl border border-[var(--border-soft)] bg-white shadow-sm',
         paddingClasses[padding],
         className,
       ].join(' ')}
@@ -29,7 +29,7 @@ export function Card({ children, padding = 'md', className = '', ...props }: Car
 
 export function CardHeader({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <div className={['flex items-center justify-between mb-4', className].join(' ')}>
+    <div className={['mb-4 flex items-center justify-between', className].join(' ')}>
       {children}
     </div>
   )
@@ -37,7 +37,7 @@ export function CardHeader({ children, className = '' }: { children: ReactNode; 
 
 export function CardTitle({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <h3 className={['text-base font-semibold text-blue-900', className].join(' ')}>
+    <h3 className={['text-base font-semibold text-[var(--ink)]', className].join(' ')}>
       {children}
     </h3>
   )

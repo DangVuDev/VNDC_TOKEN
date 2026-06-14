@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useRef, useState } from 'react'
+﻿import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   Alert, Badge, Button, Col, DatePicker, Descriptions, Divider, Empty,
   Form, Input, InputNumber, message as antMessage,
@@ -8,7 +8,7 @@ import {
 import {
   ClockCircleOutlined,
   DeleteOutlined, DownloadOutlined, PlusOutlined, QrcodeOutlined, ReloadOutlined,
-  ShoppingOutlined, UnorderedListOutlined,
+  ShoppingOutlined, UnorderedListOutlined, SafetyCertificateOutlined,
 } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import jsQR from 'jsqr'
@@ -28,54 +28,1066 @@ const { Title, Text, Paragraph } = Typography
 
 const EVENTS_STYLES = `
 .event-page {
-  --ev-ink: #0f172a;
-  --ev-muted: #64748b;
-  --ev-border: rgba(148,163,184,.24);
-  --ev-page-bg: #F4F6FB;
-  --ev-paper: #FFF8E8;
+  --ev-ink: var(--ink, #0f172a);
+  --ev-muted: var(--ink-muted, #475569);
+  --ev-subtle: var(--ink-subtle, #64748b);
+  --ev-accent: var(--accent, #2563eb);
+  --ev-accent-2: #0ea5e9;
+  --ev-success: #10b981;
+  --ev-warning: #d97706;
+  --ev-danger: #dc2626;
+  --ev-border: rgba(255, 255, 255, 0.68);
+  --ev-page-bg: #eef6ff;
+  --ev-paper: rgba(255, 255, 255, 0.42);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  border-radius: 30px;
+  background:
+    linear-gradient(118deg, rgba(255, 255, 255, 0.24), rgba(239, 246, 255, 0.08) 44%, rgba(236, 253, 245, 0.06)),
+    var(--visual-events-bg, none) center top / cover no-repeat,
+    radial-gradient(900px 420px at 8% -8%, rgba(37, 99, 235, 0.2), transparent 64%),
+    radial-gradient(820px 420px at 94% 0%, rgba(14, 165, 233, 0.2), transparent 64%),
+    radial-gradient(720px 400px at 52% 112%, rgba(16, 185, 129, 0.16), transparent 68%),
+    linear-gradient(135deg, rgba(219, 234, 254, 0.72), rgba(224, 242, 254, 0.5) 52%, rgba(236, 253, 245, 0.46));
+  background-blend-mode: screen, normal, normal, normal, normal, normal;
+  box-shadow:
+    0 38px 96px rgba(37, 99, 235, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(37, 99, 235, 0.08);
+  backdrop-filter: blur(10px) saturate(1.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  padding: 20px 20px 42px;
 }
-.event-page .ev-glass {
-  background: rgba(255,255,255,.88);
-  border: 1px solid var(--ev-border);
-  border-radius: 16px;
-  box-shadow: 0 14px 28px rgba(15,23,42,.08);
+.event-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(760px 320px at 8% -4%, rgba(37, 99, 235, 0.18), transparent 68%),
+    radial-gradient(720px 340px at 95% 2%, rgba(14, 165, 233, 0.18), transparent 66%),
+    radial-gradient(620px 360px at 52% 108%, rgba(16, 185, 129, 0.13), transparent 64%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(246, 248, 251, 0.78));
+  pointer-events: none;
 }
-.event-page .ev-hero {
-  background: linear-gradient(135deg,#0F0E2B 0%,#1E1A5C 50%,#312E81 100%);
-  border-radius: 22px;
-  padding: 22px 26px;
-  color: #fff;
+.event-page::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  border-radius: 27px;
+  background:
+    linear-gradient(125deg, rgba(255, 255, 255, 0.32), transparent 34%, rgba(255, 255, 255, 0.16) 62%, transparent 82%);
+  opacity: 0.62;
+  pointer-events: none;
+}
+.event-page .ev-glass,
+.event-page .ev-toolbar,
+.event-page .ev-admin-kpi,
+.event-page .ev-chart-card,
+.event-page .ev-scan-result,
+.event-page .ev-variant-card {
   position: relative;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(67,56,202,.32);
+  border: 1px solid rgba(255, 255, 255, 0.72) !important;
+  border-radius: 22px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.08)) !important;
+  box-shadow:
+    0 26px 64px rgba(37, 99, 235, 0.16),
+    0 10px 24px rgba(15, 23, 42, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    inset 0 -1px 0 rgba(37, 99, 235, 0.1),
+    inset 1px 0 0 rgba(255, 255, 255, 0.46) !important;
+  backdrop-filter: blur(24px) saturate(1.95) contrast(1.06);
+  -webkit-backdrop-filter: blur(24px) saturate(1.95) contrast(1.06);
+  color: var(--ev-ink);
+  transform-style: preserve-3d;
+}
+.event-page .ev-glass::before,
+.event-page .ev-toolbar::before,
+.event-page .ev-admin-kpi::before,
+.event-page .ev-chart-card::before,
+.event-page .ev-scan-result::before,
+.event-page .ev-variant-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.46), transparent 28%, rgba(255, 255, 255, 0.12) 56%, transparent 78%),
+    radial-gradient(460px 110px at 12% 0%, rgba(255, 255, 255, 0.58), transparent 72%);
+  opacity: 0.62;
+  pointer-events: none;
+}
+.event-page .ev-glass::after,
+.event-page .ev-toolbar::after,
+.event-page .ev-admin-kpi::after,
+.event-page .ev-chart-card::after,
+.event-page .ev-scan-result::after,
+.event-page .ev-variant-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.88), rgba(255,255,255,0.08) 38%, rgba(14,165,233,0.18) 68%, rgba(255,255,255,0.42));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.event-page .ev-glass > *,
+.event-page .ev-toolbar > *,
+.event-page .ev-admin-kpi > *,
+.event-page .ev-chart-card > *,
+.event-page .ev-scan-result > *,
+.event-page .ev-variant-card > * {
+  position: relative;
+  z-index: 1;
+}
+.event-page .ev-hero {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(191, 219, 254, 0.88);
+  border-radius: 24px;
+  background:
+    linear-gradient(110deg, rgba(255, 255, 255, 0.94) 0%, rgba(239, 246, 255, 0.88) 48%, rgba(236, 253, 245, 0.72) 100%),
+    var(--visual-events, none) center right / cover no-repeat !important;
+  box-shadow: 0 24px 70px rgba(37, 99, 235, 0.14);
   margin-bottom: 18px;
+  padding: 26px 30px;
+}
+.event-page .ev-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(420px 180px at 82% 18%, rgba(14, 165, 233, 0.2), transparent 70%),
+    radial-gradient(280px 180px at 96% 92%, rgba(16, 185, 129, 0.2), transparent 72%);
+  pointer-events: none;
 }
 .event-page .ev-hero::after {
-  content: '';
+  content: "";
   position: absolute;
-  right: -30px;
-  top: -30px;
-  width: 180px;
-  height: 180px;
+  inset: auto 0 0 0;
+  height: 3px;
+  background: linear-gradient(90deg, #2563eb, #0ea5e9, #10b981);
+  pointer-events: none;
+}
+.event-page .ev-hero-title,
+.event-page .vndc-hero-title {
+  color: var(--ev-ink) !important;
+  margin: 0 !important;
+  font-family: var(--font-sans) !important;
+  font-weight: 800 !important;
+  line-height: 1.15 !important;
+  letter-spacing: -0.02em;
+}
+.event-page .vndc-hero-kicker {
+  color: var(--ev-accent);
+  font-size: 11px;
+  font-weight: 740;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.event-page .vndc-hero-desc {
+  color: var(--ev-muted) !important;
+  max-width: 780px;
+}
+.event-page .ev-hero-metric {
+  min-width: 132px;
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgba(255,255,255,.52), rgba(255,255,255,.16));
+  box-shadow:
+    0 18px 36px rgba(37, 99, 235, 0.12),
+    inset 0 1px 0 rgba(255,255,255,.85);
+  padding: 12px 14px;
+  text-align: right;
+  backdrop-filter: blur(14px) saturate(1.45);
+  -webkit-backdrop-filter: blur(14px) saturate(1.45);
+}
+.event-page .ev-hero-metric .value {
+  color: var(--ev-ink);
+  display: block;
+  font-size: 18px;
+  font-weight: 820;
+  line-height: 1.12;
+}
+.event-page .ev-hero-metric .label {
+  color: var(--ev-subtle);
+  display: block;
+  font-size: 11px;
+  font-weight: 680;
+}
+.event-page .ev-tabs .ant-tabs-nav {
+  margin-bottom: 18px;
+}
+.event-page .ev-tabs .ant-tabs-nav::before {
+  border-bottom-color: rgba(191, 219, 254, 0.7);
+}
+.event-page .ev-tabs .ant-tabs-tab {
   border-radius: 999px;
-  background: rgba(99,102,241,.12);
+  color: var(--ev-muted);
+  font-size: 13px;
+  font-weight: 720;
+  padding: 10px 16px;
+  transition: background 180ms ease, transform 180ms ease, color 180ms ease;
+}
+.event-page .ev-tabs .ant-tabs-tab:hover {
+  color: var(--accent-strong, #1d4ed8);
+  transform: translateY(-1px);
+}
+.event-page .ev-tabs .ant-tabs-tab.ant-tabs-tab-active {
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.13), rgba(14, 165, 233, 0.1) 58%, rgba(16, 185, 129, 0.1));
+  box-shadow: inset 0 0 0 1px rgba(191, 219, 254, 0.66);
+}
+.event-page .ev-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--accent-strong, #1d4ed8) !important;
+}
+.event-page .ev-tabs .ant-tabs-ink-bar {
+  display: none;
+}
+.event-page .ev-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  padding: 12px;
+}
+.event-page .ev-toolbar .ant-input,
+.event-page .ev-toolbar .ant-input-affix-wrapper,
+.event-page .ev-toolbar .ant-select-selector,
+.event-page .ev-toolbar .ant-input-number,
+.event-page .ev-glass .ant-input,
+.event-page .ev-glass .ant-input-affix-wrapper,
+.event-page .ev-glass .ant-select-selector,
+.event-page .ev-glass .ant-input-number {
+  border-radius: 12px !important;
+  border-color: rgba(191, 219, 254, 0.9) !important;
+  background: rgba(255, 255, 255, 0.78) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+.event-page .ev-ticket-grid {
+  align-items: stretch;
+}
+.event-page .ev-ticket-grid > .ant-col {
+  display: flex;
+}
+.event-page .ev-ticket-card {
+  --ticket-cutout: rgba(238, 246, 255, 0.96);
+  position: relative;
+  width: 100%;
+  min-height: 236px;
+  height: 236px;
+  cursor: pointer;
+  user-select: none;
+  display: grid;
+  grid-template-columns: 9px minmax(0, 1fr) 38px 126px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.78) !important;
+  border-radius: 24px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.1)) !important;
+  box-shadow:
+    0 26px 64px rgba(37, 99, 235, 0.16),
+    0 10px 24px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.94),
+    inset 0 -1px 0 rgba(37, 99, 235, 0.1) !important;
+  backdrop-filter: blur(24px) saturate(1.95) contrast(1.06);
+  -webkit-backdrop-filter: blur(24px) saturate(1.95) contrast(1.06);
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease, filter 220ms ease;
+}
+.event-page .ev-ticket-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(112deg, rgba(255,255,255,.6), transparent 30%, rgba(255,255,255,.14) 54%, transparent 78%),
+    radial-gradient(520px 130px at 12% 0%, rgba(255,255,255,.6), transparent 72%);
+  opacity: .72;
+  pointer-events: none;
+}
+.event-page .ev-ticket-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(255,255,255,.96), rgba(255,255,255,.1) 36%, rgba(14,165,233,.22) 68%, rgba(255,255,255,.46));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.event-page .ev-ticket-card > * {
+  position: relative;
+  z-index: 1;
+}
+.event-page .ev-ticket-card:hover {
+  border-color: rgba(255, 255, 255, 0.92) !important;
+  box-shadow:
+    0 34px 78px rgba(37, 99, 235, 0.2),
+    0 14px 30px rgba(15, 23, 42, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.98) !important;
+  filter: saturate(1.06);
+  transform: translateY(-4px) scale(1.004);
+}
+.event-page .ev-ticket-card:active {
+  transform: translateY(-1px) scale(0.996);
+}
+.event-page .ev-ticket-card.is-inactive {
+  opacity: .72;
+}
+.event-page .ev-ticket-stripe {
+  background: var(--ticket-color);
+  box-shadow: 8px 0 22px rgba(37, 99, 235, .14);
+}
+.event-page .ev-ticket-main {
+  display: flex;
+  min-width: 0;
+  gap: 14px;
+  padding: 16px 18px;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.42), rgba(255,255,255,.12)),
+    radial-gradient(320px 120px at 18% 0%, rgba(255,255,255,.5), transparent 72%);
+}
+.event-page .ev-ticket-media {
+  flex: 0 0 96px;
+  width: 96px;
+  height: 100%;
+  min-height: 166px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 18px;
+  background:
+    radial-gradient(130px 80px at 20% 12%, rgba(255,255,255,.76), transparent 70%),
+    linear-gradient(135deg, var(--ticket-soft), rgba(255,255,255,.5));
+  box-shadow: 0 16px 32px rgba(37, 99, 235, .14), inset 0 1px 0 rgba(255,255,255,.88);
+}
+.event-page .ev-ticket-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.event-page .ev-ticket-media-placeholder {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  color: var(--ticket-color);
+  font-size: 34px;
+}
+.event-page .ev-ticket-content {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.event-page .ev-ticket-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.event-page .ev-ticket-chip {
+  border: 1px solid rgba(255,255,255,.5);
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: 760;
+  line-height: 1.35;
+  box-shadow: 0 8px 16px rgba(15, 23, 42, .06), inset 0 1px 0 rgba(255,255,255,.72);
+}
+.event-page .ev-ticket-title {
+  color: var(--ev-ink);
+  font-size: 16px;
+  font-weight: 840;
+  line-height: 1.3;
+  min-height: 42px;
+}
+.event-page .ev-ticket-desc {
+  color: var(--ev-muted);
+  font-size: 12px;
+  line-height: 1.45;
+  min-height: 34px;
+}
+.event-page .ev-line-clamp-1,
+.event-page .ev-line-clamp-2 {
+  display: -webkit-box !important;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  white-space: normal !important;
+}
+.event-page .ev-line-clamp-1 { -webkit-line-clamp: 1; }
+.event-page .ev-line-clamp-2 { -webkit-line-clamp: 2; }
+.event-page .ev-ticket-meta {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+.event-page .ev-ticket-stock {
+  color: #047857;
+  font-size: 12px;
+  font-weight: 740;
+}
+.event-page .ev-ticket-stock.is-out {
+  color: var(--ev-danger);
+}
+.event-page .ev-ticket-date {
+  color: var(--ev-subtle);
+  font-size: 11px;
+}
+.event-page .ev-ticket-seam {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.08), rgba(255,255,255,.4) 48%, rgba(255,255,255,.08)),
+    radial-gradient(circle at 50% 0%, rgba(255,255,255,.42), transparent 52%);
+}
+.event-page .ev-ticket-seam::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 26px;
+  bottom: 26px;
+  width: 2px;
+  transform: translateX(-50%);
+  background-image: repeating-linear-gradient(to bottom, rgba(71, 85, 105, .5) 0 8px, transparent 8px 15px);
+  filter: drop-shadow(0 0 5px rgba(255,255,255,.7));
+}
+.event-page .ev-ticket-seam::after,
+.event-page .ev-ticket-notch-bottom {
+  content: "";
+  position: absolute;
+  left: 50%;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.22), transparent 58%),
+    var(--ticket-cutout);
+  border: 1px solid rgba(191, 219, 254, 0.82);
+  box-shadow:
+    inset 0 3px 8px rgba(15, 23, 42, .1),
+    0 0 0 6px rgba(255,255,255,.16);
+  transform: translateX(-50%);
+}
+.event-page .ev-ticket-seam::after { top: -18px; }
+.event-page .ev-ticket-notch-bottom { bottom: -18px; }
+.event-page .ev-ticket-stub {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 12px 8px;
+  color: #fff;
+  text-align: center;
+  border-left: 1px dashed rgba(255,255,255,.42);
+  background:
+    radial-gradient(120px 80px at 30% 0%, rgba(255,255,255,.32), transparent 70%),
+    linear-gradient(160deg, color-mix(in srgb, var(--ticket-color), white 8%), var(--ticket-color));
+}
+.event-page .ev-ticket-stub-label {
+  color: rgba(255,255,255,.78);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.event-page .ev-ticket-price {
+  color: #fff;
+  font-size: 21px;
+  font-weight: 920;
+  line-height: 1.1;
+}
+.event-page .ev-ticket-cta {
+  margin-top: 8px;
+  border: 1px solid rgba(255,255,255,.26);
+  border-radius: 999px;
+  background: rgba(255,255,255,.22);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 820;
+  padding: 4px 9px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.28);
 }
 .event-page .ev-qr-shell {
-  background: radial-gradient(circle at top, #1f2564 0%, #13183f 68%);
-  border-radius: 16px;
+  background:
+    radial-gradient(circle at top, rgba(37, 99, 235, 0.72) 0%, rgba(15, 23, 42, 0.92) 68%),
+    linear-gradient(135deg, rgba(255,255,255,.16), rgba(255,255,255,.04));
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 18px;
   padding: 18px;
   text-align: center;
   box-shadow: inset 0 0 0 1px rgba(165,180,252,.2), 0 12px 32px rgba(30,27,75,.35);
 }
-.event-page .ev-scan-result {
-  border-radius: 14px;
+.event-page .ev-admin-hero {
+  padding: 16px;
+}
+.event-page .ev-admin-kpi {
+  min-height: 116px;
   padding: 14px;
-  border: 1px solid var(--ev-border);
+}
+.event-page .ev-admin-kpi .label,
+.event-page .ev-chart-label {
+  color: var(--ev-subtle);
+  display: block;
+  font-size: 12px;
+  font-weight: 680;
+}
+.event-page .ev-admin-kpi .value {
+  color: var(--ev-ink);
+  display: block;
+  font-size: 28px;
+  font-weight: 860;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+.event-page .ev-admin-kpi .hint {
+  color: var(--ev-muted);
+  display: block;
+  font-size: 11px;
+  margin-top: 5px;
+}
+.event-page .ev-chart-card {
+  height: 100%;
+  padding: 16px;
+}
+.event-page .ev-chart-title {
+  color: var(--ev-ink);
+  font-size: 15px;
+  font-weight: 820;
+  margin-bottom: 12px;
+}
+.event-page .ev-bar-row {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr) 42px;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+}
+.event-page .ev-bar-label {
+  color: var(--ev-muted);
+  font-size: 12px;
+  font-weight: 680;
+  min-width: 0;
+}
+.event-page .ev-bar-track {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(226, 232, 240, 0.86);
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+.event-page .ev-bar-fill {
+  height: 100%;
+  min-width: 4px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--bar-color), #0ea5e9);
+}
+.event-page .ev-bar-count {
+  color: var(--ev-ink);
+  font-size: 12px;
+  font-weight: 820;
+  text-align: right;
+}
+.event-page .ev-daily-chart {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  height: 164px;
+  padding-top: 8px;
+}
+.event-page .ev-daily-item {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end;
+  gap: 8px;
+}
+.event-page .ev-daily-bar {
+  width: 100%;
+  max-width: 34px;
+  min-height: 6px;
+  border-radius: 999px 999px 8px 8px;
+  background: linear-gradient(180deg, #2563eb, #0ea5e9 54%, #10b981);
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.2);
+}
+.event-page .ev-daily-label {
+  color: var(--ev-subtle);
+  font-size: 11px;
+  white-space: nowrap;
+}
+.event-page .ev-admin-donut-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+.event-page .ev-donut-card {
+  border: 1px solid rgba(255,255,255,.54);
+  border-radius: 16px;
+  background: rgba(255,255,255,.28);
+  padding: 12px;
+  text-align: center;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.65);
+}
+.event-page .ev-donut {
+  --pct: 0;
+  --donut-color: #2563eb;
+  display: grid;
+  place-items: center;
+  width: 82px;
+  height: 82px;
+  margin: 0 auto 8px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, rgba(255,255,255,.95) 0 54%, transparent 55%),
+    conic-gradient(var(--donut-color) calc(var(--pct) * 1%), rgba(226, 232, 240, 0.8) 0);
+  box-shadow: 0 12px 24px rgba(37,99,235,.12), inset 0 1px 0 rgba(255,255,255,.85);
+}
+.event-page .ev-donut strong {
+  color: var(--ev-ink);
+  font-size: 18px;
+}
+.event-page .ev-table-card {
+  padding: 14px;
+}
+.event-page .ev-table-card .ant-table,
+.event-page .ev-glass .ant-table {
+  background: transparent !important;
+}
+.event-page .ev-table-card .ant-table-thead > tr > th,
+.event-page .ev-glass .ant-table-thead > tr > th {
+  background: rgba(239, 246, 255, 0.76) !important;
+  color: var(--ev-ink);
+  font-weight: 760;
+}
+.event-page .ev-table-card .ant-table-tbody > tr > td,
+.event-page .ev-glass .ant-table-tbody > tr > td {
+  background: rgba(255,255,255,.38);
+  border-bottom-color: rgba(191, 219, 254, 0.42) !important;
+}
+.event-page .ev-table-card .ant-table-tbody > tr:hover > td,
+.event-page .ev-glass .ant-table-tbody > tr:hover > td {
+  background: rgba(239, 246, 255, 0.64) !important;
+}
+.event-page .ant-btn {
+  border-radius: 12px;
+  font-weight: 650;
+}
+.event-page .ant-btn:active,
+.ev-liquid-modal .ant-btn:active {
+  transform: translateY(1px);
+}
+.event-page .ant-btn-primary {
+  border-color: #2563eb !important;
+  background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%) !important;
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+}
+.event-page .ant-empty-description,
+.event-page .ant-typography-secondary,
+.event-page .ant-descriptions-item-label {
+  color: var(--ev-subtle) !important;
+}
+.ev-liquid-modal .ant-modal-content {
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 22px !important;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(239, 246, 255, 0.48) 58%, rgba(236, 253, 245, 0.36)) !important;
+  box-shadow:
+    0 34px 88px rgba(37, 99, 235, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.96),
+    inset 0 -1px 0 rgba(37, 99, 235, 0.08);
+  backdrop-filter: blur(28px) saturate(1.85) contrast(1.06);
+  -webkit-backdrop-filter: blur(28px) saturate(1.85) contrast(1.06);
+}
+.ev-liquid-modal .ant-modal-body {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.08)),
+    var(--visual-events-bg, none) center top / cover no-repeat;
+  background-blend-mode: screen, normal;
+}
+.ev-liquid-modal img {
+  box-shadow:
+    0 22px 48px rgba(37, 99, 235, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.78);
+}
+.ev-liquid-modal .ant-modal-header {
+  background: transparent !important;
+  border-bottom-color: rgba(191, 219, 254, 0.72) !important;
+}
+.ev-liquid-modal .ant-modal-title {
+  color: var(--ink, #0f172a);
+  font-weight: 780;
+}
+.ev-liquid-modal .ant-input,
+.ev-liquid-modal .ant-input-affix-wrapper,
+.ev-liquid-modal .ant-input-number,
+.ev-liquid-modal .ant-picker,
+.ev-liquid-modal .ant-select-selector {
+  border-radius: 12px !important;
+  border-color: rgba(191, 219, 254, 0.9) !important;
+  background: rgba(255, 255, 255, 0.78) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+.ev-liquid-modal .ant-btn {
+  border-radius: 12px;
+  font-weight: 650;
+}
+.ev-liquid-modal .ant-btn-primary {
+  border-color: #2563eb !important;
+  background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%) !important;
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+}
+.ev-liquid-modal .ant-descriptions-view,
+.ev-liquid-modal .ant-steps,
+.ev-liquid-modal .ev-qr-shell {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.34);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+@media (max-width: 992px) {
+  .event-page .ev-ticket-card {
+    grid-template-columns: 7px minmax(0, 1fr) 0 104px;
+  }
+  .event-page .ev-ticket-media {
+    display: none;
+  }
 }
 @media (max-width: 768px) {
-  .event-page .ev-hero { padding: 16px; border-radius: 16px; }
+  .event-page {
+    padding: 12px;
+    border-radius: 20px;
+  }
+  .event-page .ev-hero {
+    padding: 18px;
+    border-radius: 18px;
+  }
+  .event-page .ev-glass {
+    border-radius: 18px;
+  }
+  .event-page .ev-ticket-card {
+    grid-template-columns: 7px minmax(0, 1fr) 32px 104px;
+    height: 220px;
+    min-height: 220px;
+  }
+  .event-page .ev-ticket-main {
+    padding: 14px;
+  }
+  .event-page .ev-ticket-stub {
+    padding-inline: 6px;
+  }
+  .event-page .ev-ticket-price {
+    font-size: 17px;
+  }
+  .event-page .ev-admin-donut-grid {
+    grid-template-columns: 1fr;
+  }
+  .event-page .ev-bar-row {
+    grid-template-columns: 96px minmax(0, 1fr) 34px;
+  }
+}
+
+/* Events visual refresh: lighter page shell and more physical ticket cards. */
+.event-page {
+  background:
+    linear-gradient(118deg, rgba(255,255,255,0.42), rgba(239,246,255,0.16) 44%, rgba(236,253,245,0.14)),
+    radial-gradient(900px 420px at 8% -8%, rgba(37,99,235,0.22), transparent 64%),
+    radial-gradient(820px 420px at 94% 0%, rgba(14,165,233,0.2), transparent 64%),
+    radial-gradient(720px 400px at 52% 112%, rgba(16,185,129,0.16), transparent 68%),
+    var(--visual-events-bg, none) center top / cover no-repeat,
+    linear-gradient(135deg, #dbeafe, #ecfeff 52%, #dcfce7) !important;
+}
+.event-page::before {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.2), rgba(246,248,251,0.42) 58%, rgba(255,255,255,0.68)),
+    radial-gradient(900px 360px at 50% -10%, rgba(255,255,255,0.34), transparent 72%);
+}
+.event-page::after {
+  opacity: 0.3;
+}
+.event-page .ev-hero {
+  min-height: 218px;
+  border-color: rgba(255,255,255,0.76) !important;
+  background:
+    linear-gradient(104deg, rgba(255,255,255,0.82) 0%, rgba(239,246,255,0.58) 42%, rgba(255,255,255,0.18) 100%),
+    var(--visual-events, none) center right / cover no-repeat !important;
+  backdrop-filter: blur(14px) saturate(1.28);
+  -webkit-backdrop-filter: blur(14px) saturate(1.28);
+}
+.event-page .ev-hero::before {
+  background:
+    linear-gradient(90deg, rgba(255,255,255,0.18), transparent 55%),
+    radial-gradient(420px 170px at 84% 12%, rgba(14,165,233,0.2), transparent 70%),
+    radial-gradient(320px 180px at 96% 94%, rgba(16,185,129,0.18), transparent 72%);
+}
+.event-page .ev-hero-title,
+.event-page .vndc-hero-title {
+  font-size: clamp(25px, 3vw, 40px) !important;
+  font-weight: 880 !important;
+  letter-spacing: -0.045em !important;
+}
+.event-page .vndc-hero-desc {
+  color: #334155 !important;
+  line-height: 1.65;
+}
+.event-page .ev-tabs-shell {
+  border: 0 !important;
+  border-radius: 0;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  padding: 0;
+}
+.event-page .ev-tabs-shell::before,
+.event-page .ev-tabs-shell::after {
+  display: none !important;
+}
+.event-page .ev-tabs > .ant-tabs-nav {
+  position: sticky;
+  top: 84px;
+  z-index: 3;
+  margin: 0 0 18px;
+  border: 1px solid rgba(255,255,255,0.7);
+  border-radius: 22px;
+  background: rgba(255,255,255,0.5);
+  box-shadow: 0 18px 42px rgba(37,99,235,0.1), inset 0 1px 0 rgba(255,255,255,0.86);
+  backdrop-filter: blur(18px) saturate(1.45);
+  -webkit-backdrop-filter: blur(18px) saturate(1.45);
+  padding: 8px 10px 0;
+}
+.event-page .ev-ticket-card {
+  --ticket-cutout: rgba(239, 246, 255, 0.98);
+  --ticket-paper: #fff2dc;
+  --ticket-paper-deep: #f9d9aa;
+  --ticket-notch-r: 22px;
+  --ticket-notch-x: calc(100% - 159px);
+  min-height: 252px;
+  height: 252px;
+  grid-template-columns: 10px minmax(0, 1fr) 42px 138px;
+  border-color: rgba(255,255,255,0.84) !important;
+  border-radius: 26px;
+  background:
+    linear-gradient(135deg, rgba(255,246,230,0.98), rgba(255,234,202,0.82) 52%, rgba(249,217,170,0.56)) !important;
+  box-shadow:
+    0 28px 70px rgba(37,99,235,0.16),
+    0 12px 28px rgba(15,23,42,0.09),
+    inset 0 1px 0 rgba(255,255,255,0.98),
+    inset 0 -18px 34px rgba(37,99,235,0.06) !important;
+  backdrop-filter: blur(20px) saturate(1.58) contrast(1.03);
+  -webkit-backdrop-filter: blur(20px) saturate(1.58) contrast(1.03);
+  -webkit-mask:
+    radial-gradient(circle var(--ticket-notch-r) at var(--ticket-notch-x) 0, transparent 98%, #000 100%),
+    radial-gradient(circle var(--ticket-notch-r) at var(--ticket-notch-x) 100%, transparent 98%, #000 100%);
+  -webkit-mask-composite: source-in;
+  mask:
+    radial-gradient(circle var(--ticket-notch-r) at var(--ticket-notch-x) 0, transparent 98%, #000 100%),
+    radial-gradient(circle var(--ticket-notch-r) at var(--ticket-notch-x) 100%, transparent 98%, #000 100%);
+  mask-composite: intersect;
+}
+.event-page .ev-ticket-card::before {
+  background:
+    linear-gradient(115deg, rgba(255,255,255,0.48), transparent 26%, rgba(255,244,224,0.2) 58%, transparent 80%),
+    radial-gradient(580px 130px at 12% 0%, rgba(255,255,255,0.58), transparent 72%),
+    repeating-linear-gradient(0deg, transparent 0 11px, rgba(146,64,14,0.035) 11px 12px);
+  opacity: 0.76;
+}
+.event-page .ev-ticket-main {
+  gap: 16px;
+  padding: 18px 20px;
+  background:
+    linear-gradient(135deg, rgba(255,248,237,0.94), rgba(255,237,213,0.76)),
+    radial-gradient(340px 120px at 18% 0%, rgba(255,255,255,0.62), transparent 72%);
+}
+.event-page .ev-ticket-media {
+  flex-basis: 108px;
+  width: 108px;
+  min-height: 180px;
+  border-radius: 20px;
+}
+.event-page .ev-ticket-title {
+  font-size: 17px;
+  font-weight: 880;
+}
+.event-page .ev-ticket-seam {
+  background:
+    linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.52) 48%, rgba(255,255,255,0.04)),
+    repeating-linear-gradient(to bottom, transparent 0 12px, rgba(37,99,235,0.08) 12px 13px);
+}
+.event-page .ev-ticket-seam::before {
+  top: 30px;
+  bottom: 30px;
+  width: 3px;
+  background-image: repeating-linear-gradient(to bottom, rgba(71,85,105,0.58) 0 7px, transparent 7px 14px);
+}
+.event-page .ev-ticket-seam::after,
+.event-page .ev-ticket-notch-bottom {
+  width: 42px;
+  height: 42px;
+}
+.event-page .ev-ticket-seam::after { top: -21px; }
+.event-page .ev-ticket-notch-bottom { bottom: -21px; }
+.event-page .ev-ticket-stub {
+  justify-content: space-between;
+  padding: 15px 10px;
+  border-left: 1px dashed rgba(255,255,255,0.56);
+}
+.event-page .ev-ticket-mini-qr {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border: 1px solid rgba(255,255,255,0.38);
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.94), rgba(255,255,255,0.7)),
+    repeating-linear-gradient(45deg, #0f172a 0 2px, transparent 2px 6px);
+  color: var(--ticket-color);
+  font-size: 23px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.82), 0 12px 24px rgba(15,23,42,0.12);
+}
+.event-page .ev-ticket-code {
+  max-width: 96px;
+  overflow: hidden;
+  color: rgba(255,255,255,0.72);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.event-page .ev-ticket-price-block {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  min-width: 0;
+}
+.event-page .ev-ticket-price {
+  font-size: 23px;
+}
+.event-page .ev-ticket-seam {
+  z-index: 3;
+  overflow: visible;
+  background:
+    linear-gradient(90deg, rgba(255,248,237,0.96), rgba(255,242,220,0.92)),
+    radial-gradient(120px 92px at 0% 10%, rgba(255,255,255,0.48), transparent 72%);
+}
+.event-page .ev-ticket-seam::before {
+  display: none;
+}
+.event-page .ev-ticket-seam::after,
+.event-page .ev-ticket-notch-bottom {
+  z-index: 3;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  background:
+    linear-gradient(118deg, rgba(255,255,255,0.18), rgba(239,246,255,0.08) 44%, rgba(236,253,245,0.06)),
+    var(--visual-events-bg, none) center top / cover no-repeat,
+    linear-gradient(135deg, rgba(219,234,254,0.72), rgba(224,242,254,0.5) 52%, rgba(236,253,245,0.46));
+  border-color: rgba(255,255,255,0.82);
+  box-shadow:
+    inset 0 3px 10px rgba(15,23,42,0.1),
+    0 0 0 1px rgba(148,163,184,0.12);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.event-page .ev-ticket-seam::after {
+  top: 0;
+  transform: translate(-50%, -50%);
+}
+.event-page .ev-ticket-notch-bottom {
+  bottom: 0;
+  transform: translate(-50%, 50%);
+}
+.event-page .ev-ticket-stub {
+  z-index: 4;
+  margin-left: -21px;
+  padding-left: 31px;
+  border-left: 0;
+  background:
+    radial-gradient(132px 88px at 28% 0%, rgba(255,255,255,0.32), transparent 70%),
+    linear-gradient(160deg, color-mix(in srgb, var(--ticket-color), white 8%), var(--ticket-color));
+}
+.event-page .ev-toolbar,
+.event-page .ev-glass,
+.event-page .ev-admin-kpi,
+.event-page .ev-chart-card,
+.event-page .ev-variant-card {
+  border-color: rgba(255,255,255,0.74) !important;
+  background: linear-gradient(135deg, rgba(255,255,255,0.44), rgba(255,255,255,0.18) 52%, rgba(219,234,254,0.18)) !important;
+}
+@media (max-width: 992px) {
+  .event-page .ev-ticket-card {
+    --ticket-notch-r: 21px;
+    --ticket-notch-x: calc(100% - 143px);
+    grid-template-columns: 9px minmax(0, 1fr) 38px 124px;
+  }
+  .event-page .ev-ticket-stub {
+    margin-left: -19px;
+    padding-left: 29px;
+  }
+}
+@media (max-width: 768px) {
+  .event-page .ev-tabs > .ant-tabs-nav {
+    position: relative;
+    top: auto;
+    overflow-x: auto;
+  }
+  .event-page .ev-ticket-card {
+    grid-template-columns: 8px minmax(0, 1fr);
+    height: auto;
+    min-height: 0;
+    -webkit-mask: none;
+    mask: none;
+  }
+  .event-page .ev-ticket-seam {
+    display: none;
+  }
+  .event-page .ev-ticket-stub {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    margin-left: 0;
+    padding: 15px 10px;
+    border-left: 0;
+    border-top: 1px dashed rgba(255,255,255,0.56);
+    text-align: left;
+  }
+  .event-page .ev-ticket-price-block {
+    justify-items: start;
+  }
+  .event-page .ev-ticket-code {
+    max-width: 100%;
+  }
+  .event-page .ev-ticket-media {
+    display: none;
+  }
 }
 `
+
 
 // â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
@@ -91,7 +1103,7 @@ function fmtVNDC(wei: string): string {
 
 function shortWallet(w?: string): string {
   if (!w || w.length < 10) return w ?? ''
-  return `${w.slice(0, 6)}â€¦${w.slice(-4)}`
+  return `${w.slice(0, 6)}…${w.slice(-4)}`
 }
 
 function checkIsAdmin(user?: AuthUser): boolean {
@@ -106,7 +1118,7 @@ function getTokenContract(): string { return ENV?.VITE_TOKEN_CONTRACT_ADDRESS ??
 
 const CATEGORY_LABEL: Record<string, string> = {
   EVENT_SEAT: 'Sự kiện',
-  RETAKE_EXAM: 'Thi lai',
+  RETAKE_EXAM: 'Thi lại',
   GRADE_UPGRADE: 'Nâng điểm',
   COMPUTER_RENTAL: 'Thuê máy tính',
   PARKING_MONTHLY: 'Vé xe tháng',
@@ -156,184 +1168,87 @@ function TicketCard({
     <div
       role="button"
       tabIndex={0}
+      className={`ev-ticket-card ${isActive ? '' : 'is-inactive'}`}
+      style={{ '--ticket-color': col.bg, '--ticket-soft': col.light } as React.CSSProperties}
       onClick={onClick}
       onKeyDown={e => e.key === 'Enter' && onClick()}
-      style={{
-        display: 'flex',
-        borderRadius: 12,
-        overflow: 'hidden',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.07)',
-        cursor: 'pointer',
-        background: '#fff',
-        userSelect: 'none',
-        transition: 'box-shadow 0.18s, transform 0.18s',
-        opacity: isActive ? 1 : 0.75,
-      }}
-      onMouseEnter={e => {
-        const el = e.currentTarget as HTMLDivElement
-        el.style.boxShadow = '0 8px 28px rgba(0,0,0,0.14)'
-        el.style.transform = 'translateY(-3px)'
-      }}
-      onMouseLeave={e => {
-        const el = e.currentTarget as HTMLDivElement
-        el.style.boxShadow = '0 2px 8px rgba(0,0,0,0.07)'
-        el.style.transform = ''
-      }}
     >
-      {/* Left color stripe */}
-      <div style={{ width: 8, flexShrink: 0, background: col.bg }} />
+      <div className="ev-ticket-stripe" />
 
-      {/* Main content */}
-      <div style={{ flex: 1, padding: '14px 16px 12px', minWidth: 0, overflow: 'hidden', background: 'var(--ev-paper)' }}>
-        {/* Category + type tags */}
-        <div style={{ display: 'flex', gap: 6, marginBottom: 8, flexWrap: 'wrap' }}>
-          <span style={{
-            background: col.light, color: col.bg,
-            borderRadius: 4, padding: '2px 8px', fontSize: 11, fontWeight: 700,
-          }}>
-            {CATEGORY_LABEL[product.category] ?? product.category}
-          </span>
-          <span style={{
-            background: '#F3F4F6', color: '#6B7280',
-            borderRadius: 4, padding: '2px 8px', fontSize: 11, fontWeight: 500,
-          }}>
-            {product.ticket_type}
-          </span>
-          {!isActive && (
-            <span style={{
-              background: '#FFF7ED', color: '#C2410C',
-              borderRadius: 4, padding: '2px 8px', fontSize: 11,
-            }}>
-              {product.status}
-            </span>
-          )}
-        </div>
-
-        {/* Title */}
-        <div style={{ fontWeight: 700, fontSize: 15, color: '#111827', marginBottom: 4, lineHeight: 1.3 }}>
-          {product.title}
-        </div>
-
-        {/* Description â€” 2 lines max */}
-        {product.description && (
-          <div style={{
-            fontSize: 12, color: '#6B7280', marginBottom: 8,
-            overflow: 'hidden',
-            display: '-webkit-box',
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: 'vertical',
-          } as React.CSSProperties}>
-            {product.description}
-          </div>
-        )}
-
-        {/* Stock + date info */}
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-          {outOfStock ? (
-            <span style={{ color: '#DC2626', fontSize: 12, fontWeight: 600 }}>Hết vé</span>
-          ) : isLimited ? (
-            <span style={{ color: '#059669', fontSize: 12 }}>
-              Còn <strong>{product.available_stock.toLocaleString()}</strong> vé
-            </span>
+      <div className="ev-ticket-main">
+        <div className="ev-ticket-media">
+          {product.image_uri ? (
+            <img src={product.image_uri} alt={product.title} />
           ) : (
-            <span style={{ color: '#059669', fontSize: 12 }}>Không giới hạn</span>
+            <div className="ev-ticket-media-placeholder"><QrcodeOutlined /></div>
           )}
-          {product.sale_ends_at && (
-            <span style={{ color: '#9CA3AF', fontSize: 11 }}>
-              Đến {dayjs(product.sale_ends_at).format('DD/MM/YYYY')}
+        </div>
+
+        <div className="ev-ticket-content">
+          <div className="ev-ticket-tags">
+            <span className="ev-ticket-chip" style={{ background: col.light, color: col.bg }}>
+              {CATEGORY_LABEL[product.category] ?? product.category}
             </span>
-          )}
+            <span className="ev-ticket-chip" style={{ background: 'rgba(248, 250, 252, 0.82)', color: '#64748B' }}>
+              {product.ticket_type}
+            </span> 
+            {!isActive && (
+              <span className="ev-ticket-chip" style={{ background: '#FFF7ED', color: '#C2410C' }}>
+                {product.status}
+              </span>
+            )}
+          </div>
+
+          <div className="ev-ticket-title ev-line-clamp-2">
+            {product.title}
+          </div>
+
+          <div className="ev-ticket-desc ev-line-clamp-2">
+            {product.description || 'Vé dịch vụ/sự kiện trong hệ sinh thái VNDC campus.'}
+          </div>
+
+          <div className="ev-ticket-meta">
+            {outOfStock ? (
+              <span className="ev-ticket-stock is-out">Hết vé</span>
+            ) : isLimited ? (
+              <span className="ev-ticket-stock">
+                Còn <strong>{product.available_stock.toLocaleString()}</strong> vé
+              </span>
+            ) : (
+              <span className="ev-ticket-stock">Không giới hạn</span>
+            )}
+            {product.sale_ends_at && (
+              <span className="ev-ticket-date">
+                Đến {dayjs(product.sale_ends_at).format('DD/MM/YYYY')}
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Ticket seam with two notches */}
-      <div
-        style={{
-          width: 0,
-          position: 'relative',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'stretch',
-          flexShrink: 0,
-          overflow: 'visible',
-        }}
-      >
-        <div style={{
-          width: 1,
-          position: 'absolute',
-          left: -0.5,
-          top: 10,
-          bottom: 10,
-          backgroundImage: 'repeating-linear-gradient(to bottom, transparent 0 4px, #D1D5DB 4px 8px)',
-        }} />
-        <div
-          style={{
-            position: 'absolute',
-            left: '50%',
-            top: -11,
-            transform: 'translateX(-50%)',
-            width: 24,
-            height: 24,
-            borderRadius: '50%',
-            background: 'var(--ev-page-bg)',
-            border: '1px solid #D7DFEB',
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            left: '50%',
-            bottom: -11,
-            transform: 'translateX(-50%)',
-            width: 24,
-            height: 24,
-            borderRadius: '50%',
-            background: 'var(--ev-page-bg)',
-            border: '1px solid #D7DFEB',
-          }}
-        />
+      <div className="ev-ticket-seam">
+        <div className="ev-ticket-notch-bottom" />
       </div>
 
-      {/* Price stub */}
-      <div style={{
-        width: 110,
-        flexShrink: 0,
-        background: `linear-gradient(160deg, ${col.bg}DD, ${col.bg})`,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 2,
-        padding: '12px 8px',
-      }}>
-        <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.75)', fontWeight: 600, letterSpacing: 1 }}>ĐƠN GIÁ</span>
-        <span style={{ fontSize: 17, fontWeight: 800, color: '#fff', textAlign: 'center', lineHeight: 1.2 }}>
-          {fmtVNDC(product.unit_price)}
-        </span>
-        <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.75)', letterSpacing: 0.5 }}>VNDC</span>
+      <div className="ev-ticket-stub">
+        <div className="ev-ticket-mini-qr" aria-hidden="true">
+          <QrcodeOutlined />
+        </div>
+        <div className="ev-ticket-price-block">
+          <span className="ev-ticket-code">{product.code || product.id.slice(0, 10)}</span>
+          <span className="ev-ticket-stub-label">Đơn giá</span>
+          <span className="ev-ticket-price">{fmtVNDC(product.unit_price)}</span>
+          <span className="ev-ticket-stub-label">VNDC</span>
+        </div>
         {isActive && !outOfStock ? (
-          <div style={{
-            marginTop: 6, background: 'rgba(255,255,255,0.22)',
-            borderRadius: 4, padding: '3px 8px',
-            fontSize: 10, color: '#fff', fontWeight: 700, letterSpacing: 0.3,
-          }}>
-            XEM CHI TIẾT
-          </div>
+          <div className="ev-ticket-cta">Xem chi tiết</div>
         ) : outOfStock ? (
-          <div style={{
-            marginTop: 6, background: 'rgba(0,0,0,0.25)',
-            borderRadius: 4, padding: '3px 8px',
-            fontSize: 10, color: '#fff', fontWeight: 700,
-          }}>
-            HẾT VÉ
-          </div>
+          <div className="ev-ticket-cta">Hết vé</div>
         ) : null}
       </div>
     </div>
   )
 }
-
-// â”€â”€â”€ PurchaseModal â€” EIP-712 purchase flow â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function PurchaseModal({
   product,
@@ -441,6 +1356,7 @@ function PurchaseModal({
 
   return (
     <Modal
+      className="ev-liquid-modal"
       open={open}
       onCancel={onClose}
       title="Xác nhận mua vé"
@@ -538,6 +1454,7 @@ function TicketDetailModal({
   return (
     <>
       <Modal
+        className="ev-liquid-modal"
         open={open}
         onCancel={onClose}
         footer={null}
@@ -593,12 +1510,12 @@ function TicketDetailModal({
             )}
 
             {product.sale_starts_at && (
-              <Descriptions.Item label="Mo ban">
+              <Descriptions.Item label="Mở bán">
                 {dayjs(product.sale_starts_at).format('HH:mm DD/MM/YYYY')}
               </Descriptions.Item>
             )}
             {product.sale_ends_at && (
-              <Descriptions.Item label="Ket thuc">
+              <Descriptions.Item label="Kết thúc">
                 {dayjs(product.sale_ends_at).format('HH:mm DD/MM/YYYY')}
               </Descriptions.Item>
             )}
@@ -616,7 +1533,7 @@ function TicketDetailModal({
               onClick={() => setShowBuy(true)}
               style={{ background: col.bg, borderColor: col.bg, fontWeight: 700 }}
             >
-              Mua vé &mdash; {fmtVNDC(product.unit_price)} VNDC
+              Mua vé | {fmtVNDC(product.unit_price)} VNDC
             </Button>
           ) : outOfStock ? (
             <Alert type="warning" showIcon message="Vé đã hết, không thể mua thêm." />
@@ -796,6 +1713,7 @@ function MyTickets({ user }: { user: AuthUser }) {
       </div>
 
       <Table
+        className="ev-glass-table"
         dataSource={purchases}
         columns={columns}
         rowKey="id"
@@ -811,6 +1729,7 @@ function MyTickets({ user }: { user: AuthUser }) {
       />
 
       <Modal
+        className="ev-liquid-modal"
         open={!!detailItem}
         onCancel={() => setDetailItem(null)}
         title="Chi tiết vé"
@@ -887,6 +1806,7 @@ function MyTickets({ user }: { user: AuthUser }) {
       </Modal>
 
       <Modal
+        className="ev-liquid-modal"
         open={!!qrItem}
         onCancel={() => setQrItem(null)}
         title="QR Ticket"
@@ -916,6 +1836,7 @@ function MyTickets({ user }: { user: AuthUser }) {
       </Modal>
 
       <Modal
+        className="ev-liquid-modal"
         open={scanOpen}
         onCancel={() => setScanOpen(false)}
         footer={null}
@@ -931,6 +1852,7 @@ function MyTickets({ user }: { user: AuthUser }) {
       </Modal>
 
       <Modal
+        className="ev-liquid-modal"
         open={scanResultOpen}
         onCancel={() => setScanResultOpen(false)}
         title="Kết quả quét vé"
@@ -979,7 +1901,7 @@ function TicketScanner({ onDetected, onClose }: { onDetected: (code: string) => 
     if (!navigator.mediaDevices?.getUserMedia) {
       setError('Trình duyệt không hỗ trợ MediaDevices API.')
       setCameraHints([
-        'Cap nhat Chrome/Edge phien ban moi.',
+        'Cập nhật Chrome/Edge phiên bản mới.',
         'Nếu đang trong chế độ private bị giới hạn camera, hãy mở tab thường.',
       ])
       return
@@ -1010,15 +1932,15 @@ function TicketScanner({ onDetected, onClose }: { onDetected: (code: string) => 
         const domErr = (fallbackErr ?? primaryErr) as DOMException | Error
         const errName = (domErr as DOMException)?.name || 'UnknownError'
         if (errName === 'NotAllowedError') {
-          setError('Camera bi tu choi quyen truy cap.')
+          setError('Camera bị từ chối quyền truy cập.')
           setCameraHints([
-            'Bam icon camera tren thanh dia chi va chon Allow.',
+            'Bấm biểu tượng camera trên thanh địa chỉ và chọn Allow.',
             'Vào Site Settings -> Camera -> Allow cho trang này, sau đó tải lại.',
           ])
           return
         }
         if (errName === 'NotFoundError' || errName === 'DevicesNotFoundError') {
-          setError('Không tim thay thiet bi camera tren may.')
+          setError('Không tìm thấy thiết bị camera trên máy.')
           setCameraHints([
             'Kiểm tra webcam đã cắm/được hệ điều hành nhận diện.',
             'Đóng ứng dụng khác đang chiếm camera (Zoom, Teams, OBS).',
@@ -1160,7 +2082,7 @@ function TicketScanner({ onDetected, onClose }: { onDetected: (code: string) => 
               {cameraHints.map((hint, idx) => (
                 <Text key={idx} style={{ fontSize: 12 }}>{`- ${hint}`}</Text>
               ))}
-              <Button size="small" onClick={() => { void startCamera() }}>Thu mo camera lai</Button>
+              <Button size="small" onClick={() => { void startCamera() }}>Thử mở camera lại</Button>
             </Space>
           }
           showIcon
@@ -1368,6 +2290,7 @@ function CreateProductModal({
 
   return (
     <Modal
+      className="ev-liquid-modal"
       open={open}
       onCancel={handleClose}
       title="Tạo vé mới"
@@ -1444,13 +2367,8 @@ function CreateProductModal({
           {variants.map((v, idx) => (
             <div
               key={idx}
-              style={{
-                border: '1px solid #E5E7EB',
-                borderRadius: 8,
-                padding: '14px 16px 10px',
-                background: '#FAFAFA',
-                position: 'relative',
-              }}
+              className="ev-variant-card"
+              style={{ padding: '14px 16px 10px', position: 'relative' }}
             >
               {variants.length > 1 && (
                 <Button
@@ -1583,20 +2501,20 @@ function BrowseProducts({
   return (
     <div>
       {/* Toolbar */}
-      <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+      <div className="ev-toolbar">
         <Input.Search
           placeholder="Tìm kiếm vé..."
           allowClear
           onSearch={v => setFilterSearch(v)}
           onChange={e => { if (!e.target.value) setFilterSearch('') }}
-          style={{ width: 220 }}
+          style={{ width: 260, flex: '1 1 260px' }}
         />
         <Select
           allowClear
           placeholder="Danh mục"
           value={filterCategory || undefined}
           onChange={v => setFilterCategory(v ?? '')}
-          style={{ width: 160 }}
+          style={{ width: 190 }}
           options={[
             { value: '', label: 'Tất cả danh mục' },
             ...Object.entries(CATEGORY_LABEL).map(([value, label]) => ({ value, label })),
@@ -1620,7 +2538,7 @@ function BrowseProducts({
         {products.length === 0 && !loading ? (
           <Empty description="Không có sản phẩm nào" style={{ margin: '48px 0' }} />
         ) : (
-          <Row gutter={[12, 12]}>
+          <Row gutter={[16, 16]} className="ev-ticket-grid">
             {products.map(p => (
               <Col key={p.id} xs={24} lg={12}>
                 <TicketCard product={p} onClick={() => openDetail(p)} />
@@ -1685,6 +2603,36 @@ function EventAdminTab({ user }: { user: AuthUser }) {
     }
   }
 
+  const resultOptions = [
+    { value: 'SUCCESS', label: 'Thành công', color: '#10B981' },
+    { value: 'ALREADY_USED', label: 'Đã dùng', color: '#D97706' },
+    { value: 'EXPIRED', label: 'Hết hạn', color: '#DC2626' },
+    { value: 'INVALID_CODE', label: 'Sai mã', color: '#EF4444' },
+    { value: 'UNAUTHORIZED_SCANNER', label: 'Sai quyền', color: '#7C3AED' },
+    { value: 'NOT_FOUND', label: 'Không thấy', color: '#64748B' },
+    { value: 'PRODUCT_INACTIVE', label: 'Tạm ngưng', color: '#B45309' },
+  ]
+
+  const scanDashboard = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const log of scanLogs) counts.set(log.result, (counts.get(log.result) || 0) + 1)
+    const buckets = resultOptions.map(opt => ({ ...opt, count: counts.get(opt.value) || 0 }))
+    const total = scanLogs.length
+    const success = counts.get('SUCCESS') || 0
+    const denied = total - success
+    const today = scanLogs.filter(log => dayjs(log.created_at).isSame(dayjs(), 'day')).length
+    const uniqueScanners = new Set(scanLogs.map(log => log.scanner_wallet).filter(Boolean)).size
+    const successRate = total ? Math.round((success / total) * 100) : 0
+    const maxBucket = Math.max(1, ...buckets.map(b => b.count))
+    const daily = Array.from({ length: 7 }, (_, idx) => {
+      const day = dayjs().subtract(6 - idx, 'day')
+      const count = scanLogs.filter(log => dayjs(log.created_at).isSame(day, 'day')).length
+      return { label: day.format('DD/MM'), count }
+    })
+    const maxDaily = Math.max(1, ...daily.map(d => d.count))
+    return { total, success, denied, today, uniqueScanners, successRate, buckets, maxBucket, daily, maxDaily }
+  }, [scanLogs])
+
   const columns = [
     {
       title: 'Thời gian', dataIndex: 'created_at', key: 'created_at', width: 140,
@@ -1725,44 +2673,117 @@ function EventAdminTab({ user }: { user: AuthUser }) {
   ]
 
   return (
-    <Space direction="vertical" style={{ width: '100%' }} size={14}>
-      <div className="ev-glass" style={{ padding: 14 }}>
-        <Space style={{ justifyContent: 'space-between', width: '100%', flexWrap: 'wrap' }}>
-          <Space direction="vertical" size={0}>
-            <Text strong style={{ fontSize: 16 }}>Quản trị Sự kiện</Text>
-            <Text type="secondary">Tạo vé, quét vé tại cổng và theo dõi lịch sử quét theo thời gian thực.</Text>
+    <Space direction="vertical" style={{ width: '100%' }} size={16}>
+      <div className="ev-glass ev-admin-hero">
+        <Space style={{ justifyContent: 'space-between', width: '100%', flexWrap: 'wrap', gap: 14 }}>
+          <Space direction="vertical" size={2}>
+            <Text strong style={{ fontSize: 17 }}>Dashboard quản trị sự kiện</Text>
+            <Text type="secondary" style={{ fontSize: 13 }}>
+              Theo dõi check-in, tỷ lệ vé hợp lệ và lịch sử quét theo thời gian thực.
+            </Text>
           </Space>
-          <Space>
+          <Space wrap>
             <Button icon={<QrcodeOutlined />} type="primary" onClick={() => setScanOpen(true)}>Quét vé</Button>
             <Button icon={<PlusOutlined />} onClick={() => setShowCreate(true)}>Tạo vé mới</Button>
+            <Button icon={<ReloadOutlined />} onClick={loadLogs} loading={logsLoading}>Làm mới</Button>
           </Space>
         </Space>
       </div>
 
-      <div className="ev-glass" style={{ padding: 14 }}>
-        <Space style={{ justifyContent: 'space-between', width: '100%', marginBottom: 12 }}>
-          <Text strong>Lịch sử quét</Text>
-          <Space>
+      <Row gutter={[12, 12]}>
+        {[
+          { label: 'Tổng lượt quét', value: scanDashboard.total, hint: '50 log gần nhất', color: '#2563EB' },
+          { label: 'Check-in hợp lệ', value: scanDashboard.success, hint: `${scanDashboard.successRate}% thành công`, color: '#10B981' },
+          { label: 'Cần xử lý', value: scanDashboard.denied, hint: 'Đã dùng / sai mã / hết hạn', color: '#D97706' },
+          { label: 'Hôm nay', value: scanDashboard.today, hint: `${scanDashboard.uniqueScanners} ví scanner`, color: '#0EA5E9' },
+        ].map(item => (
+          <Col xs={12} lg={6} key={item.label}>
+            <div className="ev-admin-kpi">
+              <Text className="label">{item.label}</Text>
+              <Text className="value" style={{ color: item.color }}>{item.value}</Text>
+              <Text className="hint">{item.hint}</Text>
+            </div>
+          </Col>
+        ))}
+      </Row>
+
+      <Row gutter={[14, 14]}>
+        <Col xs={24} lg={14}>
+          <div className="ev-chart-card">
+            <div className="ev-chart-title">Phân bổ kết quả quét</div>
+            {scanDashboard.buckets.map(bucket => (
+              <div className="ev-bar-row" key={bucket.value}>
+                <div className="ev-bar-label ev-line-clamp-1">{bucket.label}</div>
+                <div className="ev-bar-track">
+                  <div
+                    className="ev-bar-fill"
+                    style={{ width: `${Math.max(4, Math.round((bucket.count / scanDashboard.maxBucket) * 100))}%`, '--bar-color': bucket.color } as React.CSSProperties}
+                  />
+                </div>
+                <div className="ev-bar-count">{bucket.count}</div>
+              </div>
+            ))}
+          </div>
+        </Col>
+        <Col xs={24} lg={10}>
+          <div className="ev-chart-card">
+            <div className="ev-chart-title">Tỷ lệ vận hành</div>
+            <div className="ev-admin-donut-grid">
+              {[
+                { label: 'Thành công', pct: scanDashboard.successRate, color: '#10B981' },
+                { label: 'Cần kiểm tra', pct: scanDashboard.total ? Math.round((scanDashboard.denied / scanDashboard.total) * 100) : 0, color: '#D97706' },
+                { label: 'Hôm nay', pct: scanDashboard.total ? Math.round((scanDashboard.today / scanDashboard.total) * 100) : 0, color: '#0EA5E9' },
+                { label: 'Scanner', pct: Math.min(100, scanDashboard.uniqueScanners * 20), color: '#7C3AED' },
+              ].map(item => (
+                <div className="ev-donut-card" key={item.label}>
+                  <div className="ev-donut" style={{ '--pct': item.pct, '--donut-color': item.color } as React.CSSProperties}>
+                    <strong>{item.pct}%</strong>
+                  </div>
+                  <Text className="ev-chart-label">{item.label}</Text>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Col>
+        <Col xs={24}>
+          <div className="ev-chart-card">
+            <Space style={{ justifyContent: 'space-between', width: '100%', marginBottom: 4 }}>
+              <div className="ev-chart-title" style={{ marginBottom: 0 }}>Lượt quét 7 ngày gần đây</div>
+              <Text type="secondary" style={{ fontSize: 12 }}>Dựa trên log hiện đang tải</Text>
+            </Space>
+            <div className="ev-daily-chart">
+              {scanDashboard.daily.map(day => (
+                <div className="ev-daily-item" key={day.label}>
+                  <Text strong style={{ fontSize: 12 }}>{day.count}</Text>
+                  <div className="ev-daily-bar" style={{ height: `${Math.max(6, Math.round((day.count / scanDashboard.maxDaily) * 120))}px` }} />
+                  <span className="ev-daily-label">{day.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Col>
+      </Row>
+
+      <div className="ev-glass ev-table-card">
+        <Space style={{ justifyContent: 'space-between', width: '100%', marginBottom: 12, flexWrap: 'wrap' }}>
+          <Space direction="vertical" size={0}>
+            <Text strong>Lịch sử quét</Text>
+            <Text type="secondary" style={{ fontSize: 12 }}>Lọc nhanh các trạng thái lỗi để xử lý tại cổng.</Text>
+          </Space>
+          <Space wrap>
             <Select
               allowClear
-              style={{ width: 180 }}
+              style={{ width: 190 }}
               placeholder="Lọc kết quả"
               value={logsResult || undefined}
               onChange={value => setLogsResult(value ?? '')}
-              options={[
-                { value: 'SUCCESS', label: 'SUCCESS' },
-                { value: 'ALREADY_USED', label: 'ALREADY_USED' },
-                { value: 'EXPIRED', label: 'EXPIRED' },
-                { value: 'INVALID_CODE', label: 'INVALID_CODE' },
-                { value: 'UNAUTHORIZED_SCANNER', label: 'UNAUTHORIZED_SCANNER' },
-                { value: 'NOT_FOUND', label: 'NOT_FOUND' },
-                { value: 'PRODUCT_INACTIVE', label: 'PRODUCT_INACTIVE' },
-              ]}
+              options={resultOptions.map(({ value, label }) => ({ value, label: `${label} (${value})` }))}
             />
             <Button icon={<ReloadOutlined />} onClick={loadLogs} loading={logsLoading}>Làm mới</Button>
           </Space>
         </Space>
         <Table
+          className="ev-glass-table"
           rowKey="id"
           dataSource={scanLogs}
           columns={columns}
@@ -1775,6 +2796,7 @@ function EventAdminTab({ user }: { user: AuthUser }) {
       </div>
 
       <Modal
+        className="ev-liquid-modal"
         open={scanOpen}
         onCancel={() => setScanOpen(false)}
         footer={null}
@@ -1787,6 +2809,7 @@ function EventAdminTab({ user }: { user: AuthUser }) {
       </Modal>
 
       <Modal
+        className="ev-liquid-modal"
         open={scanResultOpen}
         onCancel={() => setScanResultOpen(false)}
         title="Kết quả quét"
@@ -1802,6 +2825,7 @@ function EventAdminTab({ user }: { user: AuthUser }) {
         onClose={() => setShowCreate(false)}
         onSuccess={() => {
           antMessage.success('Đã tạo vé thành công')
+          void loadLogs()
         }}
       />
     </Space>
@@ -1833,39 +2857,52 @@ export default function EventsPage({ user }: EventsPageProps) {
     ...(admin && user
       ? [{
           key: 'admin',
-          label: <Space><span style={{ fontSize: 16 }}>🛡️</span>Quản trị</Space>,
+          label: <Space><SafetyCertificateOutlined />Quản trị</Space>,
           children: <EventAdminTab user={user} />,
         }]
       : []),
   ]
 
   return (
-    <div style={{ padding: '24px', maxWidth: 1080, margin: '0 auto' }} className="event-page">
+    <div className="event-page" style={{ maxWidth: 1280, margin: '0 auto' }}>
       <style>{EVENTS_STYLES}</style>
 
       <div className="ev-hero">
-        <Space style={{ justifyContent: 'space-between', width: '100%', flexWrap: 'wrap', position: 'relative', zIndex: 1 }}>
-          <Space direction="vertical" size={2}>
-            <Title level={3} style={{ color: '#fff', margin: 0, fontFamily: 'Georgia,serif' }}>Sự kiện & Ticketing</Title>
-            <Text style={{ color: '#A5B4FC', fontSize: 13 }}>
-              Bố cục mới, luồng mua vé theo dõi batch settle và trạng thái đồng bộ on-chain/off-chain/DB.
+        <Space style={{ justifyContent: 'space-between', width: '100%', flexWrap: 'wrap', gap: 18, position: 'relative', zIndex: 1 }}>
+          <Space direction="vertical" size={8} style={{ flex: '1 1 360px', minWidth: 240 }}>
+            <div className="vndc-hero-kicker">Dịch vụ campus</div>
+            <Title level={2} className="vndc-hero-title">
+              Sự kiện & Ticketing
+            </Title>
+            <Text className="vndc-hero-desc" style={{ fontSize: 13 }}>
+              Mua vé, quản lý QR ticket và check-in tại cổng với luồng đồng bộ on-chain / off-chain / DB.
             </Text>
-          </Space>
-          <Space direction="vertical" align="end" size={2}>
-            <Space>
+            <Space wrap>
               <Tag color="blue">On-chain transfer</Tag>
               <Tag color="cyan">Off-chain order</Tag>
               <Tag color="green">DB finalize</Tag>
             </Space>
-            <Text style={{ color: '#93C5FD', fontSize: 12 }}>
-              <ClockCircleOutlined style={{ marginRight: 4 }} />Tự động cập nhật khi có pending
-            </Text>
+          </Space>
+
+          <Space wrap style={{ justifyContent: 'flex-end' }}>
+            <div className="ev-hero-metric">
+              <span className="value">EIP-712</span>
+              <span className="label">Ký giao dịch</span>
+            </div>
+            <div className="ev-hero-metric">
+              <span className="value">QR</span>
+              <span className="label">Check-in nhanh</span>
+            </div>
+            <div className="ev-hero-metric">
+              <span className="value">Live</span>
+              <span className="label">Theo dõi pending</span>
+            </div>
           </Space>
         </Space>
       </div>
 
-      <div className="ev-glass" style={{ padding: 12 }}>
-        <Tabs items={tabItems} defaultActiveKey="browse" />
+      <div className="ev-tabs-shell">
+        <Tabs className="ev-tabs" items={tabItems} defaultActiveKey="browse" />
       </div>
     </div>
   )

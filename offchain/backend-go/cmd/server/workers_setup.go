@@ -57,6 +57,9 @@ func startBackgroundWorkers(d workerDeps) {
 		MaxRetries:   d.cfg.Worker.RetryMax,
 		RetryDelay:   d.cfg.Worker.RetryDelay,
 	}
+	if d.cfg.Worker.MaxTransactionsPerSession > 0 {
+		batchWorkerCfg.BatchSize = d.cfg.Worker.MaxTransactionsPerSession
+	}
 	if batchWorkerCfg.BatchSize == 0 {
 		batchWorkerCfg.BatchSize = 10
 	}
@@ -94,7 +97,7 @@ func startBackgroundWorkers(d workerDeps) {
 		if ttCfg.ChangeStreamRetryDelay == 0 {
 			ttCfg.ChangeStreamRetryDelay = 5 * time.Second
 		}
-		txCollection := d.mongoClient.Collection("transactions")
+		txCollection := d.mongoClient.Collection("tx_pending")
 		ttWorker := workers.NewTokenTransferWorker(txCollection, d.txRepo, ttCfg, d.log)
 		batchWorker.SetTriggerChan(ttWorker.TriggerChan())
 

@@ -1,6 +1,6 @@
 ﻿import { useEffect, useState, useCallback, useRef } from 'react'
 import {
-  Card, Typography, Space, Tag, List, Spin, Empty, Row, Col,
+  Avatar, Card, Typography, Space, Tag, List, Spin, Empty, Row, Col,
   Button, Modal, Form, Input, Select, InputNumber,
   message, Badge, Divider, Alert, Progress, DatePicker,
   Radio, Pagination, Tooltip,
@@ -150,6 +150,24 @@ function formatTime(secs: number): string {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`
 }
 
+function isExpiredActivity(activity: Activity): boolean {
+  if (!activity.expires_at) return false
+  const expiry = new Date(activity.expires_at).getTime()
+  return Number.isFinite(expiry) && expiry <= Date.now()
+}
+
+function isVisibleActivity(activity: Activity): boolean {
+  return activity.status === 'ACTIVE' && !isExpiredActivity(activity)
+}
+
+function getActivityDeadlineLabel(activity: Activity): string | null {
+  if (!activity.expires_at) return null
+  const expiry = new Date(activity.expires_at)
+  if (!Number.isFinite(expiry.getTime())) return null
+  const prefix = activity.cluster === 'ACTIVITY' ? 'Đăng ký đến' : 'Hạn hoàn thành'
+  return `${prefix}: ${expiry.toLocaleDateString('vi-VN')}`
+}
+
 function typeIcon(t: string) {
   const map: Record<string, React.ReactNode> = {
     READING:  <BookOutlined />,
@@ -170,11 +188,74 @@ function getYouTubeEmbedUrl(url: string): string | null {
   } catch { return null }
 }
 
+function getRankName(entry: RankEntry): string {
+  return entry.student_name?.trim() || shortAddr(entry.student_wallet)
+}
+
+function getRankInitials(entry: RankEntry): string {
+  const name = entry.student_name?.trim()
+  if (!name) return entry.student_wallet.slice(2, 4).toUpperCase()
+  const parts = name.split(/\s+/).filter(Boolean)
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
+  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase()
+}
+
+function getRankTone(rank: number) {
+  if (rank === 1) return { label: 'Hạng 1', accent: '#D97706', soft: 'rgba(245, 158, 11, 0.2)', pedestal: 'act-podium-first' }
+  if (rank === 2) return { label: 'Hạng 2', accent: '#64748B', soft: 'rgba(148, 163, 184, 0.22)', pedestal: 'act-podium-second' }
+  return { label: 'Hạng 3', accent: '#B45309', soft: 'rgba(180, 83, 9, 0.2)', pedestal: 'act-podium-third' }
+}
+
+function RankAvatar({ entry, size = 48 }: { entry: RankEntry; size?: number }) {
+  return (
+    <Avatar
+      className="act-rank-avatar"
+      src={entry.avatar_uri}
+      size={size}
+    >
+      {!entry.avatar_uri ? getRankInitials(entry) : null}
+    </Avatar>
+  )
+}
+
+function PodiumStep({ entry }: { entry: RankEntry }) {
+  const tone = getRankTone(entry.rank)
+  return (
+    <div className={`act-podium-step ${tone.pedestal}`} style={{ '--rank-accent': tone.accent, '--rank-soft': tone.soft } as React.CSSProperties}>
+      <div className="act-podium-avatar-wrap">
+        <RankAvatar entry={entry} size={entry.rank === 1 ? 78 : 64} />
+      </div>
+      <div className="act-podium-tier">
+        <div className="act-podium-rank-line">
+          <span className="act-podium-rank-number">#{entry.rank}</span>
+          <span className="act-podium-badge" style={{ color: tone.accent, background: tone.soft }}>{tone.label}</span>
+        </div>
+        <Text className="act-podium-name" strong>{getRankName(entry)}</Text>
+        <Text className="act-podium-meta">{entry.class || shortAddr(entry.student_wallet)}</Text>
+        <div className="act-podium-points" style={{ color: tone.accent }}>
+          <TrophyOutlined /> {entry.activity_points} pts
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function PodiumStage({ entries }: { entries: RankEntry[] }) {
+  if (entries.length === 0) return null
+  return (
+    <div className="act-podium-stage" aria-label="Bục vinh danh top 3">
+      {entries.map((entry) => (
+        <PodiumStep key={entry.student_wallet} entry={entry} />
+      ))}
+    </div>
+  )
+}
+
 // ─── Stat card ────────────────────────────────────────────────────
 
 function StatCard({ label, value, color, icon }: { label: string; value: number; color: string; icon?: React.ReactNode }) {
   return (
-    <Card className="act-stat" styles={{ body: { padding: '12px 16px' } }} style={{ borderRadius: 16, border: `1px solid ${color}20`, background: '#fff', boxShadow: `0 2px 10px ${color}12` }}>
+    <Card className="act-stat act-glass-card" styles={{ body: { padding: '12px 16px' } }} style={{ borderRadius: 16, border: `1px solid ${color}20`, background: '#fff', boxShadow: `0 2px 10px ${color}12` }}>
       <Space align="center" size={10}>
         {icon && (
           <div style={{ width: 34, height: 34, borderRadius: 10, background: `${color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', color, fontSize: 16, flexShrink: 0 }}>
@@ -196,43 +277,44 @@ function LearningCard({ activity, onDetail }: { activity: Activity; onDetail: (a
   const isActive = activity.status === 'ACTIVE'
   const clr = TYPE_HINTS[activity.activity_type]?.color ?? COLORS.primary
   const timeLabel = activity.min_time_seconds ? `${Math.round(activity.min_time_seconds / 60)} phút` : null
-  const typeEmoji: Record<string, string> = { READING: '📖', VIDEO: '🎬', QUIZ: '📝' }
+  const deadlineLabel = getActivityDeadlineLabel(activity)
   return (
     <Card
-      className="act-card"
+      className="act-card act-task-card act-learning-card"
       onClick={() => onDetail(activity)}
       style={{ borderRadius: 18, marginBottom: 10, border: `1.5px solid ${clr}25`, background: 'linear-gradient(135deg, #FAFAFA 0%, #F0F3FF 100%)', overflow: 'hidden', boxShadow: `0 2px 12px ${clr}10`, cursor: 'pointer' }}
       styles={{ body: { padding: 0 } }}
     >
-      <div style={{ height: 3, background: `linear-gradient(90deg, ${clr} 0%, #0EA5E9 100%)` }} />
-      <div style={{ padding: '14px 18px 12px' }}>
+      <div className="act-card-strip" style={{ height: 3, background: `linear-gradient(90deg, ${clr} 0%, #0EA5E9 100%)` }} />
+      <div className="act-task-content" style={{ padding: '14px 18px 12px' }}>
         <Row gutter={12} align="middle" wrap={false}>
           <Col>
-            <div style={{ width: 48, height: 48, borderRadius: 14, background: `linear-gradient(135deg, ${clr} 0%, #0EA5E9 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>
-              <span>{typeEmoji[activity.activity_type] ?? '📚'}</span>
+            <div className="act-task-icon" style={{ width: 48, height: 48, borderRadius: 14, background: `linear-gradient(135deg, ${clr} 0%, #0EA5E9 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>
+              <span style={{ color: '#fff' }}>{typeIcon(activity.activity_type)}</span>
             </div>
           </Col>
           <Col flex={1} style={{ minWidth: 0 }}>
             <Space direction="vertical" size={3} style={{ width: '100%' }}>
               <Space style={{ justifyContent: 'space-between', width: '100%', flexWrap: 'wrap' }}>
-                <Text strong style={{ fontSize: 14, color: '#111827' }}>{activity.title}</Text>
+                <Text className="act-task-title" strong style={{ fontSize: 14, color: '#111827' }}>{activity.title}</Text>
                 {!isActive && <Tag color="default" style={{ borderRadius: 8, fontSize: 10, margin: 0 }}>Đã đóng</Tag>}
               </Space>
-              <Text style={{ fontSize: 12, color: COLORS.muted, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{activity.description}</Text>
-              <Space size={6} wrap style={{ marginTop: 2 }}>
-                <span style={{ padding: '2px 8px', borderRadius: 8, background: `${clr}15`, color: clr, fontSize: 10, fontWeight: 600 }}>
+              <Text className="act-task-desc" style={{ fontSize: 12, color: COLORS.muted, display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{activity.description}</Text>
+              <Space className="act-task-meta" size={6} wrap style={{ marginTop: 2 }}>
+                <span className="act-task-chip" style={{ padding: '2px 8px', borderRadius: 8, background: `${clr}15`, color: clr, fontSize: 10, fontWeight: 600 }}>
                   {typeIcon(activity.activity_type)} {activity.activity_type}
                 </span>
-                {timeLabel && <span style={{ fontSize: 10, color: COLORS.muted }}><FieldTimeOutlined /> {timeLabel}</span>}
+                {timeLabel && <span className="act-time-chip" style={{ fontSize: 10, color: COLORS.muted }}><FieldTimeOutlined /> {timeLabel}</span>}
                 {activity.quiz_questions && activity.quiz_questions.length > 0 && (
-                  <span style={{ fontSize: 10, color: COLORS.accent }}><QuestionCircleOutlined /> {activity.quiz_questions.length} câu</span>
+                  <span className="act-quiz-chip" style={{ fontSize: 10, color: COLORS.accent }}><QuestionCircleOutlined /> {activity.quiz_questions.length} câu</span>
                 )}
-                <span style={{ fontSize: 10, color: COLORS.success, fontWeight: 700 }}><TrophyOutlined /> +{activity.points_per_rating.good} điểm</span>
+                {deadlineLabel && <span className="act-deadline-chip"><ClockCircleOutlined /> {deadlineLabel}</span>}
+                <span className="act-reward-chip" style={{ fontSize: 10, color: COLORS.success, fontWeight: 700 }}><TrophyOutlined /> +{activity.points_per_rating.good} điểm</span>
               </Space>
             </Space>
           </Col>
           <Col>
-            <div style={{ color: '#C4C4C4', fontSize: 18, lineHeight: 1 }}>›</div>
+            <div className="act-card-arrow" style={{ color: '#C4C4C4', fontSize: 18, lineHeight: 1 }}>›</div>
           </Col>
         </Row>
       </div>
@@ -251,15 +333,14 @@ function TaskDetailModal({ activity, onClose, onStart }: { activity: Activity | 
     : null
   const embedUrl = activity.content_url ? getYouTubeEmbedUrl(activity.content_url) : null
   const isActive = activity.status === 'ACTIVE'
-  const typeEmoji: Record<string, string> = { READING: '📖', VIDEO: '🎬', QUIZ: '📝' }
   return (
-    <Modal open={!!activity} onCancel={onClose} footer={null} width={600} destroyOnClose
+    <Modal className="act-liquid-modal act-task-detail-modal" open={!!activity} onCancel={onClose} footer={null} width={600} destroyOnClose
       styles={{ body: { padding: 0, overflow: 'hidden', borderRadius: 16 } }}>
       {/* Gradient header */}
-      <div style={{ padding: '24px 28px 20px', background: `linear-gradient(135deg, ${tHint?.color ?? COLORS.primary} 0%, #0EA5E9 100%)` }}>
+      <div className="act-modal-hero" style={{ padding: '24px 28px 20px', background: `linear-gradient(135deg, ${tHint?.color ?? COLORS.primary} 0%, #0EA5E9 100%)` }}>
         <Space size={14} align="start">
           <div style={{ width: 52, height: 52, borderRadius: 14, background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, flexShrink: 0 }}>
-            {typeEmoji[activity.activity_type] ?? '📚'}
+            {typeIcon(activity.activity_type)}
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 17, fontWeight: 800, color: '#fff', lineHeight: 1.35, marginBottom: 6 }}>{activity.title}</div>
@@ -270,10 +351,10 @@ function TaskDetailModal({ activity, onClose, onStart }: { activity: Activity | 
         </Space>
       </div>
       {/* Body */}
-      <div style={{ padding: '20px 28px 24px', maxHeight: '65vh', overflowY: 'auto' }}>
+      <div className="act-modal-body-scroll" style={{ padding: '20px 28px 24px', maxHeight: '65vh', overflowY: 'auto' }}>
         <Space direction="vertical" size={18} style={{ width: '100%' }}>
           {/* Description */}
-          <div style={{ fontSize: 14, color: '#374151', lineHeight: 1.7 }}>{activity.description}</div>
+          <div className="act-modal-description" style={{ fontSize: 14, color: '#374151', lineHeight: 1.7 }}>{activity.description}</div>
 
           {/* Video embed */}
           {activity.activity_type === 'VIDEO' && embedUrl && (
@@ -294,7 +375,7 @@ function TaskDetailModal({ activity, onClose, onStart }: { activity: Activity | 
             <Row gutter={[10, 10]}>
               {timeLabel && (
                 <Col span={12}>
-                  <div style={{ borderRadius: 10, padding: '12px 14px', background: '#EEF2FF', border: '1px solid #C7D2FE' }}>
+                  <div className="act-modal-info-card" style={{ borderRadius: 10, padding: '12px 14px', background: '#EEF2FF', border: '1px solid #C7D2FE' }}>
                     <div style={{ fontSize: 10, color: '#6B7280', marginBottom: 3, fontWeight: 500 }}>Thời gian tối thiểu</div>
                     <div style={{ fontWeight: 700, color: COLORS.primary, fontSize: 14 }}><ClockCircleOutlined style={{ marginRight: 6 }} />{timeLabel}</div>
                   </div>
@@ -302,7 +383,7 @@ function TaskDetailModal({ activity, onClose, onStart }: { activity: Activity | 
               )}
               {activity.quiz_questions && activity.quiz_questions.length > 0 && (
                 <Col span={12}>
-                  <div style={{ borderRadius: 10, padding: '12px 14px', background: '#EFF6FF', border: '1px solid #BFDBFE' }}>
+                  <div className="act-modal-info-card" style={{ borderRadius: 10, padding: '12px 14px', background: '#EFF6FF', border: '1px solid #BFDBFE' }}>
                     <div style={{ fontSize: 10, color: '#6B7280', marginBottom: 3, fontWeight: 500 }}>Bài kiểm tra</div>
                     <div style={{ fontWeight: 700, color: COLORS.accent, fontSize: 14 }}><QuestionCircleOutlined style={{ marginRight: 6 }} />{activity.quiz_questions.length} câu hỏi</div>
                   </div>
@@ -312,8 +393,8 @@ function TaskDetailModal({ activity, onClose, onStart }: { activity: Activity | 
           )}
 
           {/* Points breakdown */}
-          <div style={{ borderRadius: 12, padding: '16px', background: '#F5F3FF', border: '1px solid #DDD6FE' }}>
-            <div style={{ fontSize: 12, color: '#6B7280', fontWeight: 700, marginBottom: 12 }}>🏆 Điểm thưởng Token VNDC</div>
+          <div className="act-reward-panel" style={{ borderRadius: 12, padding: '16px', background: '#F5F3FF', border: '1px solid #DDD6FE' }}>
+            <div style={{ fontSize: 12, color: '#6B7280', fontWeight: 700, marginBottom: 12 }}><TrophyOutlined style={{ marginRight: 6 }} />Điểm thưởng Token VNDC</div>
             <Row gutter={8}>
               {([
                 { label: '★★★ Tốt',    pts: activity.points_per_rating.good,    color: COLORS.success, bg: '#ECFDF5' },
@@ -321,7 +402,7 @@ function TaskDetailModal({ activity, onClose, onStart }: { activity: Activity | 
                 { label: '★ Trung bình', pts: activity.points_per_rating.poor,  color: COLORS.warning, bg: '#FFFBEB' },
               ] as const).map((p) => (
                 <Col span={8} key={p.label} style={{ textAlign: 'center' }}>
-                  <div style={{ borderRadius: 8, padding: '10px 4px', background: p.bg, border: `1px solid ${p.color}33` }}>
+                  <div className="act-reward-mini-card" style={{ borderRadius: 8, padding: '10px 4px', background: p.bg, border: `1px solid ${p.color}33` }}>
                     <div style={{ fontSize: 20, fontWeight: 800, color: p.color }}>{p.pts}</div>
                     <div style={{ fontSize: 10, color: '#6B7280', marginTop: 2 }}>{p.label}</div>
                   </div>
@@ -329,7 +410,7 @@ function TaskDetailModal({ activity, onClose, onStart }: { activity: Activity | 
               ))}
             </Row>
             <div style={{ marginTop: 10, fontSize: 11, color: '#6B7280', textAlign: 'center' }}>
-              💳 Token chuyển tự động vào ví sau khi hoàn thành
+              Token chuyển tự động vào ví sau khi hoàn thành
             </div>
           </div>
 
@@ -338,7 +419,7 @@ function TaskDetailModal({ activity, onClose, onStart }: { activity: Activity | 
             <Button type="primary" size="large" block icon={<PlayCircleOutlined />}
               onClick={() => { onClose(); onStart(activity) }}
               style={{ height: 50, borderRadius: 14, fontWeight: 700, fontSize: 15, background: `linear-gradient(135deg, ${tHint?.color ?? COLORS.primary} 0%, #0EA5E9 100%)`, border: 'none' }}>
-              Bắt đầu học ngay →
+              Bắt đầu học ngay
             </Button>
           ) : (
             <Alert type="warning" showIcon message="Hoạt động này đã đóng, không thể tham gia." style={{ borderRadius: 10 }} />
@@ -362,44 +443,43 @@ function EventCard({
   const es = myEnrollment ? ENROLLMENT_STATUS_CONFIG[myEnrollment.status as keyof typeof ENROLLMENT_STATUS_CONFIG] : null
   const enrolled = !!myEnrollment
   const eventEnd = activity.event_ends_at ? new Date(activity.event_ends_at) : null
+  const deadlineLabel = getActivityDeadlineLabel(activity)
   return (
     <Card
-      className="act-card"
+      className="act-card act-task-card act-event-card"
       onClick={() => onClick(activity)}
       style={{ borderRadius: 18, marginBottom: 10, border: `1.5px solid ${COLORS.success}25`, background: 'linear-gradient(135deg, #FAFFFC 0%, #F0FDF4 100%)', overflow: 'hidden', boxShadow: `0 2px 12px ${COLORS.success}10`, cursor: 'pointer' }}
       styles={{ body: { padding: 0 } }}
     >
-      <div style={{ height: 3, background: `linear-gradient(90deg, ${COLORS.success} 0%, #0EA5E9 100%)` }} />
-      <div style={{ padding: '14px 18px 12px' }}>
+      <div className="act-card-strip" style={{ height: 3, background: `linear-gradient(90deg, ${COLORS.success} 0%, #0EA5E9 100%)` }} />
+      <div className="act-task-content" style={{ padding: '14px 18px 12px' }}>
         <Row gutter={12} align="middle" wrap={false}>
           <Col>
-            <div style={{ width: 48, height: 48, borderRadius: 14, background: `linear-gradient(135deg, ${COLORS.success} 0%, #0EA5E9 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>
-              <span>📅</span>
+            <div className="act-task-icon" style={{ width: 48, height: 48, borderRadius: 14, background: `linear-gradient(135deg, ${COLORS.success} 0%, #0EA5E9 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>
+              <CalendarOutlined style={{ color: '#fff' }} />
             </div>
           </Col>
           <Col flex={1} style={{ minWidth: 0 }}>
             <Space direction="vertical" size={3} style={{ width: '100%' }}>
               <Space style={{ justifyContent: 'space-between', width: '100%', flexWrap: 'wrap' }}>
-                <Text strong style={{ fontSize: 14, color: '#111827' }}>{activity.title}</Text>
+                <Text className="act-task-title" strong style={{ fontSize: 14, color: '#111827' }}>{activity.title}</Text>
                 {!isActive && <Tag color="default" style={{ borderRadius: 8, fontSize: 10, margin: 0 }}>Đã đóng</Tag>}
               </Space>
-              <Text style={{ fontSize: 12, color: COLORS.muted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>{activity.description}</Text>
-              <Space size={8} wrap style={{ marginTop: 2 }}>
-                {activity.expires_at && (
-                  <span style={{ fontSize: 10, color: COLORS.warning }}><CalendarOutlined /> Đăng ký đến: {new Date(activity.expires_at).toLocaleDateString('vi-VN')}</span>
-                )}
+              <Text className="act-task-desc" style={{ fontSize: 12, color: COLORS.muted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'block' }}>{activity.description}</Text>
+              <Space className="act-task-meta" size={8} wrap style={{ marginTop: 2 }}>
+                {deadlineLabel && <span className="act-deadline-chip"><CalendarOutlined /> {deadlineLabel}</span>}
                 {eventEnd && (
-                  <span style={{ fontSize: 10, color: COLORS.accent }}><CalendarOutlined /> Kết thúc: {eventEnd.toLocaleDateString('vi-VN')}</span>
+                  <span className="act-time-chip" style={{ fontSize: 10, color: COLORS.accent }}><CalendarOutlined /> Kết thúc: {eventEnd.toLocaleDateString('vi-VN')}</span>
                 )}
-                <span style={{ fontSize: 10, color: COLORS.success, fontWeight: 700 }}><TrophyOutlined /> +{activity.points_per_rating.good} điểm</span>
+                <span className="act-reward-chip" style={{ fontSize: 10, color: COLORS.success, fontWeight: 700 }}><TrophyOutlined /> +{activity.points_per_rating.good} điểm</span>
                 {enrolled && es && (
-                  <span style={{ padding: '1px 7px', borderRadius: 7, background: es.bg, color: es.color, fontSize: 10, fontWeight: 700 }}>✓ {es.label}</span>
+                  <span className="act-enrolled-chip" style={{ padding: '1px 7px', borderRadius: 7, background: es.bg, color: es.color, fontSize: 10, fontWeight: 700 }}>✓ {es.label}</span>
                 )}
               </Space>
             </Space>
           </Col>
           <Col>
-            <div style={{ color: '#C4C4C4', fontSize: 18, lineHeight: 1 }}>›</div>
+            <div className="act-card-arrow" style={{ color: '#C4C4C4', fontSize: 18, lineHeight: 1 }}>›</div>
           </Col>
         </Row>
       </div>
@@ -477,6 +557,7 @@ function EventDetailModal({
 
   return (
     <Modal
+      className="act-liquid-modal act-event-detail-modal"
       open={!!activity}
       onCancel={onClose}
       title={
@@ -491,9 +572,9 @@ function EventDetailModal({
       width={560}
       destroyOnClose
     >
-      <Space direction="vertical" size={16} style={{ width: '100%', paddingTop: 8 }}>
+      <Space className="act-event-modal-stack" direction="vertical" size={16} style={{ width: '100%', paddingTop: 8 }}>
         {/* Description */}
-        <div style={{ borderRadius: 12, padding: '14px 16px', background: GRADIENT.cardEvent, border: `1px solid ${COLORS.success}33` }}>
+        <div className="act-modal-description" style={{ borderRadius: 12, padding: '14px 16px', background: GRADIENT.cardEvent, border: `1px solid ${COLORS.success}33` }}>
           <Text style={{ fontSize: 14, color: COLORS.text, lineHeight: 1.6 }}>{activity.description}</Text>
         </div>
 
@@ -501,7 +582,7 @@ function EventDetailModal({
         <Row gutter={[12, 12]}>
           {registrationDeadline && (
             <Col span={12}>
-              <div style={{ borderRadius: 10, padding: '12px 14px', background: isPast ? '#FEF2F2' : '#FFFBEB', border: `1px solid ${isPast ? '#FCA5A5' : '#FDE68A'}` }}>
+              <div className="act-modal-info-card" style={{ borderRadius: 10, padding: '12px 14px', background: isPast ? '#FEF2F2' : '#FFFBEB', border: `1px solid ${isPast ? '#FCA5A5' : '#FDE68A'}` }}>
                 <div style={{ fontSize: 11, color: COLORS.muted, marginBottom: 4 }}>Hạn đăng ký</div>
                 <div style={{ fontSize: 13, fontWeight: 600, color: isPast ? COLORS.danger : COLORS.warning }}>
                   <CalendarOutlined style={{ marginRight: 6 }} />
@@ -513,7 +594,7 @@ function EventDetailModal({
           )}
           {eventEndTime && (
             <Col span={12}>
-              <div style={{ borderRadius: 10, padding: '12px 14px', background: '#EEF2FF', border: '1px solid #C7D2FE' }}>
+              <div className="act-modal-info-card" style={{ borderRadius: 10, padding: '12px 14px', background: '#EEF2FF', border: '1px solid #C7D2FE' }}>
                 <div style={{ fontSize: 11, color: COLORS.muted, marginBottom: 4 }}>Kết thúc sự kiện</div>
                 <div style={{ fontSize: 13, fontWeight: 600, color: COLORS.primary }}>
                   <CalendarOutlined style={{ marginRight: 6 }} />
@@ -524,7 +605,7 @@ function EventDetailModal({
           )}
           {activity.max_slots && (
             <Col span={12}>
-              <div style={{ borderRadius: 10, padding: '12px 14px', background: '#EFF6FF', border: '1px solid #BFDBFE' }}>
+              <div className="act-modal-info-card" style={{ borderRadius: 10, padding: '12px 14px', background: '#EFF6FF', border: '1px solid #BFDBFE' }}>
                 <div style={{ fontSize: 11, color: COLORS.muted, marginBottom: 4 }}>Số lượng</div>
                 <div style={{ fontSize: 13, fontWeight: 600, color: isFull ? '#EF4444' : COLORS.accent }}>
                   <TeamOutlined style={{ marginRight: 6 }} />{enrollmentCount}/{activity.max_slots} người
@@ -534,7 +615,7 @@ function EventDetailModal({
           )}
           {activity.content_url && (
             <Col span={24}>
-              <div style={{ borderRadius: 10, padding: '12px 14px', background: '#F8FAFC', border: `1px solid ${COLORS.border}` }}>
+              <div className="act-modal-info-card" style={{ borderRadius: 10, padding: '12px 14px', background: '#F8FAFC', border: `1px solid ${COLORS.border}` }}>
                 <div style={{ fontSize: 11, color: COLORS.muted, marginBottom: 4 }}>Thông tin sự kiện</div>
                 <a href={activity.content_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13, color: COLORS.accent, wordBreak: 'break-all' }}>
                   <GlobalOutlined style={{ marginRight: 6 }} />{activity.content_url}
@@ -545,7 +626,7 @@ function EventDetailModal({
         </Row>
 
         {/* Points breakdown */}
-        <div style={{ borderRadius: 12, padding: '14px 16px', background: '#F5F3FF', border: '1px solid #DDD6FE' }}>
+        <div className="act-reward-panel" style={{ borderRadius: 12, padding: '14px 16px', background: '#F5F3FF', border: '1px solid #DDD6FE' }}>
           <div style={{ fontSize: 12, color: COLORS.muted, marginBottom: 10, fontWeight: 600 }}>Điểm thưởng sau đánh giá</div>
           <Row gutter={8}>
             {[
@@ -554,7 +635,7 @@ function EventDetailModal({
               { label: 'Trung bình ★', val: activity.points_per_rating.poor,    color: COLORS.warning },
             ].map((p) => (
               <Col span={8} key={p.label} style={{ textAlign: 'center' }}>
-                <div style={{ borderRadius: 8, padding: '8px 4px', background: '#fff' }}>
+                <div className="act-reward-mini-card" style={{ borderRadius: 8, padding: '8px 4px', background: '#fff' }}>
                   <div style={{ fontSize: 18, fontWeight: 800, color: p.color }}>{p.val}</div>
                   <div style={{ fontSize: 10, color: COLORS.muted, marginTop: 2 }}>{p.label}</div>
                 </div>
@@ -566,7 +647,7 @@ function EventDetailModal({
         {/* Enroll action */}
         <div style={{ textAlign: 'center', paddingBottom: 4 }}>
           {es ? (
-            <div style={{ padding: '14px', borderRadius: 12, background: es.bg, border: `1px solid ${es.color}33` }}>
+            <div className="act-enrolled-panel" style={{ padding: '14px', borderRadius: 12, background: es.bg, border: `1px solid ${es.color}33` }}>
               <div style={{ fontSize: 16, fontWeight: 700, color: es.color }}>
                 <CheckCircleOutlined style={{ marginRight: 8 }} />{es.label}
               </div>
@@ -673,6 +754,7 @@ function LearningModal({ activity, onClose, onDone }: LearningModalProps) {
 
   return (
     <Modal
+      className="act-liquid-modal act-learning-run-modal"
       open={!!activity}
       onCancel={handleClose}
       title={
@@ -688,16 +770,15 @@ function LearningModal({ activity, onClose, onDone }: LearningModalProps) {
     >
       {/* ── Result screen ── */}
       {result ? (
-        <div style={{ textAlign: 'center', padding: '24px 8px 32px' }}>
-          {/* Trophy emoji */}
-          <div className="act-token-pop" style={{ fontSize: 52, lineHeight: 1, marginBottom: 8 }}>
-            {result.rating === 'GOOD' ? '🏆' : result.rating === 'AVERAGE' ? '🎯' : '📚'}
+        <div className="act-result-screen" style={{ textAlign: 'center', padding: '24px 8px 32px' }}>
+          <div className="act-token-pop" style={{ fontSize: 46, lineHeight: 1, marginBottom: 8, color: ratingCfg?.color }}>
+            {result.rating === 'GOOD' ? <TrophyOutlined /> : result.rating === 'AVERAGE' ? <CheckCircleOutlined /> : <BookOutlined />}
           </div>
           <Title level={3} style={{ color: ratingCfg?.color, marginBottom: 16, marginTop: 4 }}>
             {ratingCfg?.icon} {ratingCfg?.label}
           </Title>
           {/* Animated token orb */}
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+          <div className="act-token-orb-wrap" style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
             <div style={{ position: 'relative', width: 110, height: 110 }}>
               <div className="act-token-ring" />
               <div className="act-token-glow" style={{ width: 110, height: 110, borderRadius: '50%', background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', boxShadow: '0 8px 32px rgba(16,185,129,0.4)', position: 'relative' }}>
@@ -709,13 +790,13 @@ function LearningModal({ activity, onClose, onDone }: LearningModalProps) {
           {result.quiz_score !== undefined && (
             <div style={{ fontSize: 13, color: COLORS.muted, marginBottom: 12 }}>
               Bài kiểm tra: <strong style={{ color: result.quiz_passed ? COLORS.success : COLORS.danger }}>{result.quiz_score}%</strong>
-              {' '}{result.quiz_passed ? '✅ Đạt' : '❌ Chưa đạt'}
+              {' '}{result.quiz_passed ? 'Đạt' : 'Chưa đạt'}
             </div>
           )}
           {/* Token notice */}
-          <div style={{ borderRadius: 14, padding: '12px 20px', background: 'linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%)', border: '1px solid #6EE7B7', margin: '0 auto 20px', maxWidth: 320, display: 'inline-block' }}>
+          <div className="act-token-notice" style={{ borderRadius: 14, padding: '12px 20px', background: 'linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%)', border: '1px solid #6EE7B7', margin: '0 auto 20px', maxWidth: 320, display: 'inline-block' }}>
             <div style={{ fontSize: 14, color: '#065F46', fontWeight: 700 }}>
-              💳 Token đã chuyển tự động vào ví!
+              Token đã chuyển tự động vào ví
             </div>
             <div style={{ fontSize: 12, color: '#047857', marginTop: 3 }}>{result.message}</div>
           </div>
@@ -723,16 +804,16 @@ function LearningModal({ activity, onClose, onDone }: LearningModalProps) {
           <Button type="primary" size="large"
             style={{ borderRadius: 12, background: GRADIENT.hero, border: 'none', fontWeight: 700, height: 46, minWidth: 160, fontSize: 15 }}
             onClick={() => { setResult(null); onDone(); handleClose() }}>
-            Tuyệt vời! 🎉
+            Hoàn tất
           </Button>
         </div>
       ) : (
-        <Space direction="vertical" size={20} style={{ width: '100%' }}>
+        <Space className="act-learning-stack" direction="vertical" size={20} style={{ width: '100%' }}>
           {/* ── VIDEO content ── */}
           {activity.activity_type === 'VIDEO' && (
             <>
               {embedUrl ? (
-                <div style={{ borderRadius: 12, overflow: 'hidden', background: '#000', aspectRatio: '16/9' }}>
+                <div className="act-video-frame" style={{ borderRadius: 12, overflow: 'hidden', background: '#000', aspectRatio: '16/9' }}>
                   <iframe src={embedUrl} width="100%" height="100%" style={{ border: 'none', display: 'block' }} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
                 </div>
               ) : activity.content_url ? (
@@ -752,7 +833,7 @@ function LearningModal({ activity, onClose, onDone }: LearningModalProps) {
 
           {/* ── Timer ── */}
           {activity.activity_type !== 'QUIZ' && minTime > 0 && (
-            <div style={{ borderRadius: 14, padding: '16px 20px', background: timeDone ? '#ECFDF5' : '#F8FAFC', border: `1px solid ${timeDone ? '#6EE7B7' : COLORS.border}` }}>
+            <div className="act-learning-timer" style={{ borderRadius: 14, padding: '16px 20px', background: timeDone ? '#ECFDF5' : '#F8FAFC', border: `1px solid ${timeDone ? '#6EE7B7' : COLORS.border}` }}>
               <Space style={{ justifyContent: 'space-between', width: '100%', marginBottom: 10 }}>
                 <Space>
                   <ClockCircleOutlined style={{ color: timeDone ? COLORS.success : COLORS.warning }} />
@@ -781,7 +862,7 @@ function LearningModal({ activity, onClose, onDone }: LearningModalProps) {
               </Divider>
               <Space direction="vertical" size={16} style={{ width: '100%' }}>
                 {activity.quiz_questions.map((q, idx) => (
-                  <Card key={q.id} style={{ borderRadius: 14, border: `1px solid ${COLORS.border}` }} bodyStyle={{ padding: '16px 18px' }}>
+                  <Card className="act-quiz-question-card" key={q.id} style={{ borderRadius: 14, border: `1px solid ${COLORS.border}` }} bodyStyle={{ padding: '16px 18px' }}>
                     <Text strong style={{ fontSize: 14, color: COLORS.text, display: 'block', marginBottom: 12 }}>
                       Câu {idx + 1}: {q.question}
                     </Text>
@@ -850,7 +931,7 @@ function RecordCard({ record, showEdit, onEdit }: { record: ActivityRecord; show
   const rCfg = RATING_CONFIG[record.rating]
   const sCfg = STATUS_CONFIG[record.status as keyof typeof STATUS_CONFIG] ?? STATUS_CONFIG.PENDING
   return (
-    <Card style={{ borderRadius: 14, marginBottom: 10, border: `1px solid ${rCfg.color}20`, background: '#FAFAFA', boxShadow: '0 1px 6px rgba(0,0,0,0.04)' }} styles={{ body: { padding: '12px 16px' } }}>
+    <Card className="act-record-card act-glass-card" style={{ borderRadius: 14, marginBottom: 10, border: `1px solid ${rCfg.color}20`, background: '#FAFAFA', boxShadow: '0 1px 6px rgba(0,0,0,0.04)' }} styles={{ body: { padding: '12px 16px' } }}>
       <Row gutter={12} align="middle">
         <Col>
           <div style={{ width: 40, height: 40, borderRadius: 12, background: `linear-gradient(135deg, ${rCfg.color} 0%, ${rCfg.color}BB 100%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, color: '#fff', boxShadow: `0 3px 10px ${rCfg.color}30` }}>
@@ -872,7 +953,7 @@ function RecordCard({ record, showEdit, onEdit }: { record: ActivityRecord; show
             <Space size={8} wrap>
               <Text style={{ fontSize: 13, color: COLORS.success, fontWeight: 800 }}>+{record.points} điểm</Text>
               {record.status === 'CONFIRMED' && (
-                <span style={{ fontSize: 10, color: '#065F46', background: '#ECFDF5', padding: '1px 6px', borderRadius: 6, fontWeight: 600 }}>💳 Token đã nhận</span>
+                <span style={{ fontSize: 10, color: '#065F46', background: '#ECFDF5', padding: '1px 6px', borderRadius: 6, fontWeight: 600 }}>Token đã nhận</span>
               )}
               {record.can_edit && <CountdownTimer seconds={record.time_remaining} />}
               {showEdit && record.can_edit && onEdit && (
@@ -999,7 +1080,7 @@ function TypeSpecificFields({ activityType }: { activityType: string | undefined
                         ))}
                       </Row>
                       <Form.Item name={[field.name, 'correct_index']} label="Đáp án đúng" rules={[{ required: true, message: 'Chọn đáp án đúng' }]} style={{ marginTop: 10, marginBottom: 0 }}>
-                        <Select placeholder="Chọn đáp án đúng" style={{ borderRadius: 8 }} options={[0, 1, 2, 3].map((i) => ({ value: i, label: <Space><span style={{ fontWeight: 700, color: COLORS.success }}>{CORRECT_LABEL[i]}</span><span>— Đáp án {CORRECT_LABEL[i]}</span></Space> }))} />
+                        <Select placeholder="Chọn đáp án đúng" style={{ borderRadius: 8 }} options={[0, 1, 2, 3].map((i) => ({ value: i, label: <Space><span style={{ fontWeight: 700, color: COLORS.success }}>{CORRECT_LABEL[i]}</span><span>- Đáp án {CORRECT_LABEL[i]}</span></Space> }))} />
                       </Form.Item>
                     </Card>
                   ))}
@@ -1111,13 +1192,18 @@ export function ActivitiesPage({ user }: ActivitiesPageProps) {
 
   // ── Derived data ──────────────────────────────────────────────
 
-  const learningActivities = activities.filter((a) => a.cluster === 'LEARNING')
-  const activityActivities = activities.filter((a) => a.cluster === 'ACTIVITY')
-  const activeActs = activities.filter((a) => a.status === 'ACTIVE')
+  const visibleActivities = activities.filter(isVisibleActivity)
+  const learningActivities = visibleActivities.filter((a) => a.cluster === 'LEARNING')
+  const activityActivities = visibleActivities.filter((a) => a.cluster === 'ACTIVITY')
+  const activeActs = visibleActivities
+  const visibleActivityIds = new Set(visibleActivities.map((a) => a.id))
+  const visibleMyEnrollments = myEnrollments.filter((e) => visibleActivityIds.has(e.activity_id))
   const confirmedPts = myRecords.filter((r) => r.status === 'CONFIRMED').reduce((s, r) => s + r.points, 0)
   const pendingPts   = myRecords.filter((r) => r.status === 'PENDING').reduce((s, r) => s + r.points, 0)
   const editableRecs = myRecords.filter((r) => r.can_edit)
   const topThree = [...ranking].filter((e) => e.rank <= 3).sort((a, b) => a.rank - b.rank)
+  const podiumEntries = [topThree.find((e) => e.rank === 2), topThree.find((e) => e.rank === 1), topThree.find((e) => e.rank === 3)]
+    .filter((e): e is RankEntry => Boolean(e))
   const nextTopTen = [...ranking].filter((e) => e.rank > 3 && e.rank <= 13).sort((a, b) => a.rank - b.rank)
   const myWallet = (user?.wallet_address ?? '').toLowerCase()
   const myRankEntry = myWallet ? ranking.find((e) => e.student_wallet.toLowerCase() === myWallet) : undefined
@@ -1216,7 +1302,7 @@ export function ActivitiesPage({ user }: ActivitiesPageProps) {
     // Tab 1: LEARNING
     {
       key: 'learning',
-      label: <Space size={6}><ReadOutlined /><span>Học tập</span><Badge count={learningActivities.filter(a => a.status === 'ACTIVE').length} style={{ background: COLORS.primary }} /></Space>,
+      label: <Space size={6}><ReadOutlined /><span>Học tập</span><Badge count={learningActivities.length} style={{ background: COLORS.primary }} /></Space>,
       children: (
         <Spin spinning={loading}>
           {learningActivities.length === 0 && !loading ? (
@@ -1237,7 +1323,7 @@ export function ActivitiesPage({ user }: ActivitiesPageProps) {
     // Tab 2: ACTIVITY (Events)
     {
       key: 'events',
-      label: <Space size={6}><CalendarOutlined /><span>Hoạt động</span><Badge count={activityActivities.filter(a => a.status === 'ACTIVE').length} style={{ background: COLORS.success }} /></Space>,
+      label: <Space size={6}><CalendarOutlined /><span>Hoạt động</span><Badge count={activityActivities.length} style={{ background: COLORS.success }} /></Space>,
       children: (
         <Spin spinning={loading}>
           {activityActivities.length === 0 && !loading ? (
@@ -1266,12 +1352,12 @@ export function ActivitiesPage({ user }: ActivitiesPageProps) {
       children: (
         <Spin spinning={loading}>
           {/* Stats */}
-          {(myRecords.length > 0 || myEnrollments.length > 0) && (
-            <Card style={{ borderRadius: 20, marginBottom: 20, border: 'none', background: GRADIENT.cardMy, boxShadow: '0 4px 20px rgba(79,70,229,.08)' }} styles={{ body: { padding: '20px 24px' } }}>
+          {(myRecords.length > 0 || visibleMyEnrollments.length > 0) && (
+            <Card className="act-progress-summary act-glass-card" style={{ borderRadius: 20, marginBottom: 20, border: 'none', background: GRADIENT.cardMy, boxShadow: '0 4px 20px rgba(79,70,229,.08)' }} styles={{ body: { padding: '20px 24px' } }}>
               <Row gutter={[16, 12]}>
                 {[
                   { label: 'Học tập hoàn thành', val: myRecords.filter(r => r.lecturer_address === 'SYSTEM').length, color: COLORS.primary },
-                  { label: 'Hoạt động đăng ký',  val: myEnrollments.length, color: COLORS.success },
+                  { label: 'Hoạt động đăng ký',  val: visibleMyEnrollments.length, color: COLORS.success },
                   { label: 'Điểm chờ duyệt',     val: pendingPts,           color: COLORS.warning },
                   { label: 'Điểm xác nhận',       val: confirmedPts,         color: COLORS.secondary },
                 ].map((s) => (
@@ -1317,15 +1403,15 @@ export function ActivitiesPage({ user }: ActivitiesPageProps) {
           )}
 
           {/* Event enrollments */}
-          {myEnrollments.length > 0 && (
+          {visibleMyEnrollments.length > 0 && (
             <>
               <Text strong style={{ fontSize: 14, color: COLORS.text, display: 'block', marginBottom: 12 }}><CalendarOutlined style={{ marginRight: 6 }} />Hoạt động ngoại khóa</Text>
               <Row gutter={[12, 12]}>
-                {myEnrollments.map((e) => {
+                {visibleMyEnrollments.map((e) => {
                   const es = ENROLLMENT_STATUS_CONFIG[e.status as keyof typeof ENROLLMENT_STATUS_CONFIG]
                   return (
                     <Col xs={24} md={12} key={e.id}>
-                      <Card style={{ borderRadius: 14, border: `1px solid ${es?.bg ?? COLORS.border}`, height: '100%' }} styles={{ body: { padding: '14px 18px' } }}>
+                      <Card className="act-enrollment-card act-glass-card" style={{ borderRadius: 14, border: `1px solid ${es?.bg ?? COLORS.border}`, height: '100%' }} styles={{ body: { padding: '14px 18px' } }}>
                         <Space style={{ justifyContent: 'space-between', width: '100%' }}>
                           <Space><CalendarOutlined style={{ color: COLORS.success }} /><Text style={{ fontSize: 13 }}>{e.activity_id}</Text></Space>
                           <Tag style={{ borderRadius: 8, background: es?.bg, color: es?.color, border: 'none', fontWeight: 600 }}>{es?.label ?? e.status}</Tag>
@@ -1339,7 +1425,7 @@ export function ActivitiesPage({ user }: ActivitiesPageProps) {
             </>
           )}
 
-          {myRecords.length === 0 && myEnrollments.length === 0 && !loading && (
+          {myRecords.length === 0 && visibleMyEnrollments.length === 0 && !loading && (
             <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Bạn chưa tham gia hoạt động nào" style={{ padding: 60 }} />
           )}
         </Spin>
@@ -1357,22 +1443,25 @@ export function ActivitiesPage({ user }: ActivitiesPageProps) {
           )}
           {ranking.length > 0 && (
             <>
-              <Card style={{ borderRadius: 16, marginBottom: 14, border: `1px solid ${COLORS.border}`, background: 'linear-gradient(135deg, #FFF7ED 0%, #FFFBEB 46%, #F8FAFC 100%)' }} styles={{ body: { padding: '14px 16px' } }}>
+              <Card className="act-ranking-summary act-glass-card" style={{ borderRadius: 16, marginBottom: 14, border: `1px solid ${COLORS.border}`, background: 'linear-gradient(135deg, #FFF7ED 0%, #FFFBEB 46%, #F8FAFC 100%)' }} styles={{ body: { padding: '14px 16px' } }}>
                 <Row justify="space-between" align="middle" gutter={[12, 12]}>
                   <Col>
                     <Space direction="vertical" size={2}>
                       <Text strong style={{ fontSize: 14, color: '#92400E' }}>Bảng vàng điểm hoạt động</Text>
-                      <Text style={{ fontSize: 12, color: COLORS.muted }}>Top 3 nổi bật và Top 10 kế tiếp</Text>
+                      <Text style={{ fontSize: 12, color: COLORS.muted }}>Bục vinh danh và danh sách top 10 nổi bật</Text>
                     </Space>
                   </Col>
                   <Col>
-                    <div style={{ minWidth: 160, borderRadius: 12, padding: '8px 12px', background: '#fff', border: `1px solid ${COLORS.border}`, textAlign: 'right' }}>
-                      <Text style={{ display: 'block', fontSize: 11, color: COLORS.muted }}>Điểm của bạn</Text>
+                    <div className="act-my-rank-card" style={{ minWidth: 180, borderRadius: 12, padding: '8px 12px', background: '#fff', border: `1px solid ${COLORS.border}`, textAlign: 'right' }}>
+                      <Text style={{ display: 'block', fontSize: 11, color: COLORS.muted }}>Vị trí của bạn</Text>
                       {myRankEntry ? (
-                        <>
-                          <Text strong style={{ fontSize: 16, color: COLORS.primary }}>#{myRankEntry.rank} • {myRankEntry.activity_points} pts</Text>
-                          <Text style={{ display: 'block', fontSize: 11, color: COLORS.muted }}>{myRankEntry.student_name || shortAddr(myRankEntry.student_wallet)}</Text>
-                        </>
+                        <Space size={10} align="center">
+                          <RankAvatar entry={myRankEntry} size={34} />
+                          <Space direction="vertical" size={0} style={{ textAlign: 'left' }}>
+                            <Text strong style={{ fontSize: 15, color: COLORS.primary }}>#{myRankEntry.rank} | {myRankEntry.activity_points} pts</Text>
+                            <Text style={{ display: 'block', fontSize: 11, color: COLORS.muted }}>{getRankName(myRankEntry)}</Text>
+                          </Space>
+                        </Space>
                       ) : (
                         <Text strong style={{ fontSize: 13, color: COLORS.muted }}>Chưa có trong top hiện tại</Text>
                       )}
@@ -1381,33 +1470,9 @@ export function ActivitiesPage({ user }: ActivitiesPageProps) {
                 </Row>
               </Card>
 
-              <Row gutter={[12, 12]} style={{ marginBottom: 14 }}>
-                {topThree.map((entry) => {
-                  const cardBg = entry.rank === 1
-                    ? 'linear-gradient(135deg, #FFFBEB 0%, #FDE68A 100%)'
-                    : entry.rank === 2
-                      ? 'linear-gradient(135deg, #F8FAFC 0%, #E5E7EB 100%)'
-                      : 'linear-gradient(135deg, #FFF7ED 0%, #FDBA74 100%)'
-                  const badge = entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : '🥉'
-                  return (
-                    <Col xs={24} md={8} key={entry.student_wallet}>
-                      <Card className="act-card" style={{ borderRadius: 16, border: `1px solid ${COLORS.warning}40`, background: cardBg }} styles={{ body: { padding: '14px 14px 12px' } }}>
-                        <div style={{ textAlign: 'center' }}>
-                          <div style={{ fontSize: 30, lineHeight: 1, marginBottom: 8 }}>{badge}</div>
-                          <Text strong style={{ fontSize: 14, display: 'block' }}>{entry.student_name || shortAddr(entry.student_wallet)}</Text>
-                          <Text style={{ fontSize: 11, color: COLORS.muted, display: 'block', marginTop: 2 }}>Hạng #{entry.rank}</Text>
-                          {entry.class && <Text style={{ fontSize: 11, color: COLORS.muted, display: 'block' }}>{entry.class}</Text>}
-                          <div style={{ marginTop: 10 }}>
-                            <span style={{ padding: '5px 12px', borderRadius: 999, background: 'rgba(15,23,42,.08)', fontWeight: 800, color: COLORS.text, fontSize: 13 }}>{entry.activity_points} pts</span>
-                          </div>
-                        </div>
-                      </Card>
-                    </Col>
-                  )
-                })}
-              </Row>
+              <PodiumStage entries={podiumEntries} />
 
-              <Card style={{ borderRadius: 16, border: `1px solid ${COLORS.border}` }} styles={{ body: { padding: '10px 12px' } }}>
+              <Card className="act-ranking-list act-glass-card" style={{ borderRadius: 16, border: `1px solid ${COLORS.border}` }} styles={{ body: { padding: '10px 12px' } }}>
                 <Text strong style={{ display: 'block', marginBottom: 10, fontSize: 13, color: COLORS.text }}>Top 10 tiếp theo</Text>
                 {nextTopTen.length === 0 ? (
                   <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="Chưa đủ dữ liệu để hiển thị top 10 tiếp theo" style={{ padding: 18 }} />
@@ -1415,16 +1480,22 @@ export function ActivitiesPage({ user }: ActivitiesPageProps) {
                   <List
                     dataSource={nextTopTen}
                     renderItem={(entry) => (
-                      <List.Item style={{ padding: '8px 2px' }}>
-                        <Space style={{ justifyContent: 'space-between', width: '100%' }}>
-                          <Space>
-                            <div style={{ width: 34, height: 34, borderRadius: '50%', background: COLORS.primary + '15', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: COLORS.primary, fontSize: 13 }}>#{entry.rank}</div>
-                            <Space direction="vertical" size={0}>
-                              <Text strong style={{ fontSize: 13 }}>{entry.student_name || shortAddr(entry.student_wallet)}</Text>
-                              {entry.class && <Text style={{ fontSize: 11, color: COLORS.muted }}>{entry.class}</Text>}
+                      <List.Item className="act-ranking-row" style={{ padding: '8px 2px' }}>
+                        <Space className="act-ranking-row-inner" style={{ justifyContent: 'space-between', width: '100%' }}>
+                          <Space size={12} align="center">
+                            <div className="act-rank-index">#{entry.rank}</div>
+                            <RankAvatar entry={entry} size={42} />
+                            <Space direction="vertical" size={1}>
+                              <Text strong className="act-ranking-name" style={{ fontSize: 13 }}>{getRankName(entry)}</Text>
+                              <Space size={6} wrap>
+                                {entry.class && <Text className="act-ranking-sub">{entry.class}</Text>}
+                                <Text className="act-ranking-wallet">{shortAddr(entry.student_wallet)}</Text>
+                              </Space>
                             </Space>
                           </Space>
-                          <Tag style={{ borderRadius: 999, marginInlineEnd: 0, background: COLORS.primary + '10', border: 'none', color: COLORS.primary, fontWeight: 800 }}>{entry.activity_points} pts</Tag>
+                          <Tag className="act-ranking-points" style={{ borderRadius: 999, marginInlineEnd: 0, background: COLORS.primary + '10', border: 'none', color: COLORS.primary, fontWeight: 800 }}>
+                            <TrophyOutlined /> {entry.activity_points} pts
+                          </Tag>
                         </Space>
                       </List.Item>
                     )}
@@ -1464,7 +1535,7 @@ export function ActivitiesPage({ user }: ActivitiesPageProps) {
             <Row gutter={[12, 12]}>
               {activityActivities.map((a) => (
                 <Col xs={24} lg={12} key={a.id}>
-                  <Card style={{ borderRadius: 16, border: `1px solid ${COLORS.border}`, height: '100%' }} styles={{ body: { padding: '14px 18px' } }}>
+                  <Card className="act-admin-item-card act-glass-card" style={{ borderRadius: 16, border: `1px solid ${COLORS.border}`, height: '100%' }} styles={{ body: { padding: '14px 18px' } }}>
                     <Space direction="vertical" size={10} style={{ width: '100%' }}>
                       <Space direction="vertical" size={2}>
                         <Space wrap>
@@ -1516,7 +1587,7 @@ export function ActivitiesPage({ user }: ActivitiesPageProps) {
                       const eventEnded = adminActivity?.event_ends_at ? new Date(adminActivity.event_ends_at) <= new Date() : false
                       return (
                         <Col xs={24} md={12} key={e.id}>
-                          <Card style={{ borderRadius: 14, border: `1px solid ${COLORS.border}`, height: '100%' }} styles={{ body: { padding: '14px 18px' } }}>
+                          <Card className="act-enrollment-card act-glass-card" style={{ borderRadius: 14, border: `1px solid ${COLORS.border}`, height: '100%' }} styles={{ body: { padding: '14px 18px' } }}>
                             <Space direction="vertical" size={8} style={{ width: '100%' }}>
                               <Space style={{ justifyContent: 'space-between', width: '100%' }} wrap>
                                 <Space>
@@ -1589,25 +1660,22 @@ export function ActivitiesPage({ user }: ActivitiesPageProps) {
   // ── Render ────────────────────────────────────────────────────
 
   return (
-    <div style={{ maxWidth: 940, margin: '0 auto', padding: '0 4px' }}>
+    <div className="act-page act-liquid-page" style={{ maxWidth: 1120, margin: '0 auto' }}>
       <style>{ACT_STYLES}</style>
       {/* Hero Header */}
-      <div style={{ borderRadius: 24, marginBottom: 22, padding: '26px 32px 22px', background: 'linear-gradient(135deg, #0F0E2B 0%, #1E1A5C 50%, #312E81 100%)', position: 'relative', overflow: 'hidden' }}>
-        {/* Decorative circles */}
-        <div style={{ position: 'absolute', top: -45, right: -45, width: 200, height: 200, borderRadius: '50%', background: 'rgba(255,255,255,.04)' }} />
-        <div style={{ position: 'absolute', bottom: -25, right: 120, width: 110, height: 110, borderRadius: '50%', background: 'rgba(99,102,241,.22)' }} />
+      <div className="act-hero" style={{ marginBottom: 22, padding: '26px 32px 22px' }}>
         <Space style={{ justifyContent: 'space-between', width: '100%', flexWrap: 'wrap', rowGap: 12 }}>
           <Space direction="vertical" size={6}>
             <Space align="center" size={10}>
-              <div style={{ width: 44, height: 44, borderRadius: 14, background: 'rgba(255,255,255,0.11)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22 }}>🎓</div>
-              <Title level={3} style={{ margin: 0, color: '#fff', fontWeight: 800, letterSpacing: -0.3 }}>Học tập & Hoạt động</Title>
+              <div className="vndc-hero-icon" style={{ width: 48, height: 48, fontSize: 22 }}><BookOutlined /></div>
+              <Title level={3} className="vndc-hero-title" style={{ margin: 0, fontWeight: 800 }}>Học tập & Hoạt động</Title>
             </Space>
-            <Text style={{ color: 'rgba(255,255,255,.68)', fontSize: 13, paddingLeft: 54 }}>
-              {isLecturer ? 'Tạo & quản lý nội dung — Ghi nhận điểm rèn luyện' : 'Học tập, tích lũy điểm & đăng ký hoạt động ngoại khóa'}
+            <Text className="vndc-hero-desc" style={{ fontSize: 13, paddingLeft: 58 }}>
+              {isLecturer ? 'Tạo & quản lý nội dung - Ghi nhận điểm rèn luyện' : 'Học tập, tích lũy điểm & đăng ký hoạt động ngoại khóa'}
             </Text>
           </Space>
           {isLecturer && (
-            <Button icon={<PlusOutlined />} onClick={() => setShowCreate(true)} style={{ borderRadius: 12, height: 40, fontWeight: 700, background: 'rgba(255,255,255,.11)', border: '1.5px solid rgba(255,255,255,.3)', color: '#fff' }}>
+            <Button type="primary" icon={<PlusOutlined />} onClick={() => setShowCreate(true)} style={{ borderRadius: 12, height: 40, fontWeight: 700 }}>
               Tạo hoạt động
             </Button>
           )}
@@ -1618,7 +1686,7 @@ export function ActivitiesPage({ user }: ActivitiesPageProps) {
       <Row gutter={[12, 12]} style={{ marginBottom: 20 }}>
         {[
           { label: 'Đang mở',       val: activeActs.length,                       color: COLORS.primary,   icon: <FireOutlined /> },
-          { label: 'Đã tham gia',   val: myRecords.length + myEnrollments.length, color: COLORS.success,   icon: <CheckCircleOutlined /> },
+          { label: 'Đã tham gia',   val: myRecords.length + visibleMyEnrollments.length, color: COLORS.success,   icon: <CheckCircleOutlined /> },
           { label: 'Điểm chờ',      val: pendingPts,                              color: COLORS.warning,   icon: <ClockCircleOutlined /> },
           { label: 'Điểm xác nhận', val: confirmedPts,                            color: COLORS.secondary, icon: <TrophyOutlined /> },
         ].map((s) => (
@@ -1629,7 +1697,7 @@ export function ActivitiesPage({ user }: ActivitiesPageProps) {
       </Row>
 
       {/* Main tabs */}
-      <Card style={{ borderRadius: 20, border: `1px solid ${COLORS.border}`, boxShadow: '0 4px 24px rgba(0,0,0,.06)' }} styles={{ body: { padding: 0 } }}>
+      <Card className="act-main-panel act-glass-card" style={{ borderRadius: 20, border: `1px solid ${COLORS.border}`, boxShadow: '0 4px 24px rgba(0,0,0,.06)' }} styles={{ body: { padding: 0 } }}>
         {/* Custom pill tab navigation */}
         <div style={{ padding: '14px 16px 0', borderBottom: '1px solid #F3F4F6' }}>
           <Space size={4} wrap>
@@ -1686,12 +1754,13 @@ export function ActivitiesPage({ user }: ActivitiesPageProps) {
 
       {/* ── Evaluate Enrollment Modal ── */}
       <Modal
+        className="act-liquid-modal act-evaluate-modal"
         title={<Space><StarOutlined style={{ color: COLORS.secondary }} /><span>Đánh giá &amp; Phát Token</span></Space>}
         open={showEval}
         onCancel={() => { setShowEval(false); evalForm.resetFields() }}
         onOk={() => evalForm.submit()}
         confirmLoading={evalSaving}
-        okText="💳 Đánh giá &amp; gửi Token" cancelText="Hủy"
+        okText="Đánh giá và gửi Token" cancelText="Hủy"
         okButtonProps={{ style: { borderRadius: 10, background: GRADIENT.hero, border: 'none', fontWeight: 600 } }}
       >
         {evalTarget && (
@@ -1701,9 +1770,9 @@ export function ActivitiesPage({ user }: ActivitiesPageProps) {
         <Form form={evalForm} layout="vertical" onFinish={handleEvaluate} requiredMark="optional">
           <Form.Item name="rating" label="Xếp loại" rules={[{ required: true, message: 'Chọn xếp loại' }]}>
             <Select size="large" options={[
-              { value: 'GOOD',    label: <Space><span style={{ color: COLORS.success }}>★★★</span><span>Tốt — {adminActivity?.points_per_rating.good} điểm</span></Space> },
-              { value: 'AVERAGE', label: <Space><span style={{ color: COLORS.accent }}>★★</span><span>Khá — {adminActivity?.points_per_rating.average} điểm</span></Space> },
-              { value: 'POOR',    label: <Space><span style={{ color: COLORS.warning }}>★</span><span>Trung bình — {adminActivity?.points_per_rating.poor} điểm</span></Space> },
+              { value: 'GOOD',    label: <Space><span style={{ color: COLORS.success }}>★★★</span><span>Tốt - {adminActivity?.points_per_rating.good} điểm</span></Space> },
+              { value: 'AVERAGE', label: <Space><span style={{ color: COLORS.accent }}>★★</span><span>Khá - {adminActivity?.points_per_rating.average} điểm</span></Space> },
+              { value: 'POOR',    label: <Space><span style={{ color: COLORS.warning }}>★</span><span>Trung bình - {adminActivity?.points_per_rating.poor} điểm</span></Space> },
             ]} placeholder="Chọn xếp loại" style={{ borderRadius: 10 }} />
           </Form.Item>
         </Form>
@@ -1711,6 +1780,7 @@ export function ActivitiesPage({ user }: ActivitiesPageProps) {
 
       {/* ── Create Activity Modal ── */}
       <Modal
+        className="act-liquid-modal act-create-modal"
         title={<Space><PlusOutlined /><span>Tạo hoạt động mới</span></Space>}
         open={showCreate}
         onCancel={() => { setShowCreate(false); createForm.resetFields() }}
@@ -1844,6 +1914,7 @@ export function ActivitiesPage({ user }: ActivitiesPageProps) {
 
       {/* ── Record Activity Modal ── */}
       <Modal
+        className="act-liquid-modal act-record-modal"
         title={<Space><SafetyCertificateOutlined /><span>Ghi nhận tham gia</span>{adminActivity && <Text style={{ fontSize: 12, color: COLORS.muted, fontWeight: 400 }}>{adminActivity.title}</Text>}</Space>}
         open={showRecord}
         onCancel={() => { setShowRecord(false); recordForm.resetFields() }}
@@ -1871,6 +1942,7 @@ export function ActivitiesPage({ user }: ActivitiesPageProps) {
 
       {/* ── Edit Record Modal ── */}
       <Modal
+        className="act-liquid-modal act-edit-modal"
         title={<Space><EditOutlined /><span>Chỉnh sửa ghi nhận</span></Space>}
         open={showEdit}
         onCancel={() => { setShowEdit(false); editForm.resetFields(); setEditTarget(null) }}

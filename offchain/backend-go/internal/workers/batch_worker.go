@@ -168,6 +168,7 @@ func (w *BatchWorker) processBatch(ctx context.Context) error {
 	// 2. Build Batch record
 	batchID := uuid.NewString()
 	txIDs := make([]string, 0, len(pendingTxs))
+	validTxs := make([]*domain.Transaction, 0, len(pendingTxs))
 	totalAmount := big.NewInt(0)
 	transfers := make([]ports.TransferCall, 0, len(pendingTxs))
 
@@ -190,6 +191,7 @@ func (w *BatchWorker) processBatch(ctx context.Context) error {
 		}
 
 		txIDs = append(txIDs, tx.ID)
+		validTxs = append(validTxs, tx)
 
 		amt, ok := new(big.Int).SetString(tx.Amount, 10)
 		if ok && amt.Sign() > 0 {
@@ -197,6 +199,7 @@ func (w *BatchWorker) processBatch(ctx context.Context) error {
 		}
 
 		transfers = append(transfers, ports.TransferCall{
+			TxID:      tx.ID,
 			From:      tx.FromWallet,
 			To:        tx.ToWallet,
 			Amount:    tx.Amount,
@@ -231,7 +234,7 @@ func (w *BatchWorker) processBatch(ctx context.Context) error {
 	}
 
 	// 4. Submit on-chain with retry
-	txHash, err := w.submitWithRetry(ctx, batchID, transfers)
+	result, err := w.submitWithRetry(ctx, batchID, transfers)
 	if err != nil {
 		w.log.Error("batch on-chain submission failed",
 			logger.String("batch_id", batchID),
@@ -240,17 +243,48 @@ func (w *BatchWorker) processBatch(ctx context.Context) error {
 		w.markBatchFailed(ctx, batchID, txIDs, err.Error())
 		return nil // don't surface — already recorded
 	}
+	txHash := result.TxHash
 
 	// 5. Update batch as CONFIRMED
 	confirmed := time.Now().UTC()
 	w.updateBatchConfirmed(ctx, batchID, txHash, confirmed)
 
-	// 6. Mark transactions SUCCESS & re-sync balance caches from chain.
+	// 6. Mark transactions from per-item events & re-sync balance caches from chain.
 	// Collect unique wallets that need a balance refresh.
-	walletSet := make(map[string]struct{}, len(pendingTxs)*2)
-	for _, tx := range pendingTxs {
-		w.updateTxSuccess(ctx, tx.ID, batchID, txHash, confirmed)
-		w.handlePostSettlement(ctx, tx, txHash)
+	walletSet := make(map[string]struct{}, len(validTxs)*2)
+	outcomes := resultItemsByTxID(result.Items)
+	if len(outcomes) == 0 {
+		// Compatibility guard: a correctly upgraded contract emits one item event
+		// per transfer. If an older local contract is still deployed, keep the
+		// old all-success behavior instead of leaving PROCESSING records stuck.
+		for _, tx := range validTxs {
+			outcomes[tx.ID] = ports.BatchTransferItemResult{TxID: tx.ID, Success: true}
+		}
+	}
+	for _, tx := range validTxs {
+		outcome, ok := outcomes[tx.ID]
+		if !ok {
+			outcome = ports.BatchTransferItemResult{
+				TxID:      tx.ID,
+				Success:   false,
+				ErrorCode: "MISSING_EVENT",
+				Reason:    "batch item event not found",
+			}
+		}
+		if outcome.Success {
+			w.updateTxSuccess(ctx, tx.ID, batchID, txHash, confirmed)
+			w.handlePostSettlement(ctx, tx, txHash)
+		} else {
+			reason := strings.TrimSpace(outcome.Reason)
+			if reason == "" {
+				reason = outcome.ErrorCode
+			}
+			if reason == "" {
+				reason = "batch item failed"
+			}
+			w.updateTxFailed(ctx, tx.ID, batchID, txHash, reason)
+			w.handlePostFailure(ctx, tx, reason)
+		}
 		walletSet[tx.FromWallet] = struct{}{}
 		walletSet[tx.ToWallet] = struct{}{}
 	}
@@ -549,12 +583,12 @@ func (w *BatchWorker) handleServiceTicketFailure(ctx context.Context, tx *domain
 
 // submitWithRetry executes the batch transfer on-chain with bounded retry attempts and delay.
 // It isolates retry policy from the rest of processBatch so submission behavior is easier to reason about and tune.
-func (w *BatchWorker) submitWithRetry(ctx context.Context, batchID string, transfers []ports.TransferCall) (string, error) {
+func (w *BatchWorker) submitWithRetry(ctx context.Context, batchID string, transfers []ports.TransferCall) (*ports.BatchTransferResult, error) {
 	var lastErr error
 	for attempt := 1; attempt <= w.cfg.MaxRetries; attempt++ {
-		txHash, err := w.token.BatchTransfer(ctx, transfers)
+		result, err := w.token.BatchTransfer(ctx, batchID, transfers)
 		if err == nil {
-			return txHash, nil
+			return result, nil
 		}
 		lastErr = err
 		w.log.Warn("batch submission attempt failed",
@@ -564,11 +598,11 @@ func (w *BatchWorker) submitWithRetry(ctx context.Context, batchID string, trans
 		)
 		select {
 		case <-ctx.Done():
-			return "", ctx.Err()
+			return nil, ctx.Err()
 		case <-time.After(w.cfg.RetryDelay):
 		}
 	}
-	return "", lastErr
+	return nil, lastErr
 }
 
 // -----------------------------------------------------------------------------
@@ -608,4 +642,26 @@ func (w *BatchWorker) updateTxSuccess(ctx context.Context, txID, batchID, txHash
 	if err := w.txRepo.Update(ctx, txID, map[string]interface{}{"status": domain.TxStatusSuccess, "batch_id": batchID, "tx_hash": txHash, "settled_at": settledAt}); err != nil {
 		w.log.Error("update tx success error", logger.String("tx_id", txID), logger.Err(err))
 	}
+}
+
+func (w *BatchWorker) updateTxFailed(ctx context.Context, txID, batchID, txHash, reason string) {
+	if err := w.txRepo.Update(ctx, txID, map[string]interface{}{
+		"status":     domain.TxStatusFailed,
+		"batch_id":   batchID,
+		"tx_hash":    txHash,
+		"last_error": reason,
+	}); err != nil {
+		w.log.Error("update tx failed error", logger.String("tx_id", txID), logger.Err(err))
+	}
+}
+
+func resultItemsByTxID(items []ports.BatchTransferItemResult) map[string]ports.BatchTransferItemResult {
+	out := make(map[string]ports.BatchTransferItemResult, len(items))
+	for _, item := range items {
+		if item.TxID == "" {
+			continue
+		}
+		out[item.TxID] = item
+	}
+	return out
 }

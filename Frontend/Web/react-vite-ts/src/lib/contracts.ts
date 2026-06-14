@@ -37,8 +37,8 @@ export const CONTRACTS = {
     deployed: true,
   },
   MarketplaceManager: {
-    address: '0x0165878A594ca255338adfa4d48449f69242Eb8F',
-    label: 'NFT Marketplace 721',
+    address: '0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6',
+    label: 'Marketplace Manager',
     type: 'Ownable + ReentrancyGuard' as const,
     deployed: true,
   },

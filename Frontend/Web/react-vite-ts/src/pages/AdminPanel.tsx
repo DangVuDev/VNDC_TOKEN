@@ -7,7 +7,7 @@ import {
 import {
   DashboardOutlined, FileTextOutlined, BellOutlined, ToolOutlined,
   CheckCircleOutlined, CloseCircleOutlined, PlusOutlined,
-  ReloadOutlined, DownloadOutlined,
+  ReloadOutlined, DownloadOutlined, CalendarOutlined, ApartmentOutlined,
 } from '@ant-design/icons'
 import type { AuthUser } from '../hooks/useAuth'
 
@@ -329,7 +329,7 @@ function AnalyticsTab() {
       {/* Feature Clusters */}
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={12}>
-          <Card title="📅 Module Sự Kiện - Vé">
+          <Card title={<Space><CalendarOutlined /><span>Module Sự kiện - Vé</span></Space>}>
             <Space direction="vertical" style={{ width: '100%' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Text>Tổng Sản Phẩm</Text>
@@ -347,7 +347,7 @@ function AnalyticsTab() {
           </Card>
         </Col>
         <Col xs={24} sm={12}>
-          <Card title="🗳️ Module DAO & Voting">
+          <Card title={<Space><ApartmentOutlined /><span>Module DAO & Voting</span></Space>}>
             <Space direction="vertical" style={{ width: '100%' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Text>Tổng DAOs</Text>
@@ -365,7 +365,7 @@ function AnalyticsTab() {
           </Card>
         </Col>
         <Col xs={24} sm={12}>
-          <Card title="🎯 Module Nhiệm Vụ">
+          <Card title={<Space><ToolOutlined /><span>Module Nhiệm vụ</span></Space>}>
             <Space direction="vertical" style={{ width: '100%' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Text>Tổng Nhiệm Vụ</Text>
@@ -512,7 +512,7 @@ export interface AdminPanelProps {
   user?: AuthUser
 }
 
-export function AdminPanel(_: AdminPanelProps) {
+export function AdminPanelLegacy(_: AdminPanelProps) {
   const tabItems = [
     {
       key: 'contracts',
@@ -561,6 +561,65 @@ export function AdminPanel(_: AdminPanelProps) {
       <div style={{ marginBottom: 24 }}>
         <Title level={3} style={{ margin: 0 }}>🛡️ Bảng Điều Khiển Admin</Title>
         <Text type="secondary">Quản lý hợp đồng, hệ thống và báo cáo</Text>
+      </div>
+      <Tabs items={tabItems} defaultActiveKey="contracts" />
+    </div>
+  )
+}
+
+export function AdminPanel(_: AdminPanelProps) {
+  const tabItems = [
+    {
+      key: 'contracts',
+      label: (
+        <Space>
+          <ToolOutlined />
+          Hợp đồng
+        </Space>
+      ),
+      children: <ContractManagementTab />,
+    },
+    {
+      key: 'offchain',
+      label: (
+        <Space>
+          <DashboardOutlined />
+          Offchain
+        </Space>
+      ),
+      children: <OffchainAdminTab />,
+    },
+    {
+      key: 'analytics',
+      label: (
+        <Space>
+          <FileTextOutlined />
+          Báo cáo
+        </Space>
+      ),
+      children: <AnalyticsTab />,
+    },
+    {
+      key: 'notifications',
+      label: (
+        <Space>
+          <BellOutlined />
+          Thông báo
+        </Space>
+      ),
+      children: <NotificationsTab />,
+    },
+  ]
+
+  return (
+    <div className="admin-page" style={{ padding: 18 }}>
+      <div className="admin-hero" style={{ marginBottom: 24, padding: '22px 26px', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+        <div className="vndc-hero-icon"><ToolOutlined /></div>
+        <div>
+          <div className="vndc-hero-kicker">Quản trị hệ thống</div>
+          <Title level={3} className="vndc-hero-title" style={{ margin: 0, fontWeight: 800 }}>Bảng điều khiển Admin</Title>
+          <Text className="vndc-hero-desc">Quản lý hợp đồng, off-chain jobs, thông báo và báo cáo vận hành</Text>
+        </div>
       </div>
       <Tabs items={tabItems} defaultActiveKey="contracts" />
     </div>

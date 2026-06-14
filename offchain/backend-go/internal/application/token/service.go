@@ -298,19 +298,40 @@ func (s *Service) pendingAmount(ctx context.Context, wallet string) string {
 	return total.String()
 }
 
+// nextAvailableNonce returns the first nonce that is not already occupied by an active queued transfer.
+// The contract nonce only advances after settlement, so pending rows must be included to avoid reusing a nonce.
+func (s *Service) nextAvailableNonce(ctx context.Context, wallet string, chainNonce uint64) uint64 {
+	statuses := []domain.TransactionStatus{
+		domain.TxStatusPending, domain.TxStatusQueued, domain.TxStatusProcessing,
+	}
+	next := chainNonce
+	normWallet := normalizeAddress(wallet)
+	for _, status := range statuses {
+		txs, _ := s.txRepo.FindByStatus(ctx, status, 1000)
+		for _, tx := range txs {
+			if !strings.EqualFold(tx.FromWallet, normWallet) {
+				continue
+			}
+			nonce, ok := new(big.Int).SetString(tx.Nonce, 10)
+			if !ok || nonce.Sign() < 0 || !nonce.IsUint64() {
+				continue
+			}
+			if candidate := nonce.Uint64() + 1; candidate > next {
+				next = candidate
+			}
+		}
+	}
+	return next
+}
+
 // checkNonce rejects reuse of a nonce while an earlier transaction with that nonce is still unresolved.
 // This protects the meta-transaction queue from replay-like duplicates before blockchain settlement completes.
 func (s *Service) checkNonce(ctx context.Context, wallet, nonce string) error {
-	existing, err := s.txRepo.FindOne(ctx,
-		database.WithEq("from_wallet", normalizeAddress(wallet)),
-		database.WithEq("nonce", nonce),
-		database.WithNin("status", []string{
-			string(domain.TxStatusSuccess),
-			string(domain.TxStatusFailed),
-			string(domain.TxStatusRolledBack),
-		}),
-	)
-	if err == nil && existing != nil {
+	hasActive, err := s.txRepo.HasActiveNonce(ctx, normalizeAddress(wallet), nonce)
+	if err != nil {
+		return apperr.Wrap(apperr.ErrCodeDatabase, "nonce check failed", err)
+	}
+	if hasActive {
 		return apperr.New(apperr.ErrCodeConflict, "Nonce already used by a pending transaction")
 	}
 	return nil
@@ -352,8 +373,8 @@ func (s *Service) GetContractInfo(ctx context.Context) (*ContractInfoResponse, e
 //  GetNonce
 // ─────────────────────────────────────────────
 
-// GetNonce returns the current contract nonce that must be embedded into the next EIP-712 transfer payload.
-// Frontends rely on this exact value to produce signatures the relayer can verify and settle.
+// GetNonce returns the next nonce that must be embedded into the next EIP-712 transfer payload.
+// It includes active queued transactions because the contract nonce only advances after settlement.
 func (s *Service) GetNonce(ctx context.Context, wallet string) (*NonceResponse, error) {
 	wallet = normalizeAddress(wallet)
 	if wallet == "" {
@@ -361,7 +382,7 @@ func (s *Service) GetNonce(ctx context.Context, wallet string) (*NonceResponse, 
 	}
 
 	if s.token == nil {
-		return &NonceResponse{Wallet: wallet, Nonce: 0}, nil
+		return &NonceResponse{Wallet: wallet, Nonce: s.nextAvailableNonce(ctx, wallet, 0)}, nil
 	}
 
 	nonce, err := s.token.Nonce(ctx, wallet)
@@ -369,7 +390,7 @@ func (s *Service) GetNonce(ctx context.Context, wallet string) (*NonceResponse, 
 		return nil, apperr.Wrap(apperr.ErrCodeBlockchain, "Nonce fetch failed", err)
 	}
 
-	return &NonceResponse{Wallet: wallet, Nonce: nonce}, nil
+	return &NonceResponse{Wallet: wallet, Nonce: s.nextAvailableNonce(ctx, wallet, nonce)}, nil
 }
 
 // ─────────────────────────────────────────────

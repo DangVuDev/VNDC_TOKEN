@@ -117,7 +117,7 @@ export function SecurityPanel({ onSetup2FA, onEnable2FA, onDisable2FA }: Securit
           )}
           {backupCodes.length > 0 && (
             <div className="bg-amber-50 rounded-lg p-3">
-              <p className="text-xs text-amber-600 font-medium mb-2">⚠ Save these backup codes:</p>
+              <p className="text-xs text-amber-600 font-medium mb-2">Save these backup codes:</p>
               <div className="grid grid-cols-2 gap-1">
                 {backupCodes.map((bc) => (
                   <code key={bc} className="text-xs font-mono text-amber-800">{bc}</code>
