@@ -50,6 +50,449 @@ dayjs.extend(relativeTime)
 
 const { Title, Text, Paragraph } = Typography
 
+
+const ADMIN_STYLES = `
+.admin-page {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 18px 18px 40px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 28px;
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.32), rgba(239, 246, 255, 0.12) 42%, rgba(236, 253, 245, 0.1)),
+    var(--visual-dashboard-liquid, none) center top / cover no-repeat,
+    linear-gradient(135deg, rgba(219, 234, 254, 0.74), rgba(236, 253, 245, 0.46));
+  box-shadow: 0 34px 90px rgba(37, 99, 235, 0.16);
+}
+
+.admin-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(780px 320px at 8% -4%, rgba(37, 99, 235, 0.2), transparent 68%),
+    radial-gradient(720px 340px at 95% 2%, rgba(14, 165, 233, 0.18), transparent 66%),
+    radial-gradient(620px 360px at 52% 108%, rgba(16, 185, 129, 0.14), transparent 64%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(246, 248, 251, 0.78));
+  pointer-events: none;
+}
+
+.admin-page::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  border-radius: 27px;
+  background:
+    linear-gradient(125deg, rgba(255, 255, 255, 0.34), transparent 34%, rgba(255, 255, 255, 0.16) 62%, transparent 82%);
+  opacity: 0.66;
+  pointer-events: none;
+}
+
+.admin-page .admin-hero {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 26px;
+  background:
+    linear-gradient(110deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.16) 46%, rgba(219, 234, 254, 0.08)),
+    var(--visual-dashboard-liquid, none) center / cover no-repeat !important;
+  box-shadow:
+    0 26px 70px rgba(37, 99, 235, 0.16),
+    0 10px 24px rgba(15, 23, 42, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(37, 99, 235, 0.08);
+  backdrop-filter: blur(22px) saturate(1.9) contrast(1.05);
+  -webkit-backdrop-filter: blur(22px) saturate(1.9) contrast(1.05);
+}
+
+.admin-page .admin-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.5), transparent 28%, rgba(255, 255, 255, 0.14) 54%, transparent 76%),
+    radial-gradient(560px 150px at 12% 0%, rgba(255, 255, 255, 0.62), transparent 70%),
+    radial-gradient(420px 220px at 88% 24%, rgba(14, 165, 233, 0.22), transparent 72%),
+    radial-gradient(360px 220px at 96% 94%, rgba(16, 185, 129, 0.18), transparent 72%);
+  pointer-events: none;
+}
+
+.admin-page .admin-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #2563eb, #0ea5e9, #10b981);
+  box-shadow: 0 -1px 18px rgba(14, 165, 233, 0.34);
+  pointer-events: none;
+}
+
+.admin-page .admin-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-page .vndc-hero-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.68);
+  border-radius: 18px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0.18)) !important;
+  color: var(--accent-strong, #2563eb) !important;
+  box-shadow:
+    0 16px 34px rgba(37, 99, 235, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.94),
+    inset 0 -1px 0 rgba(37, 99, 235, 0.08);
+  backdrop-filter: blur(16px) saturate(1.6);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6);
+}
+
+.admin-page .vndc-hero-kicker {
+  margin-bottom: 4px;
+  color: var(--accent, #2563eb);
+  font-size: 12px;
+  font-weight: 760;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-page .vndc-hero-title {
+  color: var(--ink, #0f172a) !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72);
+  letter-spacing: -0.02em;
+}
+
+.admin-page .vndc-hero-desc {
+  color: var(--ink-muted, #475569) !important;
+}
+
+.admin-page .admin-tabs > .ant-tabs-nav,
+.admin-page > .ant-tabs > .ant-tabs-nav {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 18px !important;
+  padding: 8px 12px !important;
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  border-radius: 20px !important;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.12)) !important;
+  box-shadow:
+    0 18px 44px rgba(37, 99, 235, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.84);
+  backdrop-filter: blur(18px) saturate(1.75);
+  -webkit-backdrop-filter: blur(18px) saturate(1.75);
+}
+
+.admin-page .ant-tabs-nav::before {
+  border-bottom: 0 !important;
+}
+
+.admin-page .ant-tabs-tab {
+  border-radius: 999px;
+  color: var(--ink-muted, #475569);
+  font-size: 13px;
+  font-weight: 720;
+  padding: 10px 15px !important;
+  transition: background 180ms ease, transform 180ms ease, color 180ms ease, box-shadow 180ms ease;
+}
+
+.admin-page .ant-tabs-tab:hover {
+  color: var(--accent-strong, #1d4ed8);
+  transform: translateY(-1px);
+}
+
+.admin-page .ant-tabs-tab.ant-tabs-tab-active {
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.14), rgba(14, 165, 233, 0.1) 58%, rgba(16, 185, 129, 0.1));
+  box-shadow: inset 0 0 0 1px rgba(191, 219, 254, 0.68);
+}
+
+.admin-page .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--accent-strong, #1d4ed8) !important;
+}
+
+.admin-page .ant-tabs-ink-bar {
+  display: none;
+}
+
+.admin-page .ant-tabs-content-holder {
+  min-width: 0;
+}
+
+.admin-page .ant-card,
+.admin-page .ant-alert,
+.admin-page .ant-list,
+.admin-page .ant-table-wrapper,
+.admin-page .ant-descriptions,
+.admin-page .ant-table,
+.admin-page .ant-table-container {
+  border-radius: 18px;
+}
+
+.admin-page .ant-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.62) !important;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.12)) !important;
+  box-shadow:
+    0 22px 54px rgba(37, 99, 235, 0.13),
+    0 8px 18px rgba(15, 23, 42, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86),
+    inset 0 -1px 0 rgba(37, 99, 235, 0.08) !important;
+  backdrop-filter: blur(18px) saturate(1.85) contrast(1.05);
+  -webkit-backdrop-filter: blur(18px) saturate(1.85) contrast(1.05);
+  color: var(--ink, #0f172a);
+  transform-style: preserve-3d;
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.admin-page .ant-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.46), transparent 28%, rgba(255, 255, 255, 0.12) 56%, transparent 78%),
+    radial-gradient(460px 110px at 12% 0%, rgba(255, 255, 255, 0.58), transparent 72%);
+  opacity: 0.62;
+  pointer-events: none;
+}
+
+.admin-page .ant-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.88), rgba(255,255,255,0.08) 38%, rgba(14,165,233,0.18) 68%, rgba(255,255,255,0.42));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.admin-page .ant-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-page .ant-card:hover {
+  border-color: rgba(255, 255, 255, 0.84) !important;
+  box-shadow:
+    0 30px 70px rgba(37, 99, 235, 0.18),
+    0 12px 26px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+  transform: translateY(-2px);
+}
+
+.admin-page .ant-card-head {
+  border-bottom-color: rgba(191, 219, 254, 0.62) !important;
+  background: transparent !important;
+}
+
+.admin-page .ant-card-head-title {
+  color: var(--ink, #0f172a);
+  font-weight: 780;
+}
+
+.admin-page .ant-alert {
+  border: 1px solid rgba(255, 255, 255, 0.56) !important;
+  background: rgba(255, 255, 255, 0.42) !important;
+  box-shadow:
+    0 16px 34px rgba(37, 99, 235, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(16px) saturate(1.55);
+  -webkit-backdrop-filter: blur(16px) saturate(1.55);
+}
+
+.admin-page .ant-table-wrapper {
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.56);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.12));
+  box-shadow: 0 18px 44px rgba(37, 99, 235, 0.11);
+  backdrop-filter: blur(18px) saturate(1.55);
+  -webkit-backdrop-filter: blur(18px) saturate(1.55);
+}
+
+.admin-page .ant-table,
+.admin-page .ant-table-container,
+.admin-page .ant-table-content,
+.admin-page .ant-table-thead > tr > th,
+.admin-page .ant-table-tbody > tr > td {
+  background: transparent !important;
+}
+
+.admin-page .ant-table-thead > tr > th {
+  color: var(--ink, #0f172a) !important;
+  font-weight: 760 !important;
+  border-bottom-color: rgba(191, 219, 254, 0.7) !important;
+}
+
+.admin-page .ant-table-tbody > tr > td {
+  border-bottom-color: rgba(226, 232, 240, 0.64) !important;
+}
+
+.admin-page .ant-table-tbody > tr:hover > td {
+  background: rgba(239, 246, 255, 0.44) !important;
+}
+
+.admin-page .ant-descriptions-view {
+  overflow: hidden;
+  border-color: rgba(191, 219, 254, 0.72) !important;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.admin-page .ant-descriptions-item-label,
+.admin-page .ant-descriptions-item-content {
+  background: rgba(255, 255, 255, 0.28) !important;
+  border-color: rgba(191, 219, 254, 0.62) !important;
+}
+
+.admin-page .ant-input,
+.admin-page .ant-input-affix-wrapper,
+.admin-page .ant-input-number,
+.admin-page .ant-select-selector {
+  border-radius: 12px !important;
+  border-color: rgba(191, 219, 254, 0.88) !important;
+  background: rgba(255, 255, 255, 0.74) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.admin-page .ant-btn {
+  border-radius: 12px;
+  font-weight: 650;
+}
+
+.admin-page .ant-btn-primary {
+  border-color: #2563eb !important;
+  background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%) !important;
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+}
+
+.admin-page .ant-tag {
+  border-radius: 999px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.admin-page .ant-progress-bg {
+  background: linear-gradient(90deg, #2563eb 0%, #0ea5e9 52%, #10b981 100%) !important;
+}
+
+.admin-page .ant-list-item {
+  border-block-end-color: rgba(191, 219, 254, 0.58) !important;
+}
+
+.admin-page .ant-list-item:hover {
+  background: rgba(239, 246, 255, 0.44) !important;
+}
+
+.admin-page .ant-typography-secondary,
+.admin-page .ant-descriptions-item-label {
+  color: var(--ink-subtle, #64748b) !important;
+}
+
+.admin-page .admin-kpi-strip,
+.admin-page .admin-chart-grid {
+  align-items: stretch;
+}
+
+.admin-page .admin-kpi-strip > .ant-col,
+.admin-page .admin-chart-grid > .ant-col {
+  display: flex;
+}
+
+.admin-page .admin-kpi-strip .ant-card,
+.admin-page .admin-chart-grid .ant-card {
+  width: 100%;
+  min-height: 100%;
+}
+
+.admin-page .admin-section-title {
+  color: var(--ink, #0f172a);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.admin-page .admin-muted {
+  color: var(--ink-subtle, #64748b);
+  font-size: 12px;
+}
+
+.ant-modal .ant-modal-content,
+.ant-drawer .ant-drawer-content {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(239, 246, 255, 0.92) 58%, rgba(236, 253, 245, 0.86)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow:
+    0 30px 80px rgba(37, 99, 235, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(22px) saturate(1.65);
+  -webkit-backdrop-filter: blur(22px) saturate(1.65);
+}
+
+.ant-modal .ant-modal-header,
+.ant-drawer .ant-drawer-header {
+  background: transparent !important;
+  border-bottom-color: rgba(191, 219, 254, 0.72) !important;
+}
+
+.ant-modal .ant-modal-title,
+.ant-drawer .ant-drawer-title {
+  color: var(--ink, #0f172a);
+  font-weight: 780;
+}
+
+.ant-modal .ant-input,
+.ant-modal .ant-input-affix-wrapper,
+.ant-modal .ant-input-number,
+.ant-modal .ant-select-selector,
+.ant-drawer .ant-input,
+.ant-drawer .ant-input-affix-wrapper,
+.ant-drawer .ant-input-number,
+.ant-drawer .ant-select-selector {
+  border-radius: 12px !important;
+  border-color: rgba(191, 219, 254, 0.9) !important;
+  background: rgba(255, 255, 255, 0.78) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+@media (max-width: 768px) {
+  .admin-page {
+    padding: 12px;
+    border-radius: 20px;
+  }
+
+  .admin-page .admin-hero {
+    padding: 18px !important;
+    border-radius: 20px;
+  }
+
+  .admin-page .admin-tabs > .ant-tabs-nav,
+  .admin-page > .ant-tabs > .ant-tabs-nav {
+    border-radius: 16px !important;
+    padding: 6px 8px !important;
+  }
+}
+`
+
+
 // ─── Helpers ────────────────────────────────────────────────────
 
 function fmtWei(wei: string | number | undefined): string {
@@ -2688,23 +3131,29 @@ export function AdminPage({ user }: AdminPageProps) {
   ]
 
   return (
-    <div>
+    <div className="admin-page">
+      <style>{ADMIN_STYLES}</style>
       {/* Page header */}
-      <div style={{
-        background: 'linear-gradient(135deg, #1A1744 0%, #312E81 60%, #4338CA 100%)',
-        borderRadius: 14,
+      <div className="admin-hero" style={{
         padding: '24px 32px',
         marginBottom: 24,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
+        gap: 16,
+        flexWrap: 'wrap',
       }}>
         <div>
           <Space align="center" style={{ marginBottom: 6 }}>
-            <span style={{ fontSize: 28 }}>🛡️</span>
-            <Title level={3} style={{ color: '#fff', margin: 0 }}>Bảng điều khiển quản trị</Title>
+            <div className="vndc-hero-icon" style={{ width: 52, height: 52, fontSize: 24 }}>
+              <SafetyCertificateOutlined />
+            </div>
+            <div>
+              <div className="vndc-hero-kicker">Quản trị hệ thống</div>
+              <Title level={3} className="vndc-hero-title" style={{ margin: 0, fontWeight: 800 }}>Bảng điều khiển quản trị</Title>
+            </div>
           </Space>
-          <Text style={{ color: '#A5B4FC', fontSize: 13 }}>
+          <Text className="vndc-hero-desc" style={{ fontSize: 13 }}>
             Quản lý toàn bộ hệ thống VNDC Education Platform - Blockchain, Backend, Analytics &amp; Thông báo
           </Text>
         </div>
@@ -2713,7 +3162,7 @@ export function AdminPage({ user }: AdminPageProps) {
             {user?.full_name ?? user?.username ?? 'Admin'}
           </Tag>
           <div style={{ marginTop: 6 }}>
-            <Text style={{ color: '#818CF8', fontSize: 11 }}>
+            <Text style={{ color: 'var(--ink-subtle)', fontSize: 11 }}>
               {user?.wallet_address?.slice(0, 8)}…{user?.wallet_address?.slice(-6)}
             </Text>
           </div>
@@ -2722,11 +3171,17 @@ export function AdminPage({ user }: AdminPageProps) {
 
       {/* Tabs */}
       <Tabs
+        className="admin-tabs"
         items={tabItems}
         defaultActiveKey="contracts"
         size="large"
         style={{ background: 'transparent' }}
-        tabBarStyle={{ background: '#fff', padding: '0 16px', borderRadius: '10px 10px 0 0', marginBottom: 0 }}
+        tabBarStyle={{
+          background: 'rgba(255, 255, 255, 0.18)',
+          padding: '8px 12px',
+          borderRadius: 20,
+          marginBottom: 18,
+        }}
       />
     </div>
   )

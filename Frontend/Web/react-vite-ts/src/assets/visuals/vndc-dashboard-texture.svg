@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="VNDC token certificate dashboard texture">
+  <defs>
+    <linearGradient id="base" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset=".6" stop-color="#eff6ff"/>
+      <stop offset="1" stop-color="#ecfdf5"/>
+    </linearGradient>
+    <radialGradient id="coinBlue" cx=".45" cy=".38" r=".62">
+      <stop offset="0" stop-color="#dbeafe"/>
+      <stop offset=".5" stop-color="#60a5fa"/>
+      <stop offset="1" stop-color="#2563eb"/>
+    </radialGradient>
+    <radialGradient id="coinGreen" cx=".42" cy=".35" r=".62">
+      <stop offset="0" stop-color="#dcfce7"/>
+      <stop offset=".52" stop-color="#34d399"/>
+      <stop offset="1" stop-color="#059669"/>
+    </radialGradient>
+    <filter id="blurShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="22" stdDeviation="18" flood-color="#2563eb" flood-opacity=".13"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="900" fill="url(#base)"/>
+  <path d="M0 760 C230 666 470 735 695 630 C910 530 1098 496 1600 546" fill="none" stroke="#93c5fd" stroke-width="3" stroke-opacity=".26"/>
+  <path d="M0 820 C260 720 500 754 800 645 C1040 558 1230 530 1600 592" fill="none" stroke="#10b981" stroke-width="2" stroke-opacity=".16"/>
+  <g opacity=".42" stroke="#bfdbfe" stroke-width="2">
+    <path d="M90 760 L216 690 L360 738 L502 654 L640 702"/>
+    <circle cx="90" cy="760" r="8" fill="#60a5fa"/>
+    <circle cx="216" cy="690" r="6" fill="#10b981"/>
+    <circle cx="360" cy="738" r="7" fill="#f59e0b"/>
+    <circle cx="502" cy="654" r="6" fill="#38bdf8"/>
+    <circle cx="640" cy="702" r="8" fill="#2563eb"/>
+  </g>
+  <g transform="translate(990 260) rotate(-8)" filter="url(#blurShadow)">
+    <rect x="0" y="90" width="430" height="278" rx="18" fill="#ffffff" opacity=".86"/>
+    <rect x="26" y="124" width="378" height="208" rx="10" fill="none" stroke="#bfdbfe" stroke-width="5"/>
+    <path d="M58 164 H372 M58 210 H372 M58 256 H298" stroke="#93c5fd" stroke-width="7" stroke-linecap="round" opacity=".34"/>
+    <circle cx="316" cy="274" r="42" fill="none" stroke="#10b981" stroke-width="7" opacity=".36"/>
+  </g>
+  <g transform="translate(1070 154)" filter="url(#blurShadow)">
+    <circle cx="170" cy="170" r="150" fill="url(#coinBlue)" opacity=".82"/>
+    <circle cx="170" cy="170" r="102" fill="none" stroke="#ffffff" stroke-width="9" opacity=".56"/>
+    <path d="M170 95 L232 134 L232 206 L170 245 L108 206 L108 134Z" fill="#ffffff" opacity=".32"/>
+  </g>
+  <g transform="translate(1228 514)" filter="url(#blurShadow)">
+    <circle cx="130" cy="130" r="116" fill="url(#coinGreen)" opacity=".72"/>
+    <circle cx="130" cy="130" r="76" fill="none" stroke="#ffffff" stroke-width="8" opacity=".52"/>
+    <path d="M130 70 L182 102 L182 158 L130 190 L78 158 L78 102Z" fill="#ffffff" opacity=".28"/>
+  </g>
+  <rect width="950" height="900" fill="#ffffff" opacity=".68"/>
+</svg>

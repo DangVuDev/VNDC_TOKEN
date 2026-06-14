@@ -7,11 +7,11 @@ interface BadgeProps {
 }
 
 const variantClasses: Record<BadgeVariant, string> = {
-  success: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200',
-  warning: 'bg-amber-50 text-amber-700 ring-1 ring-amber-200',
-  danger: 'bg-red-50 text-red-700 ring-1 ring-red-200',
-  info: 'bg-blue-50 text-blue-700 ring-1 ring-blue-200',
-  neutral: 'bg-gray-50 text-gray-600 ring-1 ring-gray-200',
+  success: 'bg-[var(--success-soft)] text-emerald-800 ring-1 ring-emerald-200',
+  warning: 'bg-[var(--warning-soft)] text-amber-800 ring-1 ring-amber-200',
+  danger: 'bg-[var(--danger-soft)] text-red-800 ring-1 ring-red-200',
+  info: 'bg-[var(--accent-tint)] text-[var(--accent-strong)] ring-1 ring-blue-200',
+  neutral: 'bg-slate-50 text-slate-600 ring-1 ring-slate-200',
 }
 
 const dotClasses: Record<BadgeVariant, string> = {
@@ -19,19 +19,19 @@ const dotClasses: Record<BadgeVariant, string> = {
   warning: 'bg-amber-500',
   danger: 'bg-red-500',
   info: 'bg-blue-500',
-  neutral: 'bg-gray-400',
+  neutral: 'bg-slate-400',
 }
 
 export function Badge({ variant = 'neutral', children, dot = false }: BadgeProps) {
   return (
     <span
       className={[
-        'inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium',
+        'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold',
         variantClasses[variant],
       ].join(' ')}
     >
       {dot && (
-        <span className={['w-1.5 h-1.5 rounded-full', dotClasses[variant]].join(' ')} />
+        <span className={['h-1.5 w-1.5 rounded-full', dotClasses[variant]].join(' ')} />
       )}
       {children}
     </span>

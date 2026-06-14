@@ -90,6 +90,550 @@ function isAdmin(roles?: string[]) {
   return (roles ?? []).some((r) => r === 'ADMIN' || r === 'SUPER_ADMIN')
 }
 
+
+const PROFILE_STYLES = `
+.profile-page.profile-liquid-page {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: 18px 18px 38px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 30px;
+  background:
+    linear-gradient(115deg, rgba(255,255,255,0.34), rgba(239,246,255,0.13) 44%, rgba(236,253,245,0.12)),
+    var(--visual-profile, none) center top / cover no-repeat,
+    linear-gradient(135deg, rgba(219,234,254,0.82), rgba(236,253,245,0.58));
+  box-shadow:
+    0 34px 90px rgba(37, 99, 235, 0.16),
+    inset 0 1px 0 rgba(255,255,255,0.86);
+}
+
+.profile-page.profile-liquid-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(760px 320px at 8% -4%, rgba(37,99,235,0.20), transparent 68%),
+    radial-gradient(720px 340px at 95% 2%, rgba(14,165,233,0.18), transparent 66%),
+    radial-gradient(680px 360px at 52% 108%, rgba(16,185,129,0.14), transparent 64%),
+    linear-gradient(180deg, rgba(255,255,255,0.62), rgba(246,248,251,0.82));
+  pointer-events: none;
+}
+
+.profile-page.profile-liquid-page::after {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  border-radius: 29px;
+  background:
+    linear-gradient(125deg, rgba(255,255,255,0.46), transparent 34%, rgba(255,255,255,0.18) 62%, transparent 82%);
+  opacity: 0.66;
+  pointer-events: none;
+}
+
+.profile-page .profile-glass-card,
+.profile-page .ant-card,
+.profile-page .ant-alert,
+.profile-page .ant-table-wrapper,
+.profile-page .ant-descriptions,
+.profile-page .ant-list,
+.profile-page .ant-menu {
+  border-color: rgba(255,255,255,0.62) !important;
+}
+
+.profile-page .profile-glass-card,
+.profile-page .ant-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 22px !important;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.36), rgba(255,255,255,0.13)) !important;
+  box-shadow:
+    0 22px 54px rgba(37, 99, 235, 0.13),
+    0 8px 18px rgba(15, 23, 42, 0.06),
+    inset 0 1px 0 rgba(255,255,255,0.88),
+    inset 0 -1px 0 rgba(37,99,235,0.08) !important;
+  backdrop-filter: blur(18px) saturate(1.85) contrast(1.04);
+  -webkit-backdrop-filter: blur(18px) saturate(1.85) contrast(1.04);
+  color: var(--ink, #0f172a);
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.profile-page .profile-glass-card::before,
+.profile-page .ant-card::before,
+.profile-page .ant-alert::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(115deg, rgba(255,255,255,0.48), transparent 28%, rgba(255,255,255,0.12) 56%, transparent 78%),
+    radial-gradient(460px 110px at 12% 0%, rgba(255,255,255,0.62), transparent 72%);
+  opacity: 0.64;
+  pointer-events: none;
+}
+
+.profile-page .profile-glass-card::after,
+.profile-page .ant-card::after,
+.profile-page .ant-alert::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.08) 38%, rgba(14,165,233,0.18) 68%, rgba(255,255,255,0.42));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.profile-page .ant-card > *,
+.profile-page .ant-alert > *,
+.profile-page .profile-glass-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.profile-page .ant-card:hover,
+.profile-page .profile-glass-card:hover {
+  border-color: rgba(255,255,255,0.84) !important;
+  box-shadow:
+    0 30px 70px rgba(37, 99, 235, 0.18),
+    0 12px 26px rgba(15,23,42,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.95) !important;
+  transform: translateY(-2px);
+}
+
+.profile-page .ant-card-head {
+  background: transparent !important;
+  border-bottom-color: rgba(191,219,254,0.66) !important;
+}
+
+.profile-page .ant-card-head-title,
+.profile-page .ant-descriptions-title,
+.profile-page .ant-form-item-label > label {
+  color: var(--ink, #0f172a) !important;
+  font-weight: 750;
+}
+
+.profile-page .ant-typography-secondary,
+.profile-page .ant-descriptions-item-label,
+.profile-page .ant-empty-description {
+  color: var(--ink-subtle, #64748b) !important;
+}
+
+.profile-page .ant-input,
+.profile-page .ant-input-affix-wrapper,
+.profile-page .ant-input-number,
+.profile-page .ant-input-number-input,
+.profile-page .ant-select-selector,
+.profile-page textarea.ant-input {
+  border-radius: 13px !important;
+  border-color: rgba(191,219,254,0.88) !important;
+  background: rgba(255,255,255,0.78) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.72);
+}
+
+.profile-page .ant-input:focus,
+.profile-page .ant-input-affix-wrapper-focused,
+.profile-page .ant-select-focused .ant-select-selector,
+.profile-page .ant-input-number-focused {
+  border-color: rgba(37,99,235,0.72) !important;
+  box-shadow: 0 0 0 4px rgba(37,99,235,0.12) !important;
+}
+
+.profile-page .ant-btn {
+  border-radius: 12px;
+  font-weight: 650;
+}
+
+.profile-page .ant-btn-primary {
+  border-color: #2563eb !important;
+  background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%) !important;
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+}
+
+.profile-page .ant-btn-dangerous.ant-btn-primary,
+.profile-page .ant-btn-dangerous {
+  box-shadow: 0 12px 24px rgba(239, 68, 68, 0.12);
+}
+
+.profile-page .ant-table {
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.46) !important;
+}
+
+.profile-page .ant-table-thead > tr > th {
+  background: rgba(239,246,255,0.82) !important;
+  color: var(--ink, #0f172a) !important;
+  border-bottom-color: rgba(191,219,254,0.66) !important;
+  font-weight: 760;
+}
+
+.profile-page .ant-table-tbody > tr > td {
+  background: rgba(255,255,255,0.28) !important;
+  border-bottom-color: rgba(226,232,240,0.66) !important;
+}
+
+.profile-page .ant-table-tbody > tr:hover > td {
+  background: rgba(239,246,255,0.78) !important;
+}
+
+.profile-hero {
+  margin-bottom: 22px;
+}
+
+.profile-hero-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+  gap: 18px;
+  align-items: stretch;
+  padding: 22px;
+  min-height: 218px;
+}
+
+.profile-hero-main {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(191,219,254,0.86);
+  border-radius: 24px;
+  padding: 22px;
+  background:
+    linear-gradient(110deg, rgba(255,255,255,0.94) 0%, rgba(239,246,255,0.88) 52%, rgba(236,253,245,0.74) 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+}
+
+.profile-hero-main::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #2563eb, #0ea5e9, #10b981);
+}
+
+.profile-hero-kicker {
+  color: var(--accent, #2563eb);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.profile-hero-title {
+  margin: 0 !important;
+  color: var(--ink, #0f172a) !important;
+  font-weight: 840 !important;
+  letter-spacing: -0.03em;
+  line-height: 1.08 !important;
+}
+
+.profile-hero-wallet {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  padding: 7px 10px;
+  border: 1px solid rgba(191,219,254,0.82);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.58);
+  color: var(--ink-muted, #475569);
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 12px;
+  overflow: hidden;
+}
+
+.profile-avatar-hero {
+  width: 88px;
+  height: 88px;
+  border-radius: 26px;
+  padding: 4px;
+  background: linear-gradient(135deg, rgba(37,99,235,0.92), rgba(14,165,233,0.76), rgba(16,185,129,0.76));
+  box-shadow: 0 18px 34px rgba(37,99,235,0.24);
+}
+
+.profile-avatar-hero .ant-avatar {
+  width: 80px !important;
+  height: 80px !important;
+  line-height: 80px !important;
+  border-radius: 22px;
+  border: 2px solid rgba(255,255,255,0.78);
+}
+
+.profile-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.profile-status-wrap {
+  margin-top: 12px;
+}
+
+.profile-hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.profile-metric-tile,
+.profile-mini-stat,
+.profile-class-chip,
+.profile-section-titlebar {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.62);
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.38), rgba(255,255,255,0.14));
+  box-shadow:
+    0 16px 36px rgba(37,99,235,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.82);
+  backdrop-filter: blur(16px) saturate(1.6);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6);
+}
+
+.profile-metric-tile {
+  min-height: 98px;
+  padding: 14px;
+}
+
+.profile-metric-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(37,99,235,0.12);
+  color: #2563eb;
+  font-size: 18px;
+}
+
+.profile-metric-label {
+  margin-top: 10px;
+  color: var(--ink-subtle, #64748b);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.profile-metric-value {
+  margin-top: 2px;
+  color: var(--ink, #0f172a);
+  font-size: 22px;
+  font-weight: 840;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.profile-layout {
+  align-items: flex-start;
+}
+
+.profile-sidebar-sticky {
+  position: sticky;
+  top: 24px;
+}
+
+.profile-sidebar-card .ant-card-body {
+  padding: 0 !important;
+}
+
+.profile-sidebar-cover {
+  position: relative;
+  overflow: hidden;
+  padding: 20px 18px 16px;
+  text-align: center;
+  background:
+    radial-gradient(260px 160px at 20% 0%, rgba(255,255,255,0.24), transparent 64%),
+    linear-gradient(135deg, rgba(15,23,42,0.96), rgba(30,58,138,0.88) 58%, rgba(14,165,233,0.72));
+}
+
+.profile-sidebar-cover::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 3px;
+  background: linear-gradient(90deg, #2563eb, #0ea5e9, #10b981);
+}
+
+.profile-avatar-ring {
+  width: 84px;
+  height: 84px;
+  margin: 0 auto 12px;
+  border-radius: 26px;
+  padding: 4px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.94), rgba(191,219,254,0.62));
+  box-shadow: 0 16px 34px rgba(15,23,42,0.28);
+}
+
+.profile-avatar-ring .ant-avatar {
+  width: 76px !important;
+  height: 76px !important;
+  line-height: 76px !important;
+  border-radius: 22px;
+}
+
+.profile-sidebar-name {
+  color: #f8fbff;
+  font-size: 15px;
+  font-weight: 820;
+  line-height: 1.28;
+}
+
+.profile-sidebar-wallet {
+  margin-top: 5px;
+  color: #bfdbfe;
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 11px;
+}
+
+.profile-sidebar-body {
+  padding: 14px 14px 16px;
+}
+
+.profile-class-chip {
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+
+.profile-class-chip-label {
+  color: var(--ink-subtle, #64748b);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.profile-class-chip-value {
+  margin-top: 2px;
+  color: var(--ink, #0f172a);
+  font-size: 16px;
+  font-weight: 820;
+}
+
+.profile-mini-stat {
+  padding: 10px 8px;
+  text-align: center;
+  min-height: 72px;
+}
+
+.profile-mini-stat-value {
+  font-size: 17px;
+  font-weight: 830;
+  line-height: 1.15;
+}
+
+.profile-mini-stat-label {
+  margin-top: 3px;
+  color: var(--ink-subtle, #64748b);
+  font-size: 10px;
+}
+
+.profile-menu.ant-menu {
+  background: transparent !important;
+  border: 0 !important;
+  padding: 6px 4px 2px;
+}
+
+.profile-menu .ant-menu-item {
+  height: 42px;
+  margin: 4px 0 !important;
+  border-radius: 14px;
+  color: var(--ink-muted, #475569);
+  font-weight: 680;
+}
+
+.profile-menu .ant-menu-item-selected {
+  background: linear-gradient(135deg, rgba(37,99,235,0.13), rgba(14,165,233,0.10) 58%, rgba(16,185,129,0.10)) !important;
+  color: var(--accent-strong, #1d4ed8) !important;
+  box-shadow: inset 0 0 0 1px rgba(191,219,254,0.72);
+}
+
+.profile-content-shell {
+  min-width: 0;
+}
+
+.profile-section-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+}
+
+.profile-section-titlebar .path {
+  color: var(--ink-subtle, #64748b);
+  font-size: 13px;
+}
+
+.profile-section-titlebar .current {
+  color: var(--accent-strong, #1d4ed8);
+  font-weight: 760;
+}
+
+.profile-page .ant-divider {
+  border-color: rgba(191,219,254,0.62);
+}
+
+.profile-page .ant-statistic-title {
+  color: var(--ink-subtle, #64748b) !important;
+}
+
+.profile-page .ant-statistic-content {
+  color: var(--ink, #0f172a) !important;
+  font-weight: 820;
+}
+
+@media (max-width: 992px) {
+  .profile-hero-inner {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-sidebar-sticky {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-page.profile-liquid-page {
+    padding: 12px;
+    border-radius: 22px;
+  }
+
+  .profile-hero-inner,
+  .profile-hero-main {
+    padding: 16px;
+  }
+
+  .profile-hero-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-avatar-hero {
+    width: 76px;
+    height: 76px;
+    border-radius: 24px;
+  }
+
+  .profile-avatar-hero .ant-avatar {
+    width: 68px !important;
+    height: 68px !important;
+    line-height: 68px !important;
+  }
+}
+`
+
 // ─── Section: Thông tin hồ sơ ────────────────────────────────────────────────
 
 function AccountSection({ profile, onRefresh }: { profile: UserProfile | null; onRefresh: () => void }) {
@@ -1650,76 +2194,67 @@ function ProfileSidebar({
   ]
 
   return (
-    <div style={{ position: 'sticky', top: 24 }}>
-      <Card style={{ borderRadius: 18, overflow: 'hidden', padding: 0, border: '1px solid #E0E7FF', boxShadow: '0 14px 32px rgba(15,23,42,0.06)' }} styles={{ body: { padding: 0 } }}>
-        <div style={{ background: 'linear-gradient(135deg,#0F0E2B 0%,#1E1A5C 55%,#312E81 100%)', padding: '18px 16px 14px', textAlign: 'center' }}>
-          <Avatar
-            size={72}
-            src={getAvatarUri(profile, user)}
-            icon={<UserOutlined />}
-            style={{ background: '#4F46E5', fontSize: 28, border: '3px solid rgba(255,255,255,0.2)', boxShadow: '0 8px 18px rgba(0,0,0,0.25)' }}
-          />
-          <div style={{ marginTop: 10, color: '#EEF2FF', fontWeight: 700, fontSize: 14, lineHeight: 1.35 }}>
-            {getAvatarLabel(profile, user)}
+    <div className="profile-sidebar-sticky">
+      <Card className="profile-sidebar-card profile-glass-card" styles={{ body: { padding: 0 } }}>
+        <div className="profile-sidebar-cover">
+          <div className="profile-avatar-ring">
+            <Avatar
+              src={getAvatarUri(profile, user)}
+              icon={<UserOutlined />}
+              style={{ background: '#2563eb', fontSize: 28 }}
+            />
           </div>
-          <div style={{ marginTop: 4, color: '#C7D2FE', fontSize: 12, fontFamily: 'monospace' }}>
-            {shortenAddr(user.wallet_address)}
-          </div>
-        </div>
-        <div
-          style={{
-            background: '#fff',
-            padding: '14px 16px',
-            color: '#E0E7FF',
-          }}
-        >
-          <Text style={{ color: '#C7D2FE', fontSize: 12 }}>Lớp học hiện tại</Text>
-          <div style={{ marginTop: 2, fontWeight: 700, fontSize: 16, color: '#EEF2FF' }}>{studentClass}</div>
-        </div>
-        {/* <div style={{ background: 'linear-gradient(160deg,#1E293B 0%,#0F172A 100%)', padding: '24px 20px 40px' }}>
-          <div style={{ textAlign: 'center' }}>
-            <Avatar size={72} src={avatarUri || undefined} icon={<UserOutlined />}
-              style={{ background: '#3B82F6', fontSize: 28, border: '3px solid rgba(255,255,255,0.2)', boxShadow: '0 4px 12px rgba(0,0,0,0.3)' }} />
-          </div>
-        </div>
-        <div style={{ padding: '0 16px 16px', marginTop: -28, textAlign: 'center' }}>
-          <div style={{ background: '#fff', borderRadius: 12, padding: '16px 12px 12px', boxShadow: '0 -4px 20px rgba(0,0,0,0.06)' }}>
-            <Title level={5} style={{ margin: 0, marginBottom: 2 }}>
-              {fullName || (username ? `@${username}` : shortenAddr(user.wallet_address))}
-            </Title>
-            {username && <Text type="secondary" style={{ fontSize: 13 }}>@{username}</Text>}
-            <div style={{ marginTop: 8 }}>
-              {roles.map((r) => <Tag key={r} color={roleColor(r)} style={{ marginBottom: 4 }}>{r}</Tag>)}
+          <div className="profile-sidebar-name">{getAvatarLabel(profile, user)}</div>
+          <Tooltip title="Copy địa chỉ ví">
+            <div
+              className="profile-sidebar-wallet"
+              onClick={() => { void navigator.clipboard.writeText(user.wallet_address); antMessage.success('Đã copy địa chỉ ví!') }}
+              style={{ cursor: 'pointer' }}
+            >
+              {shortenAddr(user.wallet_address)} <CopyOutlined />
             </div>
-            <div style={{ marginTop: 8 }}>
-              <Tooltip title="Copy địa chỉ ví">
-                <Text style={{ fontFamily: 'monospace', fontSize: 11, color: '#94A3B8', cursor: 'pointer' }}
-                  onClick={() => { void navigator.clipboard.writeText(user.wallet_address); antMessage.success('Đã copy!') }}>
-                  {shortenAddr(user.wallet_address)} <CopyOutlined />
-                </Text>
-              </Tooltip>
-            </div>
+          </Tooltip>
+          <Space size={[4, 6]} wrap style={{ justifyContent: 'center', marginTop: 10 }}>
+            {roles.map((r) => <Tag key={r} color={roleColor(r)}>{r}</Tag>)}
+          </Space>
+        </div>
+
+        <div className="profile-sidebar-body">
+          <div className="profile-class-chip">
+            <div className="profile-class-chip-label">Lớp học hiện tại</div>
+            <div className="profile-class-chip-value">{studentClass}</div>
           </div>
-        </div> */}
-        <div style={{ padding: '0 16px 16px' }}>
-          <Row gutter={0}>
-            <Col span={8} style={{ textAlign: 'center', padding: '12px 4px' }}>
-              <div style={{ fontSize: 18, fontWeight: 700, color: '#4F46E5', lineHeight: 1.2 }}>{actPoints.toLocaleString()}</div>
-              <Text type="secondary" style={{ fontSize: 10 }}>Điểm</Text>
+
+          <Row gutter={[10, 10]}>
+            <Col span={8}>
+              <div className="profile-mini-stat">
+                <div className="profile-mini-stat-value" style={{ color: '#2563eb' }}>{actPoints.toLocaleString()}</div>
+                <div className="profile-mini-stat-label">Điểm</div>
+              </div>
             </Col>
-            <Col span={8} style={{ textAlign: 'center', padding: '12px 4px', borderLeft: '1px solid #F1F5F9', borderRight: '1px solid #F1F5F9' }}>
-              <div style={{ fontSize: 18, fontWeight: 700, color: '#10B981', lineHeight: 1.2 }}>{loginCount.toLocaleString()}</div>
-              <Text type="secondary" style={{ fontSize: 10 }}>Đăng nhập</Text>
+            <Col span={8}>
+              <div className="profile-mini-stat">
+                <div className="profile-mini-stat-value" style={{ color: '#059669' }}>{loginCount.toLocaleString()}</div>
+                <div className="profile-mini-stat-label">Đăng nhập</div>
+              </div>
             </Col>
-            <Col span={8} style={{ textAlign: 'center', padding: '12px 4px' }}>
-              <div style={{ fontSize: 18, fontWeight: 700, color: '#F59E0B', lineHeight: 1.2 }}>Lv.{kycLevel}</div>
-              <Text type="secondary" style={{ fontSize: 10 }}>KYC</Text>
+            <Col span={8}>
+              <div className="profile-mini-stat">
+                <div className="profile-mini-stat-value" style={{ color: '#d97706' }}>Lv.{kycLevel}</div>
+                <div className="profile-mini-stat-label">KYC</div>
+              </div>
             </Col>
           </Row>
+
+          <Divider style={{ margin: '14px 0 8px' }} />
+          <Menu
+            className="profile-menu"
+            mode="inline"
+            selectedKeys={[activeSection]}
+            onClick={({ key }) => onSelect(key)}
+            items={navItems}
+          />
         </div>
-        <Divider style={{ margin: 0 }} />
-        <Menu mode="inline" selectedKeys={[activeSection]} onClick={({ key }) => onSelect(key)}
-          style={{ border: 'none', borderRadius: '0 0 16px 16px' }} items={navItems} />
       </Card>
     </div>
   )
@@ -1778,89 +2313,104 @@ export function ProfilePage({ user }: ProfilePageProps) {
     }
   }
 
+  const displayName = getAvatarLabel(profile, currentUser) || 'Hồ sơ cá nhân'
+  const heroStats = [
+    { label: 'Điểm hoạt động', value: (profile?.activity_points ?? 0).toLocaleString('vi-VN'), icon: <TrophyOutlined />, color: '#2563eb' },
+    { label: 'KYC hiện tại', value: `Level ${profile?.kyc_level ?? 0}`, icon: <IdcardOutlined />, color: '#d97706' },
+    { label: 'Lượt đăng nhập', value: (profile?.login_count ?? 0).toLocaleString('vi-VN'), icon: <HistoryOutlined />, color: '#059669' },
+    { label: 'Bảo mật 2FA', value: profile?.two_factor_enabled || currentUser.two_factor_enabled ? 'Đã bật' : 'Chưa bật', icon: <SafetyCertificateOutlined />, color: profile?.two_factor_enabled || currentUser.two_factor_enabled ? '#059669' : '#64748b' },
+  ]
+
   return (
-    <div style={{ minHeight: '100vh' }}>
-      <Card
-        style={{
-          marginBottom: 24,
-          borderRadius: 18,
-          overflow: 'hidden',
-          border: '1px solid #E0E7FF',
-          boxShadow: '0 14px 40px rgba(15,23,42,0.08)',
-          background: 'linear-gradient(135deg,#0F0E2B 0%,#1E1A5C 55%,#312E81 100%)',
-        }}
-        styles={{ body: { padding: '20px 24px' } }}
-      >
-        <Row align="middle" gutter={[16, 16]} wrap>
-          {/* <Col>
-            <Avatar
-              size={80}
-              src={getAvatarUri(profile, currentUser)}
-              icon={<UserOutlined />}
-              style={{ background: '#4F46E5', fontSize: 32, border: '3px solid rgba(255,255,255,0.25)', boxShadow: '0 4px 16px rgba(0,0,0,0.4)' }}
-            />
-          </Col> */}
-          <Col flex={1} style={{ minWidth: 0 }}>
-            <Space direction="vertical" size={4} style={{ width: '100%' }}>
-              <Space wrap>
-                <Title level={4} style={{ margin: 0, color: '#F1F5F9' }}>
-                  {getAvatarLabel(profile, currentUser) || 'Hồ sơ cá nhân'}
-                </Title>
-                {roles.map((r) => <Tag key={r} color={roleColor(r)}>{r}</Tag>)}
-                {hasAdminRole && <Tag icon={<CrownOutlined />} color="gold" style={{ fontWeight: 600 }}>Administrator</Tag>}
-              </Space>
-              <Space>
-                <Text style={{ color: '#94A3B8', fontFamily: 'monospace', fontSize: 13 }}>{walletAddress}</Text>
-                <Tooltip title="Copy địa chỉ ví">
-                  <Button
-                    type="text"
-                    size="small"
-                    icon={<CopyOutlined />}
-                    style={{ color: '#64748B' }}
-                    onClick={() => { void navigator.clipboard.writeText(walletAddress); antMessage.success('Đã copy!') }}
+    <div className="profile-page profile-liquid-page">
+      <style>{PROFILE_STYLES}</style>
+
+      <Card className="profile-hero profile-glass-card" styles={{ body: { padding: 0 } }}>
+        <div className="profile-hero-inner">
+          <div className="profile-hero-main">
+            <Row align="middle" gutter={[18, 18]} wrap>
+              <Col>
+                <div className="profile-avatar-hero">
+                  <Avatar
+                    src={getAvatarUri(profile, currentUser)}
+                    icon={<UserOutlined />}
+                    style={{ background: '#2563eb', fontSize: 32 }}
                   />
-                </Tooltip>
-              </Space>
-              <Space wrap>
-                {profile?.status && <Tag color={profile.status === 'ACTIVE' ? 'success' : 'error'}>{profile.status}</Tag>}
-                {profile?.kyc_status && <Tag color={kycColor(profile.kyc_status)} icon={<FileProtectOutlined />}>KYC: {profile.kyc_status}</Tag>}
-                {profile?.two_factor_enabled && <Tag color="success" icon={<SafetyCertificateOutlined />}>2FA</Tag>}
-                {profile?.class && <Tag color="processing">Lớp: {profile.class}</Tag>}
-                {profile?.email && (
-                  <Tag icon={profile.email_verified ? <CheckCircleOutlined /> : <CloseCircleOutlined />}
-                    color={profile.email_verified ? 'success' : 'warning'}>{profile.email}</Tag>
-                )}
-              </Space>
-            </Space>
-          </Col>
-          <Col>
-            <Space direction="vertical" size={8} align="end">
-              <Button
-                icon={<EditOutlined />}
-                onClick={() => setActiveSection('account')}
-                style={{ background: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.2)', color: '#F1F5F9' }}
-              >
-                Chỉnh sửa
-              </Button>
-              <Popconfirm title="Xác nhận đăng xuất?" onConfirm={auth.logout} okText="Đăng xuất" cancelText="Hủy">
-                <Button danger style={{ background: 'rgba(255,255,255,0.08)', borderColor: 'rgba(255,255,255,0.2)', color: '#F1F5F9' }}>
-                  Đăng xuất
-                </Button>
-              </Popconfirm>
-            </Space>
-          </Col>
-        </Row>
+                </div>
+              </Col>
+              <Col flex={1} style={{ minWidth: 0 }}>
+                <Space direction="vertical" size={8} style={{ width: '100%' }}>
+                  <div className="profile-hero-kicker">Trung tâm hồ sơ VNDC</div>
+                  <Space wrap align="center">
+                    <Title level={3} className="profile-hero-title">
+                      {displayName}
+                    </Title>
+                    {hasAdminRole && <Tag icon={<CrownOutlined />} color="gold" style={{ fontWeight: 700 }}>Administrator</Tag>}
+                  </Space>
+                  <div className="profile-hero-wallet">
+                    <span>{walletAddress}</span>
+                    <Tooltip title="Copy địa chỉ ví">
+                      <Button
+                        type="text"
+                        size="small"
+                        icon={<CopyOutlined />}
+                        style={{ color: 'var(--accent)' }}
+                        onClick={() => { void navigator.clipboard.writeText(walletAddress); antMessage.success('Đã copy địa chỉ ví!') }}
+                      />
+                    </Tooltip>
+                  </div>
+                  <Space className="profile-status-wrap" wrap>
+                    {roles.map((r) => <Tag key={r} color={roleColor(r)}>{r}</Tag>)}
+                    {profile?.status && <Tag color={profile.status === 'ACTIVE' ? 'success' : 'error'}>{profile.status}</Tag>}
+                    {profile?.kyc_status && <Tag color={kycColor(profile.kyc_status)} icon={<FileProtectOutlined />}>KYC: {profile.kyc_status}</Tag>}
+                    {(profile?.two_factor_enabled || currentUser.two_factor_enabled) && <Tag color="success" icon={<SafetyCertificateOutlined />}>2FA</Tag>}
+                    {profile?.class && <Tag color="processing">Lớp: {profile.class}</Tag>}
+                    {profile?.email && (
+                      <Tag icon={profile.email_verified ? <CheckCircleOutlined /> : <CloseCircleOutlined />}
+                        color={profile.email_verified ? 'success' : 'warning'}>{profile.email}</Tag>
+                    )}
+                  </Space>
+                  <div className="profile-hero-actions">
+                    <Button icon={<EditOutlined />} onClick={() => setActiveSection('account')} type="primary">
+                      Chỉnh sửa hồ sơ
+                    </Button>
+                    <Button icon={<SafetyCertificateOutlined />} onClick={() => setActiveSection('kyc')}>
+                      Kiểm tra KYC
+                    </Button>
+                    <Popconfirm title="Xác nhận đăng xuất?" onConfirm={auth.logout} okText="Đăng xuất" cancelText="Hủy">
+                      <Button danger icon={<LogoutOutlined />}>Đăng xuất</Button>
+                    </Popconfirm>
+                  </div>
+                </Space>
+              </Col>
+            </Row>
+          </div>
+
+          <div className="profile-hero-metrics">
+            {heroStats.map(item => (
+              <div className="profile-metric-tile" key={item.label}>
+                <div className="profile-metric-icon" style={{ color: item.color, background: `${item.color}18` }}>{item.icon}</div>
+                <div className="profile-metric-label">{item.label}</div>
+                <div className="profile-metric-value" style={{ color: item.color }}>{item.value}</div>
+              </div>
+            ))}
+          </div>
+        </div>
       </Card>
 
-      <Row gutter={[24, 24]}>
-        <Col xs={24} md={7}>
+      <Row gutter={[22, 22]} className="profile-layout">
+        <Col xs={24} lg={7} xl={6}>
           <ProfileSidebar profile={profile} user={currentUser} activeSection={activeSection} onSelect={setActiveSection} />
         </Col>
-        <Col xs={24} md={17}>
-          <div style={{ marginBottom: 12 }}>
-            <Text type="secondary" style={{ fontSize: 13 }}>
-              Hồ sơ &rsaquo; <Text strong style={{ color: '#3B82F6' }}>{sectionLabels[activeSection] ?? 'Thông tin hồ sơ'}</Text>
-            </Text>
+        <Col xs={24} lg={17} xl={18} className="profile-content-shell">
+          <div className="profile-section-titlebar">
+            <div className="path">
+              Hồ sơ &rsaquo; <span className="current">{sectionLabels[activeSection] ?? 'Thông tin hồ sơ'}</span>
+            </div>
+            <Space size={8} wrap>
+              <Tag color={profile?.status === 'ACTIVE' ? 'success' : 'default'}>{profile?.status ?? 'Đang tải'}</Tag>
+              <Button size="small" icon={<ReloadOutlined />} onClick={() => void loadProfile()}>Làm mới</Button>
+            </Space>
           </div>
           {renderSection()}
         </Col>

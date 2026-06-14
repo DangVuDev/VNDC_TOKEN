@@ -19,16 +19,10 @@ export function toast(message: string, variant: ToastVariant = 'info') {
 toast.success = (msg: string) => toast(msg, 'success')
 toast.error = (msg: string) => toast(msg, 'error')
 
-const iconMap: Record<ToastVariant, string> = {
-  success: '✓',
-  error: '✕',
-  info: 'ℹ',
-}
-
 const colorMap: Record<ToastVariant, string> = {
-  success: 'bg-emerald-600',
-  error: 'bg-red-600',
-  info: 'bg-blue-600',
+  success: 'bg-emerald-700',
+  error: 'bg-red-700',
+  info: 'bg-[var(--accent)]',
 }
 
 function ToastItem({
@@ -48,19 +42,19 @@ function ToastItem({
   return (
     <div
       className={[
-        'flex items-start gap-3 text-white text-sm px-4 py-3 rounded-xl shadow-lg',
-        'min-w-[260px] max-w-sm animate-slide-in',
+        'flex min-w-[260px] max-w-sm items-start gap-3 rounded-xl px-4 py-3 text-sm text-white shadow-lg',
+        'animate-slide-in',
         colorMap[variant],
       ].join(' ')}
     >
-      <span className="font-bold mt-0.5">{iconMap[variant]}</span>
+      <span className="mt-1 h-2 w-2 rounded-full bg-white/80" aria-hidden="true" />
       <span className="flex-1">{message}</span>
       <button
         onClick={onRemove}
-        className="opacity-70 hover:opacity-100 font-bold leading-none ml-2"
+        className="ml-2 font-bold leading-none opacity-70 hover:opacity-100"
         aria-label="Dismiss"
       >
-        ×
+        x
       </button>
     </div>
   )
@@ -85,7 +79,7 @@ export function ToastContainer() {
   }
 
   return (
-    <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
+    <div className="fixed right-4 top-4 z-50 flex flex-col gap-2">
       {toasts.map((t) => (
         <ToastItem
           key={t.id}

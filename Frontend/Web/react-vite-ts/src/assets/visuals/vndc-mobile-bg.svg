@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1600" role="img" aria-label="VNDC mobile campus background">
+  <defs>
+    <linearGradient id="mBase" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fbfdff"/>
+      <stop offset=".58" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e0f2fe"/>
+    </linearGradient>
+    <linearGradient id="mRibbon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2563eb" stop-opacity=".72"/>
+      <stop offset=".56" stop-color="#38bdf8" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#10b981" stop-opacity=".5"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="1600" fill="url(#mBase)"/>
+  <g opacity=".16" stroke="#93c5fd" stroke-width="1">
+    <path d="M0 80 H900 M0 160 H900 M0 240 H900 M0 320 H900"/>
+    <path d="M80 0 V900 M160 0 V900 M240 0 V900 M320 0 V900 M400 0 V900 M480 0 V900 M560 0 V900"/>
+    <path d="M700 0 C590 200 600 430 760 690 C850 838 880 1030 802 1210"/>
+  </g>
+  <path d="M0 1060 C156 998 252 1042 392 962 C536 880 686 844 900 892 L900 1600 L0 1600Z" fill="#dcfce7" opacity=".42"/>
+  <path d="M0 1168 C192 1066 310 1072 512 994 C666 934 790 922 900 956" fill="none" stroke="url(#mRibbon)" stroke-width="86" stroke-linecap="round"/>
+  <path d="M-40 1228 C180 1108 332 1112 538 1016 C696 944 808 944 940 1006" fill="none" stroke="#bfdbfe" stroke-width="30" stroke-opacity=".42" stroke-linecap="round"/>
+  <g transform="translate(-42 928)" opacity=".58">
+    <path d="M0 0 L340 -92 L340 268 L0 328Z" fill="#ffffff" opacity=".74"/>
+    <path d="M34 38 L306 -30 L306 220 L34 270Z" fill="#dbeafe" opacity=".36"/>
+    <g stroke="#60a5fa" stroke-opacity=".26" stroke-width="2">
+      <path d="M42 70 L304 8"/>
+      <path d="M42 132 L306 70"/>
+      <path d="M42 194 L306 132"/>
+      <path d="M94 24 L94 258"/>
+      <path d="M178 4 L178 238"/>
+      <path d="M262 -16 L262 220"/>
+    </g>
+  </g>
+  <rect width="900" height="860" fill="#ffffff" opacity=".72"/>
+</svg>

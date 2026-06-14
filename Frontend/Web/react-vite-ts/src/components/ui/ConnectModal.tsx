@@ -26,18 +26,15 @@ export function ConnectModal({
       className="fixed inset-0 z-50 flex items-center justify-center px-4"
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      {/* Backdrop */}
-      <div className="absolute inset-0 bg-blue-950/40 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-slate-950/50 backdrop-blur-sm" />
 
-      {/* Panel */}
       <div className="relative z-10 w-full max-w-md">
-        {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute -top-10 right-0 text-white/70 hover:text-white text-2xl leading-none"
+          className="absolute -top-10 right-0 text-2xl leading-none text-white/70 hover:text-white"
           aria-label="Close"
         >
-          ×
+          x
         </button>
 
         {twoFaRequired ? (

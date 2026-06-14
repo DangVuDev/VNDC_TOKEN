@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback, type ReactNode } from 'react'
 import {
   Row, Col, Card, Typography, Space, Button, Tag, Alert, Avatar,
   Input, InputNumber, Spin, Tooltip, message as antMessage,
@@ -11,7 +11,8 @@ import {
   UserOutlined, EditOutlined, CheckCircleOutlined, WarningOutlined,
   CloseCircleOutlined, DownloadOutlined, ReloadOutlined,
   SafetyCertificateOutlined, HistoryOutlined,
-  SwapOutlined, ClockCircleOutlined,
+  SwapOutlined, ClockCircleOutlined, ShopOutlined, FundOutlined,
+  CalendarOutlined,
 } from '@ant-design/icons'
 import { QRCodeSVG } from 'qrcode.react'
 import jsQR from 'jsqr'
@@ -21,9 +22,11 @@ import {
   type BalanceResponse, type Transaction, type PublicUserInfo,
 } from '../lib/services'
 import { signTypedData, buildTransferTypedData, switchChain } from '../lib/wallet'
+import tokenVisualUrl from '../assets/visuals/vndc-token-bg.jpg'
 import type { AuthUser } from '../hooks/useAuth'
 
 const { Title, Text } = Typography
+const TOKEN_VISUAL = `url("${tokenVisualUrl}")`
 
 // ─── CSS animations ────────────────────────────────────────────────────────────
 const PAGE_STYLES = `
@@ -54,6 +57,712 @@ const PAGE_STYLES = `
   }
   .tx-row td { transition: background 0.15s; }
   .tx-row:hover td { background: #F8FAFF !important; cursor: pointer; }
+
+  /* Token scoped styles moved from index.css */
+.token-page { --page-visual: ${TOKEN_VISUAL}; --page-accent: #2563eb; --page-accent-2: #059669; }
+
+.token-page > div:first-of-type,
+.token-page > div[style*="#0B1220"] {
+  border: 1px solid rgba(191, 219, 254, 0.86) !important;
+  background:
+    // linear-gradient(105deg, rgba(255, 255, 255, 0.96) 0%, rgba(239, 246, 255, 0.9) 48%, rgba(236, 253, 245, 0.72) 100%),
+    ${TOKEN_VISUAL} center right / cover no-repeat !important;
+  box-shadow: 0 24px 70px rgba(37, 99, 235, 0.14) !important;
+}
+
+.token-page > div:first-of-type .ant-typography {
+  color: var(--ink) !important;
+}
+
+.token-page div[style*="#1E1A5C"],
+.token-page div[style*="#312E81"] {
+  background:
+    linear-gradient(135deg, rgba(239, 246, 255, 0.96), rgba(236, 253, 245, 0.86)) !important;
+  border: 1px solid rgba(191, 219, 254, 0.86) !important;
+}
+
+.token-page div[style*="#1E1A5C"] .ant-typography,
+.token-page div[style*="#312E81"] .ant-typography {
+  color: var(--ink-muted) !important;
+}
+
+
+.token-liquid-page {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  width: min(100%, 1180px);
+  margin: 0 auto;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 28px;
+  background:
+    linear-gradient(118deg, rgba(255, 255, 255, 0.28), rgba(239, 246, 255, 0.12) 38%, rgba(236, 253, 245, 0.08)),
+    var(--visual-events-bg) center top / cover no-repeat,
+    #eff6ff !important;
+  box-shadow: 0 34px 90px rgba(37, 99, 235, 0.16);
+  padding: 18px 18px 40px;
+}
+
+.token-liquid-page::before,
+.token-liquid-page::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.token-liquid-page::before {
+  background:
+    radial-gradient(640px 280px at 8% 0%, rgba(255, 255, 255, 0.5), transparent 68%),
+    radial-gradient(520px 260px at 94% 10%, rgba(14, 165, 233, 0.18), transparent 70%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.18));
+}
+
+.token-liquid-page::after {
+  inset: 1px;
+  border-radius: 27px;
+  background: linear-gradient(125deg, rgba(255, 255, 255, 0.3), transparent 36%, rgba(255, 255, 255, 0.12) 66%, transparent 84%);
+  opacity: 0.62;
+}
+
+.token-liquid-page .token-hero,
+.token-liquid-page .token-balance-card,
+.token-liquid-page .token-tabs-glass,
+.token-liquid-page .token-workspace-card,
+.token-liquid-page .token-history-panel,
+.token-liquid-page .token-receive-wallet,
+.token-liquid-page .token-qr-card,
+.token-liquid-page .token-qr-amount-card,
+.token-liquid-page .token-transfer-form-card,
+.token-liquid-page .token-recipient-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.58) !important;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.045) 48%, rgba(219, 234, 254, 0.055)) !important;
+  box-shadow:
+    0 28px 58px rgba(37, 99, 235, 0.13),
+    0 8px 20px rgba(15, 23, 42, 0.055),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(37, 99, 235, 0.08),
+    inset 1px 0 0 rgba(255, 255, 255, 0.34) !important;
+  backdrop-filter: blur(13px) saturate(2) contrast(1.08);
+  -webkit-backdrop-filter: blur(13px) saturate(2) contrast(1.08);
+  transform-style: preserve-3d;
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease, background 220ms ease;
+}
+
+.token-liquid-page .token-hero::before,
+.token-liquid-page .token-balance-card::before,
+.token-liquid-page .token-tabs-glass::before,
+.token-liquid-page .token-workspace-card::before,
+.token-liquid-page .token-history-panel::before,
+.token-liquid-page .token-receive-wallet::before,
+.token-liquid-page .token-qr-card::before,
+.token-liquid-page .token-qr-amount-card::before,
+.token-liquid-page .token-transfer-form-card::before,
+.token-liquid-page .token-recipient-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(118deg, rgba(255, 255, 255, 0.46), rgba(255, 255, 255, 0.12) 18%, transparent 36%, rgba(255, 255, 255, 0.1) 62%, transparent 82%),
+    radial-gradient(420px 110px at 12% 0%, rgba(255, 255, 255, 0.5), transparent 68%),
+    radial-gradient(320px 90px at 92% 100%, rgba(14, 165, 233, 0.16), transparent 72%);
+  opacity: 0.82;
+  pointer-events: none;
+}
+
+.token-liquid-page .token-hero::after,
+.token-liquid-page .token-balance-card::after,
+.token-liquid-page .token-tabs-glass::after,
+.token-liquid-page .token-workspace-card::after,
+.token-liquid-page .token-history-panel::after,
+.token-liquid-page .token-receive-wallet::after,
+.token-liquid-page .token-qr-card::after,
+.token-liquid-page .token-qr-amount-card::after,
+.token-liquid-page .token-transfer-form-card::after,
+.token-liquid-page .token-recipient-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  padding: 1.25px;
+  background:
+    linear-gradient(140deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0.48) 8%,
+      rgba(255, 255, 255, 0.08) 31%,
+      rgba(14, 165, 233, 0.22) 58%,
+      rgba(255, 255, 255, 0.08) 78%,
+      rgba(255, 255, 255, 0.62) 100%);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0.96;
+  pointer-events: none;
+}
+
+.token-liquid-page .token-hero > *,
+.token-liquid-page .token-balance-card > *,
+.token-liquid-page .token-tabs-glass > *,
+.token-liquid-page .token-workspace-card > *,
+.token-liquid-page .token-history-panel > *,
+.token-liquid-page .token-receive-wallet > *,
+.token-liquid-page .token-qr-card > *,
+.token-liquid-page .token-qr-amount-card > *,
+.token-liquid-page .token-transfer-form-card > *,
+.token-liquid-page .token-recipient-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.token-liquid-page .token-hero {
+  min-height: 194px;
+  background:
+    linear-gradient(110deg, rgba(219, 234, 254, 0.68), rgba(37, 99, 235, 0.28) 48%, rgba(14, 165, 233, 0.2)),
+     ${TOKEN_VISUAL} center / cover no-repeat !important;
+  color: var(--ink);
+}
+
+.token-liquid-page .token-hero .ant-typography {
+  color: var(--ink) !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.token-liquid-page .token-hero > div:first-child {
+  width: 62px !important;
+  height: 62px !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.06)) !important;
+  box-shadow:
+    0 18px 34px rgba(37, 99, 235, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px) saturate(1.8);
+  -webkit-backdrop-filter: blur(12px) saturate(1.8);
+}
+
+.token-liquid-page .token-hero > div:first-child .anticon {
+  color: var(--accent) !important;
+  filter: drop-shadow(0 8px 16px rgba(37, 99, 235, 0.18));
+}
+
+.token-liquid-page .token-hero::after {
+  inset: auto 0 0 0;
+  height: 3px;
+  border: 0;
+  border-radius: 0;
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.92), rgba(14, 165, 233, 0.88), rgba(16, 185, 129, 0.8));
+  box-shadow: 0 -1px 18px rgba(14, 165, 233, 0.34);
+  -webkit-mask: none;
+  mask: none;
+  opacity: 1;
+}
+
+.token-liquid-page .token-balance-grid {
+  margin-bottom: 24px !important;
+}
+
+.token-liquid-page .token-balance-card {
+  min-height: 152px !important;
+  border-radius: 20px !important;
+}
+
+.token-liquid-page .token-balance-card:hover,
+.token-liquid-page .token-workspace-card:hover,
+.token-liquid-page .token-history-panel:hover,
+.token-liquid-page .token-qr-card:hover,
+.token-liquid-page .token-qr-amount-card:hover {
+  border-color: rgba(255, 255, 255, 0.74) !important;
+  box-shadow:
+    0 34px 74px rgba(37, 99, 235, 0.18),
+    0 14px 28px rgba(15, 23, 42, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(37, 99, 235, 0.1) !important;
+  transform: translateY(-3px) scale(1.006);
+}
+
+.token-liquid-page .token-balance-primary {
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.46), rgba(14, 165, 233, 0.18) 48%, rgba(255, 255, 255, 0.08)) !important;
+}
+
+.token-liquid-page .token-balance-onchain {
+  --token-state-color: #059669;
+}
+
+.token-liquid-page .token-balance-pending {
+  --token-state-color: #64748b;
+}
+
+.token-liquid-page .token-balance-pending.has-pending {
+  --token-state-color: #d97706;
+}
+
+.token-liquid-page .token-balance-card .ant-typography {
+  color: var(--ink) !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.token-liquid-page .token-balance-primary .ant-typography,
+.token-liquid-page .token-balance-primary div {
+  color: #f8fbff !important;
+  text-shadow: 0 12px 24px rgba(15, 23, 42, 0.18);
+}
+
+.token-liquid-page .token-balance-onchain div[style*="monospace"],
+.token-liquid-page .token-balance-pending div[style*="monospace"] {
+  color: var(--token-state-color) !important;
+}
+
+.token-liquid-page .token-balance-card div[style*="width: 38px"] {
+  border: 1px solid rgba(255, 255, 255, 0.54);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.06)) !important;
+  box-shadow:
+    0 16px 30px rgba(37, 99, 235, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(10px) saturate(1.8);
+  -webkit-backdrop-filter: blur(10px) saturate(1.8);
+}
+
+.token-liquid-page .token-tabs-glass {
+  align-items: center;
+  border-radius: 18px !important;
+  padding: 6px !important;
+  margin-bottom: 24px !important;
+}
+
+.token-liquid-page .tok-tab {
+  flex: 1;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 14px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--ink-muted);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 14px;
+  font-weight: 660;
+  padding: 11px 10px;
+}
+
+.token-liquid-page .tok-tab.is-active {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.12)) !important;
+  box-shadow:
+    0 14px 30px rgba(37, 99, 235, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82) !important;
+  transform: translateY(-1px);
+}
+
+.token-liquid-page .tok-tab:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  transform: translateY(-2px);
+}
+
+.token-liquid-page .token-tab-content {
+  animation: page-rise 360ms cubic-bezier(0.2, 0.7, 0.2, 1) both !important;
+}
+
+.token-liquid-page .token-workspace-card,
+.token-liquid-page .token-history-panel {
+  border-radius: 22px !important;
+}
+
+.token-liquid-page .token-workspace-card .ant-card-head,
+.token-liquid-page .token-history-header {
+  border-bottom-color: rgba(255, 255, 255, 0.4) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+
+.token-liquid-page .token-workspace-card .ant-card-head-title .ant-typography,
+.token-liquid-page .token-history-header .ant-typography {
+  color: var(--ink) !important;
+}
+
+.token-liquid-page .token-transfer-form-card,
+.token-liquid-page .token-recipient-card,
+.token-liquid-page .token-receive-wallet,
+.token-liquid-page .token-qr-card,
+.token-liquid-page .token-qr-amount-card {
+  border-radius: 18px !important;
+}
+
+.token-liquid-page .token-transfer-form-card .ant-typography,
+.token-liquid-page .token-recipient-card .ant-typography,
+.token-liquid-page .token-qr-amount-card .ant-typography,
+.token-liquid-page .token-qr-card .ant-typography {
+  color: var(--ink) !important;
+}
+
+.token-liquid-page .token-receive-wallet .ant-typography {
+  color: var(--ink) !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.token-liquid-page .token-receive-wallet .ant-btn {
+  border-color: rgba(255, 255, 255, 0.56) !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: var(--accent-strong) !important;
+}
+
+.token-liquid-page .token-qr-card svg {
+  border-radius: 14px;
+}
+
+.token-liquid-page .ant-input,
+.token-liquid-page .ant-input-number,
+.token-liquid-page .ant-input-affix-wrapper,
+.token-liquid-page .ant-select-selector,
+.token-liquid-page .ant-input-number-group-addon,
+.token-liquid-page textarea {
+  border-color: rgba(255, 255, 255, 0.58) !important;
+  background: rgba(255, 255, 255, 0.42) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(10px) saturate(1.4);
+  -webkit-backdrop-filter: blur(10px) saturate(1.4);
+}
+
+.token-liquid-page .ant-segmented,
+.token-liquid-page .ant-alert {
+  border: 1px solid rgba(255, 255, 255, 0.48) !important;
+  background: rgba(255, 255, 255, 0.24) !important;
+  backdrop-filter: blur(12px) saturate(1.5);
+  -webkit-backdrop-filter: blur(12px) saturate(1.5);
+}
+
+.token-liquid-page .ant-table-wrapper,
+.token-liquid-page .ant-table,
+.token-liquid-page .ant-table-container,
+.token-liquid-page .ant-table-cell {
+  background: transparent !important;
+}
+
+.token-liquid-page .ant-table-thead > tr > th {
+  border-bottom-color: rgba(255, 255, 255, 0.42) !important;
+  background: rgba(255, 255, 255, 0.22) !important;
+}
+
+.token-liquid-page .ant-table-tbody > tr > td {
+  border-bottom-color: rgba(255, 255, 255, 0.24) !important;
+}
+
+.token-liquid-page .tx-row:hover td {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.token-liquid-page .ant-pagination-item,
+.token-liquid-page .ant-pagination-prev .ant-pagination-item-link,
+.token-liquid-page .ant-pagination-next .ant-pagination-item-link {
+  border-color: rgba(255, 255, 255, 0.48) !important;
+  background: rgba(255, 255, 255, 0.24) !important;
+  backdrop-filter: blur(8px);
+}
+
+.token-liquid-page .ant-btn:not(.ant-btn-primary) {
+  border-color: rgba(255, 255, 255, 0.54) !important;
+  background: rgba(255, 255, 255, 0.26);
+  color: var(--accent-strong);
+}
+
+.token-liquid-page .ant-btn-primary {
+  background: linear-gradient(135deg, #2563eb, #0ea5e9) !important;
+  border-color: rgba(255, 255, 255, 0.26) !important;
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.2) !important;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .token-liquid-page .token-hero,
+  .token-liquid-page .token-balance-card,
+  .token-liquid-page .token-tabs-glass,
+  .token-liquid-page .token-workspace-card,
+  .token-liquid-page .token-history-panel,
+  .token-liquid-page .token-receive-wallet,
+  .token-liquid-page .token-qr-card,
+  .token-liquid-page .token-qr-amount-card,
+  .token-liquid-page .token-transfer-form-card,
+  .token-liquid-page .token-recipient-card {
+    background: rgba(255, 255, 255, 0.88) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .token-liquid-page {
+    width: 100%;
+    border-radius: var(--radius-lg);
+    padding: 12px 12px 28px !important;
+    background:
+      linear-gradient(118deg, rgba(255, 255, 255, 0.32), rgba(239, 246, 255, 0.16) 38%, rgba(236, 253, 245, 0.1)),
+       ${TOKEN_VISUAL} top center / 820px auto no-repeat,
+      #eff6ff !important;
+  }
+
+  .token-liquid-page .token-hero {
+    min-height: auto;
+    align-items: flex-start !important;
+    gap: 14px !important;
+    padding: 20px !important;
+  }
+
+  .token-liquid-page .token-hero > div:last-child {
+    width: 100%;
+    text-align: left !important;
+  }
+
+  .token-liquid-page .token-tabs-glass {
+    gap: 4px !important;
+    padding: 5px !important;
+  }
+
+  .token-liquid-page .tok-tab {
+    min-height: 44px;
+    flex-direction: column;
+    gap: 3px;
+    font-size: 12px;
+    padding: 8px 6px;
+  }
+
+  .token-liquid-page .token-workspace-card .ant-card-body {
+    padding: 18px !important;
+  }
+
+  .token-liquid-page .token-balance-card {
+    min-height: 132px !important;
+  }
+}
+
+.token-liquid-page {
+  background:
+    linear-gradient(118deg, rgba(255, 255, 255, 0.44), rgba(239, 246, 255, 0.24) 42%, rgba(236, 253, 245, 0.18)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(226, 242, 255, 0.28)),
+    // ${TOKEN_VISUAL} center top / cover no-repeat,
+    #eff6ff !important;
+}
+
+.token-liquid-page::before {
+  background:
+    radial-gradient(760px 360px at 8% 0%, rgba(255, 255, 255, 0.72), transparent 68%),
+    radial-gradient(560px 280px at 94% 8%, rgba(14, 165, 233, 0.24), transparent 70%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.32));
+}
+
+.token-liquid-page .token-hero,
+.token-liquid-page .token-balance-card,
+.token-liquid-page .token-tabs-glass,
+.token-liquid-page .token-workspace-card,
+.token-liquid-page .token-history-panel,
+.token-liquid-page .token-receive-wallet,
+.token-liquid-page .token-qr-card,
+.token-liquid-page .token-qr-amount-card,
+.token-liquid-page .token-transfer-form-card,
+.token-liquid-page .token-recipient-card {
+  border-color: rgba(255, 255, 255, 0.76) !important;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(248, 251, 255, 0.64) 42%, rgba(226, 238, 255, 0.56)) !important;
+  box-shadow:
+    0 30px 66px rgba(37, 99, 235, 0.18),
+    0 14px 28px rgba(15, 23, 42, 0.09),
+    0 2px 8px rgba(255, 255, 255, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.98),
+    inset 0 -1px 0 rgba(37, 99, 235, 0.12),
+    inset 1px 0 0 rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(15px) saturate(1.28) contrast(1.04);
+  -webkit-backdrop-filter: blur(15px) saturate(1.28) contrast(1.04);
+}
+
+.token-liquid-page .token-hero::before,
+.token-liquid-page .token-balance-card::before,
+.token-liquid-page .token-tabs-glass::before,
+.token-liquid-page .token-workspace-card::before,
+.token-liquid-page .token-history-panel::before,
+.token-liquid-page .token-receive-wallet::before,
+.token-liquid-page .token-qr-card::before,
+.token-liquid-page .token-qr-amount-card::before,
+.token-liquid-page .token-transfer-form-card::before,
+.token-liquid-page .token-recipient-card::before {
+  background:
+    linear-gradient(118deg, rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0.22) 18%, transparent 38%, rgba(255, 255, 255, 0.16) 64%, transparent 82%),
+    radial-gradient(520px 150px at 12% 0%, rgba(255, 255, 255, 0.72), transparent 68%),
+    radial-gradient(360px 120px at 94% 100%, rgba(14, 165, 233, 0.2), transparent 72%);
+  opacity: 0.94;
+}
+
+.token-liquid-page .token-hero::after,
+.token-liquid-page .token-balance-card::after,
+.token-liquid-page .token-tabs-glass::after,
+.token-liquid-page .token-workspace-card::after,
+.token-liquid-page .token-history-panel::after,
+.token-liquid-page .token-receive-wallet::after,
+.token-liquid-page .token-qr-card::after,
+.token-liquid-page .token-qr-amount-card::after,
+.token-liquid-page .token-transfer-form-card::after,
+.token-liquid-page .token-recipient-card::after {
+  padding: 1.6px;
+  background:
+    linear-gradient(140deg,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(255, 255, 255, 0.72) 8%,
+      rgba(255, 255, 255, 0.16) 32%,
+      rgba(14, 165, 233, 0.28) 58%,
+      rgba(255, 255, 255, 0.18) 78%,
+      rgba(255, 255, 255, 0.82) 100%);
+  opacity: 1;
+}
+
+.token-liquid-page .token-balance-card,
+.token-liquid-page .token-workspace-card,
+.token-liquid-page .token-history-panel {
+  outline: 1px solid rgba(255, 255, 255, 0.26);
+  outline-offset: -4px;
+}
+
+.token-liquid-page .token-hero {
+  background:
+    linear-gradient(110deg, rgba(15, 23, 42, 0.18), rgba(30, 64, 175, 0.1) 48%, rgba(14, 116, 144, 0.08)),
+    ${TOKEN_VISUAL} center / cover no-repeat !important;
+}
+
+.token-liquid-page .token-hero::before {
+  opacity: 0.08 !important;
+  background:
+    radial-gradient(420px 170px at 14% 6%, rgba(255,255,255,0.36), transparent 72%) !important;
+}
+
+.token-liquid-page .token-hero .ant-typography {
+  color: #ffffff !important;
+  text-shadow:
+    0 1px 0 rgba(15, 23, 42, 0.62),
+    0 12px 24px rgba(15, 23, 42, 0.42);
+}
+
+.token-liquid-page .token-hero > div:first-child {
+  background:
+    linear-gradient(145deg, rgba(59, 130, 246, 0.42), rgba(15, 23, 42, 0.24)) !important;
+}
+
+.token-liquid-page .token-balance-primary {
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.62), rgba(14, 165, 233, 0.36) 48%, rgba(255, 255, 255, 0.22)) !important;
+}
+
+.token-liquid-page .token-tabs-glass {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.62), rgba(239, 246, 255, 0.34)) !important;
+}
+
+.token-liquid-page .tok-tab.is-active {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.44)) !important;
+  box-shadow:
+    0 18px 36px rgba(37, 99, 235, 0.16),
+    0 6px 14px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.96) !important;
+}
+
+.token-liquid-page .token-transfer-form-card,
+.token-liquid-page .token-recipient-card,
+.token-liquid-page .token-qr-card,
+.token-liquid-page .token-qr-amount-card,
+.token-liquid-page .token-receive-wallet {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.84), rgba(248, 251, 255, 0.68) 42%, rgba(239, 246, 255, 0.6)) !important;
+  box-shadow:
+    0 22px 44px rgba(37, 99, 235, 0.14),
+    0 10px 22px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.96) !important;
+}
+
+.token-liquid-page .ant-input,
+.token-liquid-page .ant-input-number,
+.token-liquid-page .ant-input-affix-wrapper,
+.token-liquid-page .ant-select-selector,
+.token-liquid-page .ant-input-number-group-addon,
+.token-liquid-page textarea {
+  background: rgba(255, 255, 255, 0.86) !important;
+  color: #10213f !important;
+  backdrop-filter: blur(8px) saturate(1.12);
+  -webkit-backdrop-filter: blur(8px) saturate(1.12);
+}
+
+.token-liquid-page .ant-typography,
+.token-liquid-page .ant-card-head-title,
+.token-liquid-page .ant-table,
+.token-liquid-page .ant-table-cell,
+.token-liquid-page label {
+  color: #10213f !important;
+}
+
+.token-liquid-page .ant-typography-secondary,
+.token-liquid-page .ant-table-thead > tr > th,
+.token-liquid-page span[style*="#9CA3AF"],
+.token-liquid-page span[style*="#6B7280"],
+.token-liquid-page div[style*="#9CA3AF"],
+.token-liquid-page div[style*="#6B7280"] {
+  color: #475569 !important;
+}
+
+.token-liquid-page .token-balance-card .ant-typography {
+  color: #10213f !important;
+  text-shadow: none !important;
+}
+
+.token-liquid-page .token-balance-primary .ant-typography,
+.token-liquid-page .token-balance-primary div {
+  color: #f8fbff !important;
+  text-shadow: 0 12px 24px rgba(15, 23, 42, 0.18) !important;
+}
+
+.token-liquid-page .ant-table-tbody > tr > td {
+  color: #13233f !important;
+}
+
+@media (max-width: 768px) {
+  .token-liquid-page {
+    background:
+      linear-gradient(118deg, rgba(255, 255, 255, 0.52), rgba(239, 246, 255, 0.3) 42%, rgba(236, 253, 245, 0.2)),
+      ${TOKEN_VISUAL} top center / 820px auto no-repeat,
+      #eff6ff !important;
+  }
+}
+
+/* Keep token hero image clear: no milky overlay over the background image. */
+.token-liquid-page .token-hero {
+  background:
+    linear-gradient(105deg, rgba(7, 18, 38, 0.26), rgba(29, 78, 216, 0.08) 48%, rgba(14, 116, 144, 0.04)),
+    ${TOKEN_VISUAL} center center / cover no-repeat !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.token-liquid-page .token-hero::before {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+.token-liquid-page .token-hero::after {
+  z-index: 1;
+}
+
+.token-liquid-page .token-hero > * {
+  z-index: 2;
+}
+
+
 `
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
@@ -95,18 +804,24 @@ function parseQRPayload(raw: string): { wallet: string; amount?: string } | null
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
 const TX_STATUS: Record<string, { color: string; label: string; bg: string }> = {
-  PENDING:   { color: '#D97706', label: 'Đang xử lý',  bg: '#FFFBEB' },
+  PENDING: { color: '#D97706', label: 'Đang xử lý', bg: '#FFFBEB' },
+  QUEUED: { color: '#D97706', label: 'Đang chờ', bg: '#FFFBEB' },
+  PROCESSING: { color: '#D97706', label: 'Đang gửi lên chain', bg: '#FFFBEB' },
   CONFIRMED: { color: '#059669', label: 'Đã xác nhận', bg: '#ECFDF5' },
-  FAILED:    { color: '#DC2626', label: 'Thất bại',     bg: '#FEF2F2' },
+  SUCCESS: { color: '#059669', label: 'Thành công', bg: '#ECFDF5' },
+  FAILED: { color: '#DC2626', label: 'Thất bại', bg: '#FEF2F2' },
 }
-const TX_TYPE: Record<string, { label: string; icon: string; color: string }> = {
-  TRANSFER:              { label: 'Chuyển khoản',      icon: '\u{1F4B8}', color: '#4338CA' },
-  ACTIVITY_REWARD:       { label: 'Thưởng hoạt động',  icon: '\u{1F3AF}', color: '#10B981' },
-  DAO_REWARD:            { label: 'Phần thưởng DAO',   icon: '\u{1F5F3}', color: '#7C3AED' },
-  NFT_PURCHASE:          { label: 'Mua NFT',            icon: '\u{1F5BC}', color: '#D97706' },
-  CAMPAIGN_CONTRIBUTION: { label: 'Đóng góp gây quỹ',  icon: '\u{1F397}', color: '#DB2777' },
-  TICKET_PURCHASE:       { label: 'Mua vé',             icon: '\u{1F3AB}', color: '#0891B2' },
-  REFUND:                { label: 'Hoàn tiền',          icon: '\u21A9',    color: '#6B7280' },
+const ACTIVE_TX_STATUSES = new Set(['PENDING', 'QUEUED', 'PROCESSING'])
+const isActiveTxStatus = (status?: string) => ACTIVE_TX_STATUSES.has(status ?? '')
+
+const TX_TYPE: Record<string, { label: string; icon: ReactNode; color: string }> = {
+  TRANSFER: { label: 'Chuyển khoản', icon: <SwapOutlined />, color: '#2563EB' },
+  ACTIVITY_REWARD: { label: 'Thưởng hoạt động', icon: <CheckCircleOutlined />, color: '#10B981' },
+  DAO_REWARD: { label: 'Phần thưởng DAO', icon: <SafetyCertificateOutlined />, color: '#1D4ED8' },
+  NFT_PURCHASE: { label: 'Mua NFT', icon: <ShopOutlined />, color: '#D97706' },
+  CAMPAIGN_CONTRIBUTION: { label: 'Đóng góp gây quỹ', icon: <FundOutlined />, color: '#0EA5E9' },
+  TICKET_PURCHASE: { label: 'Mua vé', icon: <CalendarOutlined />, color: '#0891B2' },
+  REFUND: { label: 'Hoàn tiền', icon: <ReloadOutlined />, color: '#6B7280' },
 }
 
 // ─── QRScanner ─────────────────────────────────────────────────────────────────
@@ -195,7 +910,7 @@ function RecipientCard({ info, walletAddr }: { info: PublicUserInfo | null; wall
   if (!walletAddr) return null
   const isKYC = info?.kyc_verified
   return (
-    <div style={{ borderRadius: 14, padding: '14px 18px', background: isKYC ? 'linear-gradient(135deg,#ECFDF5,#D1FAE5)' : 'linear-gradient(135deg,#FFFBEB,#FEF3C7)', border: `1.5px solid ${isKYC ? '#6EE7B7' : '#FCD34D'}`, display: 'flex', alignItems: 'center', gap: 14 }}>
+    <div className={`token-recipient-card ${isKYC ? 'is-verified' : 'is-warning'}`} style={{ borderRadius: 14, padding: '14px 18px', background: isKYC ? 'linear-gradient(135deg,#ECFDF5,#D1FAE5)' : 'linear-gradient(135deg,#FFFBEB,#FEF3C7)', border: `1.5px solid ${isKYC ? '#6EE7B7' : '#FCD34D'}`, display: 'flex', alignItems: 'center', gap: 14 }}>
       <Avatar size={48} src={info?.avatar_uri} icon={<UserOutlined />}
         style={{ background: isKYC ? '#10B981' : '#F59E0B', flexShrink: 0, border: `2px solid ${isKYC ? '#6EE7B7' : '#FCD34D'}` }} />
       <div style={{ flex: 1, minWidth: 0 }}>
@@ -310,7 +1025,15 @@ function TransferPanel({ walletAddr, onchainBal, onSuccess }: TransferPanelProps
       await transferToken(walletAddr, recipientWallet, amountWei, sig as string, typedData as Record<string, unknown>)
       antMessage.success('Giao dịch đã gửi thành công!')
       resetRecipient(); onSuccess()
-    } catch (e) { antMessage.error(e instanceof Error ? e.message : 'Giao dịch thất bại') }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Giao dịch thất bại'
+      if (/Nonce already used by a pending transaction/i.test(msg)) {
+        antMessage.warning('Đang có giao dịch chờ xử lý dùng nonce này. Dữ liệu đã được làm mới, vui lòng thử lại sau vài giây.')
+        onSuccess()
+      } else {
+        antMessage.error(msg)
+      }
+    }
     finally { setSending(false) }
   }
 
@@ -404,7 +1127,7 @@ function TransferPanel({ walletAddr, onchainBal, onSuccess }: TransferPanelProps
               }
               style={{ borderRadius: 12 }} />
           )}
-          <div style={{ background: '#F8FAFF', borderRadius: 16, padding: '20px 22px', border: '1.5px solid #E0E7FF' }}>
+          <div className="token-transfer-form-card" style={{ background: '#F8FAFF', borderRadius: 16, padding: '20px 22px', border: '1.5px solid #E0E7FF' }}>
             <Space direction="vertical" size={16} style={{ width: '100%' }}>
               <div>
                 <Text strong style={{ display: 'block', marginBottom: 8, color: '#1A1744' }}>Số lượng VNDC</Text>
@@ -426,7 +1149,7 @@ function TransferPanel({ walletAddr, onchainBal, onSuccess }: TransferPanelProps
                 />
                 {amountError && (
                   <Text style={{ fontSize: 12, color: '#DC2626', display: 'block', marginTop: 4 }}>
-                    ⚠ {amountError}
+                    <WarningOutlined style={{ marginRight: 6 }} />{amountError}
                   </Text>
                 )}
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: amountError ? 4 : 6 }}>
@@ -502,7 +1225,7 @@ function ReceivePanel({ walletAddr }: { walletAddr: string }) {
 
   return (
     <Space direction="vertical" size={20} style={{ width: '100%' }}>
-      <div style={{ background: 'linear-gradient(135deg,#1E1A5C,#312E81)', borderRadius: 18, padding: '24px 28px' }}>
+      <div className="token-receive-wallet" style={{ background: 'linear-gradient(135deg,#1E1A5C,#312E81)', borderRadius: 18, padding: '24px 28px' }}>
         <Text style={{ color: '#A5B4FC', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600, display: 'block', marginBottom: 8 }}>Địa chỉ ví của bạn</Text>
         <Text style={{ color: '#fff', fontFamily: 'monospace', fontSize: 14, wordBreak: 'break-all', display: 'block', lineHeight: 1.7, marginBottom: 16 }}>{walletAddr}</Text>
         <Button icon={copied ? <CheckCircleOutlined /> : <CopyOutlined />} onClick={copyWallet}
@@ -512,7 +1235,7 @@ function ReceivePanel({ walletAddr }: { walletAddr: string }) {
       </div>
       <Row gutter={[20, 20]}>
         <Col xs={24} md={12}>
-          <div style={{ background: '#fff', borderRadius: 18, padding: '20px 20px 16px', border: '1.5px solid #E0E7FF', textAlign: 'center', boxShadow: '0 4px 24px rgba(67,56,202,0.08)', height: '100%' }}>
+          <div className="token-qr-card" style={{ background: '#fff', borderRadius: 18, padding: '20px 20px 16px', border: '1.5px solid #E0E7FF', textAlign: 'center', boxShadow: '0 4px 24px rgba(67,56,202,0.08)', height: '100%' }}>
             <Tag color="blue" style={{ fontSize: 12, marginBottom: 14 }}><QrcodeOutlined /> Mã QR nhận token</Tag>
             <div style={{ padding: 14, background: '#fff', borderRadius: 14, display: 'inline-block', boxShadow: '0 2px 16px rgba(0,0,0,0.1)', marginBottom: 14 }}>
               <QRCodeSVG id="receive-qr-svg" value={qrData || walletAddr} size={200} level="H" includeMargin />
@@ -527,7 +1250,7 @@ function ReceivePanel({ walletAddr }: { walletAddr: string }) {
           </div>
         </Col>
         <Col xs={24} md={12}>
-          <div style={{ background: '#FFFBEB', borderRadius: 18, padding: '20px 22px', border: '1.5px solid #FDE68A', height: '100%' }}>
+          <div className="token-qr-amount-card" style={{ background: '#FFFBEB', borderRadius: 18, padding: '20px 22px', border: '1.5px solid #FDE68A', height: '100%' }}>
             <div style={{ marginBottom: 14 }}>
               <SwapOutlined style={{ color: '#D97706', fontSize: 18, marginRight: 8 }} />
               <Text strong style={{ color: '#92400E', fontSize: 15 }}>Nhúng số token vào QR</Text>
@@ -558,14 +1281,14 @@ function HistoryPanel({ walletAddr, loading, txs, total, page, onPageChange, onR
 }) {
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null)
   const [detailOpen, setDetailOpen]  = useState(false)
-  const hasPending = txs.some(t => t.status === 'PENDING')
+  const hasPending = txs.some(t => isActiveTxStatus(t.status))
 
   const columns: ColumnsType<Transaction> = [
     {
       title: 'Loại', dataIndex: 'type', width: 170,
       render: (type: string, tx: Transaction) => {
         const isSend   = tx.from_wallet?.toLowerCase() === walletAddr.toLowerCase()
-        const typeInfo = TX_TYPE[type] ?? { label: type, icon: '·', color: '#6B7280' }
+        const typeInfo = TX_TYPE[type] ?? { label: type, icon: <InfoCircleOutlined />, color: '#6B7280' }
         return (
           <Space direction="vertical" size={3}>
             <Space size={5}>
@@ -610,7 +1333,7 @@ function HistoryPanel({ walletAddr, loading, txs, total, page, onPageChange, onR
         const s = TX_STATUS[status] ?? { color: '#6B7280', label: status, bg: '#F9FAFB' }
         return (
           <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-            {status === 'PENDING' ? (
+            {isActiveTxStatus(status) ? (
               <div style={{ position: 'relative', width: 10, height: 10, flexShrink: 0 }}>
                 <div className="live-ring" style={{ background: '#D97706' }} />
                 <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#D97706', position: 'absolute', top: 1, left: 1 }} />
@@ -642,8 +1365,8 @@ function HistoryPanel({ walletAddr, loading, txs, total, page, onPageChange, onR
 
   return (
     <>
-      <div style={{ borderRadius: 20, border: '1.5px solid #E0E7FF', overflow: 'hidden', boxShadow: '0 4px 24px rgba(67,56,202,0.07)' }}>
-        <div style={{ padding: '16px 20px', borderBottom: '1px solid #E0E7FF', background: '#F8FAFF', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
+      <div className="token-history-panel liquid-panel" style={{ borderRadius: 20, border: '1.5px solid #E0E7FF', overflow: 'hidden', boxShadow: '0 4px 24px rgba(67,56,202,0.07)' }}>
+        <div className="token-history-header" style={{ padding: '16px 20px', borderBottom: '1px solid #E0E7FF', background: '#F8FAFF', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
           <Space>
             <HistoryOutlined style={{ color: '#4338CA', fontSize: 16 }} />
             <Text strong style={{ color: '#1A1744', fontSize: 15 }}>Lịch Sử Giao Dịch</Text>
@@ -677,7 +1400,7 @@ function HistoryPanel({ walletAddr, loading, txs, total, page, onPageChange, onR
         width={520} centered>
         {selectedTx && (() => {
           const isSend     = selectedTx.from_wallet?.toLowerCase() === walletAddr.toLowerCase()
-          const typeInfo   = TX_TYPE[selectedTx.type] ?? { label: selectedTx.type, icon: '·', color: '#6B7280' }
+          const typeInfo   = TX_TYPE[selectedTx.type] ?? { label: selectedTx.type, icon: <InfoCircleOutlined />, color: '#6B7280' }
           const statusInfo = TX_STATUS[selectedTx.status] ?? { color: '#6B7280', label: selectedTx.status, bg: '#F9FAFB' }
           return (
             <Space direction="vertical" size={16} style={{ width: '100%', marginTop: 8 }}>
@@ -729,7 +1452,7 @@ export function TokenPage({ user }: TokenPageProps) {
   })()
 
   const hasPending = (() => {
-    try { return BigInt(pendingBalWei) > 0n || txs.some(t => t.status === 'PENDING') }
+    try { return BigInt(pendingBalWei) > 0n || txs.some(t => isActiveTxStatus(t.status)) }
     catch { return false }
   })()
 
@@ -771,25 +1494,24 @@ export function TokenPage({ user }: TokenPageProps) {
   }, [hasPending, silentRefresh])
 
   const tabDefs = [
-    { value: 'transfer' as ActiveTab, emoji: '💸', label: 'Chuyển Token',  color: '#4338CA' },
-    { value: 'receive'  as ActiveTab, emoji: '📥', label: 'Nhận Token',    color: '#059669' },
-    { value: 'history'  as ActiveTab, emoji: '📋', label: 'Lịch Sử',       color: '#D97706' },
+    { value: 'transfer' as ActiveTab, icon: <SendOutlined />, label: 'Chuyển Token', color: '#2563EB' },
+    { value: 'receive' as ActiveTab, icon: <QrcodeOutlined />, label: 'Nhận Token', color: '#059669' },
+    { value: 'history' as ActiveTab, icon: <HistoryOutlined />, label: 'Lịch sử', color: '#D97706' },
   ]
 
   return (
     <>
       <style>{PAGE_STYLES}</style>
-      <div style={{ maxWidth: 960, margin: '0 auto', paddingBottom: 40 }}>
+      <div className="token-page token-liquid-page">
 
         {/* ── Header ── */}
-        <div style={{ background: 'linear-gradient(135deg,#0F0E2B 0%,#1E1A5C 50%,#312E81 100%)', borderRadius: 22, padding: '24px 32px', marginBottom: 28, display: 'flex', alignItems: 'center', gap: 22, flexWrap: 'wrap', boxShadow: '0 20px 60px rgba(67,56,202,0.32)', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', right: -30, top: -30, width: 180, height: 180, borderRadius: '50%', background: 'rgba(99,102,241,0.1)', pointerEvents: 'none' }} />
-          <div style={{ width: 58, height: 58, borderRadius: 17, background: 'rgba(99,102,241,0.2)', border: '1.5px solid rgba(165,180,252,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <WalletOutlined style={{ fontSize: 28, color: '#A5B4FC' }} />
+        <div className="token-hero" style={{ background: 'linear-gradient(135deg,#0B1220 0%,#1E3A8A 100%)', borderRadius: 22, padding: '24px 32px', marginBottom: 28, display: 'flex', alignItems: 'center', gap: 22, flexWrap: 'wrap', boxShadow: '0 20px 60px rgba(15,23,42,0.18)', position: 'relative', overflow: 'hidden', border: '1px solid rgba(147,197,253,0.22)' }}>
+          <div style={{ width: 58, height: 58, borderRadius: 17, background: 'rgba(37,99,235,0.22)', border: '1.5px solid rgba(191,219,254,0.34)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <WalletOutlined style={{ fontSize: 28, color: '#BFDBFE' }} />
           </div>
           <div style={{ flex: 1, minWidth: 160 }}>
-            <Title level={3} style={{ color: '#fff', margin: 0, fontFamily: 'Georgia,serif', lineHeight: 1.2 }}>Quản Lý Token VNDC</Title>
-            <Text style={{ color: '#818CF8', fontSize: 13 }}>Chuyển, nhận token và theo dõi giao dịch theo thời gian thực</Text>
+            <Title level={3} style={{ color: '#fff', margin: 0, fontFamily: 'var(--font-sans)', fontWeight: 800, lineHeight: 1.2 }}>Quản lý Token VNDC</Title>
+            <Text style={{ color: '#BFDBFE', fontSize: 13 }}>Chuyển, nhận token và theo dõi giao dịch theo thời gian thực</Text>
           </div>
           <div style={{ textAlign: 'right', flexShrink: 0, minWidth: 180 }}>
             {hasPending ? (
@@ -798,7 +1520,7 @@ export function TokenPage({ user }: TokenPageProps) {
                   <div className="live-ring" style={{ background: '#F59E0B' }} />
                   <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#F59E0B', position: 'absolute', top: 1, left: 1 }} />
                 </div>
-                <Text className="pend-blink" style={{ color: '#FCD34D', fontSize: 12, fontWeight: 700 }}>Đang xử lý · Tự cập nhật / 3s</Text>
+                <Text className="pend-blink" style={{ color: '#FCD34D', fontSize: 12, fontWeight: 700 }}>Đang xử lý / tự cập nhật 3s</Text>
               </div>
             ) : (
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'flex-end', marginBottom: 5 }}>
@@ -816,9 +1538,9 @@ export function TokenPage({ user }: TokenPageProps) {
         </div>
 
         {/* ── Balance Cards ── */}
-        <Row gutter={[16, 16]} style={{ marginBottom: 28 }}>
+        <Row gutter={[16, 16]} className="token-balance-grid" style={{ marginBottom: 28 }}>
           <Col xs={24} sm={8} className="tok-card">
-            <div style={{ background: 'linear-gradient(135deg,#4338CA,#6366F1)', borderRadius: 18, padding: '22px 24px', boxShadow: '0 12px 40px rgba(67,56,202,0.3)', position: 'relative', overflow: 'hidden', height: '100%', minHeight: 130 }}>
+            <div className="token-balance-card token-balance-primary" style={{ background: 'linear-gradient(135deg,#4338CA,#6366F1)', borderRadius: 18, padding: '22px 24px', boxShadow: '0 12px 40px rgba(67,56,202,0.3)', position: 'relative', overflow: 'hidden', height: '100%', minHeight: 130 }}>
               <div style={{ position: 'absolute', right: -16, bottom: -16, width: 90, height: 90, borderRadius: '50%', background: 'rgba(255,255,255,0.07)' }} />
               <Text style={{ color: 'rgba(255,255,255,0.72)', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 600, display: 'block', marginBottom: 8 }}>Số dư khả dụng</Text>
               {loading ? <Spin size="small" style={{ marginTop: 4 }} /> : (
@@ -836,24 +1558,24 @@ export function TokenPage({ user }: TokenPageProps) {
           </Col>
 
           <Col xs={24} sm={8} className="tok-card">
-            <div style={{ background: '#fff', borderRadius: 18, padding: '22px 24px', border: '1.5px solid #A7F3D0', boxShadow: '0 4px 20px rgba(16,185,129,0.1)', height: '100%', minHeight: 130 }}>
+            <div className="token-balance-card token-balance-onchain" style={{ background: '#fff', borderRadius: 18, padding: '22px 24px', border: '1.5px solid #A7F3D0', boxShadow: '0 4px 20px rgba(16,185,129,0.1)', height: '100%', minHeight: 130 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
                 <div style={{ width: 38, height: 38, borderRadius: 11, background: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <ArrowDownOutlined style={{ color: '#10B981', fontSize: 17 }} />
                 </div>
-                <Text style={{ fontSize: 12, color: '#065F46', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>On-Chain · Xác nhận</Text>
+                <Text style={{ fontSize: 12, color: '#065F46', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>On-chain / xác nhận</Text>
               </div>
               {loading ? <Spin size="small" /> : (
                 <div style={{ color: '#065F46', fontSize: 22, fontWeight: 800, fontFamily: 'monospace', lineHeight: 1.2, marginBottom: 6 }}>
                   {fmt(onchainBalWei)} <span style={{ fontSize: 13, opacity: 0.7, fontWeight: 500 }}>VNDC</span>
                 </div>
               )}
-              <Text style={{ fontSize: 11, color: '#10B981', fontWeight: 600 }}>✓ Đã xác nhận trên blockchain</Text>
+              <Text style={{ fontSize: 11, color: '#10B981', fontWeight: 600 }}>Đã xác nhận trên blockchain</Text>
             </div>
           </Col>
 
           <Col xs={24} sm={8} className="tok-card">
-            <div style={{ background: '#fff', borderRadius: 18, padding: '22px 24px', border: `1.5px solid ${hasPending ? '#FCD34D' : '#E5E7EB'}`, boxShadow: hasPending ? '0 4px 20px rgba(245,158,11,0.18)' : '0 2px 8px rgba(0,0,0,0.04)', height: '100%', minHeight: 130, transition: 'all 0.35s ease' }}>
+            <div className={`token-balance-card token-balance-pending ${hasPending ? 'has-pending' : ''}`} style={{ background: '#fff', borderRadius: 18, padding: '22px 24px', border: `1.5px solid ${hasPending ? '#FCD34D' : '#E5E7EB'}`, boxShadow: hasPending ? '0 4px 20px rgba(245,158,11,0.18)' : '0 2px 8px rgba(0,0,0,0.04)', height: '100%', minHeight: 130, transition: 'all 0.35s ease' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
                 <div style={{ width: 38, height: 38, borderRadius: 11, background: hasPending ? '#FFFBEB' : '#F9FAFB', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <SyncOutlined className={hasPending ? 'spin360' : ''} style={{ color: hasPending ? '#F59E0B' : '#9CA3AF', fontSize: 17 }} />
@@ -866,7 +1588,7 @@ export function TokenPage({ user }: TokenPageProps) {
                 </div>
               )}
               {hasPending
-                ? <Text className="pend-blink" style={{ fontSize: 11, color: '#F59E0B', fontWeight: 700 }}>⏳ Chờ blockchain xác nhận</Text>
+                ? <Text className="pend-blink" style={{ fontSize: 11, color: '#F59E0B', fontWeight: 700 }}>Chờ blockchain xác nhận</Text>
                 : <Text style={{ fontSize: 11, color: '#9CA3AF' }}>Không có giao dịch chờ</Text>
               }
             </div>
@@ -874,20 +1596,20 @@ export function TokenPage({ user }: TokenPageProps) {
         </Row>
 
         {/* ── Tab Navigation ── */}
-        <div style={{ display: 'flex', gap: 10, marginBottom: 24, background: '#F1F5F9', borderRadius: 16, padding: 5 }}>
+        <div className="token-tabs-glass" style={{ display: 'flex', gap: 10, marginBottom: 24, background: '#F1F5F9', borderRadius: 16, padding: 5 }}>
           {tabDefs.map(tab => (
-            <button key={tab.value} className="tok-tab" onClick={() => setActiveTab(tab.value)}
+            <button key={tab.value} className={`tok-tab ${activeTab === tab.value ? 'is-active' : ''}`} onClick={() => setActiveTab(tab.value)}
               style={{ flex: 1, padding: '13px 10px', borderRadius: 13, border: 'none', cursor: 'pointer', background: activeTab === tab.value ? '#fff' : 'transparent', boxShadow: activeTab === tab.value ? '0 2px 14px rgba(0,0,0,0.09)' : 'none', color: activeTab === tab.value ? tab.color : '#6B7280', fontWeight: activeTab === tab.value ? 700 : 500, fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-              <span style={{ fontSize: 18 }}>{tab.emoji}</span>{tab.label}
+              <span style={{ fontSize: 18 }}>{tab.icon}</span>{tab.label}
             </button>
           ))}
         </div>
 
         {/* ── Tab Content ── */}
-        <div style={{ animation: 'fadeInUp 0.25s ease' }}>
+        <div className="token-tab-content" style={{ animation: 'fadeInUp 0.25s ease' }}>
           {activeTab === 'transfer' && (
-            <Card style={{ borderRadius: 20, border: '1.5px solid #E0E7FF', boxShadow: '0 4px 24px rgba(67,56,202,0.07)' }}
-              title={<Space><span style={{ fontSize: 18 }}>💸</span><Text strong style={{ color: '#1A1744', fontSize: 15 }}>Chuyển Token VNDC</Text></Space>}
+            <Card className="token-workspace-card liquid-panel" style={{ borderRadius: 20, border: '1.5px solid #E0E7FF', boxShadow: '0 4px 24px rgba(67,56,202,0.07)' }}
+              title={<Space><SendOutlined style={{ color: '#2563EB' }} /><Text strong style={{ color: '#0F172A', fontSize: 15 }}>Chuyển Token VNDC</Text></Space>}
               styles={{ body: { padding: '24px 28px' } }}>
               <TransferPanel walletAddr={walletAddr}
                 onchainBal={Number(BigInt(availableWei)) / 1e18}
@@ -895,8 +1617,8 @@ export function TokenPage({ user }: TokenPageProps) {
             </Card>
           )}
           {activeTab === 'receive' && (
-            <Card style={{ borderRadius: 20, border: '1.5px solid #E0E7FF', boxShadow: '0 4px 24px rgba(67,56,202,0.07)' }}
-              title={<Space><span style={{ fontSize: 18 }}>📥</span><Text strong style={{ color: '#1A1744', fontSize: 15 }}>Nhận Token VNDC</Text></Space>}
+            <Card className="token-workspace-card liquid-panel" style={{ borderRadius: 20, border: '1.5px solid #E0E7FF', boxShadow: '0 4px 24px rgba(67,56,202,0.07)' }}
+              title={<Space><QrcodeOutlined style={{ color: '#059669' }} /><Text strong style={{ color: '#0F172A', fontSize: 15 }}>Nhận Token VNDC</Text></Space>}
               styles={{ body: { padding: '24px 28px' } }}>
               <ReceivePanel walletAddr={walletAddr} />
             </Card>

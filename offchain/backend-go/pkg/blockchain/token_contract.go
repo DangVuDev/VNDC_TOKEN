@@ -255,6 +255,44 @@ const vndcTokenABI = `[
     ],
     "outputs": [{"internalType":"bool","name":"","type":"bool"}],
     "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "batchTransferWithSignatureV2",
+    "inputs": [
+      {"internalType":"bytes32","name":"batchId","type":"bytes32"},
+      {"components":[
+        {"internalType":"bytes32","name":"txId","type":"bytes32"},
+        {"internalType":"address","name":"from","type":"address"},
+        {"internalType":"address","name":"to","type":"address"},
+        {"internalType":"uint256","name":"amount","type":"uint256"},
+        {"internalType":"uint256","name":"nonce","type":"uint256"},
+        {"internalType":"uint256","name":"deadline","type":"uint256"},
+        {"internalType":"bytes","name":"signature","type":"bytes"}
+      ],"internalType":"struct VNDCToken.SignedTransfer[]","name":"transfers","type":"tuple[]"}
+    ],
+    "outputs": [
+      {"internalType":"uint256","name":"successCount","type":"uint256"},
+      {"internalType":"uint256","name":"failureCount","type":"uint256"}
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type":"event",
+    "name":"MetaTransferItemResult",
+    "inputs":[
+      {"indexed":true,"internalType":"bytes32","name":"batchId","type":"bytes32"},
+      {"indexed":true,"internalType":"bytes32","name":"txId","type":"bytes32"},
+      {"indexed":true,"internalType":"uint256","name":"index","type":"uint256"},
+      {"indexed":false,"internalType":"address","name":"from","type":"address"},
+      {"indexed":false,"internalType":"address","name":"to","type":"address"},
+      {"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"},
+      {"indexed":false,"internalType":"uint256","name":"nonce","type":"uint256"},
+      {"indexed":false,"internalType":"bool","name":"success","type":"bool"},
+      {"indexed":false,"internalType":"bytes32","name":"errorCode","type":"bytes32"},
+      {"indexed":false,"internalType":"string","name":"reason","type":"string"}
+    ],
+    "anonymous":false
   }
 ]`
 
@@ -427,35 +465,59 @@ func (a *TokenContractAdapter) MetaTransfer(ctx context.Context, call ports.Meta
 //  Write — BatchTransfer
 // ─────────────────────────────────────────────
 
-// BatchTransfer executes multiple meta-transfers sequentially.
-// Each entry is signed independently by its respective sender.
-// Returns the hash of the last submitted transaction.
-func (a *TokenContractAdapter) BatchTransfer(ctx context.Context, transfers []ports.TransferCall) (string, error) {
+// BatchTransfer executes multiple meta-transfers in one contract call and returns per-item event outcomes.
+func (a *TokenContractAdapter) BatchTransfer(ctx context.Context, batchID string, transfers []ports.TransferCall) (*ports.BatchTransferResult, error) {
 	if len(transfers) == 0 {
-		return "", nil
+		return &ports.BatchTransferResult{BatchID: batchID}, nil
 	}
 
-	var lastHash string
+	batchIDBytes := bytes32FromString(batchID)
+	txIDByHash := make(map[string]string, len(transfers))
+	items := make([]signedTransferABI, 0, len(transfers))
 	for i, t := range transfers {
 		from, to, amount, nonce, err := parseTransferParams(t.From, t.To, t.Amount, t.Nonce)
 		if err != nil {
-			return lastHash, fmt.Errorf("transfer[%d]: %w", i, err)
+			return nil, fmt.Errorf("transfer[%d]: %w", i, err)
 		}
-
-		txHash, err := a.sendTransferWithSignature(ctx, from, to, amount, nonce, t.Deadline, t.Signature)
-		if err != nil {
-			return lastHash, fmt.Errorf("transfer[%d] from %s: %w", i, t.From, err)
+		txID := t.TxID
+		if txID == "" {
+			txID = fmt.Sprintf("%d", i)
 		}
-
-		lastHash = txHash
-		a.log.Info("batch transfer sent",
-			logger.String("from", t.From),
-			logger.String("to", t.To),
-			logger.String("amount", t.Amount),
-			logger.String("tx_hash", txHash),
-		)
+		txIDBytes := bytes32FromString(txID)
+		txIDByHash[common.BytesToHash(txIDBytes[:]).Hex()] = txID
+		items = append(items, signedTransferABI{
+			TxId:      txIDBytes,
+			From:      from,
+			To:        to,
+			Amount:    amount,
+			Nonce:     nonce,
+			Deadline:  big.NewInt(t.Deadline),
+			Signature: t.Signature,
+		})
 	}
-	return lastHash, nil
+
+	callData, err := a.abi.Pack("batchTransferWithSignatureV2", batchIDBytes, items)
+	if err != nil {
+		return nil, apperr.Wrap(apperr.ErrCodeBlockchain, "pack batchTransferWithSignatureV2 failed", err)
+	}
+	txHash, receipt, err := a.sendTxWithReceipt(ctx, callData)
+	if err != nil {
+		return nil, err
+	}
+	result := &ports.BatchTransferResult{
+		BatchID:     batchID,
+		TxHash:      txHash,
+		BlockNumber: receipt.BlockNumber.Uint64(),
+		GasUsed:     receipt.GasUsed,
+	}
+	result.Items = a.parseBatchItemResults(receipt, txIDByHash)
+	a.log.Info("batch transfer submitted",
+		logger.String("batch_id", batchID),
+		logger.String("tx_hash", txHash),
+		logger.Int("items", len(transfers)),
+		logger.Int("item_results", len(result.Items)),
+	)
+	return result, nil
 }
 
 // ─────────────────────────────────────────────
@@ -606,14 +668,20 @@ func (a *TokenContractAdapter) call(ctx context.Context, method string, args ...
 
 // sendTx builds, signs, submits, and waits for a write transaction using the relayer key.
 func (a *TokenContractAdapter) sendTx(ctx context.Context, callData []byte) (string, error) {
+	txHash, _, err := a.sendTxWithReceipt(ctx, callData)
+	return txHash, err
+}
+
+// sendTxWithReceipt builds, signs, submits, and waits for a write transaction using the relayer key.
+func (a *TokenContractAdapter) sendTxWithReceipt(ctx context.Context, callData []byte) (string, *types.Receipt, error) {
 	relayerNonce, err := a.eth.PendingNonceAt(ctx, a.relayerAddr)
 	if err != nil {
-		return "", apperr.Wrap(apperr.ErrCodeBlockchain, "get relayer nonce failed", err)
+		return "", nil, apperr.Wrap(apperr.ErrCodeBlockchain, "get relayer nonce failed", err)
 	}
 
 	gasPrice, err := a.eth.SuggestGasPrice(ctx)
 	if err != nil {
-		return "", apperr.Wrap(apperr.ErrCodeBlockchain, "get gas price failed", err)
+		return "", nil, apperr.Wrap(apperr.ErrCodeBlockchain, "get gas price failed", err)
 	}
 
 	gasLimit, err := a.eth.EstimateGas(ctx, ethereum.CallMsg{
@@ -639,24 +707,24 @@ func (a *TokenContractAdapter) sendTx(ctx context.Context, callData []byte) (str
 
 	signedTx, err := types.SignTx(tx, types.NewEIP155Signer(a.chainID), a.relayerKey)
 	if err != nil {
-		return "", apperr.Wrap(apperr.ErrCodeBlockchain, "sign tx failed", err)
+		return "", nil, apperr.Wrap(apperr.ErrCodeBlockchain, "sign tx failed", err)
 	}
 
 	if err := a.eth.SendTransaction(ctx, signedTx); err != nil {
-		return "", apperr.Wrap(apperr.ErrCodeBlockchain, "send tx failed", err)
+		return "", nil, apperr.Wrap(apperr.ErrCodeBlockchain, "send tx failed", err)
 	}
 
 	txHash := signedTx.Hash().Hex()
 
 	receipt, err := bind.WaitMined(ctx, a.eth, signedTx)
 	if err != nil {
-		return txHash, apperr.Wrap(apperr.ErrCodeBlockchain, "wait for mining failed", err)
+		return txHash, nil, apperr.Wrap(apperr.ErrCodeBlockchain, "wait for mining failed", err)
 	}
 	if receipt.Status == types.ReceiptStatusFailed {
-		return txHash, apperr.New(apperr.ErrCodeBlockchain, "transaction reverted on-chain")
+		return txHash, receipt, apperr.New(apperr.ErrCodeBlockchain, "transaction reverted on-chain")
 	}
 
-	return txHash, nil
+	return txHash, receipt, nil
 }
 
 // sendTransferWithSignature packs and submits transferWithSignature(from,to,amount,nonce,deadline,sig).
@@ -716,3 +784,67 @@ func parseTransferParams(from, to, amount, nonce string) (
 
 // Verify interface at compile-time.
 var _ ports.TokenContractPort = (*TokenContractAdapter)(nil)
+
+type signedTransferABI struct {
+	TxId      [32]byte
+	From      common.Address
+	To        common.Address
+	Amount    *big.Int
+	Nonce     *big.Int
+	Deadline  *big.Int
+	Signature []byte
+}
+
+type batchItemResultLog struct {
+	From      common.Address
+	To        common.Address
+	Amount    *big.Int
+	Nonce     *big.Int
+	Success   bool
+	ErrorCode [32]byte
+	Reason    string
+}
+
+func bytes32FromString(value string) [32]byte {
+	return crypto.Keccak256Hash([]byte(value))
+}
+
+func (a *TokenContractAdapter) parseBatchItemResults(receipt *types.Receipt, txIDByHash map[string]string) []ports.BatchTransferItemResult {
+	event, ok := a.abi.Events["MetaTransferItemResult"]
+	if !ok || receipt == nil {
+		return nil
+	}
+	results := make([]ports.BatchTransferItemResult, 0)
+	for _, rawLog := range receipt.Logs {
+		if rawLog.Address != a.contractAddr || len(rawLog.Topics) < 4 || rawLog.Topics[0] != event.ID {
+			continue
+		}
+		var decoded batchItemResultLog
+		if err := a.abi.UnpackIntoInterface(&decoded, "MetaTransferItemResult", rawLog.Data); err != nil {
+			a.log.Warn("failed to unpack batch item event", logger.Err(err))
+			continue
+		}
+		txIDHash := rawLog.Topics[2].Hex()
+		txID := txIDByHash[txIDHash]
+		if txID == "" {
+			txID = txIDHash
+		}
+		index := new(big.Int).SetBytes(rawLog.Topics[3].Bytes()).Int64()
+		results = append(results, ports.BatchTransferItemResult{
+			TxID:      txID,
+			Index:     int(index),
+			Success:   decoded.Success,
+			ErrorCode: bytes32String(decoded.ErrorCode),
+			Reason:    decoded.Reason,
+		})
+	}
+	return results
+}
+
+func bytes32String(value [32]byte) string {
+	trimmed := strings.TrimRight(string(value[:]), "\x00")
+	if trimmed != "" {
+		return trimmed
+	}
+	return common.BytesToHash(value[:]).Hex()
+}

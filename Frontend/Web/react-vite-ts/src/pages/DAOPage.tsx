@@ -8,7 +8,7 @@ import {
   ApartmentOutlined, PlusOutlined, CheckOutlined, CloseOutlined,
   MinusOutlined, ClockCircleOutlined, UserOutlined, FireOutlined,
   GlobalOutlined, TrophyOutlined, BankOutlined, TeamOutlined,
-  FileDoneOutlined, SearchOutlined,
+  FileDoneOutlined, SearchOutlined, SafetyCertificateOutlined,
 } from '@ant-design/icons'
 import { getDAOs, getProposals, createProposal, castVote, createDAO, type DAOOrg, type Proposal, type CreateDAORequest } from '../lib/services'
 import type { AuthUser } from '../hooks/useAuth'
@@ -111,9 +111,98 @@ const DAO_PAGE_STYLES = `
     border-radius: 22px;
     padding: 16px;
   }
+  .dao-liquid-page {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.62);
+    background:
+      linear-gradient(118deg, rgba(255,255,255,0.56), rgba(240,253,250,0.34) 44%, rgba(219,234,254,0.22)),
+      var(--visual-dao) top center / cover no-repeat,
+      #ecfeff !important;
+    box-shadow:
+      0 30px 72px rgba(15, 118, 110, 0.12),
+      inset 0 1px 0 rgba(255,255,255,0.92);
+  }
+  .dao-liquid-page::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(520px 220px at 12% 8%, rgba(20,184,166,0.24), transparent 72%),
+      radial-gradient(560px 220px at 90% 10%, rgba(37,99,235,0.18), transparent 70%),
+      linear-gradient(180deg, rgba(255,255,255,0.16), rgba(255,255,255,0.48));
+    pointer-events: none;
+  }
+  .dao-glass-card,
+  .dao-liquid-page .ant-card {
+    position: relative;
+    overflow: hidden;
+    border-color: rgba(255,255,255,0.66) !important;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.78), rgba(248,251,255,0.54) 52%, rgba(204,251,241,0.22)) !important;
+    box-shadow:
+      0 26px 58px rgba(15, 118, 110, 0.13),
+      0 10px 24px rgba(15, 23, 42, 0.08),
+      inset 0 1px 0 rgba(255,255,255,0.96) !important;
+    backdrop-filter: blur(15px) saturate(1.24);
+    -webkit-backdrop-filter: blur(15px) saturate(1.24);
+  }
+  .dao-glass-card::before,
+  .dao-liquid-page .ant-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    background:
+      linear-gradient(118deg, rgba(255,255,255,0.6), rgba(255,255,255,0.16) 22%, transparent 46%, rgba(255,255,255,0.16) 72%),
+      radial-gradient(360px 120px at 8% 0%, rgba(255,255,255,0.62), transparent 72%);
+    pointer-events: none;
+  }
+  .dao-glass-card > *,
+  .dao-liquid-page .ant-card > * {
+    position: relative;
+    z-index: 1;
+  }
   .dao-hero {
     animation: daoFadeUp .55s ease both;
     box-shadow: 0 10px 34px rgba(15, 23, 42, 0.25);
+  }
+  .dao-liquid-page .dao-hero {
+    min-height: 210px;
+    background:
+      linear-gradient(112deg, rgba(5, 150, 105, 0.66), rgba(37, 99, 235, 0.34) 52%, rgba(15, 23, 42, 0.16)),
+      var(--visual-dao) center / cover no-repeat !important;
+    border: 1px solid rgba(255,255,255,0.64);
+    box-shadow:
+      0 32px 76px rgba(15, 118, 110, 0.22),
+      inset 0 1px 0 rgba(255,255,255,0.82) !important;
+  }
+  .dao-liquid-page .dao-hero::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 3px;
+    background: linear-gradient(90deg, #0f766e, #0ea5e9, #f59e0b);
+  }
+  .dao-liquid-page .dao-hero .ant-typography {
+    text-shadow: 0 12px 26px rgba(15,23,42,0.2);
+  }
+  .dao-stats-strip {
+    backdrop-filter: blur(14px) saturate(1.22);
+    -webkit-backdrop-filter: blur(14px) saturate(1.22);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.22),
+      0 18px 36px rgba(15,23,42,0.14);
+  }
+  .dao-stat-tile {
+    transition: background 180ms ease, transform 180ms ease;
+  }
+  .dao-stat-tile:hover {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.12) !important;
   }
   .dao-page .hover-lift {
     transition: transform .22s ease, box-shadow .22s ease;
@@ -136,6 +225,26 @@ const DAO_PAGE_STYLES = `
   .dao-page .ant-tabs-ink-bar {
     display: none !important;
   }
+  .dao-liquid-page .dao-tabs .ant-tabs-nav {
+    margin-bottom: 14px;
+  }
+  .dao-liquid-page .dao-tabs .ant-tabs-tab {
+    min-height: 38px;
+    background: rgba(255,255,255,0.56) !important;
+    border-color: rgba(255,255,255,0.62) !important;
+    box-shadow:
+      0 12px 22px rgba(15,118,110,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.84);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .dao-liquid-page .dao-tabs .ant-tabs-tab-active {
+    background: linear-gradient(135deg, rgba(15,118,110,0.92), rgba(37,99,235,0.82)) !important;
+  }
+  .dao-liquid-page .dao-tabs .ant-tabs-tab-active .ant-tabs-tab-btn,
+  .dao-liquid-page .dao-tabs .ant-tabs-tab-active .anticon {
+    color: #fff !important;
+  }
   .dao-page .vote-bar-track {
     height: 11px;
     background: #E2E8F0;
@@ -143,6 +252,201 @@ const DAO_PAGE_STYLES = `
   }
   .dao-page .vote-bar-fill {
     border-radius: 999px;
+  }
+  .dao-liquid-page .vote-bar-track {
+    height: 12px;
+    padding: 2px;
+    background: rgba(15,23,42,0.08);
+    box-shadow:
+      inset 0 1px 2px rgba(15,23,42,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.76);
+  }
+  .dao-liquid-page .vote-bar-fill {
+    height: 100%;
+    box-shadow: 0 8px 16px rgba(15,118,110,0.16);
+  }
+  .dao-liquid-page .vote-bar-for { background: linear-gradient(90deg, #059669, #34d399); }
+  .dao-liquid-page .vote-bar-against { background: linear-gradient(90deg, #dc2626, #fb7185); }
+  .dao-liquid-page .vote-bar-abstain { background: linear-gradient(90deg, #64748b, #cbd5e1); }
+  .dao-proposal-card {
+    min-height: 0;
+    border-radius: 22px !important;
+  }
+  .dao-proposal-card:hover {
+    border-color: rgba(255,255,255,0.84) !important;
+    box-shadow:
+      0 34px 72px rgba(15,118,110,0.18),
+      0 14px 30px rgba(15,23,42,0.1),
+      inset 0 1px 0 rgba(255,255,255,0.98) !important;
+  }
+  .dao-proposal-accent {
+    width: 6px !important;
+    box-shadow: 0 0 30px currentColor;
+  }
+  .dao-proposal-head {
+    border-bottom-color: rgba(255,255,255,0.44) !important;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.58), rgba(240,253,250,0.4)) !important;
+  }
+  .dao-proposal-number,
+  .dao-status-pill,
+  .dao-voted-pill,
+  .dao-author-row,
+  .dao-vote-panel,
+  .dao-status-banner {
+    border-color: rgba(255,255,255,0.62) !important;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.76), rgba(248,251,255,0.52)) !important;
+    box-shadow:
+      0 14px 28px rgba(15,118,110,0.1),
+      inset 0 1px 0 rgba(255,255,255,0.88);
+    backdrop-filter: blur(10px) saturate(1.14);
+    -webkit-backdrop-filter: blur(10px) saturate(1.14);
+  }
+  .dao-proposal-number {
+    border-radius: 14px !important;
+  }
+  .dao-status-pill,
+  .dao-voted-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 25px;
+  }
+  .dao-proposal-body .ant-typography,
+  .dao-liquid-page .ant-card .ant-typography {
+    color: #10213f;
+  }
+  .dao-author-row code {
+    border: 1px solid rgba(255,255,255,0.58);
+    background: rgba(255,255,255,0.62) !important;
+  }
+  .dao-vote-panel {
+    border-radius: 18px !important;
+  }
+  .dao-vote-button {
+    min-width: 0;
+    box-shadow:
+      0 12px 22px rgba(15,118,110,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.84);
+  }
+  .dao-selector-card .ant-card-body > .ant-space {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .dao-selector-card .ant-select {
+    flex: 1;
+    min-width: 220px;
+  }
+  .dao-sidebar-card {
+    border-radius: 22px !important;
+  }
+  .dao-current-card > .ant-card-body > div:first-child {
+    background:
+      linear-gradient(135deg, rgba(15,23,42,0.84), rgba(15,118,110,0.68)),
+      var(--visual-dao) center / cover no-repeat !important;
+  }
+  .dao-admin-card,
+  .dao-participate-card {
+    background:
+      linear-gradient(135deg, rgba(255,251,235,0.76), rgba(255,255,255,0.56)) !important;
+  }
+  .dao-empty-state {
+    border-width: 1px !important;
+    border-style: solid !important;
+    border-color: rgba(255,255,255,0.68) !important;
+  }
+  .dao-liquid-page .ant-input,
+  .dao-liquid-page .ant-input-number,
+  .dao-liquid-page .ant-input-affix-wrapper,
+  .dao-liquid-page .ant-select-selector,
+  .dao-liquid-page textarea {
+    border-color: rgba(255,255,255,0.68) !important;
+    background: rgba(255,255,255,0.86) !important;
+    color: #10213f !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .dao-liquid-modal .ant-modal-content {
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.72);
+    border-radius: 24px !important;
+    background:
+      linear-gradient(135deg, rgba(255,255,255,0.88), rgba(248,251,255,0.72) 50%, rgba(204,251,241,0.38)) !important;
+    box-shadow:
+      0 34px 90px rgba(15,118,110,0.22),
+      0 18px 38px rgba(15,23,42,0.14),
+      inset 0 1px 0 rgba(255,255,255,0.98) !important;
+    backdrop-filter: blur(18px) saturate(1.28);
+    -webkit-backdrop-filter: blur(18px) saturate(1.28);
+  }
+  .dao-liquid-modal .ant-modal-header {
+    border-bottom: 1px solid rgba(153,246,228,0.42);
+    background:
+      linear-gradient(135deg, rgba(240,253,250,0.74), rgba(239,246,255,0.54)) !important;
+    padding: 18px 22px;
+  }
+  .dao-liquid-modal .ant-modal-body {
+    color: #10213f;
+  }
+  .dao-liquid-modal .ant-alert,
+  .dao-liquid-modal .ant-input,
+  .dao-liquid-modal .ant-input-number,
+  .dao-liquid-modal .ant-input-affix-wrapper,
+  .dao-liquid-modal .ant-select-selector,
+  .dao-liquid-modal textarea {
+    border-color: rgba(255,255,255,0.66) !important;
+    background: rgba(255,255,255,0.82) !important;
+    box-shadow:
+      0 14px 28px rgba(15,118,110,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.88);
+  }
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    box-shadow: 0 0 0 6px rgba(67,56,202,0.12);
+    animation: daoPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes daoPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(0.72); opacity: 0.72; }
+  }
+  @media (max-width: 768px) {
+    .dao-liquid-page {
+      padding: 12px !important;
+      background:
+        linear-gradient(118deg, rgba(255,255,255,0.58), rgba(240,253,250,0.36) 42%, rgba(219,234,254,0.24)),
+        var(--visual-dao) top center / 860px auto no-repeat,
+        #ecfeff !important;
+    }
+    .dao-liquid-page .dao-hero {
+      padding: 22px 18px !important;
+    }
+    .dao-stats-strip {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .dao-stat-tile {
+      border-right: 0 !important;
+      border-bottom: 1px solid rgba(153,246,228,0.12);
+    }
+    .dao-proposal-head,
+    .dao-proposal-body {
+      padding-inline: 14px !important;
+    }
+    .dao-proposal-head {
+      gap: 12px !important;
+    }
+    .dao-proposal-head > div:last-child {
+      width: 100%;
+      align-items: flex-start !important;
+    }
+    .dao-vote-button {
+      height: 40px !important;
+      font-size: 12px !important;
+      padding-inline: 8px;
+    }
   }
   @keyframes daoFadeUp {
     from { opacity: 0; transform: translateY(14px); }
@@ -223,7 +527,7 @@ function ProposalCard({ proposal, index, onVote }: {
 
   return (
     <div
-      className={`hover-lift ${st.cssClass}`}
+      className={`hover-lift dao-proposal-card dao-glass-card ${st.cssClass}`}
       style={{
         background: '#FFFFFF',
         borderRadius: 14,
@@ -235,11 +539,11 @@ function ProposalCard({ proposal, index, onVote }: {
       }}
     >
       {/* Colored left accent bar */}
-      <div style={{ width: 5, background: st.color, flexShrink: 0 }} />
+      <div className="dao-proposal-accent" style={{ width: 5, background: st.color, flexShrink: 0 }} />
 
       <div style={{ flex: 1, minWidth: 0 }}>
         {/* -- Card Header -- */}
-        <div style={{
+        <div className="dao-proposal-head" style={{
           padding: '15px 20px 13px',
           borderBottom: `1px solid ${st.border}`,
           background: st.bg,
@@ -251,7 +555,7 @@ function ProposalCard({ proposal, index, onVote }: {
         }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, flex: 1, minWidth: 0 }}>
             {/* Number badge */}
-            <div style={{
+            <div className="dao-proposal-number" style={{
               width: 40, height: 40, borderRadius: 10, flexShrink: 0,
               background: `${st.color}18`,
               border: `1.5px solid ${st.border}`,
@@ -265,7 +569,7 @@ function ProposalCard({ proposal, index, onVote }: {
             </div>
 
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 3 }}>
+              <div className="dao-proposal-kicker" style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 3 }}>
                 {isActive && <span className="pulse-dot" style={{ background: st.color }} />}
                 <span style={{ fontSize: 10, color: st.color, fontWeight: 600, letterSpacing: 1, textTransform: 'uppercase' }}>
                   Đề xuất
@@ -273,7 +577,7 @@ function ProposalCard({ proposal, index, onVote }: {
               </div>
               <Title level={5} style={{
                 margin: 0, color: '#1A1744', lineHeight: 1.35,
-                fontFamily: "'Playfair Display', Georgia, serif",
+                fontFamily: 'var(--font-sans)',
                 fontSize: 15.5,
               }}>
                 {proposal.title}
@@ -282,7 +586,7 @@ function ProposalCard({ proposal, index, onVote }: {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 5, flexShrink: 0 }}>
-            <span style={{
+            <span className="dao-status-pill" style={{
               fontSize: 11, fontWeight: 700, letterSpacing: 0.5,
               color: st.color, background: '#FFFFFF',
               border: `1.5px solid ${st.color}`,
@@ -291,13 +595,13 @@ function ProposalCard({ proposal, index, onVote }: {
               {st.label}
             </span>
             {hasVoted && proposal.user_vote !== undefined && (
-              <span style={{
+              <span className="dao-voted-pill" style={{
                 fontSize: 10, fontWeight: 600,
                 color: '#7C3AED', background: '#EDE9FE',
                 border: '1px solid #C4B5FD', borderRadius: 10,
                 padding: '2px 8px',
               }}>
-                Phieu: {userVoteLabel[proposal.user_vote]}
+                Phiếu: {userVoteLabel[proposal.user_vote]}
               </span>
             )}
             <Text style={{ fontSize: 11, color: '#9CA3AF' }}>
@@ -308,9 +612,9 @@ function ProposalCard({ proposal, index, onVote }: {
         </div>
 
         {/* -- Card Body -- */}
-        <div style={{ padding: '15px 20px' }}>
+        <div className="dao-proposal-body" style={{ padding: '15px 20px' }}>
           {!canVote && !hasVoted && !isActive && (
-            <div style={{
+            <div className="dao-status-banner" style={{
               marginBottom: 12,
               padding: '9px 12px',
               borderRadius: 8,
@@ -325,7 +629,7 @@ function ProposalCard({ proposal, index, onVote }: {
               </Text>
               {showStartHint && (
                 <Text style={{ display: 'block', marginTop: 4, fontSize: 12, color: statusBannerStyle.text }}>
-                  Bat dau luc {formatDateTimeVi(proposal.start_time)} (con {timeUntil(proposal.start_time)})
+                  Bắt đầu lúc {formatDateTimeVi(proposal.start_time)} (còn {timeUntil(proposal.start_time)})
                 </Text>
               )}
             </div>
@@ -349,12 +653,12 @@ function ProposalCard({ proposal, index, onVote }: {
                 cursor: 'pointer', fontSize: 12, padding: 0, marginBottom: 12,
               }}
             >
-              {expanded ? 'Thu gon' : 'Xem them...'}
+              {expanded ? 'Thu gọn' : 'Xem thêm'}
             </button>
           )}
 
           {/* Author row */}
-          <div style={{
+          <div className="dao-author-row" style={{
             display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14,
             padding: '7px 12px', background: '#F8F7FF', borderRadius: 8, flexWrap: 'wrap',
           }}>
@@ -375,7 +679,7 @@ function ProposalCard({ proposal, index, onVote }: {
           </div>
 
           {/* Vote results */}
-          <div style={{
+          <div className="dao-vote-panel" style={{
             background: 'linear-gradient(135deg, #F8F7FF 0%, #F0EFFE 100%)',
             borderRadius: 10, padding: '13px 15px',
             border: '1px solid #E0E7FF',
@@ -419,6 +723,7 @@ function ProposalCard({ proposal, index, onVote }: {
                 { v: 'ABSTAIN' as const, label: 'Trung lập', color: '#6B7280', bg: '#F9FAFB' },
               ].map(btn => (
                 <button
+                  className="dao-vote-button"
                   key={btn.v}
                   onClick={() => vote(btn.v)}
                   disabled={voting}
@@ -545,18 +850,17 @@ export function DAOPage({ user }: DAOPageProps) {
 
   const activeCount    = proposals.filter(p => p.status === 'ACTIVE').length
   const succeededCount = proposals.filter(p => p.status === 'SUCCEEDED').length
-  const defeatedCount  = proposals.filter(p => p.status === 'DEFEATED').length
   const currentDAO     = daos.find(d => d.id === selectedDao)
 
   return (
-    <div className="dao-page" style={{ maxWidth: 1120, margin: '0 auto' }}>
+    <div className="dao-page dao-liquid-page" style={{ maxWidth: 1120, margin: '0 auto' }}>
 
       <style>{DAO_PAGE_STYLES}</style>
 
       
 
       {/* ===== HERO BANNER ===== */}
-      <div className="dao-hero" style={{
+      <div className="dao-hero dao-glass-card" style={{
         background: 'linear-gradient(136deg, #0F172A 0%, #1E293B 44%, #0F766E 100%)',
         borderRadius: 20,
         padding: '30px 30px 24px',
@@ -564,19 +868,6 @@ export function DAOPage({ user }: DAOPageProps) {
         position: 'relative',
         overflow: 'hidden',
       }}>
-        <div style={{
-          position: 'absolute', top: -40, right: -40,
-          width: 200, height: 200, borderRadius: '50%',
-          border: '1px solid rgba(153,246,228,0.16)',
-          pointerEvents: 'none',
-        }} />
-        <div style={{
-          position: 'absolute', bottom: -60, left: 200,
-          width: 300, height: 300, borderRadius: '50%',
-          border: '1px solid rgba(251,191,36,0.10)',
-          pointerEvents: 'none',
-        }} />
-
         <div style={{ position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             <div style={{
@@ -586,20 +877,20 @@ export function DAOPage({ user }: DAOPageProps) {
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: 28, flexShrink: 0,
             }}>
-              ðŸ›ï¸
+              <ApartmentOutlined />
             </div>
             <div>
               <div style={{ fontSize: 11, color: '#99F6E4', fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 4 }}>
-                VNDC Â· Hoi dong Sinh vien
+                VNDC / Hội đồng Sinh viên
               </div>
               <Title level={2} style={{
                 margin: 0, color: '#FFFFFF',
                 fontWeight: 800, lineHeight: 1.2, fontSize: 27,
               }}>
-                DAO &amp; Bau cu
+                DAO &amp; Bầu cử
               </Title>
               <Text style={{ color: '#CFFAFE', fontSize: 13, marginTop: 5, display: 'block' }}>
-                Moi phieu bau deu co gia tri Â· Quyen luc thuoc ve cong dong
+                Mỗi phiếu bầu đều có giá trị / quyền lực thuộc về cộng đồng
               </Text>
             </div>
           </div>
@@ -662,7 +953,7 @@ export function DAOPage({ user }: DAOPageProps) {
         </div>
 
         {/* Stats strip */}
-        <div style={{
+        {/* <div className="dao-stats-strip" style={{
           display: 'flex',
           marginTop: 24,
           background: 'rgba(2, 6, 23, 0.30)',
@@ -676,7 +967,7 @@ export function DAOPage({ user }: DAOPageProps) {
             { icon: <CloseOutlined />,      label: 'Bị phủ quyết',    value: defeatedCount,  color: '#F87171', highlight: false },
             { icon: <FileDoneOutlined />,   label: 'Tổng đề xuất',    value: proposals.length, color: '#FBBF24', highlight: false },
           ].map((stat, i) => (
-            <div key={stat.label} style={{
+            <div className="dao-stat-tile" key={stat.label} style={{
               flex: 1, textAlign: 'center', padding: '14px 8px',
               borderRight: i < 3 ? '1px solid rgba(153,246,228,0.12)' : 'none',
               background: stat.highlight ? 'rgba(20,184,166,0.18)' : 'transparent',
@@ -690,18 +981,18 @@ export function DAOPage({ user }: DAOPageProps) {
               </div>
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
 
       {/* ===== NO DAOs STATE ===== */}
       {daoLoading === false && daos.length === 0 && (
-        <div style={{
+        <div className="dao-empty-state dao-glass-card" style={{
           textAlign: 'center', padding: '80px 40px',
           background: '#FFFFFF', borderRadius: 14,
           border: '2px dashed #C7D2FE', marginBottom: 24,
         }}>
-          <div style={{ fontSize: 60, marginBottom: 16 }}>ðŸ›ï¸</div>
-          <Title level={3} style={{ color: '#6B7280', fontFamily: "'Playfair Display', Georgia, serif", marginBottom: 8 }}>
+          <div style={{ fontSize: 52, marginBottom: 16, color: '#2563EB' }}><ApartmentOutlined /></div>
+          <Title level={3} style={{ color: '#6B7280', fontFamily: 'var(--font-sans)', marginBottom: 8 }}>
             Chưa có DAO nào được tạo
           </Title>
           <Text type="secondary" style={{ fontSize: 14, marginBottom: 20, display: 'block' }}>
@@ -719,12 +1010,13 @@ export function DAOPage({ user }: DAOPageProps) {
 
           {daos.length > 1 && (
             <Card
+              className="dao-selector-card dao-glass-card"
               style={{ borderRadius: 14, marginBottom: 16, border: '1px solid #D1FAE5', boxShadow: '0 4px 18px rgba(15,118,110,0.08)' }}
               styles={{ body: { padding: '12px 16px' } }}
             >
               <Space>
                 <GlobalOutlined style={{ color: '#0F766E' }} />
-                <Text style={{ fontWeight: 600, color: '#374151' }}>Chon DAO:</Text>
+                <Text style={{ fontWeight: 600, color: '#374151' }}>Chọn DAO:</Text>
                 <Select
                   value={selectedDao}
                   onChange={(v) => setSelectedDao(v)}
@@ -736,6 +1028,7 @@ export function DAOPage({ user }: DAOPageProps) {
           )}
 
           <Tabs
+            className="dao-tabs"
             activeKey={activeTab}
             onChange={setActiveTab}
             style={{ marginBottom: 16 }}
@@ -778,7 +1071,7 @@ export function DAOPage({ user }: DAOPageProps) {
                 label: (
                   <span>
                     <SearchOutlined />
-                    Tat ca ({proposals.length})
+                    Tất cả ({proposals.length})
                   </span>
                 ),
               },
@@ -787,13 +1080,13 @@ export function DAOPage({ user }: DAOPageProps) {
 
           <Spin spinning={loading}>
             {filteredProposals.length === 0 ? (
-              <div style={{
+              <div className="dao-empty-state dao-glass-card" style={{
                 textAlign: 'center', padding: '56px 24px',
                 background: '#FFFFFF', borderRadius: 14,
                 border: '2px dashed #C7D2FE',
               }}>
-                <div style={{ fontSize: 52, marginBottom: 12 }}>🗳️</div>
-                <Title level={4} style={{ color: '#6B7280', fontFamily: "'Playfair Display', Georgia, serif", marginBottom: 6 }}>
+                <div style={{ fontSize: 46, marginBottom: 12, color: '#2563EB' }}><ApartmentOutlined /></div>
+                <Title level={4} style={{ color: '#6B7280', fontFamily: 'var(--font-sans)', marginBottom: 6 }}>
                   {activeTab === 'ACTIVE' ? 'Chưa có đề xuất nào đang biểu quyết' : 'Chưa có đề xuất nào'}
                 </Title>
                 <Text type="secondary" style={{ fontSize: 13 }}>
@@ -807,7 +1100,7 @@ export function DAOPage({ user }: DAOPageProps) {
                       onClick={() => setCreateOpen(true)}
                       style={{ background: 'linear-gradient(135deg, #4338CA, #6366F1)', border: 'none', borderRadius: 8 }}
                     >
-                      Tạo đề xuất dau tien
+                      Tạo đề xuất đầu tiên
                     </Button>
                   </div>
                 )}
@@ -831,6 +1124,7 @@ export function DAOPage({ user }: DAOPageProps) {
 
             {currentDAO && (
               <Card
+                className="dao-sidebar-card dao-current-card dao-glass-card"
                 style={{ borderRadius: 14, border: '1px solid #E0E7FF', overflow: 'hidden' }}
                 styles={{ body: { padding: 0 } }}
               >
@@ -845,12 +1139,12 @@ export function DAOPage({ user }: DAOPageProps) {
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <Text style={{
                       color: '#FFFFFF', fontWeight: 700, fontSize: 15,
-                      fontFamily: "'Playfair Display', Georgia, serif",
+                      fontFamily: 'var(--font-sans)',
                       display: 'block',
                     }}>
                       {currentDAO.name}
                     </Text>
-                    <Text style={{ color: '#818CF8', fontSize: 11 }}>DAO Organization</Text>
+                    <Text style={{ color: '#818CF8', fontSize: 11 }}>Tổ chức DAO</Text>
                   </div>
                 </div>
                 <div style={{ padding: '14px 18px' }}>
@@ -871,12 +1165,13 @@ export function DAOPage({ user }: DAOPageProps) {
 
             {isAdmin && (
               <Card
+                className="dao-sidebar-card dao-admin-card dao-glass-card"
                 style={{ borderRadius: 14, border: '2px solid #D97706', background: 'linear-gradient(135deg, #FFFBEB, #FEF9EC)' }}
                 styles={{ body: { padding: '14px 16px' } }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-                  <span style={{ fontSize: 18 }}>ðŸ‘‘</span>
-                  <span style={{ fontWeight: 700, color: '#92400E', fontSize: 14 }}>Trang Thai Admin</span>
+                  <SafetyCertificateOutlined style={{ color: '#D97706' }} />
+                  <span style={{ fontWeight: 700, color: '#92400E', fontSize: 14 }}>Trạng thái Admin</span>
                 </div>
                 <Text style={{ fontSize: 12, color: '#B45309', lineHeight: 1.6 }}>
                   Bạn có quyền tạo và quản lý các đề xuất cho DAO dưới đây
@@ -885,6 +1180,7 @@ export function DAOPage({ user }: DAOPageProps) {
             )}
 
             <Card
+              className="dao-sidebar-card dao-rules-card dao-glass-card"
               title={
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <BankOutlined style={{ color: '#4338CA' }} />
@@ -917,6 +1213,7 @@ export function DAOPage({ user }: DAOPageProps) {
             </Card>
 
             <Card
+              className="dao-sidebar-card dao-participate-card dao-glass-card"
               title={
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <TeamOutlined style={{ color: '#D97706' }} />
@@ -944,10 +1241,11 @@ export function DAOPage({ user }: DAOPageProps) {
 
       {/* ===== CREATE MODAL ===== */}
       <Modal
+        className="dao-liquid-modal dao-create-proposal-modal"
         title={
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: 22 }}>ðŸ“‹</span>
-            <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, color: '#1A1744', fontWeight: 700 }}>
+            <FileDoneOutlined style={{ fontSize: 20, color: '#2563EB' }} />
+            <span style={{ fontFamily: 'var(--font-sans)', fontSize: 18, color: '#1A1744', fontWeight: 700 }}>
               Tạo đề xuất mới
             </span>
           </div>
@@ -997,7 +1295,7 @@ export function DAOPage({ user }: DAOPageProps) {
               </Tooltip>
             }
             name="voting_period_hours"
-            rules={[{ required: true, type: 'number', min: 1, max: 720, message: 'Tu 1 den 720 giờ' }]}
+            rules={[{ required: true, type: 'number', min: 1, max: 720, message: 'Từ 1 đến 720 giờ' }]}
             initialValue={72}
           >
             <InputNumber min={1} max={720} style={{ width: '100%', borderRadius: 8 }} addonAfter="giờ" />
@@ -1024,10 +1322,11 @@ export function DAOPage({ user }: DAOPageProps) {
 
       {/* ===== CREATE DAO MODAL ===== */}
       <Modal
+        className="dao-liquid-modal dao-create-dao-modal"
         title={
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: 22 }}>🏛️</span>
-            <span style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, color: '#1A1744', fontWeight: 700 }}>
+            <ApartmentOutlined style={{ fontSize: 20, color: '#2563EB' }} />
+            <span style={{ fontFamily: 'var(--font-sans)', fontSize: 18, color: '#1A1744', fontWeight: 700 }}>
               Tạo DAO mới
             </span>
           </div>
@@ -1077,7 +1376,7 @@ export function DAOPage({ user }: DAOPageProps) {
               <Form.Item
                 label={<span style={{ fontWeight: 600, color: '#1A1744' }}>Quorum (%)</span>}
                 name="quorum_bps"
-                rules={[{ required: true, type: 'number', min: 10, max: 100, message: 'Tu 10-100%' }]}
+                rules={[{ required: true, type: 'number', min: 10, max: 100, message: 'Từ 10-100%' }]}
                 initialValue={20}
               >
                 <InputNumber min={10} max={100} style={{ width: '100%', borderRadius: 8 }} addonAfter="%" />
@@ -1087,7 +1386,7 @@ export function DAOPage({ user }: DAOPageProps) {
               <Form.Item
                 label={
                   <Tooltip title="Thời gian chờ trước khi có thể biểu quyết">
-                    <span style={{ fontWeight: 600, color: '#1A1744' }}>Voting Delay (h)</span>
+                    <span style={{ fontWeight: 600, color: '#1A1744' }}>Độ trễ biểu quyết (h)</span>
                   </Tooltip>
                 }
                 name="voting_delay_hours"
@@ -1104,7 +1403,7 @@ export function DAOPage({ user }: DAOPageProps) {
               <Form.Item
                 label={
                   <Tooltip title="Thời gian biểu quyết">
-                    <span style={{ fontWeight: 600, color: '#1A1744' }}>Voting Period (h)</span>
+                    <span style={{ fontWeight: 600, color: '#1A1744' }}>Thời lượng biểu quyết (h)</span>
                   </Tooltip>
                 }
                 name="voting_period_hours"
@@ -1167,7 +1466,7 @@ export function DAOPage({ user }: DAOPageProps) {
                 border: 'none', borderRadius: 8, fontWeight: 600,
               }}
             >
-              Tạo DAO trên Blockchain
+              Tạo DAO trên blockchain
             </Button>
           </div>
         </Form>

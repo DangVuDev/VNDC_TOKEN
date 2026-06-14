@@ -1,18 +1,19 @@
 ﻿import { useEffect, useState, useCallback, useRef } from 'react'
 import {
-  Row, Col, Card, Typography, Tag, Space, Spin, Button, Avatar,
+  Row, Col, Card, Typography, Tag, Space, Spin, Button,
   Empty, Modal, Input, Form, Select, message as antMessage, Badge,
 } from 'antd'
 import {
   ClockCircleOutlined, ArrowUpOutlined, ArrowDownOutlined,
   PlusOutlined, CloseOutlined, BellOutlined, FireOutlined,
-  GlobalOutlined, TeamOutlined, BarChartOutlined, FundOutlined,
+  FundOutlined,
   RiseOutlined, LeftOutlined, RightOutlined, EditOutlined,
+  WalletOutlined, ApartmentOutlined, ShopOutlined, CalendarOutlined,
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import {
   getBalance, getTransactions, getContractInfo, getAdminAnalytics,
-  type Transaction, type AdminAnalytics,
+  type Transaction, type AdminAnalytics, type BalanceResponse,
 } from '../lib/services'
 import type { AuthUser } from '../hooks/useAuth'
 
@@ -50,9 +51,9 @@ interface Announcement {
 const ANN_KEY = 'vndc_announcements'
 
 const DEFAULT_ANNOUNCEMENTS: Announcement[] = [
-  { id: 'default-1', title: '🚀 VNDC Platform ra mắt chính thức', content: 'Nền tảng VNDC Token đã hoàn thành giai đoạn phát triển và chính thức đi vào hoạt động. Khám phá các tính năng mới!', type: 'highlight', createdAt: new Date().toISOString(), author: 'Admin' },
-  { id: 'default-2', title: '🗳️ DAO Voting đã mở', content: 'Các đề xuất đầu tiên đã được tạo. Hãy tham gia bỏ phiếu để định hình tương lai của nền tảng.', type: 'info', createdAt: new Date().toISOString(), author: 'Admin' },
-  { id: 'default-3', title: '🎁 Sự kiện tặng điểm hoạt động', content: 'Hoàn thành các nhiệm vụ trên hệ thống để nhận điểm hoạt động và đổi lấy VNDC Token.', type: 'success', createdAt: new Date().toISOString(), author: 'Admin' },
+  { id: 'default-1', title: 'VNDC Platform ra mắt chính thức', content: 'Nền tảng VNDC Token đã hoàn thành giai đoạn phát triển và chính thức đi vào hoạt động. Khám phá các tính năng mới.', type: 'highlight', createdAt: new Date().toISOString(), author: 'Admin' },
+  { id: 'default-2', title: 'DAO Voting đã mở', content: 'Các đề xuất đầu tiên đã được tạo. Hãy tham gia bỏ phiếu để định hình tương lai của nền tảng.', type: 'info', createdAt: new Date().toISOString(), author: 'Admin' },
+  { id: 'default-3', title: 'Sự kiện tặng điểm hoạt động', content: 'Hoàn thành các nhiệm vụ trên hệ thống để nhận điểm hoạt động và đổi lấy VNDC Token.', type: 'success', createdAt: new Date().toISOString(), author: 'Admin' },
 ]
 
 function loadAnnouncements(): Announcement[] {
@@ -67,64 +68,256 @@ function saveAnnouncements(items: Announcement[]) {
 }
 
 const ANN_STYLE: Record<string, { border: string; bg: string; tag: string; tagColor: string }> = {
-  highlight: { border: '#FCD34D', bg: 'linear-gradient(135deg,#FFFBEB,#FEF3C7)', tag: '⭐ Nổi bật',     tagColor: '#D97706' },
-  info:      { border: '#93C5FD', bg: 'linear-gradient(135deg,#EFF6FF,#DBEAFE)', tag: '📢 Thông báo',  tagColor: '#2563EB' },
-  success:   { border: '#6EE7B7', bg: 'linear-gradient(135deg,#ECFDF5,#D1FAE5)', tag: '✅ Mới',         tagColor: '#059669' },
-  warning:   { border: '#FCA5A5', bg: 'linear-gradient(135deg,#FEF2F2,#FEE2E2)', tag: '⚠️ Quan trọng', tagColor: '#DC2626' },
+  highlight: { border: '#FCD34D', bg: 'linear-gradient(135deg,#FFFBEB,#FEF3C7)', tag: 'Nổi bật',     tagColor: '#D97706' },
+  info:      { border: '#93C5FD', bg: 'linear-gradient(135deg,#EFF6FF,#DBEAFE)', tag: 'Thông báo',  tagColor: '#2563EB' },
+  success:   { border: '#6EE7B7', bg: 'linear-gradient(135deg,#ECFDF5,#D1FAE5)', tag: 'Mới',         tagColor: '#059669' },
+  warning:   { border: '#FCA5A5', bg: 'linear-gradient(135deg,#FEF2F2,#FEE2E2)', tag: 'Quan trọng', tagColor: '#DC2626' },
 }
 
-interface ChartPoint { date: string; received: number; sent: number }
+type ChartRange = 'hour' | 'day' | '3d' | '7d' | '30d'
 
-function AreaChart({ data, height = 220 }: { data: ChartPoint[]; height?: number }) {
-  if (!data.length) return <div style={{ height, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9CA3AF' }}>Chưa có dữ liệu</div>
-  const W = 900; const H = height
-  const pad = { t: 16, r: 24, b: 44, l: 60 }
-  const cW = W - pad.l - pad.r; const cH = H - pad.t - pad.b
-  const maxVal = Math.max(...data.flatMap(d => [d.received, d.sent]), 1)
-  const yTicks = [0, 0.25, 0.5, 0.75, 1].map(t => ({ v: maxVal * t, y: cH - t * cH }))
-  const xScale = (i: number) => data.length === 1 ? cW / 2 : (i / (data.length - 1)) * cW
-  const yScale = (v: number) => cH - Math.min(v / maxVal, 1) * cH
-  const toPath = (key: 'received' | 'sent') => data.map((d, i) => `${i === 0 ? 'M' : 'L'} ${xScale(i).toFixed(1)} ${yScale(d[key]).toFixed(1)}`).join(' ')
-  const toArea = (key: 'received' | 'sent') => { const last = data.length - 1; return toPath(key) + ` L ${xScale(last).toFixed(1)} ${cH} L ${xScale(0).toFixed(1)} ${cH} Z` }
-  const xStep = Math.max(1, Math.floor(data.length / 7))
-  const xLabels = data.map((d, i) => ({ d, i })).filter(({ i }) => i % xStep === 0 || i === data.length - 1)
-  const fmtY = (v: number) => v >= 1_000_000 ? `${(v / 1_000_000).toFixed(1)}M` : v >= 1_000 ? `${(v / 1_000).toFixed(0)}K` : v.toFixed(0)
-  return (
-    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height }}>
-      <defs>
-        <linearGradient id="grad-recv" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#10B981" stopOpacity="0.4" /><stop offset="100%" stopColor="#10B981" stopOpacity="0.02" /></linearGradient>
-        <linearGradient id="grad-sent" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#F43F5E" stopOpacity="0.3" /><stop offset="100%" stopColor="#F43F5E" stopOpacity="0.02" /></linearGradient>
-      </defs>
-      <g transform={`translate(${pad.l},${pad.t})`}>
-        {yTicks.map((t, i) => (<g key={i}><line x1={0} y1={t.y} x2={cW} y2={t.y} stroke="#E0E7FF" strokeWidth="1" strokeDasharray={i === 0 ? '0' : '4 3'} /><text x={-8} y={t.y + 4} textAnchor="end" fontSize="11" fill="#9CA3AF">{fmtY(t.v)}</text></g>))}
-        <path d={toArea('received')} fill="url(#grad-recv)" />
-        <path d={toArea('sent')} fill="url(#grad-sent)" />
-        <path d={toPath('received')} fill="none" stroke="#10B981" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
-        <path d={toPath('sent')} fill="none" stroke="#F43F5E" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" strokeDasharray="6 3" />
-        {xLabels.map(({ d, i }) => (<text key={i} x={xScale(i)} y={cH + 18} textAnchor="middle" fontSize="11" fill="#9CA3AF">{d.date}</text>))}
-        <line x1={0} y1={0} x2={0} y2={cH} stroke="#E0E7FF" strokeWidth="1" />
-      </g>
-    </svg>
-  )
+interface ChartPoint {
+  label: string
+  balance: number
+  received: number
+  sent: number
+  net: number
+  from: Date
+  to: Date
 }
 
-function buildChartData(txs: Transaction[], walletAddr: string, days: number): ChartPoint[] {
+const CHART_RANGE_OPTIONS: Record<ChartRange, { label: string; points: number; bucketMs: number; detail: string }> = {
+  hour: { label: 'Theo giờ', points: 12, bucketMs: 60 * 60 * 1000, detail: '12 giờ gần nhất' },
+  day:  { label: '24 giờ',   points: 24, bucketMs: 60 * 60 * 1000, detail: '24 giờ gần nhất' },
+  '3d': { label: '3 ngày',   points: 12, bucketMs: 6 * 60 * 60 * 1000, detail: 'mỗi 6 giờ' },
+  '7d': { label: '7 ngày',   points: 7,  bucketMs: 24 * 60 * 60 * 1000, detail: 'mỗi ngày' },
+  '30d':{ label: '30 ngày',  points: 30, bucketMs: 24 * 60 * 60 * 1000, detail: 'mỗi ngày' },
+}
+
+function weiToNumber(wei?: string | number): number {
+  try {
+    return Number(BigInt(String(wei ?? '0'))) / 1e18
+  } catch {
+    return 0
+  }
+}
+
+function balanceToNumber(balance: BalanceResponse | null): number {
+  if (!balance) return 0
+  const available = (balance as BalanceResponse & { available?: string }).available
+  if (available !== undefined) return weiToNumber(available)
+  try {
+    const onChain = BigInt((balance as BalanceResponse & { on_chain?: string }).on_chain ?? '0')
+    const pending = BigInt((balance as BalanceResponse & { pending?: string }).pending ?? '0')
+    const result = onChain - pending
+    return Number(result > 0n ? result : 0n) / 1e18
+  } catch {
+    return 0
+  }
+}
+
+function isConfirmedTx(tx: Transaction): boolean {
+  return tx.status === 'CONFIRMED' || tx.status === 'SUCCESS' || !tx.status
+}
+
+function isIncomingTx(tx: Transaction, walletAddr: string): boolean {
+  return !!walletAddr && tx.to_wallet?.toLowerCase() === walletAddr.toLowerCase()
+}
+
+function isOutgoingTx(tx: Transaction, walletAddr: string): boolean {
+  return !!walletAddr && tx.from_wallet?.toLowerCase() === walletAddr.toLowerCase()
+}
+
+function formatBucketLabel(date: Date, range: ChartRange): string {
+  const hh = String(date.getHours()).padStart(2, '0')
+  const dd = String(date.getDate()).padStart(2, '0')
+  const mm = String(date.getMonth() + 1).padStart(2, '0')
+  if (range === 'hour' || range === 'day') return `${hh}:00`
+  if (range === '3d') return `${dd}/${mm} ${hh}h`
+  return `${dd}/${mm}`
+}
+
+function buildBalanceChartData(
+  txs: Transaction[],
+  walletAddr: string,
+  balance: BalanceResponse | null,
+  range: ChartRange,
+): ChartPoint[] {
+  const cfg = CHART_RANGE_OPTIONS[range]
   const now = new Date()
-  return Array.from({ length: days }, (_, i) => {
-    const d = new Date(now); d.setDate(d.getDate() - (days - 1 - i))
-    const dateStr = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`
-    const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate())
-    const dayEnd = new Date(dayStart.getTime() + 86400000)
-    let received = 0; let sent = 0
-    for (const tx of txs) {
-      const txDate = new Date(tx.created_at)
-      if (txDate < dayStart || txDate >= dayEnd) continue
-      const amount = Number(BigInt(tx.amount || '0')) / 1e18
-      if (tx.to_wallet?.toLowerCase() === walletAddr.toLowerCase()) received += amount
-      if (tx.from_wallet?.toLowerCase() === walletAddr.toLowerCase()) sent += amount
-    }
-    return { date: dateStr, received, sent }
+  const currentBalance = balanceToNumber(balance)
+  const buckets = Array.from({ length: cfg.points }, (_, i) => {
+    const from = new Date(now.getTime() - (cfg.points - i) * cfg.bucketMs)
+    const to = new Date(now.getTime() - (cfg.points - 1 - i) * cfg.bucketMs)
+    return { from, to, label: formatBucketLabel(to, range) }
   })
+
+  const confirmed = txs.filter(tx => isConfirmedTx(tx))
+
+  return buckets.map(bucket => {
+    let received = 0
+    let sent = 0
+    let futureNet = 0
+
+    for (const tx of confirmed) {
+      const txDate = new Date(tx.created_at)
+      if (Number.isNaN(txDate.getTime())) continue
+      const amount = weiToNumber(tx.amount || '0')
+      const direction = isIncomingTx(tx, walletAddr) ? 1 : isOutgoingTx(tx, walletAddr) ? -1 : 0
+      if (!direction) continue
+
+      if (txDate >= bucket.from && txDate < bucket.to) {
+        if (direction > 0) received += amount
+        else sent += amount
+      }
+
+      if (txDate > bucket.to) {
+        futureNet += direction * amount
+      }
+    }
+
+    const balanceAtPoint = Math.max(0, currentBalance - futureNet)
+    return {
+      label: bucket.label,
+      balance: balanceAtPoint,
+      received,
+      sent,
+      net: received - sent,
+      from: bucket.from,
+      to: bucket.to,
+    }
+  })
+}
+
+function AreaChart({ data, height = 260 }: { data: ChartPoint[]; height?: number }) {
+  const [hoverIndex, setHoverIndex] = useState<number | null>(null)
+  if (!data.length) return <div style={{ height, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9CA3AF' }}>Chưa có dữ liệu</div>
+
+  const W = 940
+  const H = height
+  const pad = { t: 22, r: 28, b: 46, l: 66 }
+  const cW = W - pad.l - pad.r
+  const cH = H - pad.t - pad.b
+  const values = data.map(d => d.balance)
+  const rawMin = Math.min(...values)
+  const rawMax = Math.max(...values)
+  const rawRange = Math.max(rawMax - rawMin, Math.max(rawMax * 0.08, 1))
+  const minVal = Math.max(0, rawMin - rawRange * 0.18)
+  const maxVal = rawMax + rawRange * 0.2
+  const yRange = Math.max(maxVal - minVal, 1)
+
+  const xScale = (i: number) => data.length === 1 ? cW / 2 : (i / (data.length - 1)) * cW
+  const yScale = (v: number) => cH - ((v - minVal) / yRange) * cH
+  const points = data.map((d, i) => ({ x: xScale(i), y: yScale(d.balance), d, i }))
+
+  function smoothPath() {
+    if (points.length === 1) return `M ${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`
+    let d = `M ${points[0].x.toFixed(1)} ${points[0].y.toFixed(1)}`
+    for (let i = 0; i < points.length - 1; i += 1) {
+      const p0 = points[i - 1] ?? points[i]
+      const p1 = points[i]
+      const p2 = points[i + 1]
+      const p3 = points[i + 2] ?? p2
+      const cp1x = p1.x + (p2.x - p0.x) / 6
+      const cp1y = p1.y + (p2.y - p0.y) / 6
+      const cp2x = p2.x - (p3.x - p1.x) / 6
+      const cp2y = p2.y - (p3.y - p1.y) / 6
+      d += ` C ${cp1x.toFixed(1)} ${cp1y.toFixed(1)}, ${cp2x.toFixed(1)} ${cp2y.toFixed(1)}, ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`
+    }
+    return d
+  }
+
+  const linePath = smoothPath()
+  const last = points[points.length - 1]
+  const first = points[0]
+  const areaPath = points.length === 1
+    ? `M ${first.x} ${cH} L ${first.x} ${first.y} L ${first.x + 1} ${cH} Z`
+    : `${linePath} L ${last.x.toFixed(1)} ${cH} L ${first.x.toFixed(1)} ${cH} Z`
+  const yTicks = [0, 0.25, 0.5, 0.75, 1].map(t => ({
+    v: minVal + yRange * t,
+    y: cH - t * cH,
+  }))
+  const xStep = Math.max(1, Math.ceil(data.length / 8))
+  const xLabels = data.map((d, i) => ({ d, i })).filter(({ i }) => i % xStep === 0 || i === data.length - 1)
+  const fmtY = (v: number) => v >= 1_000_000 ? `${(v / 1_000_000).toFixed(1)}M` : v >= 1_000 ? `${(v / 1_000).toFixed(0)}K` : v.toFixed(v >= 10 ? 0 : 2)
+  const hover = hoverIndex !== null ? points[hoverIndex] : points[points.length - 1]
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height, display: 'block' }} onMouseLeave={() => setHoverIndex(null)}>
+        <defs>
+          <linearGradient id="balance-area-soft" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#2563EB" stopOpacity="0.34" />
+            <stop offset="52%" stopColor="#0EA5E9" stopOpacity="0.16" />
+            <stop offset="100%" stopColor="#10B981" stopOpacity="0.02" />
+          </linearGradient>
+          <linearGradient id="balance-line-soft" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#2563EB" />
+            <stop offset="52%" stopColor="#0EA5E9" />
+            <stop offset="100%" stopColor="#10B981" />
+          </linearGradient>
+          <filter id="balance-glow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="5" result="blur" />
+            <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.145 0 0 0 0 0.388 0 0 0 0 0.922 0 0 0 .28 0" />
+            <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+        </defs>
+        <g transform={`translate(${pad.l},${pad.t})`}>
+          {yTicks.map((t, i) => (
+            <g key={i}>
+              <line x1={0} y1={t.y} x2={cW} y2={t.y} stroke="rgba(148,163,184,.28)" strokeWidth="1" strokeDasharray={i === 0 ? '0' : '5 5'} />
+              <text x={-10} y={t.y + 4} textAnchor="end" fontSize="11" fill="#64748B">{fmtY(t.v)}</text>
+            </g>
+          ))}
+          <path d={areaPath} fill="url(#balance-area-soft)" />
+          <path d={linePath} fill="none" stroke="url(#balance-line-soft)" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" filter="url(#balance-glow)" />
+          {data.map((d, i) => {
+            const x = xScale(i)
+            const barBase = cH + 20
+            const netAbs = Math.min(Math.abs(d.net) / Math.max(...data.map(p => Math.abs(p.net)), 1), 1)
+            const barH = Math.max(0, netAbs * 18)
+            if (!d.net) return null
+            return (
+              <rect
+                key={`flow-${i}`}
+                x={x - 3}
+                y={d.net >= 0 ? barBase - barH : barBase}
+                width={6}
+                height={barH}
+                rx={3}
+                fill={d.net >= 0 ? '#10B981' : '#F43F5E'}
+                opacity="0.46"
+              />
+            )
+          })}
+          {xLabels.map(({ d, i }) => (
+            <text key={i} x={xScale(i)} y={cH + 38} textAnchor="middle" fontSize="11" fill="#64748B">{d.label}</text>
+          ))}
+          {points.map(p => (
+            <rect key={`hit-${p.i}`} x={p.x - Math.max(10, cW / data.length / 2)} y={0} width={Math.max(20, cW / data.length)} height={cH + 28} fill="transparent" onMouseMove={() => setHoverIndex(p.i)} />
+          ))}
+          {hover && (
+            <g>
+              <line x1={hover.x} y1={0} x2={hover.x} y2={cH} stroke="rgba(37,99,235,.28)" strokeWidth="1" strokeDasharray="4 4" />
+              <circle cx={hover.x} cy={hover.y} r="5.5" fill="#fff" stroke="#2563EB" strokeWidth="3" />
+            </g>
+          )}
+        </g>
+      </svg>
+      {hover && (
+        <div style={{ position: 'absolute', right: 12, top: 8, minWidth: 180, border: '1px solid rgba(255,255,255,.64)', borderRadius: 14, background: 'rgba(255,255,255,.72)', backdropFilter: 'blur(14px) saturate(1.4)', boxShadow: '0 18px 38px rgba(37,99,235,.14)', padding: '10px 12px' }}>
+          <Text style={{ fontSize: 11, color: '#64748B', fontWeight: 700 }}>{hover.d.label}</Text>
+          <div style={{ marginTop: 4, fontFamily: 'monospace', fontSize: 17, fontWeight: 800, color: '#1D4ED8' }}>
+            {hover.d.balance.toLocaleString('vi-VN', { maximumFractionDigits: 2 })} VNDC
+          </div>
+          <Space size={10} style={{ marginTop: 4 }}>
+            <Text style={{ fontSize: 11, color: '#059669' }}>+{hover.d.received.toLocaleString('vi-VN', { maximumFractionDigits: 2 })}</Text>
+            <Text style={{ fontSize: 11, color: '#DC2626' }}>-{hover.d.sent.toLocaleString('vi-VN', { maximumFractionDigits: 2 })}</Text>
+          </Space>
+        </div>
+      )}
+    </div>
+  )
 }
 
 const TX_TYPE_LABEL: Record<string, { label: string; color: string }> = {
@@ -144,10 +337,11 @@ export function DashboardPage({ user }: DashboardPageProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const [txs, setTxs] = useState<Transaction[]>([])
+  const [balance, setBalance] = useState<BalanceResponse | null>(null)
   const [contractInfo, setContractInfo] = useState<{ total_supply: string; paused: boolean } | null>(null)
-  const [analytics, setAnalytics] = useState<AdminAnalytics | null>(null)
+  const [, setAnalytics] = useState<AdminAnalytics | null>(null)
   const [loading, setLoading] = useState(true)
-  const [chartPeriod, setChartPeriod] = useState<'30' | '7'>('30')
+  const [chartPeriod, setChartPeriod] = useState<ChartRange>('7d')
   const [announcements, setAnnouncements] = useState<Announcement[]>(loadAnnouncements)
   const [showAnnModal, setShowAnnModal] = useState(false)
   const [annForm] = Form.useForm()
@@ -159,12 +353,13 @@ export function DashboardPage({ user }: DashboardPageProps) {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const [txData, , ci] = await Promise.all([
-        getTransactions(1, 200).catch(() => ({ transactions: [], total: 0 })),
+      const [txData, bal, ci] = await Promise.all([
+        getTransactions(1, 300).catch(() => ({ transactions: [], total: 0 })),
         getBalance(walletAddr).catch(() => null),
         getContractInfo().catch(() => null),
       ])
       setTxs(txData.transactions ?? [])
+      setBalance(bal)
       setContractInfo(ci)
       if (isAdmin) setAnalytics(await getAdminAnalytics().catch(() => null))
     } finally { setLoading(false) }
@@ -172,10 +367,12 @@ export function DashboardPage({ user }: DashboardPageProps) {
 
   useEffect(() => { void load() }, [load])
 
-  const chartData = buildChartData(txs, walletAddr, Number(chartPeriod))
-  const totalReceived = txs.filter(t => t.to_wallet?.toLowerCase() === walletAddr.toLowerCase()).reduce((s, t) => s + Number(BigInt(t.amount || '0')) / 1e18, 0)
-  const totalSent = txs.filter(t => t.from_wallet?.toLowerCase() === walletAddr.toLowerCase()).reduce((s, t) => s + Number(BigInt(t.amount || '0')) / 1e18, 0)
-  const pendingCount = txs.filter(t => t.status === 'PENDING').length
+  const chartData = buildBalanceChartData(txs, walletAddr, balance, chartPeriod)
+  const totalReceived = chartData.reduce((sum, p) => sum + p.received, 0)
+  const totalSent = chartData.reduce((sum, p) => sum + p.sent, 0)
+  const currentBalance = balanceToNumber(balance)
+  const startBalance = chartData[0]?.balance ?? currentBalance
+  const balanceDelta = currentBalance - startBalance
 
   function addAnnouncement(vals: Omit<Announcement, 'id' | 'createdAt' | 'author'>) {
     const next: Announcement = { ...vals, id: `ann-${Date.now()}`, createdAt: new Date().toISOString(), author: displayName }
@@ -196,53 +393,66 @@ export function DashboardPage({ user }: DashboardPageProps) {
 
   return (
     <Spin spinning={loading}>
-      <div style={{ maxWidth: 1280, margin: '0 auto', paddingBottom: 40 }}>
+      <div className="dashboard-liquid-page" style={{ maxWidth: 1280, margin: '0 auto', paddingBottom: 40 }}>
 
         {/* Hero Banner */}
-        <div style={{ background: 'linear-gradient(135deg,#0F0E2B 0%,#1E1A5C 45%,#312E81 100%)', borderRadius: 20, padding: '28px 36px', marginBottom: 28, display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap', boxShadow: '0 20px 60px rgba(67,56,202,0.3)', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', right: -40, top: -40, width: 200, height: 200, borderRadius: '50%', background: 'rgba(99,102,241,0.12)', pointerEvents: 'none' }} />
-          <div style={{ position: 'absolute', right: 80, bottom: -60, width: 160, height: 160, borderRadius: '50%', background: 'rgba(139,92,246,0.1)', pointerEvents: 'none' }} />
-          <Avatar size={64} style={{ background: 'linear-gradient(135deg,#6366F1,#8B5CF6)', border: '3px solid rgba(165,180,252,0.4)', flexShrink: 0, boxShadow: '0 0 24px rgba(99,102,241,0.5)', fontSize: 26, fontWeight: 800, fontFamily: 'Georgia,serif' }}>
-            {displayName.charAt(0).toUpperCase()}
-          </Avatar>
-          <div style={{ flex: 1, minWidth: 200 }}>
-            <div style={{ fontSize: 12, color: '#A5B4FC', marginBottom: 4, letterSpacing: '0.06em', textTransform: 'uppercase', fontWeight: 500 }}>Chào mừng trở lại</div>
-            <Title level={2} style={{ margin: 0, color: '#FFFFFF', fontFamily: 'Georgia,serif', lineHeight: 1.15 }}>{displayName}</Title>
-            <Space size={8} style={{ marginTop: 8, flexWrap: 'wrap' }}>
-              <Text style={{ color: '#818CF8', fontSize: 13 }}>{new Date().toLocaleDateString('vi-VN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</Text>
-              {isAdmin && <span style={{ padding: '2px 10px', background: '#D97706', color: '#fff', borderRadius: 20, fontSize: 11, fontWeight: 700 }}>ADMIN</span>}
-              {contractInfo?.paused && <span style={{ padding: '2px 10px', background: '#DC2626', color: '#fff', borderRadius: 20, fontSize: 11, fontWeight: 700 }}>HỢP ĐỒNG TẠM DỪNG</span>}
-            </Space>
-          </div>
-          <div style={{ textAlign: 'right', flexShrink: 0 }}>
-            <div style={{ fontSize: 11, color: '#818CF8', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Địa chỉ ví</div>
-            <code style={{ fontSize: 13, color: '#C7D2FE', background: 'rgba(0,0,0,0.3)', padding: '6px 14px', borderRadius: 8, display: 'block', letterSpacing: '0.05em' }}>{shortenAddr(walletAddr)}</code>
-            <Button size="small" onClick={() => void load()} style={{ marginTop: 10, background: 'rgba(99,102,241,0.2)', border: '1px solid rgba(99,102,241,0.4)', color: '#A5B4FC', borderRadius: 8, fontSize: 12 }}>↻ Làm mới</Button>
-          </div>
-        </div>
+<div className="dashboard-hero" style={{ flexWrap: 'wrap' }}>
+  <div className="dashboard-hero-copy">
+    <div className="dashboard-hero-kicker">
+      Hệ thống quản lý VNDC
+    </div>
 
-        {/* Platform Stats */}
-        <Row gutter={[16, 16]} style={{ marginBottom: 28 }}>
-          {[
-            { icon: <GlobalOutlined style={{ fontSize: 22, color: '#6366F1' }} />, label: 'Tổng cung VNDC', value: contractInfo ? formatVNDC(contractInfo.total_supply, true) : '—', sub: 'Token lưu hành', bg: '#EEF2FF', border: '#C7D2FE', iconBg: '#4338CA22' },
-            { icon: <TeamOutlined style={{ fontSize: 22, color: '#10B981' }} />, label: 'Người dùng', value: isAdmin && analytics ? analytics.users.total.toLocaleString('vi-VN') : '—', sub: isAdmin && analytics ? `${analytics.users.active_today} hoạt động hôm nay` : 'Chỉ admin xem được', bg: '#ECFDF5', border: '#A7F3D0', iconBg: '#10B98122' },
-            { icon: <BarChartOutlined style={{ fontSize: 22, color: '#F59E0B' }} />, label: 'Giao dịch', value: isAdmin && analytics ? analytics.transactions.total.toLocaleString('vi-VN') : txs.length.toString(), sub: `${pendingCount} đang chờ xử lý`, bg: '#FFFBEB', border: '#FDE68A', iconBg: '#F59E0B22' },
-            { icon: <FundOutlined style={{ fontSize: 22, color: '#8B5CF6' }} />, label: 'DAO & Chiến dịch', value: isAdmin && analytics ? `${analytics.dao.total_daos} / ${analytics.fundraising.total_campaigns}` : '—', sub: isAdmin && analytics ? `${analytics.dao.active_proposals} đề xuất đang mở` : 'Chỉ admin xem được', bg: '#F5F3FF', border: '#DDD6FE', iconBg: '#8B5CF622' },
-          ].map((s, idx) => (
-            <Col xs={12} sm={12} md={6} key={idx}>
-              <Card style={{ borderRadius: 16, background: s.bg, border: `1.5px solid ${s.border}`, height: '100%' }} styles={{ body: { padding: '18px 20px' } }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-                  <div style={{ width: 44, height: 44, borderRadius: 12, background: s.iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{s.icon}</div>
-                  <div>
-                    <div style={{ fontSize: 11, color: '#6B7280', marginBottom: 3, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{s.label}</div>
-                    <div style={{ fontSize: 24, fontWeight: 800, color: '#1A1744', lineHeight: 1.1, fontFamily: 'monospace' }}>{s.value}</div>
-                    <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 3 }}>{s.sub}</div>
-                  </div>
-                </div>
-              </Card>
-            </Col>
-          ))}
-        </Row>
+    <Title level={2} className="dashboard-hero-title">
+      Xin chào, {displayName}
+    </Title>
+
+    <Text className="dashboard-hero-muted">
+      Theo dõi nguồn cung, giao dịch và trạng thái vận hành của hệ thống trong thời gian thực.
+    </Text>
+
+    <Space size={8} style={{ marginTop: 12, flexWrap: 'wrap' }}>
+      <Text className="dashboard-hero-muted">
+        {new Date().toLocaleDateString('vi-VN', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })}
+      </Text>
+
+      {isAdmin && (
+        <span
+          style={{
+            padding: '2px 10px',
+            background: '#D97706',
+            color: '#fff',
+            borderRadius: 20,
+            fontSize: 11,
+            fontWeight: 700,
+          }}
+        >
+          ADMIN
+        </span>
+      )}
+
+      {contractInfo?.paused && (
+        <span
+          style={{
+            padding: '2px 10px',
+            background: '#DC2626',
+            color: '#fff',
+            borderRadius: 20,
+            fontSize: 11,
+            fontWeight: 700,
+          }}
+        >
+          HỢP ĐỒNG TẠM DỪNG
+        </span>
+      )}
+    </Space>
+  </div>
+</div>
+
 
         {/* Announcements */}
         <div style={{ marginBottom: 28 }}>
@@ -266,7 +476,7 @@ export function DashboardPage({ user }: DashboardPageProps) {
             {announcements.map(ann => {
               const st = ANN_STYLE[ann.type]
               return (
-                <div key={ann.id} style={{ minWidth: 300, maxWidth: 340, flexShrink: 0, background: st.bg, border: `1.5px solid ${st.border}`, borderRadius: 16, padding: '16px 18px', position: 'relative' }}>
+                <div key={ann.id} className="liquid-announcement" style={{ minWidth: 300, maxWidth: 340, flexShrink: 0, background: st.bg, border: `1.5px solid ${st.border}`, borderRadius: 16, padding: '16px 18px', position: 'relative' }}>
                   {isAdmin && (<Button size="small" type="text" shape="circle" icon={<CloseOutlined style={{ fontSize: 10 }} />} onClick={() => removeAnnouncement(ann.id)} style={{ position: 'absolute', top: 10, right: 10, color: '#9CA3AF', width: 22, height: 22, minWidth: 22 }} />)}
                   <div style={{ fontSize: 11, fontWeight: 700, color: st.tagColor, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{st.tag}</div>
                   <div style={{ fontWeight: 700, fontSize: 14, color: '#1A1744', marginBottom: 6, lineHeight: 1.3 }}>{ann.title}</div>
@@ -279,30 +489,37 @@ export function DashboardPage({ user }: DashboardPageProps) {
         </div>
 
         {/* Analytics Chart */}
-        <Card style={{ borderRadius: 20, border: '1.5px solid #E0E7FF', marginBottom: 28, boxShadow: '0 4px 24px rgba(67,56,202,0.07)' }} styles={{ body: { padding: '20px 24px' } }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
-            <Space>
-              <RiseOutlined style={{ color: '#4338CA', fontSize: 18 }} />
-              <Text strong style={{ fontSize: 16, color: '#1A1744' }}>Biến động giao dịch</Text>
+        <Card className="liquid-panel" style={{ borderRadius: 20, border: '1.5px solid #E0E7FF', marginBottom: 28, boxShadow: '0 4px 24px rgba(67,56,202,0.07)' }} styles={{ body: { padding: '20px 24px' } }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 18, flexWrap: 'wrap', gap: 14 }}>
+            <Space direction="vertical" size={2}>
+              <Space>
+                <RiseOutlined style={{ color: '#4338CA', fontSize: 18 }} />
+                <Text strong style={{ fontSize: 16, color: '#1A1744' }}>Biến động số dư</Text>
+              </Space>
+              <Text style={{ fontSize: 12, color: '#64748B' }}>
+                Biểu đồ miền mềm theo số dư ví qua từng mốc thời gian · {CHART_RANGE_OPTIONS[chartPeriod].detail}
+              </Text>
             </Space>
-            <Space size={16}>
-              <Space size={6}><div style={{ width: 16, height: 3, background: '#10B981', borderRadius: 2 }} /><Text style={{ fontSize: 12, color: '#6B7280' }}>Nhận vào</Text></Space>
-              <Space size={6}><div style={{ width: 16, height: 2, background: '#F43F5E', borderRadius: 2, borderTop: '2px dashed #F43F5E' }} /><Text style={{ fontSize: 12, color: '#6B7280' }}>Chuyển ra</Text></Space>
-              <div style={{ background: '#F1F5F9', borderRadius: 8, padding: 3, display: 'flex' }}>
-                {(['7', '30'] as const).map(p => (
-                  <button key={p} onClick={() => setChartPeriod(p)} style={{ padding: '5px 14px', borderRadius: 6, border: 'none', background: chartPeriod === p ? '#4338CA' : 'transparent', color: chartPeriod === p ? '#fff' : '#6B7280', fontWeight: chartPeriod === p ? 700 : 500, cursor: 'pointer', fontSize: 13, transition: 'all 0.15s' }}>
-                    {p === '7' ? '7 ngày' : '30 ngày'}
+            <Space size={12} wrap>
+              <Space size={6}><div style={{ width: 18, height: 4, background: 'linear-gradient(90deg,#2563EB,#0EA5E9,#10B981)', borderRadius: 999 }} /><Text style={{ fontSize: 12, color: '#6B7280' }}>Số dư</Text></Space>
+              <Space size={6}><div style={{ width: 8, height: 8, background: '#10B981', borderRadius: 999, opacity: .72 }} /><Text style={{ fontSize: 12, color: '#6B7280' }}>Dòng tiền vào</Text></Space>
+              <Space size={6}><div style={{ width: 8, height: 8, background: '#F43F5E', borderRadius: 999, opacity: .72 }} /><Text style={{ fontSize: 12, color: '#6B7280' }}>Dòng tiền ra</Text></Space>
+              <div className="liquid-segment" style={{ background: 'rgba(241,245,249,.72)', borderRadius: 12, padding: 4, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                {(Object.keys(CHART_RANGE_OPTIONS) as ChartRange[]).map(p => (
+                  <button key={p} onClick={() => setChartPeriod(p)} style={{ padding: '6px 12px', borderRadius: 9, border: 'none', background: chartPeriod === p ? 'linear-gradient(135deg,#2563EB,#0EA5E9)' : 'transparent', color: chartPeriod === p ? '#fff' : '#64748B', fontWeight: chartPeriod === p ? 800 : 600, cursor: 'pointer', fontSize: 12, transition: 'all 0.15s', boxShadow: chartPeriod === p ? '0 10px 22px rgba(37,99,235,.18)' : 'none' }}>
+                    {CHART_RANGE_OPTIONS[p].label}
                   </button>
                 ))}
               </div>
             </Space>
           </div>
-          <AreaChart data={chartData} height={220} />
+          <AreaChart data={chartData} height={260} />
           <div style={{ display: 'flex', gap: 32, marginTop: 16, paddingTop: 16, borderTop: '1px solid #E0E7FF', flexWrap: 'wrap' }}>
             {[
+              { label: 'Số dư hiện tại', value: currentBalance, color: '#1D4ED8', prefix: '' },
+              { label: 'Biến động kỳ này', value: balanceDelta, color: balanceDelta >= 0 ? '#10B981' : '#DC2626', prefix: balanceDelta >= 0 ? '+' : '' },
               { label: 'Tổng nhận', value: totalReceived, color: '#10B981', prefix: '+' },
               { label: 'Tổng gửi',  value: totalSent,     color: '#F43F5E', prefix: '-' },
-              { label: 'Net',        value: totalReceived - totalSent, color: totalReceived >= totalSent ? '#4338CA' : '#DC2626', prefix: '' },
             ].map((s, i) => (
               <div key={i}>
                 <div style={{ fontSize: 11, color: '#9CA3AF', marginBottom: 2, fontWeight: 500 }}>{s.label}</div>
@@ -318,8 +535,9 @@ export function DashboardPage({ user }: DashboardPageProps) {
         <Row gutter={[20, 20]}>
           <Col xs={24} lg={16}>
             <Card
+              className="liquid-panel"
               title={<Space><ClockCircleOutlined style={{ color: '#6366F1' }} /><Text strong style={{ color: '#1A1744', fontSize: 15 }}>Giao dịch gần đây</Text></Space>}
-              extra={<Button type="link" onClick={() => navigate('/tokens')} size="small" style={{ color: '#4338CA', fontWeight: 600 }}>Xem tất cả →</Button>}
+              extra={<Button type="link" onClick={() => navigate('/tokens')} size="small" icon={<RightOutlined />} iconPosition="end" style={{ color: '#2563EB', fontWeight: 600 }}>Xem tất cả</Button>}
               style={{ borderRadius: 20, border: '1.5px solid #E0E7FF', boxShadow: '0 4px 24px rgba(67,56,202,0.07)' }}
               styles={{ body: { padding: '0 20px 16px' } }}
             >
@@ -332,7 +550,7 @@ export function DashboardPage({ user }: DashboardPageProps) {
                     return (
                       <div key={tx.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid #F3F4F6' }}>
                         <Space size={12}>
-                          <div style={{ width: 40, height: 40, borderRadius: 12, background: isSend ? '#FEF2F2' : '#ECFDF5', border: `1.5px solid ${isSend ? '#FECACA' : '#A7F3D0'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: isSend ? '#DC2626' : '#059669', fontSize: 16 }}>
+                          <div className="liquid-icon-tile" style={{ width: 40, height: 40, borderRadius: 12, background: isSend ? '#FEF2F2' : '#ECFDF5', border: `1.5px solid ${isSend ? '#FECACA' : '#A7F3D0'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: isSend ? '#DC2626' : '#059669', fontSize: 16 }}>
                             {isSend ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
                           </div>
                           <div>
@@ -342,7 +560,7 @@ export function DashboardPage({ user }: DashboardPageProps) {
                             </Space>
                             <div style={{ fontSize: 12, color: '#9CA3AF', marginTop: 3 }}>
                               {isSend ? `\u2192 ${shortenAddr(tx.to_wallet)}` : `\u2190 ${shortenAddr(tx.from_wallet)}`}
-                              &nbsp;·&nbsp;{new Date(tx.created_at).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                              &nbsp;/&nbsp;{new Date(tx.created_at).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
                             </div>
                           </div>
                         </Space>
@@ -359,24 +577,25 @@ export function DashboardPage({ user }: DashboardPageProps) {
 
           <Col xs={24} lg={8}>
             <Card
+              className="liquid-panel"
               title={<Space><FireOutlined style={{ color: '#D97706' }} /><Text strong style={{ color: '#1A1744', fontSize: 15 }}>Khám phá nhanh</Text></Space>}
               style={{ borderRadius: 20, border: '1.5px solid #E0E7FF', marginBottom: 20, boxShadow: '0 4px 24px rgba(67,56,202,0.07)' }}
               styles={{ body: { padding: '12px 16px 16px' } }}
             >
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {[
-                  { emoji: '💸', label: 'Chuyển Token',       desc: 'Gửi VNDC an toàn',       path: '/tokens',      color: '#4338CA', bg: '#EEF2FF', border: '#C7D2FE' },
-                  { emoji: '🗳️', label: 'DAO Voting',          desc: 'Tham gia quản trị',       path: '/dao',         color: '#7C3AED', bg: '#F5F3FF', border: '#DDD6FE' },
-                  { emoji: '🛒', label: 'NFT Marketplace',     desc: 'Mua bán NFT',             path: '/marketplace', color: '#D97706', bg: '#FFFBEB', border: '#FDE68A' },
-                  { emoji: '📅', label: 'Sự kiện & Hoạt động', desc: 'Tích điểm nhận thưởng',  path: '/events',      color: '#059669', bg: '#ECFDF5', border: '#A7F3D0' },
-                  { emoji: '🎗️', label: 'Chiến dịch',           desc: 'Gây quỹ cộng đồng',      path: '/campaigns',   color: '#DB2777', bg: '#FDF2F8', border: '#FBCFE8' },
+                  { icon: <WalletOutlined />, label: 'Chuyển Token',       desc: 'Gửi VNDC an toàn',       path: '/tokens',      color: '#2563EB', bg: '#EFF6FF', border: '#BFDBFE' },
+                  { icon: <ApartmentOutlined />, label: 'DAO Voting',       desc: 'Tham gia quản trị',       path: '/dao',         color: '#1D4ED8', bg: '#EFF6FF', border: '#BFDBFE' },
+                  { icon: <ShopOutlined />, label: 'NFT Marketplace',       desc: 'Mua bán NFT',             path: '/marketplace', color: '#D97706', bg: '#FFFBEB', border: '#FDE68A' },
+                  { icon: <CalendarOutlined />, label: 'Sự kiện & Hoạt động', desc: 'Tích điểm nhận thưởng',  path: '/events',      color: '#059669', bg: '#ECFDF5', border: '#A7F3D0' },
+                  { icon: <FundOutlined />, label: 'Chiến dịch',            desc: 'Gây quỹ cộng đồng',      path: '/campaigns',   color: '#0EA5E9', bg: '#F0F9FF', border: '#BAE6FD' },
                 ].map(a => (
-                  <button key={a.path} onClick={() => navigate(a.path)}
+                  <button key={a.path} className="liquid-quick-action" onClick={() => navigate(a.path)}
                     style={{ display: 'flex', alignItems: 'center', gap: 12, width: '100%', padding: '11px 14px', borderRadius: 12, border: `1.5px solid ${a.border}`, background: a.bg, cursor: 'pointer', textAlign: 'left', transition: 'all 0.15s' }}
                     onMouseEnter={e => { e.currentTarget.style.background = a.color; e.currentTarget.style.borderColor = a.color; const label = e.currentTarget.querySelector<HTMLElement>('.nav-label'); if (label) label.style.color = '#fff' }}
                     onMouseLeave={e => { e.currentTarget.style.background = a.bg; e.currentTarget.style.borderColor = a.border; const label = e.currentTarget.querySelector<HTMLElement>('.nav-label'); if (label) label.style.color = a.color }}
                   >
-                    <span style={{ fontSize: 20 }}>{a.emoji}</span>
+                    <span className="liquid-icon-tile" style={{ width: 30, height: 30, borderRadius: 9, background: '#fff', color: a.color, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}>{a.icon}</span>
                     <div>
                       <div className="nav-label" style={{ fontSize: 13, fontWeight: 700, color: a.color, transition: 'color 0.15s' }}>{a.label}</div>
                       <div style={{ fontSize: 11, color: '#9CA3AF', marginTop: 1 }}>{a.desc}</div>
@@ -386,7 +605,7 @@ export function DashboardPage({ user }: DashboardPageProps) {
               </div>
             </Card>
 
-            <Card style={{ borderRadius: 20, border: '1.5px solid #E0E7FF', boxShadow: '0 4px 24px rgba(67,56,202,0.07)' }} styles={{ body: { padding: '16px 20px' } }}>
+            <Card className="liquid-panel" style={{ borderRadius: 20, border: '1.5px solid #E0E7FF', boxShadow: '0 4px 24px rgba(67,56,202,0.07)' }} styles={{ body: { padding: '16px 20px' } }}>
               <Space style={{ marginBottom: 14 }}>
                 <EditOutlined style={{ color: '#4338CA' }} />
                 <Text strong style={{ color: '#1A1744' }}>Hoạt động của tôi</Text>
@@ -398,7 +617,7 @@ export function DashboardPage({ user }: DashboardPageProps) {
                   { val: txs.filter(t => t.from_wallet?.toLowerCase() === walletAddr.toLowerCase()).length, label: 'Gửi đi', color: '#DC2626', bg: '#FEF2F2' },
                 ].map((s, i) => (
                   <div key={i} style={{ textAlign: 'center' }}>
-                    <div style={{ width: 48, height: 48, borderRadius: 14, background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 6px', fontSize: 20, fontWeight: 800, color: s.color }}>{s.val}</div>
+                    <div className="liquid-icon-tile" style={{ width: 48, height: 48, borderRadius: 14, background: s.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 6px', fontSize: 20, fontWeight: 800, color: s.color }}>{s.val}</div>
                     <div style={{ fontSize: 11, color: '#9CA3AF', fontWeight: 500 }}>{s.label}</div>
                   </div>
                 ))}
@@ -411,10 +630,10 @@ export function DashboardPage({ user }: DashboardPageProps) {
         <Modal title={<Space><BellOutlined style={{ color: '#4338CA' }} /><span>Đăng thông báo mới</span></Space>} open={showAnnModal} onCancel={() => { setShowAnnModal(false); annForm.resetFields() }} onOk={() => annForm.submit()} okText="Đăng ngay" cancelText="Hủy" okButtonProps={{ style: { background: '#4338CA', borderColor: '#4338CA' } }} destroyOnClose>
           <Form form={annForm} layout="vertical" onFinish={v => addAnnouncement(v as Omit<Announcement, 'id' | 'createdAt' | 'author'>)} style={{ marginTop: 16 }}>
             <Form.Item name="type" label="Loại thông báo" initialValue="info" rules={[{ required: true }]}>
-              <Select><Select.Option value="highlight">⭐ Nổi bật</Select.Option><Select.Option value="info">📢 Thông báo</Select.Option><Select.Option value="success">✅ Mới / Tốt</Select.Option><Select.Option value="warning">⚠️ Quan trọng</Select.Option></Select>
+              <Select><Select.Option value="highlight">Nổi bật</Select.Option><Select.Option value="info">Thông báo</Select.Option><Select.Option value="success">Mới / Tốt</Select.Option><Select.Option value="warning">Quan trọng</Select.Option></Select>
             </Form.Item>
             <Form.Item name="title" label="Tiêu đề" rules={[{ required: true, message: 'Nhập tiêu đề' }]}>
-              <Input placeholder="VD: 🚀 Sự kiện mới tháng 6" maxLength={80} showCount />
+              <Input placeholder="VD: Sự kiện mới tháng 6" maxLength={80} showCount />
             </Form.Item>
             <Form.Item name="content" label="Nội dung" rules={[{ required: true, message: 'Nhập nội dung' }]}>
               <Input.TextArea rows={3} placeholder="Mô tả chi tiết thông báo..." maxLength={300} showCount />

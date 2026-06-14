@@ -121,13 +121,14 @@ type LogConfig struct {
 
 // WorkerConfig holds background worker settings.
 type WorkerConfig struct {
-	BatchSize       int           `mapstructure:"batch_size"`
-	BatchTimeout    time.Duration `mapstructure:"batch_timeout"`
-	SyncInterval    time.Duration `mapstructure:"sync_interval"`
-	MaxWorkers      int           `mapstructure:"max_workers"`
-	QueueBufferSize int           `mapstructure:"queue_buffer_size"`
-	RetryMax        int           `mapstructure:"retry_max"`
-	RetryDelay      time.Duration `mapstructure:"retry_delay"`
+	BatchSize                 int           `mapstructure:"batch_size"`
+	MaxTransactionsPerSession int           `mapstructure:"max_transactions_per_session"`
+	BatchTimeout              time.Duration `mapstructure:"batch_timeout"`
+	SyncInterval              time.Duration `mapstructure:"sync_interval"`
+	MaxWorkers                int           `mapstructure:"max_workers"`
+	QueueBufferSize           int           `mapstructure:"queue_buffer_size"`
+	RetryMax                  int           `mapstructure:"retry_max"`
+	RetryDelay                time.Duration `mapstructure:"retry_delay"`
 
 	// TokenTransferWorker — Change Stream-based auto-batch trigger.
 	// PendingThreshold: fire an immediate batch when PENDING tx count reaches this.
@@ -251,6 +252,7 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("log.format", "json")
 
 	v.SetDefault("worker.batch_size", 10)
+	v.SetDefault("worker.max_transactions_per_session", 10)
 	v.SetDefault("worker.batch_timeout", "5m")
 	v.SetDefault("worker.sync_interval", "10m")
 	v.SetDefault("worker.max_workers", 4)
