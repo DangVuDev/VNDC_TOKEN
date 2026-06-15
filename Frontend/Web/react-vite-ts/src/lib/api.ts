@@ -34,6 +34,20 @@ type ApiEnvelope<T> = {
   }
 }
 
+export class ApiError extends Error {
+  status: number
+  code?: string
+  details?: unknown
+
+  constructor(message: string, status: number, code?: string, details?: unknown) {
+    super(message)
+    this.name = 'ApiError'
+    this.status = status
+    this.code = code
+    this.details = details
+  }
+}
+
 type ClientConfig = {
   baseUrl?: string
   getToken: () => string | null | undefined
@@ -90,11 +104,12 @@ export function createApiClient(config: ClientConfig): ApiClient {
     const data = await parseResponse(response)
     if (!response.ok) {
       const payload = data as ApiEnvelope<unknown> | string | undefined
+      const error = typeof payload === 'string' ? undefined : payload?.error
       const message =
         typeof payload === 'string'
           ? payload
-          : payload?.error?.message ?? JSON.stringify(payload ?? {})
-      throw new Error(message || `Request failed with ${response.status}`)
+          : error?.message ?? JSON.stringify(payload ?? {})
+      throw new ApiError(message || `Request failed with ${response.status}`, response.status, error?.code, error?.details)
     }
 
     if (data && typeof data === 'object' && 'success' in (data as Record<string, unknown>)) {
@@ -129,11 +144,12 @@ export function createApiClient(config: ClientConfig): ApiClient {
     const data = await parseResponse(response)
     if (!response.ok) {
       const payload = data as ApiEnvelope<unknown> | string | undefined
+      const error = typeof payload === 'string' ? undefined : payload?.error
       const message =
         typeof payload === 'string'
           ? payload
-          : (payload as ApiEnvelope<unknown>)?.error?.message ?? JSON.stringify(payload ?? {})
-      throw new Error(message || `Request failed with ${response.status}`)
+          : error?.message ?? JSON.stringify(payload ?? {})
+      throw new ApiError(message || `Request failed with ${response.status}`, response.status, error?.code, error?.details)
     }
     const envelope = data as { success?: boolean; data?: T[]; pagination?: { total: number; page: number; page_size: number; has_next: boolean; has_prev: boolean } }
     return {

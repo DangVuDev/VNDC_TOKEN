@@ -962,9 +962,10 @@ function TransferPanel({ walletAddr, onchainBal, onSuccess }: TransferPanelProps
     setHasNonKYCWarning(false); setNonKYCConfirmed(false)
     setManualInput(''); setUsernameInput(''); setStep(0); setAmount(null); setAmountError(null); setNote('')
   }
-  function applyRecipient(wallet: string, info: PublicUserInfo | null, presetAmount?: string) {
+  function applyRecipient(wallet: string, info: PublicUserInfo | null, presetAmount?: string, warningConfirmed = false) {
     setRecipientWallet(wallet); setRecipientInfo(info)
-    setHasNonKYCWarning(!info?.kyc_verified); setNonKYCConfirmed(false)
+    const needsWarning = !info?.kyc_verified
+    setHasNonKYCWarning(needsWarning); setNonKYCConfirmed(needsWarning ? warningConfirmed : false)
     if (presetAmount) setAmount(parseFloat(presetAmount) || null)
     setStep(1)
   }
@@ -999,6 +1000,26 @@ function TransferPanel({ walletAddr, onchainBal, onSuccess }: TransferPanelProps
     setLookupLoading(true); setLookupError(null)
     try {
       const info = await lookupUserByWallet(normalized)
+      if (!info) {
+        Modal.confirm({
+          title: 'Không tìm thấy người dùng',
+          icon: <WarningOutlined />,
+          content: (
+            <Space direction="vertical" size={8}>
+              <Text>
+                Không tìm thấy người dùng với địa chỉ{' '}
+                <Text code style={{ fontSize: 12 }}>{shortenAddr(normalized)}</Text>.
+              </Text>
+              <Text>Bạn có muốn tiếp tục chuyển token đến địa chỉ này không?</Text>
+            </Space>
+          ),
+          okText: 'Tiếp tục',
+          cancelText: 'Kiểm tra lại',
+          okButtonProps: { danger: true },
+          onOk: () => applyRecipient(normalized, null, undefined, true),
+        })
+        return
+      }
       // info === null  → wallet not linked to any user in system (404) → warn
       // info.kyc_verified === false → user found but not KYC'd → warn
       // info.kyc_verified === true  → all good, no warning

@@ -24,6 +24,7 @@ import {
   ShopOutlined,
   FundOutlined,
   CalendarOutlined,
+  LineChartOutlined,
   SettingOutlined,
   BellOutlined,
   LogoutOutlined,
@@ -87,6 +88,7 @@ const navItems: NavItem[] = [
   { key: '/marketplace', icon: <ShopOutlined />, label: 'Chợ giao dịch' },
   { key: '/campaigns', icon: <FundOutlined />, label: 'Gây quỹ' },
   { key: '/events', icon: <CalendarOutlined />, label: 'Sự kiện' },
+    { key: '/markets', icon: <LineChartOutlined />, label: 'Thị trường crypto' },
 ]
 
 export function AppLayout({ children, user, onLogout }: AppLayoutProps) {
