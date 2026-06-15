@@ -109,53 +109,68 @@ type MarketRow = {
 
 const MARKET_STYLES = `
 .crypto-market-page {
-  --market-ink: #07111f;
-  --market-muted: #667085;
+  --market-ink: var(--ink);
+  --market-muted: var(--ink-muted);
   --market-soft: rgba(255,255,255,.58);
   --market-panel: rgba(255,255,255,.64);
   --market-panel-strong: rgba(255,255,255,.82);
-  --market-line: rgba(255,255,255,.44);
-  --market-accent: #f0b90b;
-  --market-accent-soft: rgba(240,185,11,.18);
+  --market-line: rgba(255,255,255,.68);
+  --market-accent: var(--accent);
+  --market-accent-strong: var(--accent-strong);
+  --market-accent-soft: rgba(37,99,235,.13);
   --market-green: #089981;
   --market-red: #f23645;
   position: relative;
-  min-height: 100vh;
+  isolation: isolate;
+  min-height: 100dvh;
   overflow: hidden;
-  padding: 24px;
+  border: 1px solid rgba(255,255,255,.72);
+  border-radius: 28px;
+  padding: 18px 18px 40px;
   color: var(--market-ink);
   background:
-    radial-gradient(circle at 12% 8%, rgba(240,185,11,.24), transparent 25%),
-    radial-gradient(circle at 82% 12%, rgba(99,102,241,.2), transparent 28%),
-    radial-gradient(circle at 48% 92%, rgba(20,184,166,.16), transparent 25%),
-    linear-gradient(135deg, #eef6ff 0%, #f8fafc 42%, #fff7dd 100%);
+    linear-gradient(115deg, rgba(255,255,255,.3), rgba(239,246,255,.12) 42%, rgba(236,253,245,.1)),
+    var(--visual-dashboard-liquid) center top / cover no-repeat,
+    linear-gradient(135deg, rgba(219,234,254,.72), rgba(236,253,245,.46));
+  box-shadow: 0 34px 90px rgba(37,99,235,.16);
 }
 .crypto-market-page::before {
   content: '';
   position: absolute;
   inset: 0;
+  z-index: -2;
   pointer-events: none;
-  background-image:
-    linear-gradient(rgba(15,23,42,.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(15,23,42,.035) 1px, transparent 1px);
-  background-size: 42px 42px;
-  mask-image: radial-gradient(circle at 50% 30%, black 20%, transparent 76%);
+  background:
+    radial-gradient(760px 320px at 8% -4%, rgba(37,99,235,.18), transparent 68%),
+    radial-gradient(720px 340px at 95% 2%, rgba(14,165,233,.18), transparent 66%),
+    radial-gradient(620px 360px at 52% 108%, rgba(16,185,129,.13), transparent 64%),
+    linear-gradient(180deg, rgba(255,255,255,.62), rgba(246,248,251,.78));
+}
+.crypto-market-page::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  border-radius: 27px;
+  background: linear-gradient(125deg, rgba(255,255,255,.32), transparent 34%, rgba(255,255,255,.16) 62%, transparent 82%);
+  opacity: .62;
+  pointer-events: none;
 }
 .market-orb {
   position: absolute;
   z-index: 0;
   border-radius: 999px;
-  filter: blur(58px);
-  opacity: .72;
+  filter: blur(64px);
+  opacity: .22;
   pointer-events: none;
-  mix-blend-mode: multiply;
+  mix-blend-mode: screen;
 }
 .market-orb-1 {
   width: 340px;
   height: 340px;
   left: -80px;
   top: 120px;
-  background: rgba(240,185,11,.28);
+  background: rgba(37,99,235,.38);
   animation: marketFloatOne 16s ease-in-out infinite alternate;
 }
 .market-orb-2 {
@@ -163,7 +178,7 @@ const MARKET_STYLES = `
   height: 420px;
   right: -140px;
   top: -70px;
-  background: rgba(99,102,241,.22);
+  background: rgba(14,165,233,.34);
   animation: marketFloatTwo 18s ease-in-out infinite alternate;
 }
 .market-orb-3 {
@@ -171,7 +186,7 @@ const MARKET_STYLES = `
   height: 360px;
   left: 38%;
   bottom: -150px;
-  background: rgba(14,165,233,.18);
+  background: rgba(16,185,129,.28);
   animation: marketFloatThree 20s ease-in-out infinite alternate;
 }
 @keyframes marketFloatOne {
@@ -189,34 +204,65 @@ const MARKET_STYLES = `
 .market-content {
   position: relative;
   z-index: 1;
-  max-width: 1480px;
+  max-width: 1420px;
   margin: 0 auto;
 }
 .market-glass {
   position: relative;
   overflow: hidden;
-  border: 1px solid var(--market-line);
+  border: 1px solid rgba(255,255,255,.64);
   background:
-    linear-gradient(145deg, rgba(255,255,255,.82), rgba(255,255,255,.46));
+    linear-gradient(135deg, rgba(255,255,255,.34), rgba(255,255,255,.12)) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.68),
-    0 24px 70px rgba(15,23,42,.11);
-  backdrop-filter: blur(22px) saturate(155%);
-  -webkit-backdrop-filter: blur(22px) saturate(155%);
+    0 22px 54px rgba(37,99,235,.13),
+    0 8px 18px rgba(15,23,42,.06),
+    inset 0 1px 0 rgba(255,255,255,.86),
+    inset 0 -1px 0 rgba(37,99,235,.08);
+  backdrop-filter: blur(18px) saturate(1.85) contrast(1.05);
+  -webkit-backdrop-filter: blur(18px) saturate(1.85) contrast(1.05);
 }
 .market-glass::after {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    linear-gradient(135deg, rgba(255,255,255,.62), transparent 28%, transparent 68%, rgba(255,255,255,.2));
-  opacity: .58;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255,255,255,.88), rgba(255,255,255,.08) 38%, rgba(14,165,233,.18) 68%, rgba(255,255,255,.42));
+  opacity: .72;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  padding: 1px;
 }
 .market-hero {
-  border-radius: 30px;
-  padding: 26px;
+  border-radius: 24px;
+  padding: 24px;
   margin-bottom: 18px;
+  background:
+    linear-gradient(110deg, rgba(255,255,255,.94) 0%, rgba(239,246,255,.88) 48%, rgba(236,253,245,.72) 100%),
+    var(--visual-hero) center right / cover no-repeat !important;
+  border-color: rgba(191,219,254,.88);
+  box-shadow: 0 24px 70px rgba(37,99,235,.14);
+}
+.market-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(420px 180px at 82% 18%, rgba(14,165,233,.2), transparent 70%),
+    radial-gradient(280px 180px at 96% 92%, rgba(16,185,129,.2), transparent 72%);
+  pointer-events: none;
+}
+.market-hero::after {
+  inset: auto 0 0 0;
+  height: 3px;
+  border: 0;
+  border-radius: 0;
+  background: linear-gradient(90deg, #2563eb, #0ea5e9, #10b981);
+  -webkit-mask: none;
+  mask: none;
+  opacity: 1;
 }
 .market-hero-main,
 .market-section-content {
@@ -225,30 +271,30 @@ const MARKET_STYLES = `
 }
 .market-chip {
   border-radius: 999px;
-  border: 1px solid rgba(240,185,11,.34) !important;
-  background: rgba(240,185,11,.13) !important;
-  color: #8a6500 !important;
+  border: 1px solid rgba(37,99,235,.22) !important;
+  background: rgba(239,246,255,.68) !important;
+  color: var(--market-accent-strong) !important;
   font-weight: 800;
 }
 .market-stat {
   position: relative;
   overflow: hidden;
-  border-radius: 20px;
+  border-radius: 18px;
   padding: 15px;
-  border: 1px solid rgba(255,255,255,.56);
-  background: rgba(255,255,255,.6);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.65), 0 12px 30px rgba(15,23,42,.06);
+  border: 1px solid rgba(255,255,255,.62);
+  background: rgba(255,255,255,.42);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.82), 0 12px 30px rgba(37,99,235,.07);
   transition: transform .26s ease, box-shadow .26s ease, border-color .26s ease;
 }
 .market-stat:hover {
   transform: translateY(-3px);
-  border-color: rgba(240,185,11,.36);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 18px 42px rgba(15,23,42,.1);
+  border-color: rgba(191,219,254,.8);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 18px 42px rgba(37,99,235,.12);
 }
 .market-chart-shell,
 .market-side-card,
 .market-table-panel {
-  border-radius: 28px;
+  border-radius: 22px;
   padding: 18px;
 }
 .market-chart-shell {
@@ -270,12 +316,13 @@ const MARKET_STYLES = `
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  color: #7a5600;
+  color: #1d4ed8;
   font-size: 19px;
   font-weight: 950;
   background:
-    radial-gradient(circle at 30% 20%, #fff8db, #f0b90b 78%);
-  box-shadow: 0 12px 28px rgba(240,185,11,.23);
+    radial-gradient(circle at 30% 18%, rgba(255,255,255,.62), transparent 34%),
+    linear-gradient(135deg, #dbeafe, #e0f2fe 52%, #dcfce7);
+  box-shadow: 0 12px 28px rgba(37,99,235,.16);
 }
 .market-chart-tools {
   display: flex;
@@ -286,15 +333,15 @@ const MARKET_STYLES = `
 }
 .market-chart-tools .ant-radio-button-wrapper,
 .market-table-actions .ant-radio-button-wrapper {
-  border-color: rgba(15,23,42,.08) !important;
+  border-color: rgba(191,219,254,.74) !important;
   background: rgba(255,255,255,.62) !important;
   font-weight: 750;
 }
 .market-chart-tools .ant-radio-button-wrapper-checked,
 .market-table-actions .ant-radio-button-wrapper-checked {
-  color: #111827 !important;
-  border-color: rgba(240,185,11,.45) !important;
-  background: linear-gradient(135deg, rgba(240,185,11,.28), rgba(255,255,255,.74)) !important;
+  color: #1d4ed8 !important;
+  border-color: rgba(37,99,235,.42) !important;
+  background: linear-gradient(135deg, rgba(37,99,235,.14), rgba(14,165,233,.1) 58%, rgba(16,185,129,.1)) !important;
 }
 .market-chart-toolbar {
   position: relative;
@@ -305,9 +352,9 @@ const MARKET_STYLES = `
   gap: 12px;
   margin: 8px 0 12px;
   padding: 10px 12px;
-  border: 1px solid rgba(255,255,255,.54);
+  border: 1px solid rgba(255,255,255,.58);
   border-radius: 18px;
-  background: rgba(255,255,255,.52);
+  background: rgba(255,255,255,.36);
 }
 .market-chart-toolbar-left,
 .market-chart-toolbar-right {
@@ -318,13 +365,13 @@ const MARKET_STYLES = `
 }
 .market-chart-toolbar .ant-btn {
   border-radius: 12px;
-  border-color: rgba(15,23,42,.08);
-  background: rgba(255,255,255,.65);
+  border-color: rgba(191,219,254,.74);
+  background: rgba(255,255,255,.66);
   font-weight: 750;
 }
 .market-chart-toolbar .ant-btn:hover {
-  color: #8a6500 !important;
-  border-color: rgba(240,185,11,.45) !important;
+  color: var(--market-accent-strong) !important;
+  border-color: rgba(37,99,235,.42) !important;
 }
 .market-zoom-slider {
   width: 170px;
@@ -332,13 +379,13 @@ const MARKET_STYLES = `
 .market-chart-frame {
   position: relative;
   z-index: 1;
-  border-radius: 24px;
+  border-radius: 20px;
   padding: 10px;
-  border: 1px solid rgba(255,255,255,.58);
+  border: 1px solid rgba(255,255,255,.62);
   background:
-    radial-gradient(circle at 82% 12%, rgba(240,185,11,.08), transparent 28%),
-    rgba(255,255,255,.54);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.72);
+    radial-gradient(circle at 82% 12%, rgba(37,99,235,.08), transparent 28%),
+    rgba(255,255,255,.5);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.82);
 }
 .market-candle-chart {
   display: block;
@@ -372,7 +419,7 @@ const MARKET_STYLES = `
 }
 .market-list-button:hover {
   transform: translateX(4px);
-  background: rgba(240,185,11,.12);
+  background: rgba(37,99,235,.09);
 }
 .market-table-panel {
   margin-top: 16px;
@@ -393,7 +440,7 @@ const MARKET_STYLES = `
 .market-table .ant-table-container {
   border-radius: 20px;
   overflow: hidden;
-  border: 1px solid rgba(15,23,42,.06);
+  border: 1px solid rgba(191,219,254,.58);
 }
 .market-table .ant-table-thead > tr > th {
   background: rgba(255,255,255,.72) !important;
@@ -408,7 +455,7 @@ const MARKET_STYLES = `
 }
 .market-table .ant-table-tbody > tr.ant-table-row:hover > td,
 .market-table .ant-table-tbody > tr.market-row-selected > td {
-  background: rgba(240,185,11,.14) !important;
+  background: rgba(37,99,235,.1) !important;
 }
 .market-table .ant-pagination-item,
 .market-table .ant-pagination-prev button,
@@ -419,7 +466,7 @@ const MARKET_STYLES = `
 .market-input.ant-input-affix-wrapper {
   border-radius: 14px;
   background: rgba(255,255,255,.66);
-  border-color: rgba(15,23,42,.08);
+  border-color: rgba(191,219,254,.74);
 }
 .market-footer-note {
   position: relative;
@@ -427,16 +474,16 @@ const MARKET_STYLES = `
   margin-top: 12px;
   padding: 12px 14px;
   border-radius: 16px;
-  background: rgba(255,255,255,.46);
-  border: 1px solid rgba(255,255,255,.5);
+  background: rgba(255,255,255,.38);
+  border: 1px solid rgba(255,255,255,.58);
 }
 .market-fullscreen-modal .ant-modal-content {
   overflow: hidden;
   border-radius: 28px;
   border: 1px solid rgba(255,255,255,.5);
   background:
-    radial-gradient(circle at 15% 8%, rgba(240,185,11,.18), transparent 24%),
-    radial-gradient(circle at 84% 12%, rgba(99,102,241,.14), transparent 28%),
+    radial-gradient(circle at 15% 8%, rgba(37,99,235,.16), transparent 24%),
+    radial-gradient(circle at 84% 12%, rgba(14,165,233,.14), transparent 28%),
     rgba(248,250,252,.86);
   box-shadow: 0 30px 100px rgba(15,23,42,.25);
   backdrop-filter: blur(22px) saturate(155%);
@@ -466,8 +513,8 @@ const MARKET_STYLES = `
   padding: 16px;
   border-radius: 22px;
   background:
-    radial-gradient(circle at 90% 0%, rgba(240,185,11,.16), transparent 36%),
-    rgba(255,255,255,.56);
+    radial-gradient(circle at 90% 0%, rgba(37,99,235,.14), transparent 36%),
+    rgba(255,255,255,.5);
   border: 1px solid rgba(255,255,255,.58);
   box-shadow: inset 0 1px 0 rgba(255,255,255,.7);
 }
@@ -488,6 +535,7 @@ const MARKET_STYLES = `
 .market-token-avatar {
   overflow: hidden;
   border: 1px solid rgba(255,255,255,.64);
+  background-color: rgba(255,255,255,.78);
 }
 .market-token-avatar img {
   width: 100%;
@@ -517,14 +565,16 @@ const MARKET_STYLES = `
   border-radius: 18px;
   border: 1px solid rgba(255,255,255,.56);
   background: rgba(255,255,255,.48);
+  color: var(--market-ink);
   cursor: pointer;
   transition: transform .22s ease, background .22s ease, border-color .22s ease;
 }
 .market-token-pill:hover,
 .market-token-pill.active {
   transform: translateY(-2px);
-  background: rgba(240,185,11,.13);
-  border-color: rgba(240,185,11,.34);
+  background: rgba(37,99,235,.09);
+  border-color: rgba(37,99,235,.28);
+  box-shadow: 0 14px 28px rgba(37,99,235,.1), inset 0 1px 0 rgba(255,255,255,.84);
 }
 .market-layout-title {
   position: relative;
@@ -620,6 +670,40 @@ function sleep(ms: number) {
   return new Promise((resolve) => window.setTimeout(resolve, ms))
 }
 
+const STATIC_TOKEN_LOGOS: Record<string, string> = {
+  BTC: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=035',
+  ETH: 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=035',
+  BNB: 'https://cryptologos.cc/logos/bnb-bnb-logo.png?v=035',
+  SOL: 'https://cryptologos.cc/logos/solana-sol-logo.png?v=035',
+  XRP: 'https://cryptologos.cc/logos/xrp-xrp-logo.png?v=035',
+  ADA: 'https://cryptologos.cc/logos/cardano-ada-logo.png?v=035',
+  DOGE: 'https://cryptologos.cc/logos/dogecoin-doge-logo.png?v=035',
+  TRX: 'https://cryptologos.cc/logos/tron-trx-logo.png?v=035',
+  TON: 'https://cryptologos.cc/logos/toncoin-ton-logo.png?v=035',
+  AVAX: 'https://cryptologos.cc/logos/avalanche-avax-logo.png?v=035',
+  SHIB: 'https://cryptologos.cc/logos/shiba-inu-shib-logo.png?v=035',
+  LINK: 'https://cryptologos.cc/logos/chainlink-link-logo.png?v=035',
+  DOT: 'https://cryptologos.cc/logos/polkadot-new-dot-logo.png?v=035',
+  BCH: 'https://cryptologos.cc/logos/bitcoin-cash-bch-logo.png?v=035',
+  LTC: 'https://cryptologos.cc/logos/litecoin-ltc-logo.png?v=035',
+  UNI: 'https://cryptologos.cc/logos/uniswap-uni-logo.png?v=035',
+  NEAR: 'https://cryptologos.cc/logos/near-protocol-near-logo.png?v=035',
+  APT: 'https://cryptologos.cc/logos/aptos-apt-logo.png?v=035',
+  OP: 'https://cryptologos.cc/logos/optimism-ethereum-op-logo.png?v=035',
+  ARB: 'https://cryptologos.cc/logos/arbitrum-arb-logo.png?v=035',
+  ATOM: 'https://cryptologos.cc/logos/cosmos-atom-logo.png?v=035',
+  ETC: 'https://cryptologos.cc/logos/ethereum-classic-etc-logo.png?v=035',
+  FIL: 'https://cryptologos.cc/logos/filecoin-fil-logo.png?v=035',
+  ICP: 'https://cryptologos.cc/logos/internet-computer-icp-logo.png?v=035',
+  SUI: 'https://cryptologos.cc/logos/sui-sui-logo.png?v=035',
+  PEPE: 'https://cryptologos.cc/logos/pepe-pepe-logo.png?v=035',
+  WLD: 'https://cryptologos.cc/logos/worldcoin-org-wld-logo.png?v=035',
+  XLM: 'https://cryptologos.cc/logos/stellar-xlm-logo.png?v=035',
+  HBAR: 'https://cryptologos.cc/logos/hedera-hbar-logo.png?v=035',
+  AAVE: 'https://cryptologos.cc/logos/aave-aave-logo.png?v=035',
+  USDC: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png?v=035',
+}
+
 const COINGECKO_QUERY_OVERRIDES: Record<string, string> = {
   BTC: 'bitcoin',
   ETH: 'ethereum',
@@ -658,6 +742,9 @@ const COINGECKO_QUERY_OVERRIDES: Record<string, string> = {
 }
 
 async function fetchTokenLogo(baseAsset: string): Promise<string | null> {
+  const staticLogo = STATIC_TOKEN_LOGOS[baseAsset]
+  if (staticLogo) return staticLogo
+
   const query = COINGECKO_QUERY_OVERRIDES[baseAsset] ?? baseAsset
   try {
     const response = await fetch(`${COINGECKO_REST}/search?query=${encodeURIComponent(query)}`, {
@@ -666,7 +753,7 @@ async function fetchTokenLogo(baseAsset: string): Promise<string | null> {
     if (!response.ok) return null
     const data = await response.json() as { coins?: CoinGeckoSearchCoin[] }
     const coins = data.coins ?? []
-    const exactSymbol = coins.find((coin) => coin.symbol?.toUpperCase() === baseAsset)
+    const exactSymbol = coins.find((coin) => coin.symbol?.toUpperCase() === baseAsset && (coin.thumb || coin.small || coin.large))
     const ranked = [...coins]
       .filter((coin) => coin.thumb || coin.small || coin.large)
       .sort((a, b) => (a.market_cap_rank ?? Number.MAX_SAFE_INTEGER) - (b.market_cap_rank ?? Number.MAX_SAFE_INTEGER))
@@ -782,10 +869,11 @@ function TokenAvatar({
   size?: number
 }) {
   const [failed, setFailed] = useState(false)
+  const resolvedImageUrl = imageUrl ?? STATIC_TOKEN_LOGOS[label.toUpperCase()] ?? null
 
   useEffect(() => {
     setFailed(false)
-  }, [imageUrl])
+  }, [resolvedImageUrl])
 
   return (
     <div
@@ -793,9 +881,9 @@ function TokenAvatar({
       style={{ width: size, height: size, fontSize: Math.max(14, size * 0.4) }}
       title={label}
     >
-      {imageUrl && !failed ? (
+      {resolvedImageUrl && !failed ? (
         <img
-          src={imageUrl}
+          src={resolvedImageUrl}
           alt={`${label} logo`}
           loading="lazy"
           referrerPolicy="no-referrer"
@@ -830,7 +918,7 @@ function MiniMarketList({
       <div className="market-section-content">
         <Space align="center" style={{ width: '100%', justifyContent: 'space-between', marginBottom: 10 }}>
           <Space>
-            <span style={{ color: '#f0b90b', fontSize: 17 }}>{icon}</span>
+            <span style={{ color: 'var(--market-accent-strong)', fontSize: 17 }}>{icon}</span>
             <Text strong>{title}</Text>
           </Space>
           <Tag className="market-chip">{items.length}</Tag>
@@ -849,7 +937,7 @@ function MiniMarketList({
                 </Space>
                 <div style={{ textAlign: 'right' }}>
                   {metric(item)}
-                  {selectedSymbol === item.symbol && <div><Tag color="gold" style={{ margin: 0, marginTop: 4 }}>Đang xem</Tag></div>}
+                  {selectedSymbol === item.symbol && <div><Tag color="blue" style={{ margin: 0, marginTop: 4 }}>Đang xem</Tag></div>}
                 </div>
               </Space>
             </button>
@@ -924,7 +1012,7 @@ function SelectedTokenCard({
 
         <div style={{ marginTop: 12 }}>
           <Text type="secondary" style={{ fontSize: 12 }}>
-            Logo token được request riêng khi token xuất hiện trên UI. Cập nhật giá: {lastUpdated ? lastUpdated.toLocaleTimeString('vi-VN') : '--'}.
+            Logo token ưu tiên ảnh thật từ CryptoLogos, sau đó tìm qua CoinGecko khi token xuất hiện trên UI. Cập nhật giá: {lastUpdated ? lastUpdated.toLocaleTimeString('vi-VN') : '--'}.
           </Text>
         </div>
       </div>
@@ -1471,7 +1559,7 @@ export function CryptoMarketPage() {
           <div>
             <Space wrap>
               <Title level={isFullScreen ? 3 : 4} style={{ margin: 0 }}>{selectedSymbol}</Title>
-              <Badge status="processing" color="#f0b90b" text="Realtime" />
+              <Badge status="processing" color="#2563eb" text="Realtime" />
             </Space>
             <div>
               <Text strong style={{ fontSize: isFullScreen ? 30 : 24, fontFamily: 'var(--font-mono)' }}>
@@ -1536,7 +1624,7 @@ export function CryptoMarketPage() {
                   <Space direction="vertical" size={8}>
                     <Tag className="market-chip"><ThunderboltOutlined /> Binance public market data</Tag>
                     <Title level={2} style={{ margin: 0, lineHeight: 1.12 }}>Thị trường crypto realtime</Title>
-                    <Text style={{ color: '#526071', fontSize: 14 }}>
+                    <Text style={{ color: 'var(--ink-muted)', fontSize: 14 }}>
                       Theo dõi token USDT spot, nến realtime, top volume, top tăng giảm và mở biểu đồ full màn hình để phân tích rõ hơn.
                     </Text>
                   </Space>
@@ -1674,7 +1762,7 @@ export function CryptoMarketPage() {
           <div className="market-glass market-table-panel">
             <div className="market-table-actions">
               <Space>
-                <LineChartOutlined style={{ color: '#f0b90b', fontSize: 18 }} />
+                <LineChartOutlined style={{ color: 'var(--market-accent-strong)', fontSize: 18 }} />
                 <Text strong style={{ fontSize: 16 }}>Danh sách token</Text>
                 {marketLoading && <Tag color="processing">Đang tải</Tag>}
                 {lastUpdated && <Tag className="market-chip">Cập nhật {lastUpdated.toLocaleTimeString('vi-VN')}</Tag>}
@@ -1721,7 +1809,7 @@ export function CryptoMarketPage() {
 
           <div className="market-footer-note">
             <Text type="secondary" style={{ fontSize: 12 }}>
-              Dữ liệu giá lấy từ Binance Spot public endpoints. Logo token được request từ CoinGecko Search API khi token xuất hiện trên giao diện. Đây là màn hình theo dõi thị trường, không phải lời khuyên đầu tư.
+              Dữ liệu giá lấy từ Binance Spot public endpoints. Logo token ưu tiên CryptoLogos cho các tài sản phổ biến và dùng CoinGecko Search API cho token còn lại. Đây là màn hình theo dõi thị trường, không phải lời khuyên đầu tư.
             </Text>
           </div>
         </div>

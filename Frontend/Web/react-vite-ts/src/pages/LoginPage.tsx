@@ -20,6 +20,7 @@ import {
 } from '@ant-design/icons'
 import { switchChain } from '../lib/wallet'
 import type { AuthUser, AuthTokens } from '../hooks/useAuth'
+import vndcLogo from '../../public/logo.png'
 
 const { Title, Text } = Typography
 
@@ -133,9 +134,11 @@ export function LoginPage({ onGetChallenge, onLogin, onComplete2FA, onSuccess }:
       <section className="login-shell" aria-label="Đăng nhập VNDC">
         <aside className="login-brand-panel">
           <div>
-            <span className="vndc-mark vndc-mark-lg">V</span>
-            <h1 className="login-brand-heading">VNDC Education</h1>
-            <p className="login-brand-copy">
+            <span className="vndc-mark vndc-mark-lg">
+              <img src={vndcLogo} alt="VNDC Logo" style={{ width: 48, height: 48 }} />
+            </span>
+            {/* <h1 className="login-brand-heading">VNDC Education</h1> */}
+            {/* <p className="login-brand-copy">
               Nền tảng học tập, hoạt động cộng đồng và giao dịch token vận hành trên local chain minh bạch.
             </p>
 
@@ -152,7 +155,7 @@ export function LoginPage({ onGetChallenge, onLogin, onComplete2FA, onSuccess }:
                 <span className="login-proof-icon"><ThunderboltOutlined /></span>
                 <span>Session ngắn hạn, tự refresh và hỗ trợ xác thực hai lớp.</span>
               </li>
-            </ul>
+            </ul> */}
           </div>
 
           <div className="login-brand-footer">
