@@ -12,6 +12,7 @@ import { DAOPage } from './pages/DAOPage'
 import MarketplacePage from './pages/MarketplacePage'
 import { CampaignsPage } from './pages/CampaignsPage'
 import EventsPage from './pages/EventsPage'
+import { CryptoMarketPage } from './pages/CryptoMarketPage'
 import { ActivitiesPage } from './pages/ActivitiesPage'
 import { ProfilePage } from './pages/ProfilePage'
 import { AdminPage } from './pages/AdminPage'
@@ -55,6 +56,7 @@ function ProtectedApp() {
         <Route path="/marketplace" element={<MarketplacePage user={auth.user ?? undefined} />} />
         <Route path="/campaigns" element={<CampaignsPage user={auth.user ?? undefined} />} />
         <Route path="/events" element={<EventsPage user={auth.user ?? undefined} />} />
+        <Route path="/markets" element={<CryptoMarketPage />} />
         <Route path="/profile" element={<ProfilePage user={auth.user ?? undefined} />} />
         <Route path="/admin" element={<AdminPage user={auth.user ?? undefined} />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />

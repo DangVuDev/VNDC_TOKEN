@@ -1,4 +1,4 @@
-import { createApiClient, type PagedResult } from './api'
+import { ApiError, createApiClient, type PagedResult } from './api'
 
 function getToken() {
   return localStorage.getItem('vndc_access_token') || sessionStorage.getItem('vndc_access_token')
@@ -178,9 +178,10 @@ export async function lookupUserByWallet(wallet: string): Promise<PublicUserInfo
   try {
     return await api.request({ method: 'GET', path: '/users/lookup', query: { wallet }, auth: true })
   } catch (err) {
+    if (err instanceof ApiError && (err.status === 404 || err.code === 'NOT_FOUND')) return null
     const msg = String(err instanceof Error ? err.message : err)
     // 404 = wallet address not linked to any user — not an error, just return null
-    if (/404|not found/i.test(msg)) return null
+    if (/404|not found|kh[oô]ng t[iì]m th[aấ]y/i.test(msg)) return null
     // Re-throw other errors (network error, 500, etc.) so the caller can handle them
     throw err
   }
