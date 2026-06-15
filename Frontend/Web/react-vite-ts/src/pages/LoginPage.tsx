@@ -1,26 +1,23 @@
-import { useEffect, useRef, useState } from 'react'
 import {
+  CheckCircleOutlined,
+  KeyOutlined,
+  LockOutlined,
+  WalletOutlined
+} from '@ant-design/icons'
+import {
+  Alert,
   Button,
   Card,
-  Typography,
-  Space,
-  Alert,
-  Steps,
-  Input,
   Form,
+  Input,
+  Space,
+  Steps,
+  Typography,
 } from 'antd'
-import {
-  WalletOutlined,
-  SafetyCertificateOutlined,
-  ThunderboltOutlined,
-  CheckCircleOutlined,
-  LockOutlined,
-  KeyOutlined,
-  AuditOutlined,
-} from '@ant-design/icons'
-import { switchChain } from '../lib/wallet'
-import type { AuthUser, AuthTokens } from '../hooks/useAuth'
+import { useEffect, useRef, useState } from 'react'
 import vndcLogo from '../../public/logo.png'
+import type { AuthTokens, AuthUser } from '../hooks/useAuth'
+import { switchChain } from '../lib/wallet'
 
 const { Title, Text } = Typography
 
