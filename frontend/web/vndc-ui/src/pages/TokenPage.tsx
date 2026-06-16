@@ -22,6 +22,7 @@ import {
   type BalanceResponse, type Transaction, type PublicUserInfo,
 } from '../lib/services'
 import { signTypedData, buildTransferTypedData, switchChain } from '../lib/wallet'
+import { getActiveChainConfig, getRequiredContractAddress } from '../lib/chainConfig'
 import tokenVisualUrl from '../assets/visuals/vndc-token-bg.jpg'
 import type { AuthUser } from '../hooks/useAuth'
 
@@ -1035,8 +1036,9 @@ function TransferPanel({ walletAddr, onchainBal, onSuccess }: TransferPanelProps
     if (hasNonKYCWarning && !nonKYCConfirmed) return
     setSending(true)
     try {
-      const chainId  = Number((import.meta as unknown as { env: Record<string, string> }).env?.VITE_CHAIN_ID ?? 31337)
-      const contract = (import.meta as unknown as { env: Record<string, string> }).env?.VITE_TOKEN_CONTRACT_ADDRESS ?? '0x0000000000000000000000000000000000000000'
+      const activeChain = getActiveChainConfig()
+      const chainId = activeChain.chainId
+      const contract = getRequiredContractAddress('VNDCToken', 'VNDC Token', activeChain)
       await switchChain(chainId, window.ethereum)
       const { nonce } = await getNonce(walletAddr)
       const deadline  = Math.floor(Date.now() / 1000) + 3600

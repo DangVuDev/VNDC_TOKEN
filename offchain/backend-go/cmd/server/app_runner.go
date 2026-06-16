@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
+	"io"
 	"math/big"
 	"net/http"
 	"os"
@@ -31,8 +33,13 @@ import (
 )
 
 func runApp() {
-	cfgPath := envOrDefault("CONFIG_PATH", "config/config.yaml")
-	cfg, err := config.Load(cfgPath)
+	opts, err := parseRuntimeOptions(os.Args[1:])
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "FATAL: parse args: %v\n", err)
+		os.Exit(2)
+	}
+
+	cfg, err := config.LoadForNetwork(opts.ConfigPath, opts.Network)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "FATAL: load config: %v\n", err)
 		os.Exit(1)
@@ -47,6 +54,7 @@ func runApp() {
 
 	log.Info("starting VNDC backend",
 		logger.String("env", cfg.App.Environment),
+		logger.String("network", cfg.Blockchain.ActiveNetwork),
 		logger.String("version", cfg.App.Version),
 	)
 
@@ -253,6 +261,27 @@ func runApp() {
 		log.Error("HTTP server shutdown error", logger.Err(err))
 	}
 	log.Info("server stopped gracefully")
+}
+
+type runtimeOptions struct {
+	ConfigPath string
+	Network    string
+}
+
+func parseRuntimeOptions(args []string) (runtimeOptions, error) {
+	fs := flag.NewFlagSet("vndc-backend", flag.ContinueOnError)
+	fs.SetOutput(io.Discard)
+
+	configPath := fs.String("config", envOrDefault("CONFIG_PATH", "config/config.yaml"), "path to config yaml")
+	network := fs.String("network", "local", "blockchain network: local, sepolia, ethereum")
+	if err := fs.Parse(args); err != nil {
+		return runtimeOptions{}, err
+	}
+
+	return runtimeOptions{
+		ConfigPath: *configPath,
+		Network:    *network,
+	}, nil
 }
 
 func envOrDefault(key, def string) string {

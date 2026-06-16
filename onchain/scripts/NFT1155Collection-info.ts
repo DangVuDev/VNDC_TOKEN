@@ -1,5 +1,5 @@
 /**
- * VNDCNFTCollection-info.ts
+ * NFT1155Collection-info.ts
  * Display collection info and optionally check a specific token or wallet.
  *
  * Env vars (optional):
@@ -8,17 +8,17 @@
  *   TOKEN_IDS     — Comma-separated list of token IDs to batch-check for CHECK_WALLET
  *
  * Usage:
- *   npx hardhat run scripts/VNDCNFTCollection-info.ts --network localhost
- *   TOKEN_ID=1 CHECK_WALLET=0x... TOKEN_IDS=1,2,3 npx hardhat run scripts/VNDCNFTCollection-info.ts --network localhost
+ *   npx hardhat run scripts/NFT1155Collection-info.ts --network localhost
+ *   TOKEN_ID=1 CHECK_WALLET=0x... TOKEN_IDS=1,2,3 npx hardhat run scripts/NFT1155Collection-info.ts --network localhost
  */
 import { ethers, network } from "hardhat"
 import { requireAddress, envOptional, hr } from "./_utils"
 
 async function main() {
-  hr("VNDCNFTCollection — Info")
+  hr("NFT1155Collection — Info")
 
-  const nftAddress = requireAddress(network.name, "VNDCNFTCollection")
-  const nft = await ethers.getContractAt("VNDCNFTCollection", nftAddress)
+  const nftAddress = requireAddress(network.name, "NFT1155Collection")
+  const nft = await ethers.getContractAt("NFT1155Collection", nftAddress)
 
   const owner = await (nft as any).owner()
   console.log(`Contract  : ${nftAddress}`)

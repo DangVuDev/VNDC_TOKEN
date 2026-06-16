@@ -42,6 +42,7 @@ import type { AuthUser } from '../../hooks/useAuth'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import { getMyNotifications, type AppNotification, type AppNotificationType } from '../../lib/services'
+import { getActiveChainConfig } from '../../lib/chainConfig'
 
 const { Header, Sider, Content } = Layout
 const { Text } = Typography
@@ -366,6 +367,7 @@ export function AppLayout({ children, user, onLogout }: AppLayoutProps) {
   const location = useLocation()
   const screens = useBreakpoint()
   const isDesktop = Boolean(screens.md)
+  const activeChain = getActiveChainConfig()
 
   const walletAddr = user?.wallet_address ?? ''
   const displayName = user?.full_name || user?.username || shortenAddr(walletAddr)
@@ -563,7 +565,7 @@ export function AppLayout({ children, user, onLogout }: AppLayoutProps) {
             />
             <div className="app-current-page">
               <div className="app-current-title">{currentNav?.label ?? 'VNDC'}</div>
-              <div className="app-current-subtitle">Local chain 31337</div>
+              <div className="app-current-subtitle">{activeChain.label} · Chain {activeChain.chainId}</div>
             </div>
           </div>
 

@@ -22,6 +22,7 @@ import {
   type ScanTicketResult, type ServiceTicketProduct, type ServiceTicketPurchase, type ServiceTicketScanLog,
 } from '../lib/services'
 import { signTypedData, buildTransferTypedData, switchChain } from '../lib/wallet'
+import { getActiveChainConfig, getRequiredContractAddress } from '../lib/chainConfig'
 import type { AuthUser } from '../hooks/useAuth'
 
 const { Title, Text, Paragraph } = Typography
@@ -1110,9 +1111,8 @@ function checkIsAdmin(user?: AuthUser): boolean {
   return !!user?.roles?.some(r => r === 'ADMIN' || r === 'SUPER_ADMIN')
 }
 
-const ENV = (import.meta as unknown as { env: Record<string, string> }).env
-function getChainId(): number { return parseInt(ENV?.VITE_CHAIN_ID ?? '1337') }
-function getTokenContract(): string { return ENV?.VITE_TOKEN_CONTRACT_ADDRESS ?? '' }
+function getChainId(): number { return getActiveChainConfig().chainId }
+function getTokenContract(): string { return getRequiredContractAddress('VNDCToken', 'VNDC Token') }
 
 // â”€â”€â”€ Constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 

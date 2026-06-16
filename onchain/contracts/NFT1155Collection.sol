@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract VNDCNFTCollection is ERC1155, ERC1155Supply, Ownable {
+contract NFT1155Collection is ERC1155, ERC1155Supply, Ownable {
     mapping(uint256 => string) private tokenURIs;
 
     event TokenMinted(address indexed to, uint256 indexed tokenId, uint256 amount, string tokenURI);

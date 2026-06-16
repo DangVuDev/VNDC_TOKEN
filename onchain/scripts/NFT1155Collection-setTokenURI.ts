@@ -1,5 +1,5 @@
 /**
- * VNDCNFTCollection-setTokenURI.ts
+ * NFT1155Collection-setTokenURI.ts
  * Update the metadata URI for a specific token ID (owner-only).
  * Token must already exist (been minted).
  *
@@ -9,20 +9,20 @@
  *
  * Usage:
  *   TOKEN_ID=1 TOKEN_URI=ipfs://newcid... \
- *     npx hardhat run scripts/VNDCNFTCollection-setTokenURI.ts --network localhost
+ *     npx hardhat run scripts/NFT1155Collection-setTokenURI.ts --network localhost
  */
 import { ethers, network } from "hardhat"
 import { requireAddress, env, hr } from "./_utils"
 
 async function main() {
-  hr("VNDCNFTCollection — Set Token URI")
+  hr("NFT1155Collection — Set Token URI")
 
   const [signer] = await ethers.getSigners()
   const tokenId = Number(env("TOKEN_ID"))
   const tokenURI = env("TOKEN_URI")
 
-  const nftAddress = requireAddress(network.name, "VNDCNFTCollection")
-  const nft = await ethers.getContractAt("VNDCNFTCollection", nftAddress, signer)
+  const nftAddress = requireAddress(network.name, "NFT1155Collection")
+  const nft = await ethers.getContractAt("NFT1155Collection", nftAddress, signer)
 
   console.log(`Contract  : ${nftAddress}`)
   console.log(`Signer    : ${signer.address}`)

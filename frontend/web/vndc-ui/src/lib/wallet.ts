@@ -1,3 +1,5 @@
+import { getChainConfigById, getWalletChainParams } from './chainConfig'
+
 export type EthereumProvider = {
   request<T = unknown>(args: { method: string; params?: unknown[] | Record<string, unknown> }): Promise<T>
 }
@@ -54,7 +56,7 @@ export async function switchChain(chainId: number, provider?: EthereumProvider) 
     
     // Error 4902 means chain doesn't exist, try to add it
     if (err?.code === 4902 || err?.message?.includes('Unrecognized chain ID')) {
-      const chainConfig = getChainConfig(chainId)
+      const chainConfig = getChainConfigById(chainId)
       if (!chainConfig) {
         throw new Error(`Unsupported chain ID: ${chainId}`)
       }
@@ -62,7 +64,7 @@ export async function switchChain(chainId: number, provider?: EthereumProvider) 
       try {
         await ethereum.request({
           method: 'wallet_addEthereumChain',
-          params: [chainConfig],
+          params: [getWalletChainParams(chainConfig)],
         })
       } catch (addError) {
         console.error('Failed to add chain:', addError)
@@ -73,38 +75,6 @@ export async function switchChain(chainId: number, provider?: EthereumProvider) 
       throw error
     }
   }
-}
-
-/**
- * Get MetaMask network configuration for a chain ID.
- */
-function getChainConfig(chainId: number): Record<string, unknown> | null {
-  const configs: Record<number, Record<string, unknown>> = {
-    31337: {
-      chainId: '0x7a69',
-      chainName: 'Hardhat Local Node',
-      nativeCurrency: {
-        name: 'Ether',
-        symbol: 'ETH',
-        decimals: 18,
-      },
-      rpcUrls: ['http://127.0.0.1:8545'],
-      blockExplorerUrls: [],
-    },
-    11155111: {
-      chainId: '0xaa36a7',
-      chainName: 'Sepolia Testnet',
-      nativeCurrency: {
-        name: 'Sepolia ETH',
-        symbol: 'ETH',
-        decimals: 18,
-      },
-      rpcUrls: ['https://ethereum-sepolia-rpc.publicnode.com'],
-      blockExplorerUrls: ['https://sepolia.etherscan.io'],
-    },
-  }
-  
-  return configs[chainId] || null
 }
 
 export async function signPersonalMessage(provider: EthereumProvider | undefined, address: string, message: string) {

@@ -15,15 +15,15 @@ async function main() {
   console.log(`Deployer : ${deployer.address}`)
   console.log(`Network  : ${network.name}`)
 
-  const Factory = await ethers.getContractFactory("VNDCErc721Collection")
+  const Factory = await ethers.getContractFactory("NFT721Collection")
   const collection = await Factory.deploy("VNDC NFT Shop", "VNDCNFT")
   await collection.waitForDeployment()
 
   const address = await collection.getAddress()
-  console.log(`\n✅ VNDCErc721Collection deployed at: ${address}`)
+  console.log(`\n✅ NFT721Collection deployed at: ${address}`)
   console.log("ℹ️  Backend relayer must be contract owner to mint via API")
 
-  saveAddress(network.name, "VNDCErc721Collection", address, { deployer: deployer.address })
+  saveAddress(network.name, "NFT721Collection", address, { deployer: deployer.address })
   hr()
 }
 

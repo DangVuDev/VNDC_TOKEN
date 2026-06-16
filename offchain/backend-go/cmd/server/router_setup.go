@@ -63,7 +63,7 @@ func buildRouter(
 
 	corsConfig := middleware.DefaultCORSConfig()
 	if cfg.IsProduction() {
-		corsConfig.AllowOrigins = []string{"https://app.vndc.io"}
+		corsConfig.AllowOrigins = []string{"https://vndc-token.vercel.app", "http://localhost:5173"}
 	} else {
 		corsConfig.AllowOrigins = []string{
 			"http://localhost:3000",

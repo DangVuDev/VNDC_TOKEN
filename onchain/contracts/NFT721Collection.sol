@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 
-contract VNDCErc721Collection is ERC721URIStorage, Ownable {
+contract NFT721Collection is ERC721URIStorage, Ownable {
     uint256 private _nextTokenId;
 
     event NFTMinted(address indexed to, uint256 indexed tokenId, string tokenURI);

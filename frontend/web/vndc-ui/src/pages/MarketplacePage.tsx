@@ -58,6 +58,7 @@ import {
   type SellerProfile,
 } from '../lib/services'
 import { buildTransferTypedData, signTypedData, switchChain } from '../lib/wallet'
+import { getActiveChainConfig, getRequiredContractAddress } from '../lib/chainConfig'
 import type { AuthUser } from '../hooks/useAuth'
 
 const { Title, Text, Paragraph } = Typography
@@ -1727,13 +1728,15 @@ function BuyDrawer({
     setSubmitting(true)
     try {
       if (paymentMethod === 'TOKEN') {
-        const chainId = parseInt((import.meta.env.VITE_CHAIN_ID || '31337'), 10)
+        const activeChain = getActiveChainConfig()
+        const chainId = activeChain.chainId
+        const tokenContract = getRequiredContractAddress('VNDCToken', 'VNDC Token', activeChain)
         await switchChain(chainId)
         const { nonce } = await getNonce(user.wallet_address)
         const deadline = Math.floor(Date.now() / 1000) + 3600
         const typedData = buildTransferTypedData({
           chainId,
-          verifyingContract: import.meta.env.VITE_TOKEN_CONTRACT_ADDRESS,
+          verifyingContract: tokenContract,
           from: user.wallet_address,
           to: item.seller_wallet,
           amount: item.price,
@@ -2722,13 +2725,15 @@ function SellerCenterTab({ user }: { user?: AuthUser }) {
           antMessage.error('Cần kết nối ví seller để hủy đơn token')
           return
         }
-        const chainId = parseInt((import.meta.env.VITE_CHAIN_ID || '31337'), 10)
+        const activeChain = getActiveChainConfig()
+        const chainId = activeChain.chainId
+        const tokenContract = getRequiredContractAddress('VNDCToken', 'VNDC Token', activeChain)
         await switchChain(chainId)
         const { nonce } = await getNonce(user.wallet_address)
         const deadline = Math.floor(Date.now() / 1000) + 3600
         const typedData = buildTransferTypedData({
           chainId,
-          verifyingContract: import.meta.env.VITE_TOKEN_CONTRACT_ADDRESS,
+          verifyingContract: tokenContract,
           from: user.wallet_address,
           to: order.buyer_wallet,
           amount: order.price,

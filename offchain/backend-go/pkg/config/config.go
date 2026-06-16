@@ -4,7 +4,10 @@
 package config
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -77,8 +80,8 @@ type CacheConfig struct {
 	KeyPrefix    string        `mapstructure:"key_prefix"`
 }
 
-// BlockchainConfig holds Ethereum/EVM settings.
-type BlockchainConfig struct {
+// BlockchainNetworkConfig holds Ethereum/EVM settings for a single network.
+type BlockchainNetworkConfig struct {
 	RPCURL                    string `mapstructure:"rpc_url"`
 	WSURL                     string `mapstructure:"ws_url"`
 	ChainID                   int64  `mapstructure:"chain_id"`
@@ -100,6 +103,13 @@ type BlockchainConfig struct {
 	ConfirmationInterval time.Duration `mapstructure:"confirmation_interval"`
 	BatchSize            int           `mapstructure:"batch_size"`
 	BatchTimeout         time.Duration `mapstructure:"batch_timeout"`
+}
+
+// BlockchainConfig holds the selected network plus optional named profiles.
+type BlockchainConfig struct {
+	BlockchainNetworkConfig `mapstructure:",squash"`
+	ActiveNetwork           string                             `mapstructure:"active_network"`
+	Networks                map[string]BlockchainNetworkConfig `mapstructure:"networks"`
 }
 
 // AuthConfig holds JWT settings.
@@ -152,8 +162,16 @@ type MetricsConfig struct {
 
 // Load reads config from file + environment variables.
 // Environment variables override file values (12-factor compliant).
-// Example env: APP_HTTP_PORT=9090 maps to config.HTTP.Port
+// Example env: APP_HTTP_PORT=9090 maps to config.HTTP.Port.
 func Load(path string) (*Config, error) {
+	return LoadForNetwork(path, "")
+}
+
+// LoadForNetwork loads config and applies the selected blockchain network profile.
+// The explicit network is meant for CLI usage, e.g. --network sepolia.
+func LoadForNetwork(path, network string) (*Config, error) {
+	loadDotEnvFiles(path)
+
 	v := viper.New()
 
 	// File-based config
@@ -177,11 +195,231 @@ func Load(path string) (*Config, error) {
 		return nil, fmt.Errorf("config: unmarshal: %w", err)
 	}
 
+	if err := cfg.applyBlockchainNetworkProfile(requestedBlockchainNetwork(v, network)); err != nil {
+		return nil, fmt.Errorf("config: blockchain network: %w", err)
+	}
+	cfg.applyEnvironmentOverrides()
+
 	if err := cfg.validate(); err != nil {
 		return nil, fmt.Errorf("config: validation: %w", err)
 	}
 
 	return &cfg, nil
+}
+
+func loadDotEnvFiles(configPath string) {
+	candidates := []string{".env"}
+	if configPath != "" {
+		configDir := filepath.Dir(configPath)
+		candidates = append(candidates,
+			filepath.Join(configDir, ".env"),
+			filepath.Join(configDir, "..", ".env"),
+		)
+	}
+
+	seen := make(map[string]struct{}, len(candidates))
+	for _, candidate := range candidates {
+		cleaned := filepath.Clean(candidate)
+		if _, ok := seen[cleaned]; ok {
+			continue
+		}
+		seen[cleaned] = struct{}{}
+		loadDotEnvFile(cleaned)
+	}
+}
+
+func loadDotEnvFile(path string) {
+	file, err := os.Open(path)
+	if err != nil {
+		return
+	}
+	defer file.Close() //nolint:errcheck
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		line = strings.TrimPrefix(line, "export ")
+		key, value, ok := strings.Cut(line, "=")
+		if !ok {
+			continue
+		}
+		key = strings.TrimSpace(key)
+		if key == "" {
+			continue
+		}
+		if _, exists := os.LookupEnv(key); exists {
+			continue
+		}
+		os.Setenv(key, cleanDotEnvValue(value)) //nolint:errcheck
+	}
+}
+
+func cleanDotEnvValue(value string) string {
+	value = strings.TrimSpace(value)
+	if len(value) >= 2 {
+		first := value[0]
+		last := value[len(value)-1]
+		if (first == '"' && last == '"') || (first == '\'' && last == '\'') {
+			return value[1 : len(value)-1]
+		}
+	}
+	return value
+}
+
+func requestedBlockchainNetwork(v *viper.Viper, explicit string) string {
+	if value := strings.TrimSpace(explicit); value != "" {
+		return value
+	}
+	if value := strings.TrimSpace(os.Getenv("APP_BLOCKCHAIN_ACTIVE_NETWORK")); value != "" {
+		return value
+	}
+	if value := strings.TrimSpace(os.Getenv("BLOCKCHAIN_NETWORK")); value != "" {
+		return value
+	}
+	if value := strings.TrimSpace(os.Getenv("VNDC_CHAIN")); value != "" {
+		return value
+	}
+	if value := strings.TrimSpace(os.Getenv("CHAIN_NETWORK")); value != "" {
+		return value
+	}
+	return v.GetString("blockchain.active_network")
+}
+
+func normalizeBlockchainNetworkKey(value string) string {
+	switch strings.ToLower(strings.TrimSpace(value)) {
+	case "", "default":
+		return ""
+	case "localhost", "hardhat":
+		return "local"
+	case "mainnet", "eth", "etherum":
+		return "ethereum"
+	default:
+		return strings.ToLower(strings.TrimSpace(value))
+	}
+}
+
+func blockchainNetworkLookupKeys(key string) []string {
+	switch key {
+	case "local":
+		return []string{"local", "localhost", "hardhat"}
+	case "ethereum":
+		return []string{"ethereum", "mainnet", "eth", "etherum"}
+	default:
+		return []string{key}
+	}
+}
+
+func (c *Config) applyBlockchainNetworkProfile(active string) error {
+	active = normalizeBlockchainNetworkKey(active)
+	if active == "" {
+		active = normalizeBlockchainNetworkKey(c.Blockchain.ActiveNetwork)
+	}
+	c.Blockchain.ActiveNetwork = active
+
+	if active == "" || len(c.Blockchain.Networks) == 0 {
+		return nil
+	}
+
+	var (
+		profile BlockchainNetworkConfig
+		found   bool
+	)
+	for _, key := range blockchainNetworkLookupKeys(active) {
+		if candidate, ok := c.Blockchain.Networks[key]; ok {
+			profile = candidate
+			found = true
+			break
+		}
+	}
+	if !found {
+		return fmt.Errorf("%q is not defined in blockchain.networks", active)
+	}
+
+	c.Blockchain.BlockchainNetworkConfig = mergeBlockchainNetworkProfile(
+		profile,
+		c.Blockchain.BlockchainNetworkConfig,
+		active,
+	)
+	return nil
+}
+
+func (c *Config) applyEnvironmentOverrides() {
+	active := c.Blockchain.ActiveNetwork
+	c.Database.URI = firstEnvValue(c.Database.URI, "APP_DATABASE_URI", "DATABASE_URI", "MONGODB_URI")
+	c.Auth.JWTSecret = firstEnvValue(c.Auth.JWTSecret, "APP_AUTH_JWT_SECRET", "JWT_SECRET")
+	c.Auth.AdminToken = firstEnvValue(c.Auth.AdminToken, "APP_AUTH_ADMIN_TOKEN", "ADMIN_TOKEN")
+	c.Auth.SIWEDomain = firstEnvValue(c.Auth.SIWEDomain, "APP_AUTH_SIWE_DOMAIN", "SIWE_DOMAIN")
+	if c.Auth.JWTSecret == "" && !c.IsProduction() {
+		c.Auth.JWTSecret = "vndc-dev-jwt-secret"
+	}
+
+	c.Blockchain.RPCURL = c.blockchainEnvValue(active, "RPC_URL", c.Blockchain.RPCURL, "ETH_RPC_URL")
+	c.Blockchain.WSURL = c.blockchainEnvValue(active, "WS_URL", c.Blockchain.WSURL, "ETH_WS_URL")
+	c.Blockchain.TokenContractAddress = c.blockchainEnvValue(active, "TOKEN_CONTRACT_ADDRESS", c.Blockchain.TokenContractAddress, "VNDC_TOKEN_ADDRESS")
+	c.Blockchain.NFTContractAddress = c.blockchainEnvValue(active, "NFT_CONTRACT_ADDRESS", c.Blockchain.NFTContractAddress, "VNDC_NFT_ADDRESS")
+	c.Blockchain.MarketplaceManagerAddress = c.blockchainEnvValue(active, "MARKETPLACE_MANAGER_ADDRESS", c.Blockchain.MarketplaceManagerAddress)
+	c.Blockchain.RelayerAddress = c.blockchainEnvValue(active, "RELAYER_ADDRESS", c.Blockchain.RelayerAddress, "RELAYER_ADDRESS")
+	c.Blockchain.RelayerPrivateKey = c.blockchainEnvValue(active, "RELAYER_PRIVATE_KEY", c.Blockchain.RelayerPrivateKey, "RELAYER_PRIVATE_KEY")
+	c.Blockchain.FundingManagerAddress = c.blockchainEnvValue(active, "FUNDING_MANAGER_ADDRESS", c.Blockchain.FundingManagerAddress)
+	c.Blockchain.DAOManagerAddress = c.blockchainEnvValue(active, "DAO_MANAGER_ADDRESS", c.Blockchain.DAOManagerAddress)
+	c.Blockchain.TaskManagerAddress = c.blockchainEnvValue(active, "TASK_MANAGER_ADDRESS", c.Blockchain.TaskManagerAddress)
+	c.Blockchain.TaskManagerSignerPrivKey = c.blockchainEnvValue(active, "TASK_MANAGER_SIGNER_PRIV_KEY", c.Blockchain.TaskManagerSignerPrivKey, "TASK_MANAGER_SIGNER_PRIV_KEY")
+	c.Blockchain.QREncryptionKey = c.blockchainEnvValue(active, "QR_ENCRYPTION_KEY", c.Blockchain.QREncryptionKey, "QR_ENCRYPTION_KEY")
+}
+
+func (c *Config) blockchainEnvValue(active, field, fallback string, legacyLocalKeys ...string) string {
+	keys := make([]string, 0, 8+len(legacyLocalKeys))
+	for _, key := range blockchainNetworkLookupKeys(normalizeBlockchainNetworkKey(active)) {
+		upper := strings.ToUpper(strings.ReplaceAll(key, "-", "_"))
+		keys = append(keys,
+			"APP_BLOCKCHAIN_NETWORKS_"+upper+"_"+field,
+			"APP_BLOCKCHAIN_"+upper+"_"+field,
+			upper+"_"+field,
+		)
+	}
+	keys = append(keys, "APP_BLOCKCHAIN_"+field)
+	if normalizeBlockchainNetworkKey(active) == "local" {
+		keys = append(keys, legacyLocalKeys...)
+	}
+	return firstEnvValue(fallback, keys...)
+}
+
+func firstEnvValue(fallback string, keys ...string) string {
+	for _, key := range keys {
+		if value := strings.TrimSpace(os.Getenv(key)); value != "" {
+			return value
+		}
+	}
+	return fallback
+}
+
+func mergeBlockchainNetworkProfile(profile, fallback BlockchainNetworkConfig, active string) BlockchainNetworkConfig {
+	merged := profile
+	if merged.NetworkName == "" {
+		merged.NetworkName = active
+	}
+	if merged.QREncryptionKey == "" {
+		merged.QREncryptionKey = fallback.QREncryptionKey
+	}
+	if merged.MaxGasPrice == 0 {
+		merged.MaxGasPrice = fallback.MaxGasPrice
+	}
+	if merged.ConfirmationBlocks == 0 {
+		merged.ConfirmationBlocks = fallback.ConfirmationBlocks
+	}
+	if merged.ConfirmationInterval == 0 {
+		merged.ConfirmationInterval = fallback.ConfirmationInterval
+	}
+	if merged.BatchSize == 0 {
+		merged.BatchSize = fallback.BatchSize
+	}
+	if merged.BatchTimeout == 0 {
+		merged.BatchTimeout = fallback.BatchTimeout
+	}
+	return merged
 }
 
 // validate performs basic sanity checks.
@@ -244,6 +482,7 @@ func setDefaults(v *viper.Viper) {
 	v.SetDefault("blockchain.batch_size", 10)
 	v.SetDefault("blockchain.batch_timeout", "5m")
 	v.SetDefault("blockchain.max_gas_price_gwei", 100)
+	v.SetDefault("blockchain.active_network", "local")
 
 	v.SetDefault("auth.jwt_expiry", "24h")
 	v.SetDefault("auth.refresh_expiry", "168h") // 7 days

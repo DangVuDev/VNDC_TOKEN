@@ -6,10 +6,12 @@
  */
 
 import { ethers, Contract, JsonRpcProvider } from 'ethers'
+import { getActiveChainConfig, isConfiguredAddress } from './chainConfig'
 
 // ─── Provider ────────────────────────────────────────────────────────────────
 
-const RPC_URL = import.meta.env.VITE_RPC_URL ?? 'http://127.0.0.1:8545'
+const ACTIVE_CHAIN = getActiveChainConfig()
+const RPC_URL = ACTIVE_CHAIN.rpcUrl
 
 function provider(): JsonRpcProvider {
   return new JsonRpcProvider(RPC_URL)
@@ -17,49 +19,23 @@ function provider(): JsonRpcProvider {
 
 // ─── Deployed addresses (kept in sync with deployed-addresses.json) ──────────
 
+function contractMeta<T extends string>(address: string, label: string, type: T) {
+  return {
+    address,
+    label,
+    type,
+    deployed: isConfiguredAddress(address),
+  }
+}
+
 export const CONTRACTS = {
-  VNDCToken: {
-    address: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
-    label: 'VNDC Token',
-    type: 'ERC20 + AccessControl + Pausable' as const,
-    deployed: true,
-  },
-  VNDCStaking: {
-    address: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
-    label: 'VNDC Staking',
-    type: 'AccessControl' as const,
-    deployed: true,
-  },
-  DAOManager: {
-    address: '0x5FC8d32690cc91D4c39d9d3abcBD16989F875707',
-    label: 'DAO Manager',
-    type: 'Ownable + Pausable' as const,
-    deployed: true,
-  },
-  MarketplaceManager: {
-    address: '0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6',
-    label: 'Marketplace Manager',
-    type: 'Ownable + ReentrancyGuard' as const,
-    deployed: true,
-  },
-  FundingManager: {
-    address: '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9',
-    label: 'Funding Manager',
-    type: 'Ownable + Pausable' as const,
-    deployed: true,
-  },
-  TaskManager: {
-    address: '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9',
-    label: 'Task Manager',
-    type: 'Ownable + Pausable' as const,
-    deployed: true,
-  },
-  VNDCNFTCollection: {
-    address: '0xa513E6E4b8f2a923D98304ec87F64353C4D5C853',
-    label: 'NFT Collection',
-    type: 'ERC721 + Ownable' as const,
-    deployed: true,
-  },
+  VNDCToken: contractMeta(ACTIVE_CHAIN.contracts.VNDCToken, 'VNDC Token', 'ERC20 + AccessControl + Pausable' as const),
+  VNDCStaking: contractMeta(ACTIVE_CHAIN.contracts.VNDCStaking, 'VNDC Staking', 'AccessControl' as const),
+  DAOManager: contractMeta(ACTIVE_CHAIN.contracts.DAOManager, 'DAO Manager', 'Ownable + Pausable' as const),
+  MarketplaceManager: contractMeta(ACTIVE_CHAIN.contracts.MarketplaceManager, 'Marketplace Manager', 'Ownable + ReentrancyGuard' as const),
+  FundingManager: contractMeta(ACTIVE_CHAIN.contracts.FundingManager, 'Funding Manager', 'Ownable + Pausable' as const),
+  TaskManager: contractMeta(ACTIVE_CHAIN.contracts.TaskManager, 'Task Manager', 'Ownable + Pausable' as const),
+  VNDCNFTCollection: contractMeta(ACTIVE_CHAIN.contracts.VNDCNFTCollection, 'NFT Collection', 'ERC721 + Ownable' as const),
 } as const
 
 export type ContractKey = keyof typeof CONTRACTS

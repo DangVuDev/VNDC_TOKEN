@@ -24,7 +24,7 @@ contract VNDCToken is
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
-    uint256 public constant MAX_SUPPLY = 1_000_000_000 * 10 ** 18;
+    uint256 public constant MAX_SUPPLY = 100_000_000_000 * 10 ** 18;
 
     // EIP-712 typehash
     bytes32 private constant TRANSFER_TYPEHASH =

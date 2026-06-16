@@ -1,5 +1,5 @@
 /**
- * VNDCNFTCollection-mint.ts
+ * NFT1155Collection-mint.ts
  * Mint ERC-1155 NFT tokens (owner-only).
  *
  * Env vars (required):
@@ -12,13 +12,13 @@
  *
  * Usage:
  *   TO=0x... TOKEN_ID=1 AMOUNT=10 TOKEN_URI=ipfs://Qm... \
- *     npx hardhat run scripts/VNDCNFTCollection-mint.ts --network localhost
+ *     npx hardhat run scripts/NFT1155Collection-mint.ts --network localhost
  */
 import { ethers, network } from "hardhat"
 import { requireAddress, env, envOptional, shortAddr, hr } from "./_utils"
 
 async function main() {
-  hr("VNDCNFTCollection — Mint")
+  hr("NFT1155Collection — Mint")
 
   const [signer] = await ethers.getSigners()
   const to = env("TO")
@@ -26,8 +26,8 @@ async function main() {
   const amount = Number(env("AMOUNT"))
   const tokenURI = envOptional("TOKEN_URI", "")
 
-  const nftAddress = requireAddress(network.name, "VNDCNFTCollection")
-  const nft = await ethers.getContractAt("VNDCNFTCollection", nftAddress, signer)
+  const nftAddress = requireAddress(network.name, "NFT1155Collection")
+  const nft = await ethers.getContractAt("NFT1155Collection", nftAddress, signer)
 
   console.log(`Contract  : ${nftAddress}`)
   console.log(`Signer    : ${signer.address}`)

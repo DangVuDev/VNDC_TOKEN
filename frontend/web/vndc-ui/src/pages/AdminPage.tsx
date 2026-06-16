@@ -45,6 +45,7 @@ import {
   getNetworkInfo, formatVNDC,
   type VNDCTokenState,
 } from '../lib/contracts'
+import { getActiveChainConfig } from '../lib/chainConfig'
 
 dayjs.extend(relativeTime)
 
@@ -680,29 +681,29 @@ function HorizontalBars({
   )
 }
 
-function VerticalBarChart({
-  items,
-}: {
-  items: { label: string; value: number; color: string }[]
-}) {
-  const max = Math.max(...items.map(i => i.value), 1)
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(items.length, 6)}, minmax(0, 1fr))`, gap: 10, alignItems: 'end', minHeight: 220 }}>
-      {items.slice(0, 6).map(item => {
-        const h = Math.max(14, Math.round((item.value / max) * 160))
-        return (
-          <div key={item.label} style={{ textAlign: 'center' }}>
-            <Text strong style={{ fontSize: 11, color: item.color }}>{item.value.toLocaleString('vi-VN')}</Text>
-            <div style={{ height: 170, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', margin: '6px 0' }}>
-              <div style={{ width: '70%', height: h, borderRadius: '8px 8px 4px 4px', background: `linear-gradient(180deg, ${item.color}CC 0%, ${item.color} 100%)` }} />
-            </div>
-            <Text type="secondary" style={{ fontSize: 11 }}>{item.label}</Text>
-          </div>
-        )
-      })}
-    </div>
-  )
-}
+// function VerticalBarChart({
+//   items,
+// }: {
+//   items: { label: string; value: number; color: string }[]
+// }) {
+//   const max = Math.max(...items.map(i => i.value), 1)
+//   return (
+//     <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(items.length, 6)}, minmax(0, 1fr))`, gap: 10, alignItems: 'end', minHeight: 220 }}>
+//       {items.slice(0, 6).map(item => {
+//         const h = Math.max(14, Math.round((item.value / max) * 160))
+//         return (
+//           <div key={item.label} style={{ textAlign: 'center' }}>
+//             <Text strong style={{ fontSize: 11, color: item.color }}>{item.value.toLocaleString('vi-VN')}</Text>
+//             <div style={{ height: 170, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', margin: '6px 0' }}>
+//               <div style={{ width: '70%', height: h, borderRadius: '8px 8px 4px 4px', background: `linear-gradient(180deg, ${item.color}CC 0%, ${item.color} 100%)` }} />
+//             </div>
+//             <Text type="secondary" style={{ fontSize: 11 }}>{item.label}</Text>
+//           </div>
+//         )
+//       })}
+//     </div>
+//   )
+// }
 
 // ══════════════════════════════════════════════════════════════════
 // ══════════════════════════════════════════════════════════════════
@@ -715,6 +716,7 @@ interface NetworkInfo { chainId: number; name: string; blockNumber: number }
 
 function NetworkBar({ info, loading }: { info: NetworkInfo | null; loading: boolean }) {
   const connected = !!info
+  const activeChain = getActiveChainConfig()
   return (
     <Alert
       type={connected ? 'success' : 'warning'}
@@ -725,8 +727,9 @@ function NetworkBar({ info, loading }: { info: NetworkInfo | null; loading: bool
           <Space size={4}>
             <GlobalOutlined />
             <Text strong>RPC</Text>
-            <Text code style={{ fontSize: 11 }}>{import.meta.env.VITE_RPC_URL ?? 'http://127.0.0.1:8545'}</Text>
+            <Text code style={{ fontSize: 11 }}>{activeChain.rpcUrl}</Text>
           </Space>
+          <Tag color="blue">{activeChain.label}</Tag>
           {info && <>
             <Text>Chain ID: <Text strong>{info.chainId}</Text></Text>
             <Text>Block: <Text strong>#{info.blockNumber.toLocaleString('vi-VN')}</Text></Text>
@@ -2148,6 +2151,7 @@ function VNDCNFTCollectionPanel({ address }: { address: string }) {
 // ── Not deployed placeholder ──────────────────────────────────────
 function NotDeployedPanel({ contractKey }: { contractKey: ContractKey }) {
   const meta = CONTRACTS[contractKey]
+  const activeChain = getActiveChainConfig()
   const scriptMap: Record<string, string> = {
     VNDCStaking: 'scripts/deploy-staking.ts',
     DAOManager: 'scripts/deploy-dao.ts',
@@ -2166,11 +2170,11 @@ function NotDeployedPanel({ contractKey }: { contractKey: ContractKey }) {
         <div>
           <div>Chạy lệnh sau để triển khai:</div>
           <Text code copyable style={{ fontSize: 12, display: 'block', marginTop: 6 }}>
-            npx hardhat run {scriptMap[contractKey] ?? 'scripts/deploy.ts'} --network localhost
+            npx hardhat run {scriptMap[contractKey] ?? 'scripts/deploy.ts'} --network {activeChain.hardhatNetwork}
           </Text>
           <div style={{ marginTop: 6 }}>
             <Text type="secondary" style={{ fontSize: 12 }}>
-              Sau khi deploy, cập nhật địa chỉ trong <Text code>src/lib/contracts.ts</Text>
+              Sau khi deploy, cập nhật địa chỉ trong profile <Text code>{activeChain.backendNetwork}</Text>
             </Text>
           </div>
         </div>
@@ -2494,33 +2498,33 @@ function AnalyticsTab() {
     { label: 'Tác vụ', value: d?.tasks.total_tasks ?? 0, color: '#0891B2' },
     { label: 'Hoạt động', value: d?.activities.total_activities ?? 0, color: '#1A1744' },
   ]
-  const moduleActiveItems = [
-    {
-      label: 'Marketplace đang hoạt động',
-      value: d?.marketplace.total_listings ? Math.round((d.marketplace.active_listings / d.marketplace.total_listings) * 100) : 0,
-      color: '#059669',
-    },
-    {
-      label: 'Đề xuất DAO đang hoạt động',
-      value: d?.dao.total_proposals ? Math.round((d.dao.active_proposals / d.dao.total_proposals) * 100) : 0,
-      color: '#7C3AED',
-    },
-    {
-      label: 'Gây quỹ đang hoạt động',
-      value: d?.fundraising.total_campaigns ? Math.round((d.fundraising.active_campaigns / d.fundraising.total_campaigns) * 100) : 0,
-      color: '#DC2626',
-    },
-    {
-      label: 'Vé đang hoạt động',
-      value: d?.ticketing.total_products ? Math.round((d.ticketing.active_products / d.ticketing.total_products) * 100) : 0,
-      color: '#D97706',
-    },
-    {
-      label: 'Tác vụ đang hoạt động',
-      value: d?.tasks.total_tasks ? Math.round((d.tasks.active_tasks / d.tasks.total_tasks) * 100) : 0,
-      color: '#0891B2',
-    },
-  ]
+  // const moduleActiveItems = [
+  //   {
+  //     label: 'Marketplace đang hoạt động',
+  //     value: d?.marketplace.total_listings ? Math.round((d.marketplace.active_listings / d.marketplace.total_listings) * 100) : 0,
+  //     color: '#059669',
+  //   },
+  //   {
+  //     label: 'Đề xuất DAO đang hoạt động',
+  //     value: d?.dao.total_proposals ? Math.round((d.dao.active_proposals / d.dao.total_proposals) * 100) : 0,
+  //     color: '#7C3AED',
+  //   },
+  //   {
+  //     label: 'Gây quỹ đang hoạt động',
+  //     value: d?.fundraising.total_campaigns ? Math.round((d.fundraising.active_campaigns / d.fundraising.total_campaigns) * 100) : 0,
+  //     color: '#DC2626',
+  //   },
+  //   {
+  //     label: 'Vé đang hoạt động',
+  //     value: d?.ticketing.total_products ? Math.round((d.ticketing.active_products / d.ticketing.total_products) * 100) : 0,
+  //     color: '#D97706',
+  //   },
+  //   {
+  //     label: 'Tác vụ đang hoạt động',
+  //     value: d?.tasks.total_tasks ? Math.round((d.tasks.active_tasks / d.tasks.total_tasks) * 100) : 0,
+  //     color: '#0891B2',
+  //   },
+  // ]
   const selectedWallet = selectedUser?.wallet_address?.toLowerCase() ?? ''
   const selectedUserTxItems = [
     { label: 'Thành công', value: selectedUserTxs.filter(t => t.status === 'SUCCESS').length, color: '#059669' },
@@ -2573,7 +2577,7 @@ function AnalyticsTab() {
         </Col>
       </Row>
 
-      <ChartCard title="Thống kê theo cụm tính năng" subtitle="Biểu đồ cột tổng quy mô của từng cụm chức năng">
+      {/* <ChartCard title="Thống kê theo cụm tính năng" subtitle="Biểu đồ cột tổng quy mô của từng cụm chức năng">
         <Spin spinning={loading}>
           <VerticalBarChart items={moduleVolumeItems} />
         </Spin>
@@ -2583,7 +2587,7 @@ function AnalyticsTab() {
         <Spin spinning={loading}>
           <VerticalBarChart items={moduleActiveItems} />
         </Spin>
-      </ChartCard>
+      </ChartCard> */}
 
       <Card
         title={<SectionHeader icon={<TeamOutlined />} title="Quản lý cụm người dùng" extra={<Button size="small" icon={<ReloadOutlined />} onClick={() => void loadUsers(userPage)} loading={userLoading}>Tải lại người dùng</Button>} />}

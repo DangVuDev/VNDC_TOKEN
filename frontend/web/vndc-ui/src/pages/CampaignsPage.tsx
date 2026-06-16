@@ -24,6 +24,7 @@ import {
   type FundActivity, type FundLedgerEntry, type FundSummary,
 } from '../lib/services'
 import { signTypedData, buildTransferTypedData, switchChain } from '../lib/wallet'
+import { getActiveChainConfig, getRequiredContractAddress } from '../lib/chainConfig'
 import type { AuthUser } from '../hooks/useAuth'
 
 const { Title, Text, Paragraph } = Typography
@@ -496,7 +497,9 @@ function ContributeModal({ activity, user, open, onClose, onSuccess }: {
     if (!user?.wallet_address || !activity) return
     setLoading(true)
     try {
-      const chainId = parseInt((import.meta as unknown as { env: Record<string, string> }).env?.VITE_CHAIN_ID ?? '1337')
+      const activeChain = getActiveChainConfig()
+      const chainId = activeChain.chainId
+      const tokenContract = getRequiredContractAddress('VNDCToken', 'VNDC Token', activeChain)
       await switchChain(chainId)
       setStep(1)
 
@@ -513,7 +516,7 @@ function ContributeModal({ activity, user, open, onClose, onSuccess }: {
 
       const typedData = buildTransferTypedData({
         chainId,
-        verifyingContract: (import.meta as unknown as { env: Record<string, string> }).env?.VITE_TOKEN_CONTRACT_ADDRESS,
+        verifyingContract: tokenContract,
         from: user.wallet_address,
         to: toAddress,
         amount: amountWei,

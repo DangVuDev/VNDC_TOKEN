@@ -17,6 +17,7 @@ import {
 import { useEffect, useRef, useState } from 'react'
 import vndcLogo from '../../public/logo.png'
 import type { AuthTokens, AuthUser } from '../hooks/useAuth'
+import { getActiveChainConfig } from '../lib/chainConfig'
 import { switchChain } from '../lib/wallet'
 
 const { Title, Text } = Typography
@@ -45,6 +46,7 @@ export function LoginPage({ onGetChallenge, onLogin, onComplete2FA, onSuccess }:
   const [submitting2FA, setSubmitting2FA] = useState(false)
   const [useBackup, setUseBackup] = useState(false)
   const totpRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const activeChain = getActiveChainConfig()
 
   useEffect(() => {
     return () => {
@@ -69,8 +71,7 @@ export function LoginPage({ onGetChallenge, onLogin, onComplete2FA, onSuccess }:
         setError('Không tìm thấy ví Ethereum. Vui lòng cài MetaMask rồi thử lại.')
         return
       }
-      const chainId = Number((import.meta as unknown as { env: Record<string, string> }).env?.VITE_CHAIN_ID ?? 31337)
-      await switchChain(chainId, window.ethereum)
+      await switchChain(activeChain.chainId, window.ethereum)
       const accounts = await window.ethereum.request<string[]>({ method: 'eth_requestAccounts' })
       const address = accounts?.[0]
       if (!address) throw new Error('Bạn chưa chọn tài khoản ví.')
@@ -156,7 +157,7 @@ export function LoginPage({ onGetChallenge, onLogin, onComplete2FA, onSuccess }:
           </div>
 
           <div className="login-brand-footer">
-            Chain ID 31337 / EIP-4361 SIWE
+            {activeChain.label} / Chain ID {activeChain.chainId} / EIP-4361 SIWE
           </div>
         </aside>
 
