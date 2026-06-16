@@ -23,6 +23,7 @@ import { useNavigate } from 'react-router-dom'
 import heroImage from '../assets/visuals/vndc-landing-hero.png'
 import orbImage from '../assets/visuals/logo.png'
 import storyImage from '../assets/visuals/vndc-landing-story.png'
+import waveBackground from '../assets/visuals/vndc-landing-wave-bg.png'
 
 type SeoConfig = {
   title: string
@@ -32,7 +33,7 @@ type SeoConfig = {
   imagePath: string
 }
 
-type FeatureCard = {
+type EcosystemPoint = {
   icon: ReactNode
   title: string
   eyebrow: string
@@ -57,53 +58,53 @@ type ProofQuote = {
 }
 
 const SITE_SEO: SeoConfig = {
-  title: 'VNDC Campus | Kết nối học tập và phần thưởng số',
+  title: 'VNDC Campus | Hệ sinh thái token cho sinh viên',
   description:
-    'Landing page VNDC với nền sóng màu xuyên suốt, hiệu ứng cuộn, thẻ tự do và visual trừu tượng cho hệ sinh thái học tập có thưởng.',
+    'VNDC Campus là nền tảng kết nối sinh viên, nhiệm vụ học tập, sự kiện, ví thưởng, marketplace và DAO trong một hệ sinh thái số minh bạch.',
   keywords:
-    'VNDC, campus Web3, student reward, token sinh viên, ví điện tử đại học, DAO sinh viên, React TypeScript landing page',
+    'VNDC Campus, token sinh viên, student reward platform, ví thưởng đại học, DAO sinh viên, marketplace campus, blockchain education',
   author: 'Vũ Văn Đăng',
   imagePath: '/og-vndc-platform.png',
 }
 
 const navLinks = [
-  { href: '#products', label: 'Hệ sinh thái' },
-  { href: '#journey', label: 'Hành trình' },
-  { href: '#stories', label: 'Câu chuyện' },
-  { href: '#network', label: 'Mạng lưới' },
+  { href: '#products', label: 'Sản phẩm' },
+  { href: '#journey', label: 'Trải nghiệm' },
+  { href: '#stories', label: 'Giá trị' },
+  { href: '#network', label: 'Hệ sinh thái' },
 ]
 
-const featureCards: FeatureCard[] = [
+const ecosystemPoints: EcosystemPoint[] = [
   {
-    icon: <CommentOutlined />,
-    title: 'Campus Social Layer',
-    eyebrow: 'Kết nối sinh viên',
-    text: 'Tạo một lớp giao tiếp chung cho lớp học, câu lạc bộ, sự kiện và thông báo quan trọng.',
-    action: 'Khám phá kết nối',
+    icon: <UserOutlined />,
+    title: 'Hồ sơ sinh viên số',
+    eyebrow: 'Identity · activity · achievement',
+    text: 'Mỗi sinh viên có một không gian cá nhân để lưu hoạt động, điểm danh, vé tham gia, huy hiệu và thành tích trong suốt quá trình học tập.',
+    action: 'Khởi tạo hồ sơ',
     tone: 'blue',
   },
   {
     icon: <ReadOutlined />,
-    title: 'Learning Missions',
-    eyebrow: 'Học tập có nhiệm vụ',
-    text: 'Biến bài học, điểm danh, workshop và hoạt động ngoại khóa thành nhiệm vụ có thể ghi nhận.',
-    action: 'Xem nhiệm vụ',
+    title: 'Mission campus',
+    eyebrow: 'Workshop · sự kiện · thử thách',
+    text: 'Nhà trường và câu lạc bộ tạo nhiệm vụ có mục tiêu rõ ràng; sinh viên tham gia, hoàn thành và nhận ghi nhận ngay trên hệ thống.',
+    action: 'Khám phá nhiệm vụ',
     tone: 'cyan',
   },
   {
     icon: <WalletOutlined />,
-    title: 'Reward Wallet',
-    eyebrow: 'Phần thưởng số',
-    text: 'Điểm thưởng, token, vé NFT và huy hiệu được gom vào một ví sinh viên dễ hiểu.',
-    action: 'Mở ví thử',
+    title: 'Ví VNDC',
+    eyebrow: 'Token · ticket · badge',
+    text: 'Điểm thưởng và token được phát hành theo từng hoạt động, giúp đóng góp của sinh viên trở thành giá trị số có thể theo dõi và sử dụng.',
+    action: 'Mở ví VNDC',
     tone: 'gold',
   },
   {
     icon: <SafetyCertificateOutlined />,
-    title: 'DAO Campus',
-    eyebrow: 'Cộng đồng cùng quyết định',
-    text: 'Voting, gây quỹ và đề xuất giúp sinh viên tham gia phát triển hệ sinh thái minh bạch hơn.',
-    action: 'Xem DAO',
+    title: 'DAO campus',
+    eyebrow: 'Đề xuất · biểu quyết · gây quỹ',
+    text: 'Các ý tưởng của cộng đồng có thể được đề xuất, bình chọn và triển khai minh bạch, tạo môi trường sinh viên chủ động hơn.',
+    action: 'Tham gia quản trị',
     tone: 'violet',
   },
 ]
@@ -111,63 +112,63 @@ const featureCards: FeatureCard[] = [
 const journeySteps: JourneyStep[] = [
   {
     scene: 'connect',
-    label: '01',
-    title: 'Một sinh viên không đi một mình.',
-    text: 'Từ lớp học đến câu lạc bộ, mỗi tương tác được nối thành một hành trình rõ ràng thay vì bị rơi rớt trong nhiều kênh rời rạc.',
-    metric: 'Kết nối đúng người, đúng ngữ cảnh',
+    label: '01 · Onboard',
+    title: 'Sinh viên bước vào campus bằng một hồ sơ thống nhất.',
+    text: 'Tài khoản, ví và thông tin tham gia được gom về một nơi. Từ lần đăng nhập đầu tiên, sinh viên đã có thể theo dõi lớp học, câu lạc bộ, sự kiện và phần thưởng của mình.',
+    metric: 'Một danh tính số cho toàn bộ campus',
     icon: <TeamOutlined />,
   },
   {
     scene: 'learn',
-    label: '02',
-    title: 'Việc học có đường dẫn và dấu mốc.',
-    text: 'Các nhiệm vụ học tập, sự kiện, thử thách và workshop được hiển thị như các chặng tiến bộ để sinh viên thấy mình đang đi đến đâu.',
-    metric: 'Learning path có thể nhìn thấy',
+    label: '02 · Mission',
+    title: 'Hoạt động được thiết kế như một hành trình có mục tiêu.',
+    text: 'Workshop, điểm danh, nhiệm vụ học tập, chiến dịch truyền thông hay sự kiện ngoại khóa đều có trạng thái, deadline, bằng chứng hoàn thành và người phụ trách rõ ràng.',
+    metric: 'Từ tham gia rời rạc thành nhiệm vụ có lộ trình',
     icon: <ReadOutlined />,
   },
   {
     scene: 'reward',
-    label: '03',
-    title: 'Nỗ lực được chuyển hóa thành giá trị.',
-    text: 'Điểm thưởng, token và huy hiệu làm cho đóng góp thật trở nên có bằng chứng, có động lực và có thể sử dụng trong hệ sinh thái.',
-    metric: 'Reward có nguồn gốc rõ ràng',
+    label: '03 · Reward',
+    title: 'Đóng góp được ghi nhận bằng token, vé và huy hiệu.',
+    text: 'Khi hoàn thành nhiệm vụ, sinh viên nhận phần thưởng VNDC hoặc vật phẩm số tương ứng. Phần thưởng không chỉ để xem, mà còn có thể dùng trong marketplace và các hoạt động tiếp theo.',
+    metric: 'Ghi nhận nhanh, minh bạch và có thể kiểm chứng',
     icon: <WalletOutlined />,
   },
   {
     scene: 'govern',
-    label: '04',
-    title: 'Cộng đồng cùng mở khóa tương lai campus.',
-    text: 'Khi sinh viên có tiếng nói qua voting và đề xuất, nền tảng không còn là app quản lý mà trở thành một cộng đồng sống.',
-    metric: 'Sẵn sàng mở rộng DAO',
+    label: '04 · Community',
+    title: 'Cộng đồng cùng quyết định cách giá trị được sử dụng.',
+    text: 'DAO giúp sinh viên đề xuất ý tưởng, biểu quyết hoạt động, gây quỹ cho dự án và theo dõi quá trình triển khai bằng dữ liệu rõ ràng.',
+    metric: 'Quản trị mở cho sinh viên, CLB và nhà trường',
     icon: <SafetyCertificateOutlined />,
   },
 ]
 
 const proofQuotes: ProofQuote[] = [
   {
-    quote: 'Cảm giác landing có một câu chuyện xuyên suốt: kết nối, học tập, rồi phần thưởng.',
-    name: 'Minh Anh',
-    role: 'Công tác sinh viên',
+    quote: 'Sinh viên thấy rõ mình đã tham gia gì, nhận được gì và có thể dùng phần thưởng đó ở đâu trong hệ sinh thái.',
+    name: 'Sinh viên',
+    role: 'Trải nghiệm cá nhân',
   },
   {
-    quote: 'Phần Web3 được làm nhẹ nhàng, không quá nặng thuật ngữ nhưng vẫn có chất công nghệ.',
-    name: 'Hoàng Nam',
-    role: 'Mentor frontend',
+    quote: 'Câu lạc bộ có thể tổ chức hoạt động, ghi nhận người tham gia và phát thưởng mà không phải chia dữ liệu qua nhiều công cụ.',
+    name: 'Câu lạc bộ',
+    role: 'Vận hành sự kiện',
   },
   {
-    quote: 'Bố cục card tự do làm trang có nhịp chuyển động hơn, không còn cảm giác xếp khối cứng.',
-    name: 'Linh Tran',
-    role: 'Đánh giá sản phẩm',
+    quote: 'Nhà trường có thêm một lớp dữ liệu minh bạch để theo dõi mức độ tham gia, động lực học tập và đóng góp cộng đồng.',
+    name: 'Nhà trường',
+    role: 'Quản trị campus',
   },
 ]
 
 const networkNodes = [
   'Sinh viên',
-  'Lớp học',
+  'Giảng viên',
   'CLB',
   'Sự kiện',
-  'Ví thưởng',
-  'Huy hiệu',
+  'Ví VNDC',
+  'Badge/NFT',
   'DAO',
   'Marketplace',
 ]
@@ -192,7 +193,7 @@ html { scroll-behavior: smooth; }
   --glass-strong: rgba(255, 255, 255, .86);
   --mx: .5;
   --my: .5;
-  --progress: 0;
+  --scroll: 0;
   position: relative;
   isolation: isolate;
   min-height: 100dvh;
@@ -214,6 +215,18 @@ html { scroll-behavior: smooth; }
   z-index: -4;
   overflow: hidden;
   pointer-events: none;
+}
+
+.v3-wave-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: .34;
+  filter: saturate(1.08) contrast(1.02);
+  mix-blend-mode: multiply;
+  transform: translateY(-1%) scale(1.035);
 }
 
 .v3-ambient::before {
@@ -258,7 +271,7 @@ html { scroll-behavior: smooth; }
     radial-gradient(36% 24% at 72% 34%, rgba(18,198,233,.25), transparent 66%),
     radial-gradient(44% 26% at 34% 62%, rgba(103,84,244,.22), transparent 70%),
     radial-gradient(48% 30% at 78% 84%, rgba(255,174,44,.18), transparent 70%);
-  transform: translateX(-50%) rotate(-11deg) translateY(calc(var(--progress) * -70px));
+  transform: translateX(-50%) translateY(calc(var(--scroll) * -90px)) rotate(-11deg);
   animation: v3-wave-drift 18s ease-in-out infinite alternate;
 }
 
@@ -267,7 +280,7 @@ html { scroll-behavior: smooth; }
   left: 24%;
   opacity: .25;
   background: linear-gradient(180deg, rgba(18,198,233,.32), transparent 22%, rgba(215,94,232,.22) 46%, transparent 70%, rgba(7,116,234,.25));
-  transform: rotate(15deg) translateY(calc(var(--progress) * 92px));
+  transform: translateY(calc(var(--scroll) * 120px)) rotate(15deg);
   animation: v3-wave-drift-alt 22s ease-in-out infinite alternate;
 }
 
@@ -276,8 +289,54 @@ html { scroll-behavior: smooth; }
   left: 82%;
   opacity: .22;
   background: linear-gradient(180deg, rgba(255,174,44,.22), transparent 35%, rgba(18,198,233,.26), transparent 74%, rgba(103,84,244,.2));
-  transform: translateX(-50%) rotate(-19deg) translateY(calc(var(--progress) * -120px));
+  transform: translateX(-50%) translateY(calc(var(--scroll) * -120px)) rotate(-19deg);
   animation: v3-wave-drift 26s ease-in-out infinite alternate-reverse;
+}
+
+.v3-light-trail {
+  position: absolute;
+  width: min(720px, 84vw);
+  height: 160px;
+  border-radius: 999px;
+  filter: blur(42px);
+  opacity: .32;
+  mix-blend-mode: screen;
+  background: linear-gradient(90deg, transparent, rgba(18,198,233,.34), rgba(103,84,244,.18), transparent);
+  transform: rotate(var(--trail-rotate, -12deg)) translate3d(0, calc(var(--scroll) * var(--trail-depth, 120px)), 0);
+  animation: v3-trail-glow 8s ease-in-out infinite alternate;
+}
+.v3-light-trail.trail-1 { left: -8%; top: 16%; --trail-rotate: -10deg; --trail-depth: -140px; }
+.v3-light-trail.trail-2 { right: -12%; top: 48%; --trail-rotate: 12deg; --trail-depth: 160px; animation-delay: -2.8s; }
+.v3-light-trail.trail-3 { left: 20%; bottom: 8%; --trail-rotate: -4deg; --trail-depth: -90px; opacity: .24; animation-delay: -5s; }
+
+.v3-particle {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.9);
+  box-shadow: 0 0 0 8px rgba(18,198,233,.08), 0 0 24px rgba(7,116,234,.22);
+  opacity: .7;
+  animation: v3-particle-float 11s ease-in-out infinite;
+}
+.v3-particle.p1 { left: 9%; top: 18%; }
+.v3-particle.p2 { left: 78%; top: 12%; animation-delay: -2s; }
+.v3-particle.p3 { left: 52%; top: 44%; animation-delay: -4s; }
+.v3-particle.p4 { left: 18%; top: 66%; animation-delay: -6s; }
+.v3-particle.p5 { left: 88%; top: 72%; animation-delay: -8s; }
+
+.v3-section::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 32px;
+  width: min(780px, 76vw);
+  height: 1px;
+  pointer-events: none;
+  transform: translateX(-50%) scaleX(.72);
+  transform-origin: center;
+  opacity: .22;
+  background: linear-gradient(90deg, transparent, rgba(7,116,234,.38), rgba(18,198,233,.44), transparent);
 }
 
 .v3-shell {
@@ -317,7 +376,8 @@ html { scroll-behavior: smooth; }
   bottom: -1px;
   height: 2px;
   transform-origin: left;
-  transform: scaleX(var(--progress));
+  opacity: .22;
+  transform: scaleX(1);
   background: linear-gradient(90deg, var(--blue), var(--cyan), var(--gold));
 }
 
@@ -496,10 +556,7 @@ html { scroll-behavior: smooth; }
 .v3-media-card,
 .v3-mini-card,
 .v3-stat-card,
-.v3-feature-card,
-.v3-glass-panel,
-.v3-quote-card,
-.v3-network-card {
+.v3-glass-panel {
   border: 1px solid rgba(255,255,255,.76);
   background:
     linear-gradient(145deg, rgba(255,255,255,.86), rgba(245,251,255,.58)),
@@ -518,11 +575,22 @@ html { scroll-behavior: smooth; }
   width: min(520px, 88vw);
   border-radius: 38px;
   padding: 22px;
-  transform: rotateY(-10deg) rotateZ(1.5deg) translateY(calc(var(--progress) * -24px));
+  transform: rotateY(-10deg) rotateZ(1.5deg);
   transition: transform 360ms ease;
 }
 
 .v3-generated-card:hover { transform: rotateY(-6deg) rotateZ(0deg) translateY(-8px); }
+
+.v3-generated-card::after {
+  content: "";
+  position: absolute;
+  inset: -40% auto -40% -60%;
+  width: 42%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.76), transparent);
+  transform: rotate(12deg);
+  animation: v3-hero-glow-sweep 7s ease-in-out infinite;
+  pointer-events: none;
+}
 
 .v3-media-card {
   position: absolute;
@@ -615,33 +683,72 @@ html { scroll-behavior: smooth; }
 
 .v3-free-board {
   position: relative;
-  min-height: 690px;
-  margin-top: 46px;
+  min-height: 620px;
+  margin-top: 54px;
+  isolation: isolate;
 }
 
-.v3-feature-card {
+.v3-free-board::before,
+.v3-free-board::after {
+  content: "";
   position: absolute;
-  width: min(410px, 100%);
-  min-height: 278px;
-  border-radius: 30px;
-  padding: 28px;
-  transition: transform 280ms ease, box-shadow 280ms ease, border-color 280ms ease;
+  pointer-events: none;
+}
+
+.v3-free-board::before {
+  left: 5%;
+  right: 6%;
+  top: 46%;
+  height: 170px;
+  border: 2px solid rgba(7,116,234,.16);
+  border-bottom-color: rgba(18,198,233,.2);
+  border-radius: 50%;
+  transform: rotate(-5deg);
+}
+
+.v3-free-board::after {
+  left: 14%;
+  right: 14%;
+  top: 53%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(7,116,234,.26), rgba(18,198,233,.3), transparent);
+  transform: rotate(-2deg);
+}
+
+.v3-flow-point {
+  position: absolute;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  width: min(460px, 100%);
+  gap: 18px;
+  border-top: 1px solid rgba(7,44,94,.14);
+  padding: 18px 0 0;
+  transition: transform 320ms cubic-bezier(.2,.8,.2,1), opacity 320ms ease;
   will-change: transform;
 }
-.v3-feature-card:hover {
-  border-color: rgba(7,116,234,.24);
-  box-shadow: 0 38px 92px rgba(8,53,120,.14);
-}
-.v3-feature-card:nth-child(1) { left: 0; top: 36px; transform: rotate(-3.5deg); }
-.v3-feature-card:nth-child(2) { right: 5%; top: 0; transform: rotate(2.6deg); }
-.v3-feature-card:nth-child(3) { left: 26%; top: 302px; transform: rotate(1deg); z-index: 2; }
-.v3-feature-card:nth-child(4) { right: 0; top: 382px; transform: rotate(-4deg); }
-.v3-feature-card:nth-child(1):hover { transform: rotate(-1deg) translateY(-12px); }
-.v3-feature-card:nth-child(2):hover { transform: rotate(1deg) translateY(-12px); }
-.v3-feature-card:nth-child(3):hover { transform: rotate(0deg) translateY(-12px); }
-.v3-feature-card:nth-child(4):hover { transform: rotate(-1deg) translateY(-12px); }
 
-.v3-card-icon {
+.v3-flow-point::before {
+  content: "";
+  position: absolute;
+  left: 26px;
+  top: -7px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 8px rgba(18,198,233,.14), 0 0 28px rgba(7,116,234,.26);
+}
+
+.v3-flow-point:hover { transform: var(--point-hover); }
+.v3-flow-point:nth-child(1) { --point-rest: translate3d(0,0,0) rotate(-2deg); --point-hover: translate3d(0,-10px,0) rotate(-1deg); --start-rotate: -8deg; left: 0; top: 34px; transform: var(--point-rest); }
+.v3-flow-point:nth-child(2) { --point-rest: translate3d(0,0,0) rotate(2deg); --point-hover: translate3d(0,-12px,0) rotate(.5deg); --start-rotate: 7deg; right: 2%; top: 96px; transform: var(--point-rest); }
+.v3-flow-point:nth-child(3) { --point-rest: translate3d(0,0,0) rotate(.8deg); --point-hover: translate3d(0,-10px,0) rotate(0deg); --start-rotate: -5deg; left: 17%; top: 330px; transform: var(--point-rest); }
+.v3-flow-point:nth-child(4) { --point-rest: translate3d(0,0,0) rotate(-2.4deg); --point-hover: translate3d(0,-12px,0) rotate(-.8deg); --start-rotate: 6deg; right: 0; top: 410px; transform: var(--point-rest); }
+.v3-flow-point.v3-reveal.is-visible { transform: var(--point-rest); }
+.v3-flow-point.v3-reveal.is-visible:hover { transform: var(--point-hover); }
+
+.v3-flow-icon {
   display: grid;
   width: 54px;
   height: 54px;
@@ -651,13 +758,30 @@ html { scroll-behavior: smooth; }
   background: linear-gradient(135deg, rgba(7,116,234,.12), rgba(18,198,233,.12));
   font-size: 24px;
 }
-.v3-feature-card[data-tone="cyan"] .v3-card-icon { color: var(--teal); background: linear-gradient(135deg, rgba(18,198,233,.16), rgba(15,183,177,.12)); }
-.v3-feature-card[data-tone="violet"] .v3-card-icon { color: var(--violet); background: linear-gradient(135deg, rgba(103,84,244,.14), rgba(215,94,232,.12)); }
-.v3-feature-card[data-tone="gold"] .v3-card-icon { color: var(--orange); background: linear-gradient(135deg, rgba(255,174,44,.18), rgba(255,122,26,.1)); }
+.v3-flow-point[data-tone="cyan"] .v3-flow-icon { color: var(--teal); background: linear-gradient(135deg, rgba(18,198,233,.16), rgba(15,183,177,.12)); }
+.v3-flow-point[data-tone="violet"] .v3-flow-icon { color: var(--violet); background: linear-gradient(135deg, rgba(103,84,244,.14), rgba(215,94,232,.12)); }
+.v3-flow-point[data-tone="gold"] .v3-flow-icon { color: var(--orange); background: linear-gradient(135deg, rgba(255,174,44,.18), rgba(255,122,26,.1)); }
 
-.v3-feature-card h3 { margin: 18px 0 8px; color: var(--ink); font-size: 30px; font-weight: 950; letter-spacing: -.05em; }
+.v3-flow-point h3 { margin: 2px 0 8px; color: var(--ink); font-size: 30px; font-weight: 950; letter-spacing: -.05em; }
 .v3-eyebrow { display: inline-flex; border-radius: 999px; padding: 6px 11px; border: 1px solid rgba(7,44,94,.1); background: rgba(255,255,255,.7); color: var(--muted); font-size: 12px; font-weight: 850; }
-.v3-feature-card p { margin: 16px 0 22px; color: var(--muted); line-height: 1.68; }
+.v3-flow-point p { margin: 14px 0 12px; color: var(--muted); line-height: 1.68; }
+
+.v3-flow-link {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  color: var(--blue-strong);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 900;
+  padding: 0;
+}
+
+.v3-flow-link:hover { color: var(--blue); }
 
 .v3-insight-grid {
   display: grid;
@@ -668,11 +792,12 @@ html { scroll-behavior: smooth; }
 
 .v3-panel-stack { position: relative; min-height: 560px; perspective: 1000px; }
 .v3-dashboard-art {
+  --motion-rest: rotateY(10deg) rotateZ(-2deg);
   position: absolute;
   inset: 32px 40px auto 0;
   border-radius: 34px;
   padding: 18px;
-  transform: rotateY(10deg) rotateZ(-2deg);
+  transform: var(--motion-rest);
 }
 .v3-dashboard-inner {
   overflow: hidden;
@@ -684,13 +809,14 @@ html { scroll-behavior: smooth; }
     linear-gradient(135deg, rgba(255,255,255,.92), rgba(232,247,255,.7));
 }
 .v3-floating-stat {
+  --motion-rest: rotate(4deg);
   position: absolute;
   right: 0;
   bottom: 32px;
   width: 250px;
   border-radius: 28px;
   padding: 20px;
-  transform: rotate(4deg);
+  transform: var(--motion-rest);
 }
 .v3-floating-stat strong { display: block; color: var(--ink); font-size: 42px; line-height: 1; letter-spacing: -.055em; }
 .v3-floating-stat span { color: var(--muted); line-height: 1.55; }
@@ -713,7 +839,7 @@ html { scroll-behavior: smooth; }
   width: min(260px, 76%);
   border-radius: 42px;
   filter: drop-shadow(0 30px 46px rgba(8,53,120,.18));
-  transform: rotateY(-12deg) rotateX(6deg) translateY(calc(var(--progress) * -18px));
+  transform: rotateY(-12deg) rotateX(6deg);
   animation: v3-float 6.2s ease-in-out infinite;
 }
 .v3-journey-ring {
@@ -726,26 +852,70 @@ html { scroll-behavior: smooth; }
 }
 .v3-journey-caption { color: var(--muted); font-weight: 760; line-height: 1.72; }
 
-.v3-step-list { display: grid; gap: 28px; }
-.v3-step {
-  min-height: 360px;
-  border-radius: 34px;
-  padding: 32px;
-  scroll-margin-top: 120px;
+.v3-step-list {
+  position: relative;
+  display: grid;
+  gap: 42px;
 }
-.v3-step:nth-child(2n) { margin-left: 62px; }
-.v3-step-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 30px; }
-.v3-step-num { color: var(--blue); font-size: 14px; font-weight: 950; letter-spacing: .08em; }
-.v3-step-icon { display: grid; width: 50px; height: 50px; place-items: center; border-radius: 17px; background: linear-gradient(135deg, rgba(7,116,234,.13), rgba(18,198,233,.13)); color: var(--blue); font-size: 23px; }
-.v3-step h3 { margin: 0; max-width: 640px; color: var(--ink); font-size: clamp(30px, 4vw, 50px); line-height: 1; letter-spacing: -.055em; }
-.v3-step p { max-width: 620px; margin: 18px 0 26px; color: var(--muted); line-height: 1.74; font-size: 16px; }
-.v3-metric { display: inline-flex; border-radius: 999px; background: rgba(7,116,234,.09); color: var(--blue-strong); padding: 9px 13px; font-size: 13px; font-weight: 880; }
+.v3-step-list::before {
+  content: "";
+  position: absolute;
+  left: 22px;
+  top: 16px;
+  bottom: 16px;
+  width: 2px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(7,116,234,.04), rgba(7,116,234,.34), rgba(18,198,233,.34), rgba(255,174,44,.2), rgba(7,116,234,.04));
+}
+.v3-step {
+  --motion-rest: translateX(0) rotate(0deg);
+  position: relative;
+  min-height: 315px;
+  border-radius: 0;
+  padding: 22px 0 46px 82px;
+  scroll-margin-top: 120px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+.v3-step:nth-child(2n) { margin-left: 62px; --motion-rest: translateX(0) rotate(.8deg); }
+.v3-step::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 28px;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: #fff;
+  border: 7px solid rgba(18,198,233,.22);
+  box-shadow: 0 0 0 12px rgba(7,116,234,.05), 0 18px 36px rgba(8,53,120,.12);
+}
+.v3-step::after {
+  content: attr(data-scene);
+  position: absolute;
+  right: 0;
+  top: 10px;
+  color: rgba(7,116,234,.055);
+  font-size: clamp(70px, 10vw, 132px);
+  font-weight: 950;
+  letter-spacing: -.08em;
+  text-transform: uppercase;
+  z-index: -1;
+}
+.v3-step-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; }
+.v3-step-num { color: var(--blue); font-size: 14px; font-weight: 950; letter-spacing: .08em; text-transform: uppercase; }
+.v3-step-icon { display: grid; width: 50px; height: 50px; place-items: center; border-radius: 17px; background: linear-gradient(135deg, rgba(255,255,255,.86), rgba(220,246,255,.7)); color: var(--blue); font-size: 23px; box-shadow: 0 18px 44px rgba(8,53,120,.08), inset 0 1px 0 rgba(255,255,255,.95); }
+.v3-step h3 { margin: 0; max-width: 720px; color: var(--ink); font-size: clamp(32px, 4.2vw, 58px); line-height: .96; letter-spacing: -.058em; text-wrap: balance; }
+.v3-step p { max-width: 660px; margin: 20px 0 26px; color: var(--muted); line-height: 1.74; font-size: 16px; }
+.v3-metric { display: inline-flex; border-radius: 999px; background: rgba(255,255,255,.68); border: 1px solid rgba(7,44,94,.1); color: var(--blue-strong); padding: 9px 13px; font-size: 13px; font-weight: 880; box-shadow: 0 12px 28px rgba(8,53,120,.06); }
 
 .v3-story { text-align: center; }
 .v3-story h2 { margin-inline: auto; }
 .v3-stars { display: flex; justify-content: center; gap: 9px; margin-top: 24px; color: var(--gold); font-size: 20px; }
 .v3-rating { margin-top: 10px; color: var(--ink); font-size: 24px; font-weight: 950; letter-spacing: -.04em; }
 .v3-video {
+  --motion-rest: rotate(-1deg);
   position: relative;
   overflow: hidden;
   width: min(940px, 100%);
@@ -754,22 +924,26 @@ html { scroll-behavior: smooth; }
   border: 10px solid rgba(255,255,255,.88);
   border-radius: 32px;
   box-shadow: 0 34px 82px rgba(8,53,120,.16);
-  transform: rotate(-1deg);
+  transform: var(--motion-rest);
 }
 .v3-video img { width: 100%; height: 100%; display: block; object-fit: cover; }
 .v3-video::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 38%, rgba(4,20,44,.66)); }
 .v3-play { position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; color: rgba(255,255,255,.94); font-size: 64px; }
 .v3-video-caption { position: absolute; z-index: 1; left: 28px; right: 28px; bottom: 24px; color: #fff; font-size: clamp(22px, 3.2vw, 36px); font-weight: 950; letter-spacing: -.05em; line-height: 1.08; }
 .v3-quote-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 36px; text-align: left; }
-.v3-quote-card { border-radius: 26px; padding: 24px; }
+.v3-quote-card {
+  position: relative;
+  border-left: 2px solid rgba(7,116,234,.2);
+  padding: 6px 0 6px 22px;
+}
 .v3-quote-card p { margin: 0; color: var(--ink); line-height: 1.62; font-weight: 740; }
 .v3-quote-card strong { display: block; margin-top: 18px; color: var(--blue-strong); }
 .v3-quote-card span { color: var(--muted); font-size: 13px; }
 
 .v3-network-head { display: grid; grid-template-columns: .84fr 1.16fr; gap: 36px; align-items: end; }
 .v3-network-map { position: relative; min-height: 470px; margin-top: 46px; }
-.v3-network-line { position: absolute; inset: 0; border: 2px solid rgba(7,116,234,.18); border-radius: 50%; transform: rotate(-9deg) scale(.88); }
-.v3-network-line.two { transform: rotate(12deg) scale(.72); border-color: rgba(215,94,232,.17); }
+.v3-network-line { --orbit-rest: rotate(-9deg) scale(.88); position: absolute; inset: 0; border: 2px solid rgba(7,116,234,.18); border-radius: 50%; transform: var(--orbit-rest); }
+.v3-network-line.two { --orbit-rest: rotate(12deg) scale(.72); transform: var(--orbit-rest); border-color: rgba(215,94,232,.17); }
 .v3-center-node,
 .v3-node { position: absolute; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.78); background: rgba(255,255,255,.78); box-shadow: 0 18px 42px rgba(8,53,120,.1); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
 .v3-center-node { left: 50%; top: 48%; width: 122px; height: 122px; border-radius: 36px; color: var(--blue); transform: translate(-50%, -50%) rotate(-3deg); font-size: 34px; }
@@ -783,8 +957,11 @@ html { scroll-behavior: smooth; }
 .v3-node:nth-child(9) { left: 9%; top: 61%; }
 .v3-node:nth-child(10) { left: 24%; bottom: 15%; }
 .v3-node:nth-child(11) { right: 24%; bottom: 14%; }
-.v3-network-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 36px; }
-.v3-network-card { border-radius: 28px; padding: 24px; }
+.v3-network-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; margin-top: 42px; }
+.v3-network-card {
+  border-top: 1px solid rgba(7,44,94,.14);
+  padding-top: 18px;
+}
 .v3-network-card h3 { margin: 0 0 14px; color: var(--ink); font-size: 24px; font-weight: 950; letter-spacing: -.045em; }
 .v3-network-card ul { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; color: var(--muted); }
 .v3-network-card li { display: flex; gap: 9px; align-items: flex-start; line-height: 1.55; }
@@ -841,11 +1018,87 @@ html { scroll-behavior: smooth; }
     animation-timeline: view();
     animation-range: entry 8% cover 46%;
   }
+
+  .v3-flow-point {
+    animation: v3-flow-view both cubic-bezier(.2,.8,.2,1);
+    animation-timeline: view();
+    animation-range: entry 4% cover 42%;
+  }
+
+  .v3-dashboard-art,
+  .v3-floating-stat,
+  .v3-video,
+  .v3-network-card {
+    animation: v3-soft-rise both cubic-bezier(.2,.8,.2,1);
+    animation-timeline: view();
+    animation-range: entry 8% cover 38%;
+  }
+
+  .v3-network-line {
+    animation: v3-orbit-breathe both ease-out;
+    animation-timeline: view();
+    animation-range: entry 10% cover 70%;
+  }
+}
+
+@supports (animation-timeline: scroll()) {
+  .v3-progress {
+    opacity: 1;
+    transform: scaleX(0);
+    animation: v3-progress-grow linear both;
+    animation-timeline: scroll(root);
+  }
+
+  .v3-wave-image {
+    animation: v3-wave-image-scroll linear both;
+    animation-timeline: scroll(root);
+  }
 }
 
 @keyframes v3-card-view {
   from { opacity: .18; transform: translateY(70px) rotate(var(--start-rotate, 0deg)) scale(.94); filter: blur(4px); }
   to { opacity: 1; transform: translateY(0) rotate(var(--end-rotate, 0deg)) scale(1); filter: blur(0); }
+}
+
+@keyframes v3-flow-view {
+  from { opacity: .12; transform: translateY(92px) rotate(var(--start-rotate, 0deg)) scale(.96); filter: blur(5px); }
+  to { opacity: 1; transform: var(--point-rest); filter: blur(0); }
+}
+
+@keyframes v3-soft-rise {
+  from { opacity: .24; transform: translateY(64px) scale(.96); filter: blur(4px); }
+  to { opacity: 1; transform: var(--motion-rest, translateY(0)); filter: blur(0); }
+}
+
+@keyframes v3-orbit-breathe {
+  from { opacity: .18; transform: rotate(-18deg) scale(.74); }
+  to { opacity: 1; transform: var(--orbit-rest); }
+}
+
+@keyframes v3-progress-grow {
+  to { transform: scaleX(1); }
+}
+
+@keyframes v3-wave-image-scroll {
+  from { transform: translateY(-1%) scale(1.035); }
+  to { transform: translateY(1.4%) scale(1.07); }
+}
+
+@keyframes v3-trail-glow {
+  from { opacity: .18; filter: blur(48px); }
+  to { opacity: .42; filter: blur(34px); }
+}
+
+@keyframes v3-particle-float {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(.78); opacity: .34; }
+  35% { transform: translate3d(24px, -38px, 0) scale(1); opacity: .78; }
+  70% { transform: translate3d(-18px, 22px, 0) scale(.9); opacity: .52; }
+}
+
+@keyframes v3-hero-glow-sweep {
+  from { transform: translateX(-120%) rotate(12deg); opacity: 0; }
+  30% { opacity: .48; }
+  to { transform: translateX(160%) rotate(12deg); opacity: 0; }
 }
 
 @keyframes v3-float {
@@ -889,7 +1142,10 @@ html { scroll-behavior: smooth; }
   .v3-mini-card { width: 190px; bottom: 0; }
   .v3-floating-token.two { left: 12px; }
   .v3-free-board { display: grid; gap: 18px; min-height: auto; }
-  .v3-feature-card { position: relative; inset: auto !important; width: 100%; transform: none !important; }
+  .v3-free-board::before,
+  .v3-free-board::after { display: none; }
+  .v3-flow-point { position: relative; inset: auto !important; width: 100%; transform: none !important; }
+  .v3-flow-point.v3-reveal.is-visible { transform: none; }
   .v3-panel-stack { min-height: 480px; }
   .v3-dashboard-art { inset: 20px 0 auto; }
   .v3-floating-stat { right: 10px; width: 220px; }
@@ -922,12 +1178,15 @@ html { scroll-behavior: smooth; }
   .v3-traveler img,
   .v3-floating-token,
   .v3-journey-visual img,
-  .v3-wave {
+  .v3-wave,
+  .v3-wave-image,
+  .v3-progress {
     animation: none !important;
     transition: none !important;
     transform: none !important;
   }
   .v3-reveal { opacity: 1; }
+  .v3-progress { opacity: .45; transform: scaleX(1) !important; }
 }
 `
 
@@ -1072,38 +1331,69 @@ function useActiveScene(rootRef: RefObject<HTMLElement | null>) {
   return scene
 }
 
-function usePageMotion(rootRef: RefObject<HTMLElement | null>) {
+function usePointerGlow(rootRef: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const root = rootRef.current
     if (!root) return
 
-    let frame = 0
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduceMotion) return
 
-    const updateScroll = () => {
-      if (frame) return
-      frame = window.requestAnimationFrame(() => {
-        const max = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1)
-        const progress = Math.min(Math.max(window.scrollY / max, 0), 1)
-        root.style.setProperty('--progress', progress.toFixed(4))
-        frame = 0
-      })
+    let frame = 0
+    let nextX = 0.5
+    let nextY = 0.5
+
+    const commitPointer = () => {
+      root.style.setProperty('--mx', nextX.toFixed(4))
+      root.style.setProperty('--my', nextY.toFixed(4))
+      frame = 0
     }
 
     const updatePointer = (event: PointerEvent) => {
-      root.style.setProperty('--mx', (event.clientX / window.innerWidth).toFixed(4))
-      root.style.setProperty('--my', (event.clientY / window.innerHeight).toFixed(4))
+      nextX = event.clientX / window.innerWidth
+      nextY = event.clientY / window.innerHeight
+      if (!frame) frame = window.requestAnimationFrame(commitPointer)
     }
 
-    updateScroll()
-    window.addEventListener('scroll', updateScroll, { passive: true })
-    window.addEventListener('resize', updateScroll)
     window.addEventListener('pointermove', updatePointer, { passive: true })
 
     return () => {
       if (frame) window.cancelAnimationFrame(frame)
-      window.removeEventListener('scroll', updateScroll)
-      window.removeEventListener('resize', updateScroll)
       window.removeEventListener('pointermove', updatePointer)
+    }
+  }, [rootRef])
+}
+
+
+function useScrollMotion(rootRef: RefObject<HTMLElement | null>) {
+  useEffect(() => {
+    const root = rootRef.current
+    if (!root) return
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduceMotion) return
+
+    let frame = 0
+
+    const updateScroll = () => {
+      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight)
+      const progress = Math.min(1, Math.max(0, window.scrollY / maxScroll))
+      root.style.setProperty('--scroll', progress.toFixed(4))
+      frame = 0
+    }
+
+    const requestUpdate = () => {
+      if (!frame) frame = window.requestAnimationFrame(updateScroll)
+    }
+
+    updateScroll()
+    window.addEventListener('scroll', requestUpdate, { passive: true })
+    window.addEventListener('resize', requestUpdate)
+
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame)
+      window.removeEventListener('scroll', requestUpdate)
+      window.removeEventListener('resize', requestUpdate)
     }
   }, [rootRef])
 }
@@ -1111,9 +1401,18 @@ function usePageMotion(rootRef: RefObject<HTMLElement | null>) {
 function AmbientBackground() {
   return (
     <div className="v3-ambient" aria-hidden="true">
+      <img className="v3-wave-image" src={waveBackground} alt="" />
       <div className="v3-wave one" />
       <div className="v3-wave two" />
       <div className="v3-wave three" />
+      <div className="v3-light-trail trail-1" />
+      <div className="v3-light-trail trail-2" />
+      <div className="v3-light-trail trail-3" />
+      <span className="v3-particle p1" />
+      <span className="v3-particle p2" />
+      <span className="v3-particle p3" />
+      <span className="v3-particle p4" />
+      <span className="v3-particle p5" />
     </div>
   )
 }
@@ -1212,7 +1511,8 @@ export function LandingPage() {
 
   useLandingSeo(SITE_SEO)
   useRevealOnScroll(pageRef)
-  usePageMotion(pageRef)
+  usePointerGlow(pageRef)
+  useScrollMotion(pageRef)
 
   const goLogin = () => navigate('/login')
 
@@ -1226,7 +1526,7 @@ export function LandingPage() {
         <img src={orbImage} alt="" />
       </div>
 
-      <header className="v3-nav" aria-label="Điều hướng landing page">
+      <header className="v3-nav" aria-label="Điều hướng trang chủ VNDC">
         <div className="v3-progress" aria-hidden="true" />
         <div className="v3-shell v3-nav-row">
           <a className="v3-brand" href="#top" aria-label="Trang chủ VNDC">
@@ -1241,9 +1541,9 @@ export function LandingPage() {
           </nav>
 
           <div className="v3-nav-actions">
-            <a className="v3-text-link" href="#stories"><SearchOutlined /> Tìm hiểu</a>
+            <a className="v3-text-link" href="#stories"><SearchOutlined /> Khám phá</a>
             <Button className="v3-secondary" icon={<LoginOutlined />} onClick={goLogin}>Đăng nhập</Button>
-            <Button className="v3-primary" onClick={goLogin}>Đăng ký</Button>
+            <Button className="v3-primary" onClick={goLogin}>Tham gia beta</Button>
           </div>
         </div>
       </header>
@@ -1251,29 +1551,29 @@ export function LandingPage() {
       <section id="top" className="v3-hero v3-section" data-scene="hero">
         <div className="v3-shell v3-hero-grid">
           <div className="v3-reveal">
-            <div className="v3-kicker"><ThunderboltOutlined /> campus reward network</div>
+            <div className="v3-kicker"><ThunderboltOutlined /> VNDC CAMPUS PLATFORM</div>
             <h1 className="v3-hero-title">
-              Kết nối sinh viên bằng <span className="v3-gradient-text">học tập có thưởng.</span>
+              Hệ sinh thái token cho <span className="v3-gradient-text">campus hiện đại.</span>
             </h1>
             <p className="v3-hero-copy">
-              Landing được thiết kế lại theo hướng tự do hơn: nền sóng màu xuyên suốt, visual trừu tượng tự tạo, thẻ nổi chuyển động khi cuộn và câu chuyện đi từ kết nối đến phần thưởng số.
+              VNDC biến hoạt động sinh viên thành một trải nghiệm số liền mạch: tham gia nhiệm vụ, nhận token, sở hữu huy hiệu, dùng marketplace và cùng biểu quyết cho cộng đồng.
             </p>
             <div className="v3-hero-actions">
               <Button className="v3-primary" size="large" onClick={goLogin}>
-                Vào hệ sinh thái <ArrowRightOutlined />
+                Trải nghiệm VNDC <ArrowRightOutlined />
               </Button>
               <Button className="v3-secondary" size="large" href="#journey">
-                Xem hành trình
+                Xem cách vận hành
               </Button>
             </div>
             <div className="v3-proof-row" aria-label="Điểm nổi bật">
-              <span className="v3-proof-pill">Kết nối campus</span>
-              <span className="v3-proof-pill">Mission học tập</span>
-              <span className="v3-proof-pill">Token reward</span>
+              <span className="v3-proof-pill">Hồ sơ sinh viên</span>
+              <span className="v3-proof-pill">Mission campus</span>
+              <span className="v3-proof-pill">VNDC reward</span>
             </div>
           </div>
 
-          <div className="v3-hero-visual v3-reveal" aria-label="Visual trừu tượng về học tập có thưởng">
+          <div className="v3-hero-visual v3-reveal" aria-label="Mô hình hệ sinh thái token VNDC cho campus">
             <div className="v3-orbit-board">
               <div className="v3-orbit-line" aria-hidden="true" />
               <div className="v3-floating-token one" aria-hidden="true"><StarFilled /></div>
@@ -1285,8 +1585,8 @@ export function LandingPage() {
                 <img src={heroImage} alt="" />
               </figure>
               <div className="v3-mini-card">
-                <strong>+42%</strong>
-                <span>tương tác học tập được ghi nhận rõ hơn</span>
+                <strong>VNDC</strong>
+                <span>nơi hoạt động sinh viên được ghi nhận bằng giá trị số</span>
               </div>
             </div>
           </div>
@@ -1297,27 +1597,31 @@ export function LandingPage() {
         <div className="v3-shell">
           <div className="v3-section-head">
             <div>
-              <h2 id="products-title" className="v3-section-title v3-reveal">Không xếp card cứng nữa, mỗi khối là một mảnh của campus.</h2>
+              <h2 id="products-title" className="v3-section-title v3-reveal">Một sản phẩm cho toàn bộ vòng đời hoạt động sinh viên.</h2>
               <p className="v3-section-copy v3-reveal">
-                Các card được bố trí tự do, có góc xoay nhẹ, hover nâng khối và hiệu ứng xuất hiện theo cuộn để trang sống động hơn.
+                VNDC không chỉ là ví token. Đây là lớp sản phẩm kết nối danh tính sinh viên, nhiệm vụ học tập, sự kiện, phần thưởng, marketplace và quản trị cộng đồng.
               </p>
             </div>
             <div className="v3-pill-row v3-reveal" aria-label="Hệ sinh thái">
-              <span className="v3-pill">Chat</span>
-              <span className="v3-pill">Learning</span>
+              <span className="v3-pill">Profile</span>
+              <span className="v3-pill">Mission</span>
               <span className="v3-pill">Wallet</span>
               <span className="v3-pill">DAO</span>
             </div>
           </div>
 
           <div className="v3-free-board">
-            {featureCards.map((item) => (
-              <article key={item.title} className="v3-feature-card v3-reveal v3-scroll-card" data-tone={item.tone}>
-                <div className="v3-card-icon" aria-hidden="true">{item.icon}</div>
-                <h3>{item.title}</h3>
-                <span className="v3-eyebrow">{item.eyebrow}</span>
-                <p>{item.text}</p>
-                <Button className="v3-ghost">{item.action}</Button>
+            {ecosystemPoints.map((item) => (
+              <article key={item.title} className="v3-flow-point v3-reveal" data-tone={item.tone}>
+                <div className="v3-flow-icon" aria-hidden="true">{item.icon}</div>
+                <div>
+                  <h3>{item.title}</h3>
+                  <span className="v3-eyebrow">{item.eyebrow}</span>
+                  <p>{item.text}</p>
+                  <button className="v3-flow-link" type="button" onClick={goLogin}>
+                    {item.action} <ArrowRightOutlined />
+                  </button>
+                </div>
               </article>
             ))}
           </div>
@@ -1327,14 +1631,14 @@ export function LandingPage() {
       <section className="v3-section" data-scene="insight" aria-labelledby="insight-title">
         <div className="v3-shell v3-insight-grid">
           <div className="v3-reveal">
-            <div className="v3-kicker"><FundProjectionScreenOutlined /> dashboard chuyển động</div>
+            <div className="v3-kicker"><FundProjectionScreenOutlined /> product operating layer</div>
             <h2 id="insight-title" className="v3-section-title" style={{ marginTop: 18 }}>
-              Một dashboard không chỉ hiển thị số, mà kể được lý do vì sao sinh viên được thưởng.
+              Từ dữ liệu tham gia đến phần thưởng, mọi giá trị đều có ngữ cảnh.
             </h2>
             <p className="v3-section-copy">
-              Visual dashboard được dựng bằng SVG ngay trong component: đường tiến bộ, node phần thưởng và các lớp glass giúp trang không phụ thuộc hoàn toàn vào ảnh tĩnh.
+              Mỗi token VNDC được gắn với hoạt động cụ thể: ai tham gia, hoàn thành điều gì, nhận thưởng khi nào và có thể sử dụng trong phần nào của hệ sinh thái.
             </p>
-            <Button className="v3-primary" style={{ marginTop: 24 }}>Khám phá VNDC Hub</Button>
+            <Button className="v3-primary" style={{ marginTop: 24 }}>Mở bảng điều khiển</Button>
           </div>
 
           <div className="v3-panel-stack v3-reveal">
@@ -1342,8 +1646,8 @@ export function LandingPage() {
               <div className="v3-dashboard-inner"><DashboardVisual /></div>
             </div>
             <div className="v3-floating-stat v3-glass-panel">
-              <strong>86%</strong>
-              <span>luồng hoạt động campus dễ theo dõi hơn khi mọi nhiệm vụ có trạng thái rõ ràng.</span>
+              <strong>1 hệ sinh thái</strong>
+              <span>cho phép học tập, sự kiện, phần thưởng và quản trị cộng đồng vận hành trên cùng một nền tảng.</span>
             </div>
           </div>
         </div>
@@ -1352,20 +1656,20 @@ export function LandingPage() {
       <section id="journey" className="v3-section" data-scene="journey" aria-labelledby="journey-title">
         <div className="v3-shell v3-journey">
           <aside className="v3-glass-panel v3-journey-sticky v3-reveal">
-            <div className="v3-kicker"><ReadOutlined /> hiệu ứng khi cuộn</div>
-            <h2 id="journey-title" className="v3-section-title" style={{ marginTop: 18 }}>Cuộn tới đâu, câu chuyện đổi nhịp tới đó.</h2>
+            <div className="v3-kicker"><ReadOutlined /> student experience</div>
+            <h2 id="journey-title" className="v3-section-title" style={{ marginTop: 18 }}>Từ lần đăng nhập đầu tiên đến khi trở thành thành viên đóng góp.</h2>
             <div className="v3-journey-visual" aria-hidden="true">
               <div className="v3-journey-ring" />
               <img src={orbImage} alt="" />
             </div>
             <p className="v3-journey-caption">
-              Vật thể logo nổi ở cạnh trang sẽ đổi vị trí theo từng scene, còn các step bên phải xuất hiện như từng lớp hành trình.
+              Sinh viên không cần hiểu phức tạp về blockchain. VNDC đặt công nghệ phía sau một trải nghiệm quen thuộc: làm nhiệm vụ, nhận thưởng, dùng quyền lợi và tham gia cộng đồng.
             </p>
           </aside>
 
           <div className="v3-step-list">
             {journeySteps.map((step) => (
-              <article key={step.scene} className="v3-glass-panel v3-step v3-reveal v3-scroll-card" data-scene={step.scene}>
+              <article key={step.scene} className="v3-step v3-reveal v3-scroll-card" data-scene={step.scene}>
                 <div className="v3-step-head">
                   <span className="v3-step-num">{step.label}</span>
                   <span className="v3-step-icon" aria-hidden="true">{step.icon}</span>
@@ -1381,19 +1685,19 @@ export function LandingPage() {
 
       <section id="stories" className="v3-section v3-story" data-scene="stories" aria-labelledby="stories-title">
         <div className="v3-shell">
-          <h2 id="stories-title" className="v3-section-title v3-reveal">Một landing có cảm giác như sản phẩm thật, không chỉ là trang giới thiệu.</h2>
+          <h2 id="stories-title" className="v3-section-title v3-reveal">VNDC tạo động lực cho cộng đồng học tập năng động hơn.</h2>
           <div className="v3-stars v3-reveal" aria-hidden="true">
             <StarFilled /><StarFilled /><StarFilled /><StarFilled /><StarFilled />
           </div>
-          <div className="v3-rating v3-reveal">Từ kết nối đến phần thưởng, mọi thứ nằm trong một mạch kể chuyện.</div>
+          <div className="v3-rating v3-reveal">Thiết kế cho sinh viên, câu lạc bộ, sự kiện và những chương trình cần ghi nhận đóng góp rõ ràng.</div>
           <p className="v3-section-copy v3-reveal" style={{ marginInline: 'auto' }}>
-            Phần câu chuyện giữ video card lớn, card nhận xét dạng glass và hiệu ứng tilt nhẹ để trang có chiều sâu hơn khi cuộn.
+            Khi thành tích được nhìn thấy và có thể sử dụng, sinh viên có thêm lý do để tham gia. Khi dữ liệu được kết nối, nhà trường và CLB vận hành cộng đồng dễ hơn.
           </p>
 
           <figure className="v3-video v3-reveal">
             <img src={storyImage} alt="Nhóm sinh viên VNDC đang lập kế hoạch cho một sự kiện trong phòng workshop" />
             <div className="v3-play" aria-hidden="true"><PlayCircleFilled /></div>
-            <figcaption className="v3-video-caption">Xem cách VNDC biến hoạt động campus thành động lực có thể nhìn thấy.</figcaption>
+            <figcaption className="v3-video-caption">Một campus nơi mỗi workshop, nhiệm vụ và sự kiện đều tạo ra giá trị số cho người tham gia.</figcaption>
           </figure>
 
           <div className="v3-quote-grid">
@@ -1411,13 +1715,13 @@ export function LandingPage() {
       <section id="network" className="v3-section" data-scene="network" aria-labelledby="network-title">
         <div className="v3-shell">
           <div className="v3-network-head">
-            <h2 id="network-title" className="v3-section-title v3-reveal">Sinh viên phát triển tốt hơn khi các hệ thống hỗ trợ được kết nối.</h2>
+            <h2 id="network-title" className="v3-section-title v3-reveal">Tất cả thành phần của campus cùng vận hành trong một mạng lưới mở.</h2>
             <p className="v3-section-copy v3-reveal">
-              Network map mô phỏng campus như một chòm sao: mỗi node là một phần của hệ sinh thái, còn trung tâm là luồng giá trị chung.
+              Từ hồ sơ cá nhân đến ví thưởng, từ sự kiện đến marketplace, VNDC tạo một dòng chảy dữ liệu và giá trị thống nhất cho cộng đồng sinh viên.
             </p>
           </div>
 
-          <div className="v3-network-map v3-reveal" aria-label="Mạng lưới kết nối VNDC">
+          <div className="v3-network-map v3-reveal" aria-label="Hệ sinh thái kết nối VNDC">
             <div className="v3-network-line" aria-hidden="true" />
             <div className="v3-network-line two" aria-hidden="true" />
             <div className="v3-center-node" aria-hidden="true"><TeamOutlined /><span>VNDC</span></div>
@@ -1430,25 +1734,25 @@ export function LandingPage() {
             <article className="v3-network-card v3-reveal">
               <h3><CommentOutlined /> Kết nối</h3>
               <ul>
-                <li><span><CheckCircleFilled /></span> Thông báo hai chiều cho lớp học và câu lạc bộ.</li>
-                <li><span><CheckCircleFilled /></span> Phản hồi nhanh theo đúng ngữ cảnh hoạt động.</li>
-                <li><span><CheckCircleFilled /></span> Lịch sử giao tiếp rõ ràng, dễ truy lại.</li>
+                <li><span><CheckCircleFilled /></span> Hồ sơ sinh viên kết nối lớp học, câu lạc bộ và sự kiện.</li>
+                <li><span><CheckCircleFilled /></span> Thông báo và nhiệm vụ đi theo đúng bối cảnh người dùng.</li>
+                <li><span><CheckCircleFilled /></span> Dữ liệu tham gia được lưu lại để dễ theo dõi tiến độ.</li>
               </ul>
             </article>
             <article className="v3-network-card v3-reveal">
               <h3><ApartmentOutlined /> Học tập</h3>
               <ul>
-                <li><span><CheckCircleFilled /></span> Điều phối nhiệm vụ, sự kiện và workshop.</li>
-                <li><span><CheckCircleFilled /></span> Theo dõi thành viên và mức độ tham gia.</li>
-                <li><span><CheckCircleFilled /></span> Tạo hành trình học tập có dấu mốc.</li>
+                <li><span><CheckCircleFilled /></span> Tạo mission cho workshop, điểm danh, chiến dịch và dự án.</li>
+                <li><span><CheckCircleFilled /></span> Theo dõi trạng thái hoàn thành và minh chứng đóng góp.</li>
+                <li><span><CheckCircleFilled /></span> Tạo hành trình phát triển có milestone rõ ràng.</li>
               </ul>
             </article>
             <article className="v3-network-card v3-reveal">
               <h3><WalletOutlined /> Phần thưởng</h3>
               <ul>
-                <li><span><CheckCircleFilled /></span> Luồng token gắn với nhiệm vụ đã hoàn thành.</li>
-                <li><span><CheckCircleFilled /></span> Vé, huy hiệu và marketplace cùng hệ sinh thái.</li>
-                <li><span><CheckCircleFilled /></span> DAO tạo tiếng nói cộng đồng minh bạch hơn.</li>
+                <li><span><CheckCircleFilled /></span> Token VNDC gắn với hoạt động và quyền lợi cụ thể.</li>
+                <li><span><CheckCircleFilled /></span> Vé, huy hiệu, badge/NFT và marketplace hoạt động liền mạch.</li>
+                <li><span><CheckCircleFilled /></span> DAO giúp cộng đồng đề xuất và biểu quyết minh bạch hơn.</li>
               </ul>
             </article>
           </div>
@@ -1458,13 +1762,13 @@ export function LandingPage() {
       <section className="v3-section v3-final" data-scene="network" aria-labelledby="final-title">
         <div className="v3-shell">
           <div className="v3-glass-panel v3-final-panel v3-reveal">
-            <h2 id="final-title" className="v3-final-title">Một thế giới học tập có thưởng, được kể bằng chuyển động.</h2>
+            <h2 id="final-title" className="v3-final-title">Sẵn sàng đưa VNDC vào trải nghiệm campus của bạn?</h2>
             <p className="v3-final-copy">
-              Nền sóng màu chạy xuyên suốt, card nổi tự do, visual SVG tự tạo và scene thay đổi theo cuộn giúp LandingPage có cảm giác sản phẩm hơn.
+              Khởi động với hồ sơ sinh viên và mission học tập, sau đó mở rộng sang ví thưởng, marketplace, badge/NFT và DAO theo đúng nhu cầu của cộng đồng.
             </p>
             <div className="v3-hero-actions" style={{ justifyContent: 'center' }}>
-              <Button className="v3-primary" size="large" onClick={goLogin}>Bắt đầu ngay</Button>
-              <Button className="v3-secondary" size="large" href="#products">Xem hệ sinh thái</Button>
+              <Button className="v3-primary" size="large" onClick={goLogin}>Vào sản phẩm</Button>
+              <Button className="v3-secondary" size="large" href="#products">Khám phá hệ sinh thái</Button>
             </div>
           </div>
         </div>
@@ -1487,9 +1791,9 @@ export function LandingPage() {
           <div className="v3-footer-cols">
             <div className="v3-footer-col">
               <h4>Sản phẩm</h4>
-              <a href="#products">Campus Social</a>
-              <a href="#products">Learning Missions</a>
-              <a href="#products">Reward Wallet</a>
+              <a href="#products">Hồ sơ sinh viên</a>
+              <a href="#products">Mission học tập</a>
+              <a href="#products">Ví VNDC</a>
             </div>
             <div className="v3-footer-col">
               <h4>Dành cho ai</h4>
@@ -1499,15 +1803,15 @@ export function LandingPage() {
             </div>
             <div className="v3-footer-col">
               <h4>Tài nguyên</h4>
-              <a href="#journey">Hành trình</a>
-              <a href="#stories">Câu chuyện</a>
-              <a href="#network">Mạng lưới</a>
+              <a href="#journey">Trải nghiệm</a>
+              <a href="#stories">Giá trị</a>
+              <a href="#network">Hệ sinh thái</a>
             </div>
             <div className="v3-footer-col">
-              <h4>Công ty</h4>
-              <span>Campus network</span>
-              <span>Tin cậy và an toàn</span>
-              <span>Điều khoản và riêng tư</span>
+              <h4>Nền tảng</h4>
+              <span>Hệ sinh thái campus</span>
+              <span>Blockchain minh bạch</span>
+              <span>Quyền riêng tư người dùng</span>
             </div>
           </div>
         </div>
