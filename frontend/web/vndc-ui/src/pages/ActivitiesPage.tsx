@@ -1352,7 +1352,7 @@ export function ActivitiesPage({ user }: ActivitiesPageProps) {
       children: (
         <Spin spinning={loading}>
           {/* Stats */}
-          {(myRecords.length > 0 || visibleMyEnrollments.length > 0) && (
+          {/* {(myRecords.length > 0 || visibleMyEnrollments.length > 0) && (
             <Card className="act-progress-summary act-glass-card" style={{ borderRadius: 20, marginBottom: 20, border: 'none', background: GRADIENT.cardMy, boxShadow: '0 4px 20px rgba(79,70,229,.08)' }} styles={{ body: { padding: '20px 24px' } }}>
               <Row gutter={[16, 12]}>
                 {[
@@ -1370,7 +1370,7 @@ export function ActivitiesPage({ user }: ActivitiesPageProps) {
                 ))}
               </Row>
             </Card>
-          )}
+          )} */}
 
           {/* Learning completions */}
           {myRecords.length > 0 && (

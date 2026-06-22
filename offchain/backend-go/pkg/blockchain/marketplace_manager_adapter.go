@@ -20,10 +20,10 @@ import (
 )
 
 const marketplaceManagerABI = `[
-	{"type":"function","name":"list","inputs":[{"internalType":"bytes32","name":"listingId","type":"bytes32"},{"internalType":"address","name":"seller","type":"address"},{"internalType":"address","name":"nftContract","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"address","name":"paymentToken","type":"address"},{"internalType":"uint256","name":"price","type":"uint256"}],"outputs":[],"stateMutability":"nonpayable"},
-	{"type":"function","name":"updatePrice","inputs":[{"internalType":"bytes32","name":"listingId","type":"bytes32"},{"internalType":"uint256","name":"newPrice","type":"uint256"}],"outputs":[],"stateMutability":"nonpayable"},
-	{"type":"function","name":"cancel","inputs":[{"internalType":"bytes32","name":"listingId","type":"bytes32"}],"outputs":[],"stateMutability":"nonpayable"},
-	{"type":"function","name":"buyFor","inputs":[{"internalType":"bytes32","name":"listingId","type":"bytes32"},{"internalType":"address","name":"buyer","type":"address"}],"outputs":[],"stateMutability":"nonpayable"}
+	{"type":"function","name":"createListing","inputs":[{"internalType":"bytes32","name":"listingId","type":"bytes32"},{"internalType":"address","name":"seller","type":"address"},{"internalType":"address","name":"nftContract","type":"address"},{"internalType":"address","name":"paymentToken","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"uint256","name":"price","type":"uint256"}],"outputs":[],"stateMutability":"nonpayable"},
+	{"type":"function","name":"updateListingPrice","inputs":[{"internalType":"bytes32","name":"listingId","type":"bytes32"},{"internalType":"uint256","name":"newPrice","type":"uint256"}],"outputs":[],"stateMutability":"nonpayable"},
+	{"type":"function","name":"cancelListing","inputs":[{"internalType":"bytes32","name":"listingId","type":"bytes32"}],"outputs":[],"stateMutability":"nonpayable"},
+	{"type":"function","name":"finalizeSale","inputs":[{"internalType":"bytes32","name":"listingId","type":"bytes32"},{"internalType":"bytes32","name":"purchaseId","type":"bytes32"},{"internalType":"address","name":"buyer","type":"address"},{"internalType":"bytes32","name":"paymentTxHash","type":"bytes32"}],"outputs":[],"stateMutability":"nonpayable"}
 ]`
 
 type MarketplaceManagerAdapter struct {
@@ -74,7 +74,6 @@ var _ ports.MarketplaceContractPort = (*MarketplaceManagerAdapter)(nil)
 func (a *MarketplaceManagerAdapter) Address() string { return a.contractAddr.Hex() }
 
 func (a *MarketplaceManagerAdapter) CreateListing(ctx context.Context, listingID, seller, nftContract, paymentToken, tokenID, amount, price string) (string, error) {
-	_ = amount
 	listingID32, err := hexToBytes32(listingID)
 	if err != nil {
 		return "", fmt.Errorf("CreateListing: invalid listing id: %w", err)
@@ -82,25 +81,36 @@ func (a *MarketplaceManagerAdapter) CreateListing(ctx context.Context, listingID
 	if !common.IsHexAddress(seller) {
 		return "", apperr.New(apperr.ErrCodeBadRequest, "CreateListing: invalid seller")
 	}
+	if !common.IsHexAddress(nftContract) {
+		return "", apperr.New(apperr.ErrCodeBadRequest, "CreateListing: invalid nft contract")
+	}
+	if !common.IsHexAddress(paymentToken) {
+		return "", apperr.New(apperr.ErrCodeBadRequest, "CreateListing: invalid payment token")
+	}
 	tokenIDBig, ok := new(big.Int).SetString(tokenID, 10)
 	if !ok || tokenIDBig.Sign() < 0 {
 		return "", apperr.New(apperr.ErrCodeBadRequest, "CreateListing: invalid token id")
+	}
+	amountBig, ok := new(big.Int).SetString(amount, 10)
+	if !ok || amountBig.Sign() <= 0 {
+		return "", apperr.New(apperr.ErrCodeBadRequest, "CreateListing: invalid amount")
 	}
 	priceBig, ok := new(big.Int).SetString(price, 10)
 	if !ok || priceBig.Sign() < 0 {
 		return "", apperr.New(apperr.ErrCodeBadRequest, "CreateListing: invalid price")
 	}
 	callData, err := a.abi.Pack(
-		"list",
+		"createListing",
 		listingID32,
 		common.HexToAddress(seller),
 		common.HexToAddress(nftContract),
-		tokenIDBig,
 		common.HexToAddress(paymentToken),
+		tokenIDBig,
+		amountBig,
 		priceBig,
 	)
 	if err != nil {
-		return "", apperr.Wrap(apperr.ErrCodeBlockchain, "pack list failed", err)
+		return "", apperr.Wrap(apperr.ErrCodeBlockchain, "pack createListing failed", err)
 	}
 	return a.sendTx(ctx, callData)
 }
@@ -114,9 +124,9 @@ func (a *MarketplaceManagerAdapter) UpdateListingPrice(ctx context.Context, list
 	if !ok || priceBig.Sign() <= 0 {
 		return "", apperr.New(apperr.ErrCodeBadRequest, "UpdateListingPrice: invalid price")
 	}
-	callData, err := a.abi.Pack("updatePrice", listingID32, priceBig)
+	callData, err := a.abi.Pack("updateListingPrice", listingID32, priceBig)
 	if err != nil {
-		return "", apperr.Wrap(apperr.ErrCodeBlockchain, "pack updatePrice failed", err)
+		return "", apperr.Wrap(apperr.ErrCodeBlockchain, "pack updateListingPrice failed", err)
 	}
 	return a.sendTx(ctx, callData)
 }
@@ -126,23 +136,32 @@ func (a *MarketplaceManagerAdapter) CancelListing(ctx context.Context, listingID
 	if err != nil {
 		return "", fmt.Errorf("CancelListing: invalid listing id: %w", err)
 	}
-	callData, err := a.abi.Pack("cancel", listingID32)
+	callData, err := a.abi.Pack("cancelListing", listingID32)
 	if err != nil {
-		return "", apperr.Wrap(apperr.ErrCodeBlockchain, "pack cancel failed", err)
+		return "", apperr.Wrap(apperr.ErrCodeBlockchain, "pack cancelListing failed", err)
 	}
 	return a.sendTx(ctx, callData)
 }
 
 func (a *MarketplaceManagerAdapter) FinalizeSale(ctx context.Context, listingID, purchaseID, buyer, paymentTxHash string) (string, error) {
-	_ = purchaseID
-	_ = paymentTxHash
 	listingID32, err := hexToBytes32(listingID)
 	if err != nil {
 		return "", fmt.Errorf("FinalizeSale: invalid listing id: %w", err)
 	}
-	callData, err := a.abi.Pack("buyFor", listingID32, common.HexToAddress(buyer))
+	purchaseID32, err := hexToBytes32(purchaseID)
 	if err != nil {
-		return "", apperr.Wrap(apperr.ErrCodeBlockchain, "pack buyFor failed", err)
+		return "", fmt.Errorf("FinalizeSale: invalid purchase id: %w", err)
+	}
+	paymentTxHash32, err := hexToBytes32(paymentTxHash)
+	if err != nil {
+		return "", fmt.Errorf("FinalizeSale: invalid payment tx hash: %w", err)
+	}
+	if !common.IsHexAddress(buyer) {
+		return "", apperr.New(apperr.ErrCodeBadRequest, "FinalizeSale: invalid buyer")
+	}
+	callData, err := a.abi.Pack("finalizeSale", listingID32, purchaseID32, common.HexToAddress(buyer), paymentTxHash32)
+	if err != nil {
+		return "", apperr.Wrap(apperr.ErrCodeBlockchain, "pack finalizeSale failed", err)
 	}
 	return a.sendTx(ctx, callData)
 }

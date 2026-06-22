@@ -11,6 +11,13 @@ export class JsonRpcProvider {
   getBalance(address: string): Promise<bigint>
 }
 
+export class BrowserProvider {
+  constructor(provider?: unknown)
+  getSigner(): Promise<{
+    getAddress(): Promise<string>
+  }>
+}
+
 export class Contract {
   constructor(address: string, abi: readonly string[], runner?: unknown)
   [method: string]: any

@@ -13,6 +13,7 @@ import (
 	transactionapp "github.com/vndc/backend/internal/application/transaction"
 	"github.com/vndc/backend/internal/domain"
 	"github.com/vndc/backend/internal/ports"
+	"github.com/vndc/backend/pkg/blockchain"
 	"github.com/vndc/backend/pkg/database"
 	apperr "github.com/vndc/backend/pkg/errors"
 	"github.com/vndc/backend/pkg/logger"
@@ -136,6 +137,17 @@ func (s *Service) CreateListing(ctx context.Context, req *CreateListingRequest, 
 
 	// Non-NFT products are fully off-chain. Only NFT listings are mirrored on-chain.
 	if isNFTListing && s.market != nil && nftContract != "" {
+		if strings.TrimSpace(req.ApprovalSignature) != "" && s.erc721 != nil {
+			sigBytes, err := blockchain.HexToBytes(req.ApprovalSignature)
+			if err != nil {
+				_ = s.listingRepo.Delete(ctx, listing.ID)
+				return nil, apperr.New(apperr.ErrCodeInvalidSignature, "invalid nft approval signature")
+			}
+			if _, err := s.erc721.ApproveWithSignature(ctx, seller, s.market.Address(), listing.TokenID, req.ApprovalDeadline, sigBytes); err != nil {
+				_ = s.listingRepo.Delete(ctx, listing.ID)
+				return nil, apperr.Wrap(apperr.ErrCodeBlockchain, "approve marketplace escrow with signature failed", err)
+			}
+		}
 		txHash, err := s.market.CreateListing(ctx, listing.OnchainListingID, seller, nftContract, paymentToken, listing.TokenID, listing.Amount, listing.Price)
 		if err != nil {
 			_ = s.listingRepo.Delete(ctx, listing.ID)
@@ -143,6 +155,11 @@ func (s *Service) CreateListing(ctx context.Context, req *CreateListingRequest, 
 		}
 		listing.EscrowTxHash = txHash
 		if err := s.listingRepo.Update(ctx, listing); err != nil {
+			return nil, err
+		}
+	}
+	if isNFTListing {
+		if err := s.retirePreviousNFTListings(ctx, nftContract, listing.TokenID, listing.ID); err != nil {
 			return nil, err
 		}
 	}
@@ -926,6 +943,42 @@ func (s *Service) hasPendingPurchase(ctx context.Context, listingID string) (boo
 		}
 	}
 	return false, nil
+}
+
+// retirePreviousNFTListings keeps one marketplace row authoritative for a token.
+// Purchase history remains intact through MarketplacePurchase records, while stale listing rows stop surfacing as sellable entries.
+func (s *Service) retirePreviousNFTListings(ctx context.Context, nftContract, tokenID, keepID string) error {
+	tokenID = strings.TrimSpace(tokenID)
+	if tokenID == "" {
+		return nil
+	}
+	opts := []database.QueryOption{
+		database.WithEq("category", "nft"),
+		database.WithEq("token_id", tokenID),
+		database.WithIn("status", []string{string(domain.MarketplaceListingActive), string(domain.MarketplaceListingSold)}),
+		database.WithLimit(100),
+	}
+	if normalizedContract := normalizeWallet(nftContract); normalizedContract != "" {
+		opts = append(opts, database.WithEq("nft_contract_address", normalizedContract))
+	}
+	listings, _, err := s.listingRepo.Find(ctx, opts...)
+	if err != nil {
+		return err
+	}
+	for _, previous := range listings {
+		if previous == nil || previous.ID == keepID {
+			continue
+		}
+		previous.Status = domain.MarketplaceListingCancelled
+		previous.BuyerWallet = ""
+		if previous.CancelTxHash == "" {
+			previous.CancelTxHash = "relisted"
+		}
+		if err := s.listingRepo.Update(ctx, previous); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // buildListingListOptions translates listing filters and pagination settings into repository query options.

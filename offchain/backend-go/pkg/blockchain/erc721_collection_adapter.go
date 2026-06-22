@@ -22,6 +22,7 @@ import (
 const erc721CollectionABI = `[
   {"type":"function","name":"mint","inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"string","name":"tokenURI_","type":"string"}],"outputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"stateMutability":"nonpayable"},
 	{"type":"function","name":"approve","inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"outputs":[],"stateMutability":"nonpayable"},
+	{"type":"function","name":"approveWithSignature","inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"uint256","name":"deadline","type":"uint256"},{"internalType":"bytes","name":"signature","type":"bytes"}],"outputs":[],"stateMutability":"nonpayable"},
   {"type":"event","name":"NFTMinted","inputs":[{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"},{"indexed":false,"internalType":"string","name":"tokenURI","type":"string"}],"anonymous":false}
 ]`
 
@@ -119,6 +120,42 @@ func (a *ERC721CollectionAdapter) Approve(ctx context.Context, spender, tokenID 
 	callData, err := a.abi.Pack("approve", common.HexToAddress(spender), tokenIDBig)
 	if err != nil {
 		return "", apperr.Wrap(apperr.ErrCodeBlockchain, "pack approve failed", err)
+	}
+	txHash, _, err := a.sendTxWithReceipt(ctx, callData)
+	if err != nil {
+		return txHash, err
+	}
+	return txHash, nil
+}
+
+func (a *ERC721CollectionAdapter) ApproveWithSignature(ctx context.Context, owner, spender, tokenID string, deadline int64, signature []byte) (string, error) {
+	if !common.IsHexAddress(owner) {
+		return "", apperr.New(apperr.ErrCodeBadRequest, "ApproveWithSignature: invalid owner")
+	}
+	if !common.IsHexAddress(spender) {
+		return "", apperr.New(apperr.ErrCodeBadRequest, "ApproveWithSignature: invalid spender")
+	}
+	tokenIDBig, ok := new(big.Int).SetString(strings.TrimSpace(tokenID), 10)
+	if !ok || tokenIDBig.Sign() < 0 {
+		return "", apperr.New(apperr.ErrCodeBadRequest, "ApproveWithSignature: invalid token id")
+	}
+	if deadline <= 0 {
+		return "", apperr.New(apperr.ErrCodeBadRequest, "ApproveWithSignature: invalid deadline")
+	}
+	if len(signature) != 65 {
+		return "", apperr.New(apperr.ErrCodeBadRequest, "ApproveWithSignature: invalid signature")
+	}
+
+	callData, err := a.abi.Pack(
+		"approveWithSignature",
+		common.HexToAddress(owner),
+		common.HexToAddress(spender),
+		tokenIDBig,
+		big.NewInt(deadline),
+		signature,
+	)
+	if err != nil {
+		return "", apperr.Wrap(apperr.ErrCodeBlockchain, "pack approveWithSignature failed", err)
 	}
 	txHash, _, err := a.sendTxWithReceipt(ctx, callData)
 	if err != nil {

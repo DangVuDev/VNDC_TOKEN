@@ -12,6 +12,8 @@ type CreateListingRequest struct {
 	Price               string `json:"price" binding:"required"`
 	RoyaltyPercentage   int    `json:"royalty_percentage"`
 	Category            string `json:"category"`
+	ApprovalDeadline    int64  `json:"approval_deadline"`
+	ApprovalSignature   string `json:"approval_signature"`
 }
 
 type MintAndListNFTRequest struct {

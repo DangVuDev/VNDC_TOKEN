@@ -24,6 +24,7 @@ import {
   message as antMessage,
 } from 'antd'
 import type { TabsProps } from 'antd'
+import { BrowserProvider, Contract } from 'ethers'
 import {
   AppstoreOutlined,
   BarChartOutlined,
@@ -48,6 +49,7 @@ import {
   getNonce,
   getSellerOrders,
   getShopProfile,
+  listNFT,
   mintAndListNFT,
   toWei,
   updateListingPrice,
@@ -68,6 +70,11 @@ interface MarketplacePageProps { user?: AuthUser }
 type VotePayMethod = 'TOKEN' | 'COD'
 
 type SellerOrderStatus = 'RECEIVED' | 'PACKED' | 'SHIPPING' | 'DELIVERED'
+
+const ERC721_RESALE_ABI = [
+  'function ownerOf(uint256 tokenId) view returns (address)',
+  'function nonces(address owner) view returns (uint256)',
+]
 
 const MARKETPLACE_STYLES = `
 .market-page {
@@ -1576,6 +1583,66 @@ function isPositiveWei(value?: string): boolean {
   }
 }
 
+async function signNFTMarketplaceApproval(tokenID: string, ownerWallet: string) {
+  if (!window.ethereum) {
+    throw new Error('Cần kết nối ví để ký uỷ quyền đăng bán NFT')
+  }
+  const activeChain = getActiveChainConfig()
+  const nftContract = getRequiredContractAddress('VNDCNFTCollection', 'NFT Collection', activeChain)
+  const marketplace = getRequiredContractAddress('MarketplaceManager', 'Marketplace Manager', activeChain)
+
+  await switchChain(activeChain.chainId)
+
+  const provider = new BrowserProvider(window.ethereum)
+  const signer = await provider.getSigner()
+  const signerAddress = await signer.getAddress()
+  if (signerAddress.toLowerCase() !== ownerWallet.toLowerCase()) {
+    throw new Error('Ví đang kết nối không phải owner của NFT này')
+  }
+
+  const nft = new Contract(nftContract, ERC721_RESALE_ABI, signer)
+  const owner = String(await nft.ownerOf(tokenID))
+  if (owner.toLowerCase() !== ownerWallet.toLowerCase()) {
+    throw new Error('NFT này không còn thuộc ví của bạn trên blockchain')
+  }
+
+  const nonce = String(await nft.nonces(ownerWallet))
+  const deadline = Math.floor(Date.now() / 1000) + 3600
+  const typedData = {
+    domain: {
+      name: 'VNDC NFT Shop',
+      version: '1',
+      chainId: activeChain.chainId,
+      verifyingContract: nftContract,
+    },
+    primaryType: 'NFTApproval',
+    types: {
+      EIP712Domain: [
+        { name: 'name', type: 'string' },
+        { name: 'version', type: 'string' },
+        { name: 'chainId', type: 'uint256' },
+        { name: 'verifyingContract', type: 'address' },
+      ],
+      NFTApproval: [
+        { name: 'owner', type: 'address' },
+        { name: 'spender', type: 'address' },
+        { name: 'tokenId', type: 'uint256' },
+        { name: 'nonce', type: 'uint256' },
+        { name: 'deadline', type: 'uint256' },
+      ],
+    },
+    message: {
+      owner: ownerWallet,
+      spender: marketplace,
+      tokenId: tokenID,
+      nonce,
+      deadline,
+    },
+  }
+  const signature = await signTypedData(undefined, ownerWallet, typedData)
+  return { deadline, signature }
+}
+
 function shortAddr(addr?: string): string {
   if (!addr) return '---'
   return `${addr.slice(0, 6)}...${addr.slice(-4)}`
@@ -1938,7 +2005,7 @@ function BrowseTab({ user, onOrderPlaced }: { user?: AuthUser; onOrderPlaced: ()
     try {
       const [profile, listingRes] = await Promise.all([
         getShopProfile(item.seller_wallet),
-        getMyListings(item.seller_wallet, 1, 12),
+        getMyListings(item.seller_wallet, 1, 12, 'ACTIVE'),
       ])
       setShopProfile(profile)
       setShopListings(listingRes.items)
@@ -2038,7 +2105,7 @@ function NFTShopTab({ user }: { user?: AuthUser }) {
   const loadAll = useCallback(async () => {
     setLoadingAll(true)
     try {
-      const res = await getListings(1, 80, '')
+      const res = await getListings(1, 80, 'ACTIVE')
       setAllListings((res.items || []).filter(item => (item.category || '').toLowerCase() === 'nft'))
     } catch {
       antMessage.error('Không thể tải sàn NFT')
@@ -2057,7 +2124,7 @@ function NFTShopTab({ user }: { user?: AuthUser }) {
     try {
       const [nftRes, listingRes] = await Promise.allSettled([
         getMyNFTs(wallet, 1, 80),
-        getMyListings(wallet, 1, 200),
+        getMyListings(wallet, 1, 200, 'ACTIVE'),
       ])
       if (nftRes.status === 'fulfilled') {
         setMineNFTs(nftRes.value.items || [])
@@ -2164,10 +2231,6 @@ function NFTShopTab({ user }: { user?: AuthUser }) {
       antMessage.error('Nhập giá bán NFT')
       return
     }
-    if (!draftListing) {
-      antMessage.error('Không tìm thấy listing nháp cho NFT này để đăng bán')
-      return
-    }
     try {
       const priceWei = toWei(priceInput)
       if (BigInt(priceWei) <= 0n) {
@@ -2175,7 +2238,26 @@ function NFTShopTab({ user }: { user?: AuthUser }) {
         return
       }
       setSellingTokenId(tokenID)
-      await updateListingPrice(draftListing.id, priceWei)
+      if (draftListing) {
+        await updateListingPrice(draftListing.id, priceWei)
+      } else {
+        const approval = await signNFTMarketplaceApproval(tokenID, nft.owner)
+        const activeChain = getActiveChainConfig()
+        await listNFT({
+          title: nft.name || `NFT #${tokenID || '0'}`,
+          description: nft.description,
+          image_uri: nft.image_uri,
+          metadata_uri: nft.metadata_uri || nft.image_uri,
+          nft_contract_address: getRequiredContractAddress('VNDCNFTCollection', 'NFT Collection', activeChain),
+          payment_token_address: getRequiredContractAddress('VNDCToken', 'VNDC Token', activeChain),
+          token_id: tokenID,
+          amount: '1',
+          price: priceWei,
+          category: 'nft',
+          approval_deadline: approval.deadline,
+          approval_signature: approval.signature,
+        })
+      }
       antMessage.success('Đã đăng bán NFT')
       setPriceDrafts(prev => ({ ...prev, [tokenID]: '' }))
       void loadAll()

@@ -422,9 +422,9 @@ export async function getListings(page = 1, limit = 12, status: NFTListing['stat
   return { items: result.items, total: result.total }
 }
 
-export async function getMyListings(wallet: string, page = 1, limit = 20): Promise<{ items: NFTListing[]; total: number }> {
+export async function getMyListings(wallet: string, page = 1, limit = 20, status: NFTListing['status'] | '' = ''): Promise<{ items: NFTListing[]; total: number }> {
   const result = await api.pagedRequest<NFTListing>({
-    method: 'GET', path: '/marketplace/listings', query: { seller_wallet: wallet, page, limit }, auth: true,
+    method: 'GET', path: '/marketplace/listings', query: { seller_wallet: wallet, page, limit, status }, auth: true,
   })
   return { items: result.items, total: result.total }
 }
@@ -455,6 +455,8 @@ export async function listNFT(params: {
   category?: string
   nft_contract_address?: string
   payment_token_address?: string
+  approval_deadline?: number
+  approval_signature?: string
 }) {
   return api.request({ method: 'POST', path: '/marketplace/listings', auth: true, body: params })
 }

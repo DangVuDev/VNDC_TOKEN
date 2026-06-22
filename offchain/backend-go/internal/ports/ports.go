@@ -170,6 +170,8 @@ type ERC721CollectionPort interface {
 	Mint(ctx context.Context, to, tokenURI string) (tokenID, txHash string, err error)
 	// Approve allows a spender contract to transfer a specific token owned by the relayer.
 	Approve(ctx context.Context, spender, tokenID string) (txHash string, err error)
+	// ApproveWithSignature relays an owner-signed ERC721 approval for gasless resale.
+	ApproveWithSignature(ctx context.Context, owner, spender, tokenID string, deadline int64, signature []byte) (txHash string, err error)
 }
 
 // TaskManagerContractPort defines on-chain interactions with the TaskManager contract.
