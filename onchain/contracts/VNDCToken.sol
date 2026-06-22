@@ -205,7 +205,7 @@ contract VNDCToken is
             (bool ok, bytes32 errorCode, string memory reason) = _tryMetaTransfer(transfers[i]);
             if (ok) {
                 unchecked { successCount++; }
-            } else {
+            } else {    
                 unchecked { failureCount++; }
             }
             emit MetaTransferItemResult(
